@@ -79,6 +79,7 @@ import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.PinnedTopic
+import com.curio.app.data.PromoMode
 import com.curio.app.data.SavedQuote
 import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
@@ -202,6 +203,22 @@ fun HomeScreen(navController: NavController) {
     val unexploredTopics = ExploreSessionStore.recentlyUnexploredState
     val recentFeed = remember(recentEntries, exploredTopics, unexploredTopics) {
         buildRecentFeed(recentEntries, exploredTopics, unexploredTopics)
+    }
+    // v7.107 — promo/demo-content mode (hidden 5-tap unlock in Support):
+    // while ON, the hero stats and the recents feed are replaced with
+    // promotional SAMPLE data — real topics + all six capture formats, so
+    // screenshots look rich. Every row stays tappable; turning the mode
+    // off reverts instantly (all of this keys off the reactive state).
+    val promoOn = AppPreferences.promoModeState
+    val promoEntries by produceState<List<CurioEntry>>(initialValue = emptyList(), promoOn) {
+        value = if (promoOn) PromoMode.demoEntries() else emptyList()
+    }
+    val promoFeed = remember(promoEntries, promoOn) {
+        if (promoOn) {
+            buildRecentFeed(promoEntries, PromoMode.demoExplored(promoEntries), emptyList())
+        } else {
+            emptyList()
+        }
     }
     var totalSaved by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
@@ -430,7 +447,7 @@ fun HomeScreen(navController: NavController) {
                                         // family as the banner text.
                                         HeroStatSegment(
                                             glyph = "local_fire_department",
-                                            value = "$streakDays",
+                                            value = if (promoOn) PromoMode.DEMO_STREAK.toString() else "$streakDays",
                                             label = "Streak",
                                             tint = questInk,
                                             ink = questInk,
@@ -442,7 +459,7 @@ fun HomeScreen(navController: NavController) {
                                         )
                                         HeroStatSegment(
                                             glyph = CurioIcons.Inventory2,
-                                            value = "$totalSaved",
+                                            value = if (promoOn) PromoMode.DEMO_SAVED.toString() else "$totalSaved",
                                             label = "Cabinet",
                                             tint = questInk,
                                             ink = questInk,
@@ -454,7 +471,7 @@ fun HomeScreen(navController: NavController) {
                                         )
                                         HeroStatSegment(
                                             glyph = CurioIcons.History,
-                                            value = "${recentFeed.size}",
+                                            value = "${if (promoOn) promoFeed.size else recentFeed.size}",
                                             label = "Recent",
                                             tint = questInk,
                                             ink = questInk,
@@ -623,6 +640,8 @@ fun HomeScreen(navController: NavController) {
 
             // ── 5. Recents — explored + unexplored topics and recent entries ──
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                // Promo mode swaps in the demo feed; otherwise the real one.
+                val recentPreview = (if (promoOn) promoFeed else recentFeed).take(5)
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -633,7 +652,9 @@ fun HomeScreen(navController: NavController) {
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    if (recentEntries.isNotEmpty() || exploredTopics.isNotEmpty() || unexploredTopics.isNotEmpty()) {
+                    // v7.107 — promo mode hides View all: it would lead to
+                    // the real (empty) Recents page, breaking the demo flow.
+                    if (!promoOn && recentPreview.isNotEmpty()) {
                         Surface(
                             onClick = { navController.navigate(CurioRoutes.RECENTS_ALL) { launchSingleTop = true } },
                             shape = RoundedCornerShape(50),
@@ -660,7 +681,6 @@ fun HomeScreen(navController: NavController) {
                 }
                 Spacer(Modifier.height(10.dp))
 
-                val recentPreview = recentFeed.take(5)
                 if (recentPreview.isEmpty()) {
                     FirstTimeEmpty(
                         surface = MaterialTheme.colorScheme.surfaceContainerLow,

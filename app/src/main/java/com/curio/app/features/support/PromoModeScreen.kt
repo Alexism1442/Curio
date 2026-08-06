@@ -25,7 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
@@ -40,8 +44,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
+import com.curio.app.data.PromoMode
+import com.curio.app.data.TopicJsonLoader
 import com.curio.app.features.settings.SettingsHeroHeader
 import com.curio.app.features.settings.SettingsHeroTotalHeight
 import com.curio.app.ui.components.CurioSectionLabel
@@ -56,12 +63,16 @@ import com.curio.app.ui.theme.CurioIcons
 
 /**
  * Promo mode — the hidden, share-ready promo page unlocked by tapping the
- * Version row in Support & diagnostics five times.
+ * Version row in Support & diagnostics five times (five more toggles it
+ * OFF, per v7.107).
  *
- * Shows the app's torn-rose promo poster as a live preview (WYSIWYG — the
- * exact art the share sheet sends) plus one Share action that renders the
- * poster off-screen at 360×480 dp via [shareComposableCard] and opens the
- * Android share sheet, so screenshots for the store are one tap away.
+ * While promo mode is ON the whole app shows promotional SAMPLE content
+ * (Home hero stats + recents, Profile level, Quests level, Cabinet grid —
+ * all derived from real topics, all tappable), so the user can screenshot
+ * and share store-ready images. This page shows the current ON/OFF state
+ * with a toggle, a live preview of the promo poster (WYSIWYG — exactly
+ * what the share sheet sends), and one Share action that renders the
+ * poster off-screen at 360×560 dp via [shareComposableCard].
  *
  * The [PromoShareCard] poster is fully self-contained (explicit colors, no
  * app-theme dependency) so the off-screen export renders identically on any
@@ -70,6 +81,15 @@ import com.curio.app.ui.theme.CurioIcons
 @Composable
 fun PromoModeScreen(navController: NavController) {
     val context = LocalContext.current
+    // Reactive — flips the whole page the instant the toggle changes.
+    val promoOn = AppPreferences.promoModeState
+    // Real topic total for the poster's stat strip — preloads the pools
+    // first so the number is exact even on a cold open of this page.
+    var topicTotal by remember { mutableIntStateOf(PromoMode.topicTotal()) }
+    LaunchedEffect(Unit) {
+        TopicJsonLoader.preloadAll()
+        topicTotal = PromoMode.topicTotal()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,17 +112,19 @@ fun PromoModeScreen(navController: NavController) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item { CurioSectionLabel("Demo content") }
+                item { PromoStatusCard(on = promoOn, onToggle = { AppPreferences.setPromoModeEnabled(context, !promoOn) }) }
                 item { CurioSectionLabel("Promo card") }
                 item {
                     // Live preview — the exact poster the share sheet sends.
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(3f / 4f)
+                            .aspectRatio(9f / 14f)
                             .shadow(10.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
                     ) {
-                        PromoShareCard()
+                        PromoShareCard(topicsTotal = topicTotal)
                     }
                 }
                 item {
@@ -110,9 +132,9 @@ fun PromoModeScreen(navController: NavController) {
                         onClick = {
                             shareComposableCard(
                                 context = context,
-                                cardSize = DpSize(360.dp, 480.dp),
+                                cardSize = DpSize(360.dp, 560.dp),
                                 authority = "${context.packageName}.fileprovider",
-                                card = { PromoShareCard() }
+                                card = { PromoShareCard(topicsTotal = topicTotal) }
                             )
                         },
                         shape = RoundedCornerShape(50),
@@ -136,9 +158,22 @@ fun PromoModeScreen(navController: NavController) {
                 }
                 item {
                     Text(
-                        "Reopen anytime: in Support & diagnostics, tap the Version row five times.",
+                        text = if (promoOn) {
+                            "All screens now show demo content — Home, Profile, Quests & Cabinet. Screenshot away; everything stays tappable."
+                        } else {
+                            "Home, Profile, Quests & Cabinet show your real data while promo mode is off."
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                item {
+                    Text(
+                        "Reopen anytime: in Support & diagnostics, tap the Version row five times. Five more taps turn demo content off.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -149,9 +184,68 @@ fun PromoModeScreen(navController: NavController) {
         // settings overlay pattern).
         SettingsHeroHeader(
             title = "Promo mode",
-            subtitle = "Store-ready promo art",
+            subtitle = if (promoOn) "Demo content on · share-ready" else "Store-ready promo art",
             onBack = { navController.popBackStack() }
         )
+    }
+}
+
+/** The ON/OFF status card with the big toggle — the one control for the
+ *  hidden mode (plus the Version 5-tap in Support). */
+@Composable
+private fun PromoStatusCard(on: Boolean, onToggle: () -> Unit) {
+    val accent = if (on) CurioColors.Sage else CurioColors.CoralBlush
+    val icon = if (on) CurioIcons.Check else CurioIcons.Close
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = accent.copy(alpha = 0.12f),
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.40f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(accent.copy(alpha = 0.20f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CurioIcon(icon, null, tint = accent, size = 18.dp)
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = if (on) "Demo content is ON" else "Demo content is OFF",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = if (on) {
+                            "Home, Profile, Quests & Cabinet show promotional sample data for screenshots."
+                        } else {
+                            "Every screen shows your real data."
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            Surface(
+                onClick = onToggle,
+                shape = RoundedCornerShape(50),
+                color = accent,
+                contentColor = Color.White,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = if (on) "Turn demo content off" else "Turn demo content on",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+            }
+        }
     }
 }
 
@@ -174,15 +268,19 @@ private val PromoPaper = Color(0xFFFDFCF9)
 /** Deep warm body ink for the promise rows. */
 private val PromoBodyInk = Color(0xFF3A262B)
 private val PromoBodyMuted = Color(0xFF8A6870)
+/** Warm gold for the 5-star social-proof row. */
+private val PromoGold = Color(0xFFE8A33D)
 
 /**
- * The self-contained promo poster: a rose banner (wordmark + tagline +
- * category chips) torn onto a paper body (the three promises + the die),
- * all drawn with explicit colors so the off-screen export and the on-screen
- * preview match.
+ * The self-contained promo poster: a rose banner (editors'-choice chip,
+ * wordmark + tagline + category chips) torn onto a paper body (the three
+ * promises + the die + 5-star social proof + real topic-count stats), all
+ * drawn with explicit colors so the off-screen export and the on-screen
+ * preview match. v7.107 — taller 9:14 canvas so the extra stat row fits
+ * without crowding.
  */
 @Composable
-fun PromoShareCard() {
+fun PromoShareCard(topicsTotal: Int) {
     val bannerTorn = remember(PROMO_TEAR_SEED) { SoftTornBottomShape(PROMO_TEAR_SEED, bold = true) }
     val sheetShape = remember(PROMO_TEAR_SEED) {
         SoftTornSheetShape(PROMO_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
@@ -221,8 +319,8 @@ fun PromoShareCard() {
                 val glyphs = listOf(
                     Triple(CurioIcons.AutoAwesome, BiasAlignment(-0.92f, -0.92f), 30f),
                     Triple(CurioIcons.Casino, BiasAlignment(0.92f, -0.82f), 26f),
-                    Triple(CurioIcons.Star, BiasAlignment(-0.84f, 0.20f), 22f),
-                    Triple(CurioIcons.AutoAwesome, BiasAlignment(0.90f, 0.14f), 24f)
+                    Triple(CurioIcons.Star, BiasAlignment(-0.84f, 0.10f), 22f),
+                    Triple(CurioIcons.AutoAwesome, BiasAlignment(0.90f, 0.06f), 24f)
                 )
                 glyphs.forEach { (glyph, bias, glyphSize) ->
                     CurioIcon(
@@ -238,10 +336,32 @@ fun PromoShareCard() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 22.dp, vertical = 24.dp),
+                        .padding(horizontal = 22.dp, vertical = 22.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(Modifier.weight(0.10f))
+                    Spacer(Modifier.weight(0.08f))
+                    // Editors'-choice chip — a small glass pill above the
+                    // wordmark so the card reads as a curated pick.
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(Color.White.copy(alpha = 0.32f))
+                            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.60f)), RoundedCornerShape(50))
+                            .padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        CurioIcon(CurioIcons.Star, null, tint = PromoBannerInk, size = 11.dp)
+                        Text(
+                            "EDITORS' CHOICE",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.6.sp
+                            ),
+                            color = PromoBannerInk
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
                     // Wordmark
                     Text(
                         text = "C U R I O",
@@ -252,12 +372,12 @@ fun PromoShareCard() {
                         color = PromoBannerInk,
                         textAlign = TextAlign.Center
                     )
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(8.dp))
                     Text(
                         text = "Discover something new,\nexplore it your way.",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
-                            lineHeight = 22.sp
+                            lineHeight = 21.sp
                         ),
                         color = PromoBannerInk.copy(alpha = 0.92f),
                         textAlign = TextAlign.Center
@@ -283,37 +403,45 @@ fun PromoShareCard() {
                 }
             }
         }
-        // ── Paper body (bottom 40%) — the three promises + the die ──
+        // ── Paper body (bottom 40%) — promises, the die, social proof ──
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.40f)
-                .padding(horizontal = 24.dp, vertical = 18.dp),
+                .padding(horizontal = 24.dp, vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             PromoPromise(CurioIcons.Star, "Shuffle the deck", "Films, albums, books & discoveries")
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             PromoPromise(CurioIcons.MoodInspired, "Explore it your way", "Your pace, your notes, your words")
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             PromoPromise(CurioIcons.Bookmark, "Keep what moves you", "Quotes & entries in your Cabinet")
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
             // The die — the wildcard shuffle mark.
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(44.dp)
                     .clip(CircleShape)
                     .background(PromoRoseDeep),
                 contentAlignment = Alignment.Center
             ) {
-                CurioIcon(CurioIcons.Casino, null, tint = Color.White, size = 25.dp)
+                CurioIcon(CurioIcons.Casino, null, tint = Color.White, size = 22.dp)
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
+            // Social proof — five gold stars + a whisper line.
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                repeat(5) {
+                    CurioIcon(CurioIcons.Star, null, tint = PromoGold, size = 13.dp)
+                }
+            }
+            Spacer(Modifier.height(4.dp))
+            // Honest stats — real topic count + lanes + ads-free.
             Text(
-                text = "CURIO · FREE · ON-DEVICE · NO ADS",
+                text = "${topicsTotal.coerceAtLeast(0)}+ topics · ${CurioCategories.all.size} lanes · 0 ads",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.4.sp
+                    letterSpacing = 1.2.sp
                 ),
                 color = PromoBodyMuted,
                 textAlign = TextAlign.Center

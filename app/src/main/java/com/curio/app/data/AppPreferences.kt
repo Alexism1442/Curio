@@ -62,6 +62,7 @@ object AppPreferences {
     private const val KEY_THEME_STYLE = "theme_style"      // "default", "amoled", "material"
     private const val KEY_PASTEL_COLORS_ENABLED = "pastel_colors_enabled"
     private const val KEY_PASTEL_CROWN_DEPTH = "pastel_crown_depth"
+    private const val KEY_PROMO_MODE = "promo_mode"   // hidden promo/demo-content mode
     // v7.7 — experimental peek-card redesign, four independent toggles so
     // each upgrade can be A/B'd on its own: top-lit gradient fill, tinted
     // hairline, soft shadows, roomier two-line near titles. Each OFF by
@@ -147,6 +148,16 @@ object AppPreferences {
     // crown for depth instead of a uniform pastel from edge to edge.
     // Default ON. Only takes effect when pastel mode is active.
     var pastelCrownDepthState by mutableStateOf(true)
+        private set
+
+    // Hidden promo/demo-content mode (v7.107) — unlocked by tapping the
+    // Version row in Support & diagnostics five times (tap five times
+    // again to turn it OFF). While ON, the app shows promotional sample
+    // content everywhere (Home hero stats + recents, Profile level,
+    // Quests level, Cabinet grid) so the user can screenshot the app for
+    // store promotion. Demo data is derived from real topics via
+    // [PromoMode] — no user data is touched. Default OFF.
+    var promoModeState by mutableStateOf(false)
         private set
 
     // Peek-deck redesign (v7.7, EXPERIMENTAL) — the Spin deck's background
@@ -305,6 +316,7 @@ object AppPreferences {
         themeStyleState = getThemeStyle(context)
         pastelColorsState = isPastelColorsEnabled(context)
         pastelCrownDepthState = isPastelCrownDepthEnabled(context)
+        promoModeState = isPromoModeEnabled(context)
         peekGradientState = isPeekGradientEnabled(context)
         peekHairlineState = isPeekHairlineEnabled(context)
         peekShadowsState = isPeekShadowsEnabled(context)
@@ -366,6 +378,16 @@ object AppPreferences {
     fun setPastelCrownDepthEnabled(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_PASTEL_CROWN_DEPTH, enabled).apply()
         pastelCrownDepthState = enabled
+    }
+
+    // ── Promo/demo-content mode (v7.107 hidden) ───────────────────────
+    /** Whether the hidden promo demo-content mode is on (default off). */
+    fun isPromoModeEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_PROMO_MODE, false)
+
+    fun setPromoModeEnabled(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_PROMO_MODE, enabled).apply()
+        promoModeState = enabled
     }
 
     // ── Peek-deck redesign (v7.7 experimental) ────────────────────────

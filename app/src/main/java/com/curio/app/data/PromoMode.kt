@@ -1,0 +1,63 @@
+package com.curio.app.data
+
+/**
+ * Promo/demo-content mode (v7.107) — the hidden promotional state the app
+ * shows when `AppPreferences.promoModeState` is ON (unlocked by tapping the
+ * Version row in Support & diagnostics five times; tap five times again to
+ * turn it OFF).
+ *
+ * While ON, the app surfaces promotional SAMPLE content — derived entirely
+ * from real topics via [TopicCatalog.sampleEntries] and the loaded pools —
+ * so the user can screenshot Home, Profile, Quests and the Cabinet for
+ * store promotion. No user data is read or written; turning the mode off
+ * instantly reverts every screen to real data (all consumers read the
+ * reactive [AppPreferences.promoModeState]).
+ */
+object PromoMode {
+
+    /** Demo Streak value shown in the Home + Profile hero stat bars. */
+    const val DEMO_STREAK = 27
+
+    /** Demo Cabinet count shown in the Home + Profile hero stat bars. */
+    const val DEMO_SAVED = 128
+
+    /**
+     * Demo XP — deliberately past the final threshold (940 XP = level 12,
+     * the top rank), so the level card reads "Grand Curator" with a full
+     * bar. Must be >= 940 (the last XP_THRESHOLDS entry in CurioQuests) or
+     * levelForXp lands one short; 960 reads as a plausible earned total.
+     */
+    const val DEMO_XP = 960
+
+    /**
+     * The six fully-working demo entries — one per capture format, built
+     * from real topics by [TopicCatalog.sampleEntries]. Tapping any of
+     * them opens a REAL detail page (EntryDetail falls back to the sample
+     * pool for `sample-*` ids), so demo screenshots stay fully tappable.
+     */
+    suspend fun demoEntries(): List<CurioEntry> =
+        runCatching { TopicCatalog.sampleEntries() }.getOrDefault(emptyList())
+
+    /**
+     * "Explored" markers derived from the same demo entries — the Home
+     * recents feed pairs each saved-entry card with its explored row (the
+     * normal feed's shape), so the demo feed renders with the familiar
+     * Explore-topic + Saved-entry mix.
+     */
+    fun demoExplored(entries: List<CurioEntry>): List<ExploredTopic> =
+        entries.map { entry ->
+            ExploredTopic(
+                categoryId = entry.topic.categoryId,
+                topicName = entry.topic.name,
+                exploredAtMillis = entry.capturedAtMillis,
+                wasUnexplored = false
+            )
+        }
+
+    /**
+     * Real total topic count across all loaded pools — shown on the promo
+     * poster's stat strip ("…+ topics") so the number is honest, not fake.
+     */
+    fun topicTotal(): Int =
+        CurioCategories.all.sumOf { cat -> TopicJsonLoader.cached(cat.id)?.size ?: 0 }
+}

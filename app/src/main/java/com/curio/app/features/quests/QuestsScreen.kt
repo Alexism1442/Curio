@@ -32,11 +32,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioQuests.DailyQuest
 import com.curio.app.data.CurioQuests.JourneyQuest
+import com.curio.app.data.PromoMode
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.features.settings.SettingsHeroHeader
@@ -69,7 +71,10 @@ import com.curio.app.ui.theme.CurioIcons
  */
 @Composable
 fun QuestsScreen(navController: NavController) {
-    val xp = CurioQuests.xpState
+    // v7.107 — promo/demo-content mode shows the promotional sample XP (top
+    // rank, Grand Curator) while ON; only the level card is demoed here.
+    val promoOn = AppPreferences.promoModeState
+    val xp = if (promoOn) PromoMode.DEMO_XP else CurioQuests.xpState
     val level = CurioQuests.levelForXp(xp)
     val (progress, nextThreshold) = CurioQuests.xpProgress(xp)
 

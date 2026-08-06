@@ -74,6 +74,7 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.ExploreSessionStore
+import com.curio.app.data.PromoMode
 import com.curio.app.data.StreakTracker
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.navigation.CurioRoutes
@@ -187,9 +188,15 @@ fun ProfileScreen(navController: NavController) {
     val streakDays = StreakTracker.getStreak(context)
     // v7.40 — the level tracker is now the shared XP system (quests/levels):
     // level + progress come from earned XP instead of raw saved counts.
-    val questXp = CurioQuests.xpState
-    val level = CurioQuests.levelForXp(questXp)
-    val progress = CurioQuests.xpProgress(questXp)
+    // v7.107 — promo/demo-content mode swaps in promotional sample values
+    // (real rank math via the shared quests API, not junk numbers); turning
+    // it off reverts instantly through the reactive state.
+    val promoOn = AppPreferences.promoModeState
+    val displayStreak = if (promoOn) PromoMode.DEMO_STREAK else streakDays
+    val displaySaved = if (promoOn) PromoMode.DEMO_SAVED else totalSaved
+    val displayXp = if (promoOn) PromoMode.DEMO_XP else CurioQuests.xpState
+    val level = CurioQuests.levelForXp(displayXp)
+    val progress = CurioQuests.xpProgress(displayXp)
 
     // The hero wears the Home quest family's rose torn banner — the LAST
     // explored category personalizes the page (v7.101): its family's
@@ -250,8 +257,8 @@ fun ProfileScreen(navController: NavController) {
             item {
                 ProfileHero(
                     name = displayName,
-                    streakDays = streakDays,
-                    saved = totalSaved,
+                    streakDays = displayStreak,
+                    saved = displaySaved,
                     lanes = if (categoryCounts.isEmpty()) CurioCategories.visible.size else categoryCounts.size,
                     family = heroFamily,
                     fill = heroFill,
@@ -273,7 +280,7 @@ fun ProfileScreen(navController: NavController) {
                     CurioSettingsCard(border = null) {
                         LevelCard(
                             level = level,
-                            xp = questXp,
+                            xp = displayXp,
                             progress = progress.first,
                             nextThreshold = progress.second,
                             isMaxLevel = level >= CurioQuests.maxLevel

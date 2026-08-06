@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.curio.app.BuildConfig
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.UpdateChecker
@@ -82,9 +83,9 @@ fun SupportScreen(navController: NavController) {
     var resultVisible by remember { mutableStateOf(false) }
     val crashCount = remember { CurioCrashReporter.getCrashHistory(context).size }
 
-    // Promo-mode unlock — tap the Version row five times to open the hidden
-    // store-promo page. The counter resets itself after a short pause so
-    // stray taps never unlock it.
+    // Promo-mode toggle (v7.107) — tap the Version row five times to turn
+    // promo/demo-content mode ON, five times again to turn it OFF. The
+    // counter resets itself after a short pause so stray taps never fire.
     var versionTaps by remember { mutableIntStateOf(0) }
     LaunchedEffect(versionTaps) {
         if (versionTaps in 1..4) {
@@ -150,8 +151,10 @@ fun SupportScreen(navController: NavController) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         CurioCardHeader(CurioIcons.Download, "Updates", "Your build and what's new")
-                        // Version — tappable: five taps unlock the hidden
-                        // promo-mode page (the subtitle hints while counting).
+                        // Version — tappable: five taps TOGGLE promo mode
+                        // (on → off, off → on); the promo page then shows
+                        // the resulting state. Subtitle hints while counting
+                        // and shows the live mode when on.
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -159,6 +162,10 @@ fun SupportScreen(navController: NavController) {
                                     versionTaps++
                                     if (versionTaps >= 5) {
                                         versionTaps = 0
+                                        AppPreferences.setPromoModeEnabled(
+                                            context,
+                                            !AppPreferences.promoModeState
+                                        )
                                         navController.navigate(CurioRoutes.PROMO) { launchSingleTop = true }
                                     }
                                 }
@@ -174,10 +181,13 @@ fun SupportScreen(navController: NavController) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("Version", style = MaterialTheme.typography.bodyLarge)
                                 Text(
-                                    text = if (versionTaps in 1..4) {
-                                        "Tap ${5 - versionTaps} more to unlock promo mode"
-                                    } else {
-                                        "${BuildConfig.VERSION_NAME} · build ${BuildConfig.VERSION_CODE}"
+                                    text = when {
+                                        versionTaps in 1..4 ->
+                                            "Tap ${5 - versionTaps} more to toggle promo mode"
+                                        AppPreferences.promoModeState ->
+                                            "Promo mode on · tap 5× to turn off"
+                                        else ->
+                                            "${BuildConfig.VERSION_NAME} · build ${BuildConfig.VERSION_CODE}"
                                     },
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,

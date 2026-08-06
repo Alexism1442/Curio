@@ -68,12 +68,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
 import com.curio.app.data.CurioRepositoryHolder
+import com.curio.app.data.TopicCatalog
 import com.curio.app.data.AudioStorageManager
 import com.curio.app.data.ImageStorageManager
 import com.curio.app.features.settings.settingsReadableInk
@@ -154,11 +156,21 @@ fun CabinetScreen(navController: NavController) {
         }
     }
 
-    val entries by produceState<List<CurioEntry>>(initialValue = emptyList()) {
-        try {
-            CurioRepositoryHolder.repo.observeAll().collect { value = it }
-        } catch (_: Exception) {
-            value = emptyList()
+    // v7.107 — promo/demo-content mode fills the Cabinet with the sample
+    // entries (real topics, all six capture formats) so screenshots look
+    // rich; they stay fully tappable (EntryDetail resolves `sample-*` ids
+    // via TopicCatalog.sampleEntries). Real data returns the instant the
+    // mode is toggled off (keyed on the reactive promo state).
+    val promoOn = AppPreferences.promoModeState
+    val entries by produceState<List<CurioEntry>>(initialValue = emptyList(), promoOn) {
+        if (promoOn) {
+            value = runCatching { TopicCatalog.sampleEntries() }.getOrDefault(emptyList())
+        } else {
+            try {
+                CurioRepositoryHolder.repo.observeAll().collect { value = it }
+            } catch (_: Exception) {
+                value = emptyList()
+            }
         }
     }
 
@@ -361,8 +373,12 @@ fun CabinetScreen(navController: NavController) {
                         entry = entry,
                         selected = entry.id in selectedEntryIds,
                         onLongClick = {
-                            selectionMode = true
-                            selectedEntryIds = selectedEntryIds + entry.id
+                            // v7.107 — promo/demo mode disables multi-select:
+                            // bulk delete would no-op on the sample entries.
+                            if (!promoOn) {
+                                selectionMode = true
+                                selectedEntryIds = selectedEntryIds + entry.id
+                            }
                         },
                         onClick = {
                             if (selectionMode) {

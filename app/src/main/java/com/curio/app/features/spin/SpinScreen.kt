@@ -766,10 +766,13 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     //    layout branches (the Carousel call lives in SpinDeckSection) ─
     val onDeckCardTap: () -> Unit = {
         if (!shuffling && filteredPool.isNotEmpty()) {
-            val resolved = landedTopic
-                ?: landedTopicName?.let { name ->
-                    TopicJsonLoader.cached(cat.id)?.firstOrNull { it.name == name }
-                }
+            // v7.106 — the front card is ALWAYS openable: the restored
+            // landed topic wins when present, otherwise whatever topic the
+            // fan is showing right now (idle deck included — no shuffle
+            // required). resolveTopicForSlot is the EXACT same resolution
+            // the carousel uses to draw the front card, so tapping always
+            // opens the topic the card is actually displaying.
+            val resolved = resolveTopicForSlot(0, hand, cycleIndex, landedTopic)
             if (resolved != null) {
                 landingAlreadyOpened = true
                 navController.navigate(CurioRoutes.revealFor(resolved.categoryId.routeSlug, resolved.name)) {
@@ -2179,8 +2182,9 @@ private fun HeroTicketCard(
                         }
                         }
 
-                        // Tap hint — "tap to spin" idle, "tap to open" once
-                        // landed, and a pulsing "Opening…" during the brief
+                        // Tap hint — the card is ALWAYS openable (v7.106):
+                        // "Tap to open" at rest, "Shuffling…" while the wheel
+                        // runs, and a pulsing "Opening…" during the brief
                         // opening handoff.
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -2195,16 +2199,12 @@ private fun HeroTicketCard(
                                 )
                             } else {
                                 CurioIcon(
-                                    if (landed) CurioIcons.ChevronRight else CurioIcons.Casino, null,
+                                    if (shuffling) CurioIcons.Casino else CurioIcons.ChevronRight, null,
                                     tint = ink,
                                     size = 16.dp
                                 )
                                 Text(
-                                    text = when {
-                                        landed -> "Tap to open"
-                                        shuffling -> "Shuffling…"
-                                        else -> "Press Shuffle"
-                                    },
+                                    text = if (shuffling) "Shuffling…" else "Tap to open",
                                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                     color = ink.copy(alpha = 0.88f)
                                 )
