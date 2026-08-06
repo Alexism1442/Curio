@@ -334,7 +334,7 @@ fun CabinetScreen(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, top = 14.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -562,7 +562,7 @@ private val CabinetHeroSheetExtent = 24.dp
 /** Total header footprint — the torn banner plus its under-sheet extent. */
 private val CabinetHeroTotalHeight = CabinetHeroBannerHeight + CabinetHeroSheetExtent
 /** Fixed tear seed — the Cabinet tears in its own bold pattern, never re-rolls. */
-private const val CABINET_TEAR_SEED = 0xCAB1N
+private const val CABINET_TEAR_SEED = 0xCAB1E
 
 /** One mirrored hero watermark pair (the settings/profile collage). */
 private data class CabinetHeroPair(
