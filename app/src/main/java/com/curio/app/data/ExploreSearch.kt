@@ -3,7 +3,11 @@ package com.curio.app.data
 import android.net.Uri
 
 /**
- * Builds the Google search URL opened when the user taps "Explore now".
+ * Builds the search URL opened when the user taps "Explore now".
+ *
+ * Albums and songs (everything in the ALBUMS category) open a YouTube
+ * results page so the user can listen directly; every other category keeps
+ * the Google search.
  *
  * The query is the topic name plus contextual search hints so the first
  * result is actually the right thing:
@@ -24,7 +28,11 @@ fun buildExploreSearchUrl(topic: CurioTopic): String {
     extractYear(topic)?.let { parts += it }
     parts += topic.subtype
     val query = parts.joinToString(" ").trim()
-    return "https://www.google.com/search?q=" + Uri.encode(query)
+    return if (topic.categoryId == CategoryId.ALBUMS) {
+        "https://www.youtube.com/results?search_query=" + Uri.encode(query)
+    } else {
+        "https://www.google.com/search?q=" + Uri.encode(query)
+    }
 }
 
 /** Year from the topic name ("Citizen Kane (1941)" → "1941"), else era tag. */
