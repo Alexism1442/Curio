@@ -522,9 +522,12 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     // The initial deal centers on the RESTORED landed topic when one
     // exists (nav-return from Reveal), so the idle fan reads coherent even
     // after the back-stack drops the composition. Keyed on filteredPool
-    // ONLY — not on landedTopicName — so the spin start (which nulls the
-    // landed topic) never re-deals the hand mid-flow.
-    var hand by remember(deckPool) { mutableStateOf(buildDeckHand(deckPool, landedTopic)) }
+    // ONLY — not on deckPool and not on landedTopicName (v7.101): a topic
+    // becoming DONE mid-session (explore → back) must never re-deal the
+    // fan into a different spread — the deck stays exactly as it was until
+    // the next spin, filter change, or category switch. The spin start
+    // (which nulls the landed topic) also never re-deals the hand mid-flow.
+    var hand by remember(filteredPool) { mutableStateOf(buildDeckHand(deckPool, landedTopic)) }
     // cycleIndex is NOT reset per spin — the reel starts from wherever the
     // deck stopped (the landed topic sits at hand[0]), so the first tick is
     // a seamless continuation instead of a jump cut.
@@ -3210,10 +3213,15 @@ private fun resolveTopicForSlot(
  * topic sits at the front (hand[0]) and its neighbors fill the rest; without
  * one the hand is a plain random spread. Stable across a spin: the reel
  * rotates through it via cycleIndex instead of re-shuffling mid-spin.
+ *
+ * v7.101 — [center] leads the fan even when it's no longer in [pool]: a
+ * just-explored topic is excluded from the open deck, but the restored
+ * landed card must still sit at the front (tappable, showing its done
+ * state) until the next spin — only the NEIGHBORS come from the open pool.
  */
 private fun buildDeckHand(pool: List<CurioTopic>, center: CurioTopic?): List<CurioTopic> {
     if (pool.isEmpty()) return emptyList()
-    val head = if (center != null && pool.any { it.id == center.id }) listOf(center) else emptyList()
+    val head = if (center != null) listOf(center) else emptyList()
     val rest = (if (center == null) pool else pool.filterNot { it.id == center.id }).shuffled()
     return (head + rest).take(6)
 }

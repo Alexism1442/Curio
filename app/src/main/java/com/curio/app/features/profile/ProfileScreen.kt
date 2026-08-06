@@ -73,6 +73,7 @@ import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
+import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.StreakTracker
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.navigation.CurioRoutes
@@ -102,8 +103,7 @@ import kotlinx.coroutines.launch
  * Personalization lives entirely in Settings (appearance, notifications,
  * categories, backup — plus the Experimental section). Profile opens with
  * the Home quest family's TORN rose banner: solid rose fill with the same
- * bold soft tear and a theme-matched under-sheet, a mirrored watermark
- * collage of your most-explored lane's symbols, and the Streak · Saved ·
+ * bold soft tear and a theme-matched under-sheet, a mirrored watermark *  collage of your last-explored lane's symbols, and the Streak · Saved ·
  * Lanes stats pinned INSIDE the banner above the tear (no standalone strip
  * below). Behind everything sits the shared watermark backdrop (glyphs kept
  * below the banner). Below the hero: the level tracker, your lanes, a
@@ -191,13 +191,17 @@ fun ProfileScreen(navController: NavController) {
     val level = CurioQuests.levelForXp(questXp)
     val progress = CurioQuests.xpProgress(questXp)
 
-    // The hero wears the Home quest family's rose torn banner — your most-
-    // explored lane still personalizes the page: its family's symbols
-    // scatter across the banner and its glyph leads the watermark backdrop
-    // (wildcard sparkles before the first save).
+    // The hero wears the Home quest family's rose torn banner — the LAST
+    // explored category personalizes the page (v7.101): its family's
+    // symbols scatter across the banner and its glyph leads the watermark
+    // backdrop. Reads the REACTIVE explore recents so the hero changes the
+    // moment you explore something; falls back to your most-saved lane,
+    // then wildcard sparkles before the first explore/save.
+    val lastExploredCat = ExploreSessionStore.recentlyExploredState.firstOrNull()?.categoryId
     val topLane = categoryCounts.maxByOrNull { it.value }?.key
-    val heroFamily = topLane?.let { CategoryFamily.of(it) } ?: CategoryFamily.WILDCARD
-    val backdropActiveCat = topLane?.let { CurioCategories.byId(it) }
+    val heroCat = lastExploredCat ?: topLane
+    val heroFamily = heroCat?.let { CategoryFamily.of(it) } ?: CategoryFamily.WILDCARD
+    val backdropActiveCat = heroCat?.let { CurioCategories.byId(it) }
         ?: CurioCategories.byId(CategoryId.WILDCARD)
     val heroFill = profileRoseAccent()
     val heroInk = profileReadableInk(heroFill)
@@ -228,8 +232,8 @@ fun ProfileScreen(navController: NavController) {
         // (the Home/Spin language). Full-page collage like Home: the glyphs
         // scatter across the WHOLE background, hiding behind the opaque hero
         // banner and the torn paper cards, showing through the gutters and
-        // the tears. The active glyph is your most-explored lane (wildcard
-        // sparkles before the first save).
+        // the tears. The active glyph is your last-explored lane (wildcard
+        // sparkles before the first explore/save).
         // v7.76 — the flat content below the hero sits directly on this
         // backdrop, so the glyphs drop to a faint whisper and the rows,
         // headers and chips always read first.
@@ -477,7 +481,7 @@ private fun ProfileDialogs(
  * v7.38 — Profile's hero joins the Home torn-banner family. The solid rose
  * banner tears at the bottom with the SAME bold soft tear + theme under-
  * sheet as Home (so the tear reads as a real paper edge), wears the
- * mirrored watermark collage of your most-explored lane's symbols, and
+ * mirrored watermark collage of your last-explored lane's symbols, and
  *  carries the identity row (avatar, name, tagline) plus the Edit pill. The
  *  Streak · Saved · Lanes stats now live INSIDE the banner, pinned just
  *  above the torn seam on a soft rose gradient pane — the exact Home stat
@@ -538,7 +542,7 @@ private fun ProfileHero(
                 .height(ProfileHeroHeight)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                // Mirrored watermark collage — your most-explored lane's
+                // Mirrored watermark collage — your last-explored lane's
                 // family symbols pop around the banner edges (the Home
                 // quest hero's exact construction; wildcard before the
                 // first save).
