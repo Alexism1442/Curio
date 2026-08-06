@@ -15,6 +15,7 @@ import com.curio.app.MainActivity
 import com.curio.app.R
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.DailyReminderScheduler
+import com.curio.app.navigation.PendingSpinOpen
 
 /** Delivers the user's daily shuffle reminder alarm. */
 class DailyReminderReceiver : BroadcastReceiver() {
@@ -35,6 +36,9 @@ class DailyReminderReceiver : BroadcastReceiver() {
             4108,
             Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                // The reminder nudges the user to shuffle — make the tap land
+                // on the Spin deck (shuffle page), not plain Home.
+                putExtra(PendingSpinOpen.EXTRA_OPEN_SPIN, true)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

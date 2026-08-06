@@ -199,20 +199,30 @@ fun CurioNavHost(
         }
     }
 
-    // ── "Done exploring" notification handoff ─────────────────────────
-    // The notification action stashes the topic (category slug + name) via
-    // PendingEntryOpen and launches the activity. Once this NavHost is on a
-    // stable root (a bottom-nav tab), open the write-it-down entry page with
-    // HOME anchored beneath it — so Back from the entry page returns to the
-    // app instead of exiting it. During the boot gates (splash/onboarding/
-    // crash) the effect returns WITHOUT consuming; it re-runs when the
-    // splash lands on HOME (keyed on currentRoute).
-    LaunchedEffect(currentRoute, PendingEntryOpen.trigger) {
+    // ── Notification deep-link handoffs ────────────────────────────────
+    // The "Done exploring" action stashes the topic (category slug + name)
+    // via PendingEntryOpen and launches the activity; the daily-reminder tap
+    // stashes a spin-deck request via PendingSpinOpen. Once this NavHost is
+    // on a stable root (a bottom-nav tab), act on the pending target: the
+    // entry target opens the write-it-down entry page with HOME anchored
+    // beneath it (so Back returns to the app instead of exiting it), and the
+    // spin target opens the Spin deck with the standard tab switch. During
+    // the boot gates (splash/onboarding/crash) the effect returns WITHOUT
+    // consuming; it re-runs when the splash lands on HOME (keyed on
+    // currentRoute).
+    LaunchedEffect(currentRoute, PendingEntryOpen.trigger, PendingSpinOpen.trigger) {
         val prefix = currentRoute?.substringBefore("/")
         // Wait for a stable root: null (first frame) and the boot gates own
         // navigation until the splash lands on HOME — the effect re-runs
         // there (keyed on currentRoute) and consumes the target once.
         if (prefix == null || prefix in CurioRoutes.bootGatePrefixes) return@LaunchedEffect
+        // Daily-reminder tap — land on the Spin deck (the shuffle page the
+        // notification nudges toward), with the tab switch's popUpTo-HOME
+        // back stack so Back returns to Home.
+        if (PendingSpinOpen.take()) {
+            navController.navigateToTab(CurioRoutes.SPIN)
+            return@LaunchedEffect
+        }
         val target = PendingEntryOpen.take() ?: return@LaunchedEffect
         if (prefix != CurioRoutes.HOME) {
             navController.popBackStack(CurioRoutes.HOME, inclusive = false)

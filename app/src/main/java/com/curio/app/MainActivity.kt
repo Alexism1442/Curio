@@ -15,6 +15,7 @@ import com.curio.app.data.TopicJsonLoader
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.navigation.CurioNavHost
 import com.curio.app.navigation.PendingEntryOpen
+import com.curio.app.navigation.PendingSpinOpen
 import com.curio.app.ui.theme.CurioTheme
 
 /**
@@ -34,14 +35,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        // A "Done exploring" notification action may carry the topic to open
-        // (cold-start path) — stash it for the NavHost to navigate to once
+        // A "Done exploring" notification action may carry the topic to open,
+        // and the daily-reminder tap may carry a spin-deck request
+        // (cold-start path) — stash both for the NavHost to navigate to once
         // the splash settles on HOME. Gated on a FRESH process (no saved
         // instance state): recreation (rotation / process-death restore)
         // re-delivers the same intent and would otherwise re-trigger the
-        // entry-page navigation over a state the user already has on screen.
+        // navigation over a state the user already has on screen.
         if (savedInstanceState == null) {
             PendingEntryOpen.capture(intent)
+            PendingSpinOpen.capture(intent)
         }
 
         // Wire the asset manager into the topic loader before any Compose
@@ -80,8 +83,9 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Warm-start path: the activity was already running, so a pending
-        // entry-open target arrives here instead of onCreate.
+        // Warm-start path: the activity was already running, so pending
+        // notification targets arrive here instead of onCreate.
         PendingEntryOpen.capture(intent)
+        PendingSpinOpen.capture(intent)
     }
 }

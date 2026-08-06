@@ -25,19 +25,26 @@ import com.curio.app.navigation.PendingEntryOpen
  *     session and hands the user to the write-it-down page; "Cancel"
  *     clears it quietly (no navigation). Both cancel the alarm and stop
  *     the timer service.
+ *
+ * The notification body tap also opens the write-it-down page: the nudge
+ * promises "come back and write it down", so tapping it lands on that
+ * action for the topic it is nudging about (not plain Home).
  */
 class ExploreReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == ACTION_STOP || intent?.action == ACTION_CANCEL) {
-            // Shared teardown: clear the session, cancel the reminder alarm
-            // and stop the timer service. The two actions differ only in
-            // whether the user is handed to the write-it-down page (only
-            // "Done exploring" needs the session for its navigation).
+            // "Done exploring" needs the session for its navigation, so grab
+            // it BEFORE the teardown clears it (a cleared session would make
+            // the write-it-down jump a silent no-op). Shared teardown: clear
+            // the session, cancel the reminder alarm and stop the timer
+            // service. The two actions differ only in whether the user is
+            // handed to the write-it-down page (only "Done exploring"
+            // navigates).
+            val session = ExploreSessionStore.getActiveSession(context)
             ExploreSessionStore.clearSession(context)
             ExploreReminderScheduler.cancel(context)
             ExploreSessionService.stop(context)
             if (intent.action == ACTION_STOP) {
-                val session = ExploreSessionStore.getActiveSession(context)
                 if (session != null) {
                     // "Done exploring" — hand the user straight to the
                     // write-it-down entry page for the topic, so the action
@@ -75,6 +82,11 @@ class ExploreReminderReceiver : BroadcastReceiver() {
             4212,
             Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                // The nudge text says "come back and write it down" — make the
+                // tap land on that action: the write-it-down entry page for
+                // this topic, not plain Home.
+                putExtra(PendingEntryOpen.EXTRA_CATEGORY_SLUG, session.categoryId.routeSlug)
+                putExtra(PendingEntryOpen.EXTRA_TOPIC_NAME, session.topicName)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

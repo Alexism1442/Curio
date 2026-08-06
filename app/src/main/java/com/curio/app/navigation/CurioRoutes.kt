@@ -73,6 +73,45 @@ object PendingEntryOpen {
     }
 }
 
+/**
+ * Out-of-band handoff for the daily-reminder notification tap.
+ *
+ * The daily shuffle reminder ("A little curiosity awaits") carries a boolean
+ * extra so tapping it opens the app ON the Spin deck (the shuffle page it
+ * nudges toward) instead of plain Home. Like [PendingEntryOpen], the extra is
+ * stashed here because MainActivity may be cold-started (onCreate) or already
+ * running (onNewIntent), and the NavHost is the only place that can navigate
+ * with the correct back stack. The NavHost consumes the request once it is on
+ * a stable root route.
+ */
+object PendingSpinOpen {
+    const val EXTRA_OPEN_SPIN = "com.curio.app.extra.OPEN_SPIN"
+
+    private var pending = false
+    // Compose-observable bump: capture() may run from MainActivity (outside
+    // composition), so the NavHost must recompose when it fires — a plain
+    // Boolean would never invalidate the LaunchedEffect key.
+    private val counter = mutableIntStateOf(0)
+
+    /** Stashes the spin-open request carried by [intent], if one is present. */
+    fun capture(intent: Intent?) {
+        if (intent?.getBooleanExtra(EXTRA_OPEN_SPIN, false) == true) {
+            pending = true
+            counter.intValue++
+        }
+    }
+
+    /** Monotonic bump — the NavHost keys its open-effect on this. */
+    val trigger: Int get() = counter.intValue
+
+    /** Consumes and returns whether the Spin deck should be opened. */
+    fun take(): Boolean {
+        val p = pending
+        pending = false
+        return p
+    }
+}
+
 object CurioRoutes {
 
     // ── Bottom-nav tabs (always rendered with the bottom nav bar)
