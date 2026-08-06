@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,10 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -49,12 +52,13 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
-import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.ScreenEntrance
 import com.curio.app.ui.theme.CurioColors
+import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -77,6 +81,17 @@ fun SupportScreen(navController: NavController) {
     var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
     var resultVisible by remember { mutableStateOf(false) }
     val crashCount = remember { CurioCrashReporter.getCrashHistory(context).size }
+
+    // Promo-mode unlock — tap the Version row five times to open the hidden
+    // store-promo page. The counter resets itself after a short pause so
+    // stray taps never unlock it.
+    var versionTaps by remember { mutableIntStateOf(0) }
+    LaunchedEffect(versionTaps) {
+        if (versionTaps in 1..4) {
+            delay(2500)
+            versionTaps = 0
+        }
+    }
 
     fun runCheck() {
         if (checkState == UpdateCheckUi.Checking) return
@@ -135,11 +150,42 @@ fun SupportScreen(navController: NavController) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         CurioCardHeader(CurioIcons.Download, "Updates", "Your build and what's new")
-                        CurioSettingsInfoRow(
-                            CurioIcons.Info,
-                            "Version",
-                            "${BuildConfig.VERSION_NAME} · build ${BuildConfig.VERSION_CODE}"
-                        )
+                        // Version — tappable: five taps unlock the hidden
+                        // promo-mode page (the subtitle hints while counting).
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    versionTaps++
+                                    if (versionTaps >= 5) {
+                                        versionTaps = 0
+                                        navController.navigate(CurioRoutes.PROMO) { launchSingleTop = true }
+                                    }
+                                }
+                                .padding(horizontal = 4.dp, vertical = 13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            CurioIcon(
+                                CurioIcons.Info, null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                size = 21.dp
+                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("Version", style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = if (versionTaps in 1..4) {
+                                        "Tap ${5 - versionTaps} more to unlock promo mode"
+                                    } else {
+                                        "${BuildConfig.VERSION_NAME} · build ${BuildConfig.VERSION_CODE}"
+                                    },
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
                         CurioSettingsDivider()
                         CurioSettingsRow(
                             CurioIcons.Download,

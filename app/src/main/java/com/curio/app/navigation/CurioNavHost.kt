@@ -57,6 +57,7 @@ import com.curio.app.ui.theme.CurioIcons
 import kotlinx.coroutines.delay
 import com.curio.app.features.bugreport.BugReportScreen
 import com.curio.app.features.database.TopicDatabaseScreen
+import com.curio.app.features.support.PromoModeScreen
 import com.curio.app.features.support.SupportScreen
 import com.curio.app.features.crash.CurioCrashScreen
 import com.curio.app.features.lightbox.LightboxScreen
@@ -467,6 +468,9 @@ fun CurioNavHost(
             }
             composable(CurioRoutes.SUPPORT) {
                 SupportScreen(navController = navController)
+            }
+            composable(CurioRoutes.PROMO) {
+                PromoModeScreen(navController = navController)
             }
             composable(CurioRoutes.DATABASE) {
                 TopicDatabaseScreen(navController = navController)

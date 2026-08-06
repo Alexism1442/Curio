@@ -349,41 +349,42 @@ fun HomeScreen(navController: NavController) {
                         ) {
                             // Greeting — one line, left-aligned, with the
                             // name beneath it (the quest CTA moved below the
-                            // hero). Proper hierarchy: big bold greeting, then
-                            // a smaller, softer name below.
+                            // hero). Proper hierarchy: the greeting reads as a
+                            // compact kicker, and the NAME is the star —
+                            // bigger and bolder than the greeting above it.
                             Text(
                                 text = greetingWordForNow(),
-                                style = MaterialTheme.typography.headlineMedium.copy(
+                                style = MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.ExtraBold
                                 ),
-                                color = questInk,
+                                color = questInk.copy(alpha = 0.92f),
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(Modifier.height(4.dp))
-                            // v7.34 — the hero name reads BIG now: same size
-                            // as the greeting (hierarchy via weight + alpha),
-                            // with tall leading so the name block itself
-                            // fills the dead space below it instead of a
-                            // small caption floating above the stat bar. The
-                            // leading is held to a FIXED ~44dp box (glyphs
-                            // still scale with the system font), so the fill
-                            // works at the default scale while the stat bar
-                            // keeps fitting when fonts are enlarged.
+                            // v7.105 — the hero NAME is the hero now: larger
+                            // than the greeting (36sp ExtraBold vs the 24sp
+                            // kicker), full-strength ink, with tall leading
+                            // so the name block fills the dead space below
+                            // the greeting instead of reading as a small
+                            // caption. The leading is held to a FIXED ~48dp
+                            // box (glyphs still scale with the system font),
+                            // so the fill works at the default scale while
+                            // the stat bar keeps fitting when fonts enlarge.
                             val nameFontScale = LocalDensity.current.fontScale
                             Text(
                                 text = displayName,
-                                style = MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 30.sp,
-                                    // Fixed ~44sp leading box held against font scaling (min 30sp).
+                                style = MaterialTheme.typography.headlineLarge.copy(
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 36.sp,
+                                    // Fixed ~48sp leading box held against font scaling (min 44sp).
                                     // Plain Float math: TextUnit has no coerceAtLeast (it only
                                     // exposes an operator compareTo, not the Comparable bound).
-                                    lineHeight = (44f / nameFontScale.coerceAtLeast(1f)).coerceAtLeast(30f).sp
+                                    lineHeight = (48f / nameFontScale.coerceAtLeast(1f)).coerceAtLeast(44f).sp
                                 ),
-                                color = questInk.copy(alpha = 0.85f),
+                                color = questInk,
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,

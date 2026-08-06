@@ -149,6 +149,7 @@ object CurioRoutes {
     const val CRASH = "crash"
     const val BUG_REPORT = "bug-report"
     const val SUPPORT = "support"
+    const val PROMO = "promo"
     const val DATABASE = "database"
     const val FIELDMIND_OBSERVATION = "fieldmind-observation"
 
