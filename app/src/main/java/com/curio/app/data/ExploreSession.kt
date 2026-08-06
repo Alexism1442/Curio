@@ -324,6 +324,17 @@ object ExploreSessionStore {
     fun isDone(categoryId: CategoryId, topicName: String): Boolean =
         doneKey(categoryId, topicName) in doneTopicsState
 
+    /**
+     * Un-marks a done topic ("not watched after all") — the exact inverse of
+     * [markDone]: the done mark is dropped AND the explored recents entry is
+     * rolled back, so the topic can appear in the shuffle deck again. Called
+     * by the reveal screen's unwatch action.
+     */
+    fun unmarkDone(context: Context, categoryId: CategoryId, topicName: String) {
+        if (topicName.isBlank()) return
+        removeExplored(context, categoryId, topicName)
+    }
+
     private fun addDone(context: Context, categoryId: CategoryId, topicName: String) {
         if (topicName.isBlank()) return
         val key = doneKey(categoryId, topicName)

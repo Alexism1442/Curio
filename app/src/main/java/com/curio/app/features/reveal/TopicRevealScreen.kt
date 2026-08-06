@@ -165,6 +165,11 @@ fun TopicRevealScreen(
     // immediately when the user taps pin/unpin.
     val isPinned = resolved != null &&
         AppPreferences.pinnedTopicsState.any { it.categoryId == cat.id && it.topicName == resolved.name }
+    // v7.92 — reactive done state: the "Already …" button flips to a filled
+    // marked state once the topic is done, and the unwatch action appears.
+    // Reads doneTopicsState inside composition, so it updates the moment
+    // markDone / unmarkDone changes the set.
+    val isDone = resolved != null && ExploreSessionStore.isDone(cat.id, resolved.name)
     // v7 — like/dislike teaches the shuffle: liked topics (and their whole
     // category) get more weight, disliked get less — never fully blocked.
     // Reads the REACTIVE sentiment state so the buttons toggle instantly.
@@ -628,24 +633,37 @@ fun TopicRevealScreen(
                 }
 
                 // ── 8. "Already …" — marks the topic DONE (it never shows
-                //    in the shuffle again) and asks if the user wants to
+                //    in the NEXT shuffle again) and asks if the user wants to
                 //    write about it now. No explore session is started and
-                //    the topic is never recorded as unexplored.
+                //    the topic is never recorded as unexplored. The button
+                //    reflects the done state live: ghost when open, filled
+                //    with a check when marked done (v7.92).
                 Surface(
                     onClick = {
                         val topic = resolved ?: return@Surface
                         // Marking done IS engaging — backing out must not
                         // record the topic as unexplored afterwards.
                         engaged = true
-                        // Records explored (Home recents + quests) AND marks
-                        // it done so the spin deck never deals it again.
-                        ExploreSessionStore.markDone(context, cat.id, topic.name)
+                        if (!isDone) {
+                            // Records explored (Home recents + quests) AND
+                            // marks it done so the next shuffle never deals
+                            // it again.
+                            ExploreSessionStore.markDone(context, cat.id, topic.name)
+                        }
                         showAlreadyDoneDialog = true
                     },
                     enabled = resolved != null,
                     shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-                    border = BorderStroke(1.dp, cat.themedAccent().copy(alpha = 0.35f)),
+                    color = if (isDone) {
+                        cat.themedAccent()
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
+                    },
+                    border = if (isDone) {
+                        null
+                    } else {
+                        BorderStroke(1.dp, cat.themedAccent().copy(alpha = 0.35f))
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)
@@ -655,12 +673,37 @@ fun TopicRevealScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        CurioIcon(CurioIcons.Check, null, tint = cat.themedAccent(), size = 18.dp)
+                        CurioIcon(
+                            CurioIcons.Check, null,
+                            tint = if (isDone) cat.onAccent() else cat.themedAccent(),
+                            size = 18.dp
+                        )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = alreadyDoneLabel(cat),
+                            text = if (isDone) "${alreadyDoneLabel(cat)} ✓" else alreadyDoneLabel(cat),
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = if (isDone) cat.onAccent() else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                // ── 8b. Unwatch — only when the topic is already marked
+                //    done: returns it to the shuffle deck (v7.92).
+                if (isDone) {
+                    TextButton(
+                        onClick = {
+                            val topic = resolved ?: return@TextButton
+                            ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
+                            showAlreadyDoneDialog = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp)
+                    ) {
+                        Text(
+                            text = unwatchLabel(cat),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -748,21 +791,20 @@ fun TopicRevealScreen(
         )
     }
 
-    // v7.80 — "Already …" confirmation: the topic is already marked done;
-    // the dialog only asks whether to write about it now. "Not now" keeps
-    // it marked done (never unexplored, never back in the shuffle).
+    // v7.80/v7.92 — "Already …" confirmation: the topic is already marked
+    // done; the dialog only asks whether to write about it now. Dismissing
+    // closes the dialog and STAYS on the reveal screen — the button has
+    // already flipped to the marked-done state (and the unwatch row sits
+    // under it), so there's no reason to pop back anymore.
     if (showAlreadyDoneDialog && resolved != null) {
         val topic = resolved
         AlertDialog(
-            // Dismissing keeps the topic marked done (never unexplored, never
-            // back in the shuffle) and returns to the deck — this button
-            // replaced "Shuffle again instead", so its natural end is back.
-            onDismissRequest = { navController.popBackStack() },
+            onDismissRequest = { showAlreadyDoneDialog = false },
             title = { Text("${alreadyDoneLabel(cat)}?") },
             text = {
                 Text(
                     "${topic.name} is marked as done and won't show up in the " +
-                        "shuffle again. Want to write about it now?"
+                        "next shuffle. Want to write about it now?"
                 )
             },
             confirmButton = {
@@ -774,7 +816,7 @@ fun TopicRevealScreen(
                 }) { Text("Write about it") }
             },
             dismissButton = {
-                TextButton(onClick = { navController.popBackStack() }) { Text("Not now") }
+                TextButton(onClick = { showAlreadyDoneDialog = false }) { Text("Not now") }
             }
         )
     }
@@ -1188,6 +1230,15 @@ private fun alreadyDoneLabel(cat: com.curio.app.data.CurioCategory): String = wh
     CategoryId.ARTWORKS -> "Already seen"
     CategoryId.PAINTERS -> "Already explored"
     else -> "Already explored"
+}
+
+/** The unwatch label — the category's "not … after all" verb (v7.92). */
+private fun unwatchLabel(cat: com.curio.app.data.CurioCategory): String = when (cat.id) {
+    CategoryId.FILMS, CategoryId.DIRECTORS -> "Not watched after all — back to the deck"
+    CategoryId.ALBUMS, CategoryId.ARTISTS -> "Not listened after all — back to the deck"
+    CategoryId.BOOKS, CategoryId.AUTHORS -> "Not read after all — back to the deck"
+    CategoryId.ARTWORKS -> "Not seen after all — back to the deck"
+    else -> "Not explored after all — back to the deck"
 }
 
 /** Circular like/dislike toggle — active state fills with the category accent. */

@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -737,7 +738,6 @@ private fun BoxScope.CabinetStickyChipBar(
         }
     }
     val frostShift = FastOutSlowInEasing.transform(progress)
-    val popScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
     val liftPx = with(LocalDensity.current) { (CabinetChipBarRestTop - CabinetChipBarPinnedTop).toPx() }
 
     // No frosted card behind the chips — each pill pops on its own (v7.89:
@@ -758,21 +758,23 @@ private fun BoxScope.CabinetStickyChipBar(
             }
     ) {
         item("all") {
-            CabinetChipPop(popScale) {
+            CabinetChipPop(index = 0, frostShift = frostShift) {
                 FilterChipLite(
                     label = "All",
                     accent = MaterialTheme.colorScheme.primary,
                     tint = MaterialTheme.colorScheme.primaryContainer,
                     ink = MaterialTheme.colorScheme.onPrimaryContainer,
-                    chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                    // Opaque unselected pill — the chip reads as a solid
+                    // surface over the backdrop, not a see-through wash.
+                    chipSurface = MaterialTheme.colorScheme.surfaceVariant,
                     chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     selected = selectedFilter == null && !showLegacyOnly,
                     onClick = onSelectAll
                 )
             }
         }
-        items(CurioCategories.visible) { cat ->
-            CabinetChipPop(popScale) {
+        itemsIndexed(CurioCategories.visible) { i, cat ->
+            CabinetChipPop(index = i + 1, frostShift = frostShift) {
                 FilterChipLite(
                     label = cat.displayName,
                     accent = cat.themedAccent(),
@@ -781,7 +783,9 @@ private fun BoxScope.CabinetStickyChipBar(
                     // it stays on the neutral theme ink in every state, so
                     // only the background carries the tint.
                     ink = MaterialTheme.colorScheme.onSurfaceVariant,
-                    chipSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                    // Opaque category pill — full-strength chip surface so
+                    // the tinted pill reads solid on the backdrop.
+                    chipSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant),
                     chipBorder = cat.categoryBorder(
                         fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ),
@@ -795,13 +799,13 @@ private fun BoxScope.CabinetStickyChipBar(
         // open, so the active chip stays visible/deselectable).
         if (hasLegacyEntries || showLegacyOnly) {
             item("legacy") {
-                CabinetChipPop(popScale) {
+                CabinetChipPop(index = CurioCategories.visible.size + 1, frostShift = frostShift) {
                     FilterChipLite(
                         label = "Legacy",
                         accent = MaterialTheme.colorScheme.tertiary,
                         tint = MaterialTheme.colorScheme.tertiaryContainer,
                         ink = MaterialTheme.colorScheme.onTertiaryContainer,
-                        chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        chipSurface = MaterialTheme.colorScheme.surfaceVariant,
                         chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         selected = showLegacyOnly,
                         onClick = onToggleLegacy
@@ -812,17 +816,25 @@ private fun BoxScope.CabinetStickyChipBar(
     }
 }
 
-/** Per-pill pop — each chip scales 0.97 → 1.0 as the bar lifts, with no
- *  frosted card behind the row (v7.89). */
+/** Per-pill pop — each chip scales 0.90 → 1.0 as the bar lifts, staggered
+ *  per pill so the row ripples left→right instead of scaling as one block.
+ *  No frosted card behind the row (v7.89). */
 @Composable
 private fun CabinetChipPop(
-    popScale: Float,
+    index: Int,
+    frostShift: Float,
     content: @Composable () -> Unit
 ) {
+    // Each pill starts its pop a beat after its left neighbor, so the row
+    // reads as per-pill motion while the whole bar pins. Normalized so the
+    // last pill still reaches full scale at full scroll.
+    val stagger = (index * 0.07f).coerceAtMost(0.85f)
+    val pillProgress = ((frostShift - stagger) / (1f - stagger)).coerceIn(0f, 1f)
+    val pillScale = androidx.compose.ui.util.lerp(0.90f, 1f, pillProgress)
     Box(
         modifier = Modifier.graphicsLayer {
-            scaleX = popScale
-            scaleY = popScale
+            scaleX = pillScale
+            scaleY = pillScale
         }
     ) { content() }
 }

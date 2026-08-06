@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -1418,7 +1419,11 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
     ModalDrawerSheet(
         modifier = Modifier.width(320.dp),
         drawerContainerColor = MaterialTheme.colorScheme.surface,
-        drawerContentColor = MaterialTheme.colorScheme.onSurface
+        drawerContentColor = MaterialTheme.colorScheme.onSurface,
+        // The hero banner tears from the very top edge — run the sheet
+        // content up behind the status bar (the hero draws its own
+        // top spacing, and the footer adds its own nav-bar inset).
+        windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             // -- Menu rows - drawn first so they scroll UNDER the tear ------
@@ -1503,11 +1508,25 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
                         .height(HomeDrawerHeroHeight)
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        // Mirrored watermark collage - the Home hero's symbols.
-                        heroSymbols.forEachIndexed { i, glyph ->
-                            val pair = heroPairs[i % heroPairs.size]
+                        // Mirrored watermark collage - each pair scatters one
+                        // glyph on the LEFT (-biasX, mirrored rotation) and
+                        // one on the RIGHT (+biasX), exactly like the Home /
+                        // Profile / Settings heroes. The old drawer code
+                        // placed every glyph at +biasX (all right) and cycled
+                        // pairs with i % size, so glyphs overlapped.
+                        heroPairs.forEachIndexed { i, pair ->
                             CurioIcon(
-                                name = glyph,
+                                name = heroSymbols[i * 2],
+                                contentDescription = null,
+                                tint = drawerInk.copy(alpha = pair.alpha),
+                                size = pair.size,
+                                modifier = Modifier
+                                    .align(BiasAlignment(-pair.biasX, pair.biasY))
+                                    .padding(10.dp)
+                                    .graphicsLayer { rotationZ = -pair.rotation }
+                            )
+                            CurioIcon(
+                                name = heroSymbols[i * 2 + 1],
                                 contentDescription = null,
                                 tint = drawerInk.copy(alpha = pair.alpha),
                                 size = pair.size,
@@ -1560,6 +1579,7 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(vertical = 12.dp)
             ) {
                 Text(
