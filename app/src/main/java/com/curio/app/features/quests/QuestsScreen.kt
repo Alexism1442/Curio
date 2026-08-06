@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +40,7 @@ import com.curio.app.data.CurioQuests.JourneyQuest
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.features.settings.SettingsHeroHeader
+import com.curio.app.features.settings.SettingsHeroTotalHeight
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
 import com.curio.app.ui.components.CurioSettingsCard
@@ -84,48 +84,48 @@ fun QuestsScreen(navController: NavController) {
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-        ) {
-            SettingsHeroHeader(
-                title = "Quests & levels",
-                subtitle = "Grow your curiosity, one quest at a time",
-                onBack = { navController.popBackStack() }
-            )
-            ScreenEntrance {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    item {
-                        LevelCard(
-                            level = level,
-                            xp = xp,
-                            nextThreshold = nextThreshold,
-                            progress = progress,
-                            isMaxLevel = level >= CurioQuests.maxLevel
-                        )
-                    }
-                    item {
-                        JourneyCard(
-                            current = CurioQuests.currentJourneyQuest(),
-                            onNavigate = { route -> navigateToQuest(navController, route) }
-                        )
-                    }
-                    item {
-                        DailyCard(
-                            quests = CurioQuests.dailyQuestsFor(CurioQuests.todayEpochDay())
-                        )
-                    }
-                    item {
-                        AchievementsCard()
-                    }
+        // The hero is drawn LAST (on top of the scroll content): the quest
+        // cards scroll UP and disappear behind the ragged tear instead of
+        // clipping at a straight line — the same overlay construction as
+        // every settings screen.
+        ScreenEntrance {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                item {
+                    LevelCard(
+                        level = level,
+                        xp = xp,
+                        nextThreshold = nextThreshold,
+                        progress = progress,
+                        isMaxLevel = level >= CurioQuests.maxLevel
+                    )
+                }
+                item {
+                    JourneyCard(
+                        current = CurioQuests.currentJourneyQuest(),
+                        onNavigate = { route -> navigateToQuest(navController, route) }
+                    )
+                }
+                item {
+                    DailyCard(
+                        quests = CurioQuests.dailyQuestsFor(CurioQuests.todayEpochDay())
+                    )
+                }
+                item {
+                    AchievementsCard()
                 }
             }
         }
+        // Drawn on top of the scroll content — cards slide under the ragged
+        // tear as they scroll up.
+        SettingsHeroHeader(
+            title = "Quests & levels",
+            subtitle = "Grow your curiosity, one quest at a time",
+            onBack = { navController.popBackStack() }
+        )
     }
 }
 

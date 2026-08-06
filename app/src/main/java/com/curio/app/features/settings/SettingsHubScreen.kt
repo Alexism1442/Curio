@@ -65,8 +65,11 @@ private const val SETTINGS_HERO_TEAR_SEED = 0x5EED
 private val SettingsHeroBannerHeight = 180.dp
 /** Extra layout space reserved for the under-sheet below the torn banner. */
 private val SettingsHeroSheetExtent = 24.dp
-/** Total header footprint — the torn banner plus its under-sheet extent. */
-private val SettingsHeroTotalHeight = SettingsHeroBannerHeight + SettingsHeroSheetExtent
+/** Total header footprint — the torn banner plus its under-sheet extent.
+ *  Public so every settings screen can start its scroll content just below
+ *  the hero (the hero overlays the content, letting rows disappear under
+ *  the ragged tear as they scroll). */
+val SettingsHeroTotalHeight = SettingsHeroBannerHeight + SettingsHeroSheetExtent
 
 /** One mirrored hero watermark pair — the left glyph mirrors the right
  *  (the Profile/Home quest hero construction, adapted for Settings). */
@@ -164,17 +167,6 @@ fun SettingsHeroHeader(
                             containerColor = ink.copy(alpha = 0.18f),
                             contentColor = ink,
                             disableRipple = true
-                        )
-                        // Decorative echo of the back pill — a plain settings
-                        // glyph floats on the opposite corner (Profile's
-                        // top-bar symmetry). Deliberately NOT a Surface:
-                        // no circle, no press, just a quiet ink glyph so it
-                        // never reads as a button.
-                        CurioIcon(
-                            name = CurioIcons.Settings,
-                            contentDescription = null,
-                            tint = ink.copy(alpha = 0.55f),
-                            size = 24.dp
                         )
                     }
                     // Flex spacer — pins the title block just above the tear.
@@ -277,19 +269,16 @@ fun SettingsHubScreen(navController: NavController) {
         )
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — the Profile/Home
-        // construction, so Settings tears from the very top edge.
-        Column(modifier = Modifier.fillMaxSize()) {
-            SettingsHeroHeader(
-                title = "Settings",
-                subtitle = "Tune Curio your way",
-                onBack = { navController.popBackStack() }
-            )
-            ScreenEntrance {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+        // construction, so Settings tears from the very top edge. The hero
+        // is drawn LAST (on top of the scroll content): the rows scroll UP
+        // and disappear behind the ragged tear instead of clipping at a
+        // straight line.
+        ScreenEntrance {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
                     item { CurioSectionLabel("Personalize") }
                     item {
                         Column(modifier = Modifier.fillMaxWidth()) {
@@ -339,6 +328,12 @@ fun SettingsHubScreen(navController: NavController) {
                     }
                 }
             }
-        }
+        // Drawn on top of the scroll content — rows slide under the ragged
+        // tear as they scroll up.
+        SettingsHeroHeader(
+            title = "Settings",
+            subtitle = "Tune Curio your way",
+            onBack = { navController.popBackStack() }
+        )
     }
 }

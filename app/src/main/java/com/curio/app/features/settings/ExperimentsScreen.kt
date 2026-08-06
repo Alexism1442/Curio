@@ -57,15 +57,12 @@ fun ExperimentsScreen(navController: NavController) {
         )
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — Profile/Home style.
-        Column(modifier = Modifier.fillMaxSize()) {
-            SettingsHeroHeader(
-                title = "Experiments",
-                subtitle = "Try ideas before they ship",
-                onBack = { navController.popBackStack() }
-            )
+        // The hero is drawn LAST (on top of the scroll content): the rows
+        // scroll UP and disappear behind the ragged tear instead of clipping
+        // at a straight line.
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item { CurioSectionLabel("Card surfaces") }
@@ -158,7 +155,13 @@ fun ExperimentsScreen(navController: NavController) {
             }
             item { CurioSettingsInfoRow(CurioIcons.Info, "About experiments", "These controls are temporary and may change") }
         }
-        }
+        // Drawn on top of the scroll content — rows slide under the ragged
+        // tear as they scroll up.
+        SettingsHeroHeader(
+            title = "Experiments",
+            subtitle = "Try ideas before they ship",
+            onBack = { navController.popBackStack() }
+        )
     }
 }
 
