@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -128,32 +129,61 @@ fun PromoModeScreen(navController: NavController) {
                     }
                 }
                 item {
-                    Surface(
-                        onClick = {
-                            shareComposableCard(
-                                context = context,
-                                cardSize = DpSize(360.dp, 560.dp),
-                                authority = "${context.packageName}.fileprovider",
-                                card = { PromoShareCard(topicsTotal = topicTotal) }
-                            )
-                        },
-                        shape = RoundedCornerShape(50),
-                        color = CurioColors.HomeRosewood,
-                        contentColor = Color(0xFFFDFCF9),
-                        modifier = Modifier.fillMaxWidth()
+                    PromoShareButton("Share promo card") {
+                        shareComposableCard(
+                            context = context,
+                            cardSize = DpSize(360.dp, 560.dp),
+                            authority = "${context.packageName}.fileprovider",
+                            card = { PromoShareCard(topicsTotal = topicTotal) }
+                        )
+                    }
+                }
+                item { CurioSectionLabel("Feature graphic · 16:9") }
+                item {
+                    // 16:9 wide banner — wordmark + three phone mockups of
+                    // the app (Home / Spin / Cabinet) + the stat strip.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9f)
+                            .shadow(10.dp, RoundedCornerShape(22.dp))
+                            .clip(RoundedCornerShape(22.dp))
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CurioIcon(CurioIcons.Share, null, tint = Color(0xFFFDFCF9), size = 18.dp)
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                "Share promo card",
-                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
+                        PromoFeatureGraphic(topicsTotal = topicTotal)
+                    }
+                }
+                item {
+                    PromoShareButton("Share feature graphic") {
+                        shareComposableCard(
+                            context = context,
+                            cardSize = DpSize(512.dp, 288.dp),
+                            authority = "${context.packageName}.fileprovider",
+                            card = { PromoFeatureGraphic(topicsTotal = topicTotal) }
+                        )
+                    }
+                }
+                item { CurioSectionLabel("App screenshot") }
+                item {
+                    // 9:16 portrait — a phone-sized Home screen mockup with
+                    // the brand caption bar beneath it.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(9f / 16f)
+                            .shadow(10.dp, RoundedCornerShape(22.dp))
+                            .clip(RoundedCornerShape(22.dp))
+                    ) {
+                        PromoAppScreenshot()
+                    }
+                }
+                item {
+                    PromoShareButton("Share screenshot") {
+                        shareComposableCard(
+                            context = context,
+                            cardSize = DpSize(360.dp, 640.dp),
+                            authority = "${context.packageName}.fileprovider",
+                            card = { PromoAppScreenshot() }
+                        )
                     }
                 }
                 item {
@@ -501,6 +531,492 @@ private fun PromoPromise(glyph: String, title: String, subtitle: String) {
                 color = PromoBodyMuted,
                 maxLines = 1
             )
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// The promo gallery's extra share art (v7.109) — the feature graphic and
+// the app screenshot. All self-contained (explicit colors), so the
+// off-screen exports match the on-screen previews exactly.
+// ═══════════════════════════════════════════════════════════════════════
+
+/** Shared rose share button — one shape for every promo share action. */
+@Composable
+private fun PromoShareButton(label: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = CurioColors.HomeRosewood,
+        contentColor = Color(0xFFFDFCF9),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CurioIcon(CurioIcons.Share, null, tint = Color(0xFFFDFCF9), size = 18.dp)
+            Spacer(Modifier.width(8.dp))
+            Text(label, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+        }
+    }
+}
+
+/**
+ * The 16:9 feature graphic — a wide rose banner with the wordmark +
+ * tagline and category chips on the left, three mini phone mockups of the
+ * app (Home / Spin / Cabinet) on the right, and the honest topic-count
+ * stat strip along the bottom. The classic Google-Play-feature-graphic
+ * shape, built entirely in Compose.
+ */
+@Composable
+fun PromoFeatureGraphic(topicsTotal: Int) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(PromoRoseTop, PromoRoseDeep)))
+    ) {
+        // Watermark glyphs at the corners (white, soft).
+        CurioIcon(
+            CurioIcons.AutoAwesome, null,
+            tint = Color.White.copy(alpha = 0.22f),
+            size = 38.dp,
+            modifier = Modifier.align(Alignment.TopEnd).padding(14.dp)
+        )
+        CurioIcon(
+            CurioIcons.Casino, null,
+            tint = Color.White.copy(alpha = 0.18f),
+            size = 32.dp,
+            modifier = Modifier.align(Alignment.BottomStart).padding(14.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 22.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "C U R I O",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 4.sp
+                    ),
+                    color = PromoBannerInk
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Discover something new,\nexplore it your way.",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 15.sp
+                    ),
+                    color = PromoBannerInk.copy(alpha = 0.92f)
+                )
+                Spacer(Modifier.height(10.dp))
+                // Two compact chip rows (the poster's arrangement, scaled).
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    PromoChip(CurioIcons.Movies, "Films", PromoBannerInk)
+                    PromoChip(CurioIcons.Music, "Albums", PromoBannerInk)
+                }
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    PromoChip(CurioIcons.Books, "Books", PromoBannerInk)
+                    PromoChip(CurioIcons.Science, "Discoveries", PromoBannerInk)
+                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "${topicsTotal.coerceAtLeast(0)}+ topics · ${CurioCategories.all.size} lanes · 0 ads",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.2.sp
+                    ),
+                    color = PromoBannerInk.copy(alpha = 0.85f)
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            // Three overlapping phone mockups — Home / Spin / Cabinet.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(-9.dp)
+            ) {
+                PhoneMockup(
+                    accent = Color(0xFFE493A8),
+                    heroLight = PromoRoseTop,
+                    ink = PromoBannerInk,
+                    rotation = -7f
+                )
+                PhoneMockup(
+                    accent = Color(0xFF7FA8CE),
+                    heroLight = Color(0xFFDCE8F5),
+                    ink = Color(0xFF24364A),
+                    rotation = 0f
+                )
+                PhoneMockup(
+                    accent = Color(0xFF93AC82),
+                    heroLight = Color(0xFFE4EBDD),
+                    ink = Color(0xFF2A3A24),
+                    rotation = 7f
+                )
+            }
+        }
+    }
+}
+
+/**
+ * The 9:16 app screenshot — a phone-sized mockup of the Home screen
+ * (torn-rose hero, streak pills, shuffle CTA, recents) over a brand
+ * caption bar with the five gold stars. Reads as a real store screenshot.
+ */
+@Composable
+fun PromoAppScreenshot() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PromoPaper)
+    ) {
+        // ── The phone, filling the top ~70% ──
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.70f),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.60f)
+                    .fillMaxHeight(0.92f)
+                    .clip(RoundedCornerShape(26.dp))
+                    .background(Color(0xFF1A1B20))
+                    .padding(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(22.dp))
+                        .background(Color(0xFFFDFCF9))
+                ) {
+                    // Status strip
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(22.dp)
+                            .background(Brush.verticalGradient(listOf(PromoRoseTop, PromoRoseDeep)))
+                    ) {
+                        Text(
+                            "9:41",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = PromoBannerInk,
+                            modifier = Modifier.align(Alignment.CenterStart).padding(start = 10.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(18.dp)
+                                .height(5.dp)
+                                .align(Alignment.TopCenter)
+                                .padding(top = 4.dp)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(Color.Black.copy(alpha = 0.35f))
+                        )
+                    }
+                    // Torn-rose hero with the greeting + streak pills
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(92.dp)
+                            .background(Brush.verticalGradient(listOf(PromoRoseTop, PromoRoseDeep)))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 12.dp, top = 10.dp)
+                        ) {
+                            Text(
+                                "Curio",
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 2.sp
+                                ),
+                                color = PromoBannerInk
+                            )
+                            Spacer(Modifier.height(3.dp))
+                            Text(
+                                "Good morning",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
+                                color = PromoBannerInk
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                ScreenshotStatPill("27", "Streak", PromoBannerInk)
+                                ScreenshotStatPill("128", "Cabinet", PromoBannerInk)
+                                ScreenshotStatPill("6", "Recent", PromoBannerInk)
+                            }
+                        }
+                    }
+                    // Shuffle CTA pill
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .height(26.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(PromoRoseDeep.copy(alpha = 0.9f)),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CurioIcon(CurioIcons.Casino, null, tint = Color.White, size = 12.dp)
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            "Shuffle the deck",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White
+                        )
+                    }
+                    // Recents header + three cards
+                    Text(
+                        "Recents",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = PromoBodyInk,
+                        modifier = Modifier.padding(start = 12.dp, top = 2.dp, bottom = 4.dp)
+                    )
+                    Column(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        ScreenshotRow("The Grand Budapest Hotel (2014)", "FILMS", PromoRoseDeep)
+                        ScreenshotRow("OK Computer (1997)", "ALBUMS", Color(0xFF7FA8CE))
+                        ScreenshotRow("Beloved (1987)", "BOOKS", Color(0xFF93AC82))
+                    }
+                    // Bottom nav strip — fills the screen's lower edge so the
+                    // mockup reads like a real Home screen, not a top-heavy
+                    // card (v7.109 review fix).
+                    Spacer(Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(22.dp)
+                            .background(Color(0xFFF7F4F1)),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        repeat(4) { i ->
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (i == 0) PromoRoseDeep else Color(0xFFD9D2CE)
+                                    )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        // ── Caption bar — brand + stars ──
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.30f)
+                .background(Brush.verticalGradient(listOf(PromoRoseTop, PromoRoseDeep))),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                    repeat(5) {
+                        CurioIcon(CurioIcons.Star, null, tint = PromoGold, size = 13.dp)
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Curio — discover something new,\nexplore it your way.",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 18.sp
+                    ),
+                    color = PromoBannerInk,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "FREE · ON-DEVICE · NO ADS",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.4.sp
+                    ),
+                    color = PromoBannerInk.copy(alpha = 0.85f)
+                )
+            }
+        }
+    }
+}
+
+/** A tiny glass stat pill inside the screenshot's phone hero. */
+@Composable
+private fun ScreenshotStatPill(value: String, label: String, ink: Color) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(Color.White.copy(alpha = 0.32f))
+            .padding(horizontal = 7.dp, vertical = 3.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        Text(
+            value,
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.ExtraBold),
+            color = ink
+        )
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+            color = ink.copy(alpha = 0.85f)
+        )
+    }
+}
+
+/** A recents row inside the screenshot's phone — glyph dot + title + lane. */
+@Composable
+private fun ScreenshotRow(title: String, lane: String, accent: Color) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
+            .clip(RoundedCornerShape(7.dp))
+            .background(Color(0xFFF4F1EE)),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(7.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = 7.dp)
+                .size(7.dp)
+                .clip(CircleShape)
+                .background(accent)
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.72f)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0xFFC9C2BE))
+            )
+            Spacer(Modifier.height(3.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.42f)
+                    .height(3.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0xFFDCD6D2))
+            )
+        }
+        Text(
+            lane,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp, fontWeight = FontWeight.Bold),
+            color = accent,
+            modifier = Modifier.padding(end = 7.dp)
+        )
+    }
+}
+
+/**
+ * A mini phone mockup — dark bezel around a cream screen with an accent
+ * hero, a greeting bar and three tinted content cards. Used in the 16:9
+ * feature graphic to show "the app" (Home / Spin / Cabinet variants).
+ */
+@Composable
+private fun PhoneMockup(
+    accent: Color,
+    heroLight: Color,
+    ink: Color,
+    rotation: Float = 0f
+) {
+    Box(
+        modifier = Modifier
+            .width(46.dp)
+            .height(98.dp)
+            .graphicsLayer { rotationZ = rotation }
+            .clip(RoundedCornerShape(11.dp))
+            .background(Color(0xFF1A1B20))
+            .padding(3.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color(0xFFFDFCF9))
+        ) {
+            // Status strip
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(accent)
+            )
+            // Hero with the greeting bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .background(Brush.verticalGradient(listOf(heroLight, accent))),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(26.dp)
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(ink.copy(alpha = 0.85f))
+                )
+            }
+            // Three tinted content cards
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 3.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                repeat(3) { i ->
+                    val dot = when (i) {
+                        0 -> accent
+                        1 -> Color(0xFF8FA97C)
+                        else -> Color(0xFFE8A33D)
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color(0xFFF4F1EE)),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 2.dp)
+                                .size(5.dp)
+                                .clip(CircleShape)
+                                .background(dot)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(16.dp)
+                                .height(3.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color(0xFFC9C2BE))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(10.dp)
+                                .height(3.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color(0xFFDCD6D2))
+                        )
+                    }
+                }
+            }
         }
     }
 }

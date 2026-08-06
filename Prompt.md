@@ -453,3 +453,12 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 
 - User: the intro page's Curio text should sit a little lower, be a little bigger, and be placed better; the Skip/Next buttons should sit further below, not at the tear level.
 - OnboardingScreen.kt: the wordmark gained a 26dp top spacer (off the status bar), bumped from headlineSmall (24sp) to headlineMedium (28sp) ExtraBold with 3sp letter-spacing so it reads as a proper wordmark; the bottom controls row gained a 12dp spacer below the page dots plus taller vertical padding (12→16dp), pushing Skip/Next clearly clear of the ragged tear.
+
+## v7.109 — promo gallery: 16:9 feature graphic + 9:16 app screenshot (additive)
+
+- User: add multiple promotion images on the promo screen — including a 16:9 image with the app's screens, beautiful; do NOT replace the existing poster, just add more.
+- PromoModeScreen.kt now shows a 3-card promo gallery, each with its own live preview + share button (shared PromoShareButton extracted):
+  1. **Promo poster** (existing, 9:14, 360×560) — unchanged.
+  2. **Feature graphic (16:9, 512×288)** — wide rose banner with wordmark/tagline + 2 compact chip rows + honest stat strip on the left, and three overlapping mini phone mockups (Home rose / Spin blue / Cabinet sage, rotated -7/0/7°) on the right. PhoneMockup: dark bezel + cream screen with accent status strip, gradient hero + greeting bar, three tinted content cards. (Phones sized 46×98 so the text column never overflows the preview width.)
+  3. **App screenshot (9:16, 360×640)** — a phone-sized Home-screen mockup (status strip '9:41', torn-rose hero with mini wordmark + 'Good morning' + 27/128/6 stat pills, shuffle CTA pill, Recents header + 3 lane cards, bottom nav strip) over a rose caption bar with five gold stars + tagline + 'FREE · ON-DEVICE · NO ADS'.
+- All cards self-contained (explicit colors) so off-screen exports match previews; reviewer fixes applied (phone shrink + bottom nav strip).
