@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,8 +70,13 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun TopicDatabaseScreen(navController: NavController) {
-    var query by remember { mutableStateOf("") }
-    var selectedCat by remember { mutableStateOf<CategoryId?>(null) }
+    // v7.97 — SAVEABLE state: the search query, the selected category filter
+    // and the scroll position survive leaving the screen (Topic Reveal
+    // round-trips, tab switches, rotation, process death) instead of
+    // resetting to a fresh blank list every time you come back.
+    var query by rememberSaveable { mutableStateOf("") }
+    var selectedCat by rememberSaveable { mutableStateOf<CategoryId?>(null) }
+    val listState = rememberLazyListState()
     // Reactive done-set — reading the value registers the dependency so the
     // list refreshes when the user marks a topic done (e.g. after returning
     // from a Topic Reveal) or a session records an exploration.
@@ -92,13 +99,20 @@ fun TopicDatabaseScreen(navController: NavController) {
     }
     val totalTopics = catalog.sumOf { it.second.size }
 
+    // v7.97 — the persisted filter can outlive its lane (a category hidden in
+    // Manage Categories drops out of the catalog). Fall back to All instead
+    // of leaving an invisible "no topics" state with no visible chip.
+    val effectiveCat = remember(catalog, selectedCat) {
+        if (selectedCat != null && catalog.none { it.first.id == selectedCat }) null else selectedCat
+    }
+
     // Filtered rows — section headers while browsing All, topic rows always.
     // Keyed on the done-set snapshot (structural equality) so badges refresh.
     val needle = query.trim().lowercase()
-    val rows = remember(catalog, selectedCat, needle, doneTopics) {
+    val rows = remember(catalog, effectiveCat, needle, doneTopics) {
         buildList {
             catalog.forEach { (cat, topics) ->
-                if (selectedCat != null && selectedCat != cat.id) return@forEach
+                if (effectiveCat != null && effectiveCat != cat.id) return@forEach
                 val shown = if (needle.isEmpty()) topics else topics.filter { t ->
                     t.name.lowercase().contains(needle) ||
                         t.subtype.lowercase().contains(needle) ||
@@ -136,6 +150,7 @@ fun TopicDatabaseScreen(navController: NavController) {
         // ── Scroll content — fills the screen, runs under the ragged tear.
         ScreenEntrance {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
@@ -207,7 +222,7 @@ fun TopicDatabaseScreen(navController: NavController) {
                                     selectedInk = MaterialTheme.colorScheme.onPrimaryContainer,
                                     accent = MaterialTheme.colorScheme.primary,
                                     tint = MaterialTheme.colorScheme.primaryContainer,
-                                    selected = selectedCat == null,
+                                    selected = effectiveCat == null,
                                     onClick = { selectedCat = null }
                                 )
                             }
@@ -218,7 +233,7 @@ fun TopicDatabaseScreen(navController: NavController) {
                                     selectedInk = cat.accent,
                                     accent = cat.accent,
                                     tint = cat.tint,
-                                    selected = selectedCat == cat.id,
+                                    selected = effectiveCat == cat.id,
                                     onClick = { selectedCat = cat.id }
                                 )
                             }
