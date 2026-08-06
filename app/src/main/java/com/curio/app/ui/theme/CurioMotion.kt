@@ -81,10 +81,13 @@ object CurioMotion {
          * Extreme bouncy overshoot for dramatic entrances.
          * The splash → home transition, hero card appearances, reward
          * moments that deserve the "wow" treatment.
+         * v7.94 — stiffness raised / damping raised so the entrance
+         * settles noticeably faster (still bouncy, but no more 1s+
+         * settle that read as a delayed animation).
          */
         val Elastic: SpringSpec<Float> = spring(
-            dampingRatio = 0.35f,
-            stiffness = 200f
+            dampingRatio = 0.45f,
+            stiffness = 340f
         )
 
         /**
@@ -102,11 +105,13 @@ object CurioMotion {
         const val Standard: Int = 300
         const val Deliberate: Int = 500
 
-        /** Shape morphing transitions — longer to let curves flow. */
-        const val Morph: Int = 700
+        /** Shape morphing transitions — smooth but snappy (v7.94: 700 → 450
+         *  so screen-to-screen morphs stop feeling laggy). */
+        const val Morph: Int = 450
 
-        /** Dramatic reveal moments (splash → home, topic landing). */
-        const val Reveal: Int = 900
+        /** Dramatic reveal moments (splash → home, topic landing).
+         *  v7.94: 900 → 650 — still dramatic, just no longer a pause. */
+        const val Reveal: Int = 650
 
         /** The Spin rotation window — premium and unhurried: the wheel
          *  glides for a touch longer (2.8–3.6s) so the deceleration reads

@@ -101,6 +101,12 @@ object AppPreferences {
     private const val KEY_LAST_SPIN_CATEGORY = "last_spin_category"
     private const val KEY_LAST_SPIN_CATEGORIES = "last_spin_categories"   // comma-joined set
     private const val KEY_LANDED_TOPIC_PREFIX = "landed_topic_"
+    // v7.94 — Manage Categories persistence: the hidden set + the custom
+    // order, both comma-joined CategoryId names. Previously the screen kept
+    // only a local rememberSaveable list, so toggles/order died on app
+    // restart and nothing else in the app honored them.
+    private const val KEY_HIDDEN_CATEGORIES = "hidden_categories"
+    private const val KEY_CATEGORY_ORDER = "category_order"
 
     // ── Display name ─────────────────────────────────────────────────
     fun getDisplayName(context: Context): String =
@@ -276,6 +282,24 @@ object AppPreferences {
     var topicSentimentsState by mutableStateOf<Map<String, String>>(emptyMap())
         private set
 
+    /**
+     * Reactive hidden-categories state (v7.94) — set via Manage Categories.
+     * [CurioCategories.visible] reads it, so Home/Cabinet/Picker/Spin all
+     * drop hidden lanes instantly and persistently. Seeded from prefs in
+     * [initThemeMode].
+     */
+    var hiddenCategoriesState by mutableStateOf<Set<CategoryId>>(emptySet())
+        private set
+
+    /**
+     * Reactive category ORDER state (v7.94) — set via Manage Categories.
+     * Empty = the default order. [CurioCategories.visible] applies it, so
+     * the Home/Cabinet chip rows and the pickers honor the user's reorder.
+     * Seeded from prefs in [initThemeMode].
+     */
+    var categoryOrderState by mutableStateOf<List<CategoryId>>(emptyList())
+        private set
+
     fun initThemeMode(context: Context) {
         themeModeState = getThemeMode(context)
         themeStyleState = getThemeStyle(context)
@@ -302,6 +326,8 @@ object AppPreferences {
         pinnedTopicsState = getPinnedTopics(context)
         savedQuotesState = getSavedQuotes(context)
         topicSentimentsState = getTopicSentiments(context)
+        hiddenCategoriesState = getHiddenCategories(context)
+        categoryOrderState = getCategoryOrder(context)
     }
 
     // ── Theme ────────────────────────────────────────────────────────
@@ -800,6 +826,47 @@ object AppPreferences {
             if (delta != 0) acc[catName] = (acc[catName] ?: 0) + delta
         }
         return acc
+    }
+
+    // ── Manage Categories (v7.94) — hidden set + custom order ──────────
+    /** Whether [id] is hidden by the user (Manage Categories). */
+    fun isCategoryHidden(id: CategoryId): Boolean = id in hiddenCategoriesState
+
+    /**
+     * The user's hidden category set, persisted as comma-joined names.
+     * Unknown names are dropped defensively on read.
+     */
+    fun getHiddenCategories(context: Context): Set<CategoryId> {
+        val raw = prefs(context).getString(KEY_HIDDEN_CATEGORIES, null) ?: return emptySet()
+        return raw.split(",").mapNotNull { name ->
+            CategoryId.values().firstOrNull { it.name == name }
+        }.toSet()
+    }
+
+    /** Hides or un-hides [id]; updates the reactive state instantly. */
+    fun setCategoryHidden(context: Context, id: CategoryId, hidden: Boolean) {
+        val updated = if (hidden) hiddenCategoriesState + id else hiddenCategoriesState - id
+        prefs(context).edit()
+            .putString(KEY_HIDDEN_CATEGORIES, updated.joinToString(",") { it.name })
+            .apply()
+        hiddenCategoriesState = updated
+    }
+
+    /** The user's custom category order (empty = default). */
+    fun getCategoryOrder(context: Context): List<CategoryId> {
+        val raw = prefs(context).getString(KEY_CATEGORY_ORDER, null) ?: return emptyList()
+        return raw.split(",").mapNotNull { name ->
+            CategoryId.values().firstOrNull { it.name == name }
+        }
+    }
+
+    /** Persists a full custom order; empty restores the default order. */
+    fun setCategoryOrder(context: Context, order: List<CategoryId>) {
+        val valid = order.distinct().filter { it in CategoryId.values().asList() }
+        prefs(context).edit()
+            .putString(KEY_CATEGORY_ORDER, valid.joinToString(",") { it.name })
+            .apply()
+        categoryOrderState = valid
     }
 
     // ── Daily reminder ───────────────────────────────────────────────

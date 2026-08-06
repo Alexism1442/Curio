@@ -13,6 +13,7 @@ import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -22,10 +23,10 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
 import com.curio.app.ui.theme.CurioColors
 import com.curio.app.ui.theme.CurioIcon
-import com.curio.app.ui.theme.categoryInk
-import com.curio.app.ui.theme.isCurioDarkTheme
+import com.curio.app.ui.theme.categoryInkFor
+import com.curio.app.ui.theme.isCurioDarkThemeForContext
 import com.curio.app.ui.theme.pastelFillInk
-import com.curio.app.ui.theme.themedAccent
+import com.curio.app.ui.theme.themedAccentFor
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -70,19 +71,33 @@ fun CurioWatermarkBackdrop(
     // the visual priority without removing the glyphs entirely.
     alphaScale: Float = 1f
 ) {
-    val isDark = isCurioDarkTheme()
+    val context = LocalContext.current
+    val isDark = isCurioDarkThemeForContext(context)
     // Every glyph maps to its category accent — the same colors that open
     // the main-card gradients — so the backdrop palette always matches the
     // deck. Wildcard's glyph picks up the brand coral automatically.
-    // Rebuilt in the composable body (NOT remember) so the Material style's
-    // device-color blend updates the backdrop glyphs when the style changes.
+    // v7.94 — the map is now cached with remember keyed on the ONLY inputs
+    // it depends on (pastel mode + dark theme; the Material style's
+    // device-color blend updates when the theme style changes, which
+    // re-resolves both). The old build-on-every-recomposition recomputed
+    // 11 category colors per FRAME on screens that animate heavily (Spin,
+    // Home), adding measurable jank to the very animations this request
+    // is about. Behavior is identical — same inputs, same output. (Uses
+    // the non-composable categoryInkFor/themedAccentFor twins because a
+    // remember calculation lambda is @DisallowComposableCalls.)
     // v7.7 — pastel mode: the airy pastel accents melt into the pale pastel
     // page wash, so the glyphs switch to the category's INK twins (deep
     // accent in light, light twin in dark) to stay visible — and get a
     // modest alpha bump (see [watermarkAlpha]).
     val pastelMode = AppPreferences.pastelColorsState
-    val accentByGlyph = CurioCategories.all.associate {
-        it.iconGlyph to if (pastelMode) it.categoryInk() else it.themedAccent()
+    val accentByGlyph = remember(pastelMode, isDark) {
+        CurioCategories.all.associate {
+            it.iconGlyph to if (pastelMode) {
+                it.categoryInkFor(pastel = true, dark = isDark)
+            } else {
+                it.themedAccentFor(pastel = false, dark = isDark)
+            }
+        }
     }
 
     if (topClearance > 0.dp) {
@@ -282,15 +297,22 @@ fun CurioMoodBoardBackdrop(
     accent: Color,
     modifier: Modifier = Modifier
 ) {
-    val isDark = isCurioDarkTheme()
-    // Rebuilt in the composable body (NOT remember) so the Material style's
-    // device-color blend updates the backdrop glyphs when the style changes.
-    // v7.7 — pastel mode switches to the ink twins (same reason as
-    // [CurioWatermarkBackdrop]) so the collage doesn't vanish on the pale
-    // tinted canvas.
+    val context = LocalContext.current
+    val isDark = isCurioDarkThemeForContext(context)
+    // v7.94 — accent map cached (same treatment as [CurioWatermarkBackdrop]):
+    // keyed on the two real inputs (pastel mode + dark theme) so the mood
+    // board stops recomputing 11 category colors on every frame while its
+    // glyph animations run. Output is identical; uses the non-composable
+    // color twins (remember calculation is @DisallowComposableCalls).
     val pastelMode = AppPreferences.pastelColorsState
-    val accentByGlyph = CurioCategories.all.associate {
-        it.iconGlyph to if (pastelMode) it.categoryInk() else it.themedAccent()
+    val accentByGlyph = remember(pastelMode, isDark) {
+        CurioCategories.all.associate {
+            it.iconGlyph to if (pastelMode) {
+                it.categoryInkFor(pastel = true, dark = isDark)
+            } else {
+                it.themedAccentFor(pastel = false, dark = isDark)
+            }
+        }
     }
     // v7.9 — pastel mode: the DOMINANT (80%) glyph tint switches from the
     // airy pastel accent (which melts into the tinted pastel canvas) to the

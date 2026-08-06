@@ -483,7 +483,9 @@ fun HomeScreen(navController: NavController) {
                 QuestShuffleCard(
                     accent = homeRoseAccent(),
                     onShuffle = {
-                        val all = CurioCategories.all
+                        // v7.94 — shuffle only VISIBLE lanes: hidden
+                        // categories (Manage Categories) never get dealt.
+                        val all = CurioCategories.visible
                         val pickMix = Random.nextBoolean()
                         val chosen =
                             if (pickMix) all.shuffled().take(2 + Random.nextInt(2))

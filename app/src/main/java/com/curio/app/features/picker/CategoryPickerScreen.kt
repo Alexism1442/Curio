@@ -59,7 +59,9 @@ import com.curio.app.ui.theme.categoryBackgroundWash
 @Composable
 fun CategoryPickerScreen(navController: NavController) {
     val context = LocalContext.current
-    val categories = remember { CurioCategories.visible }
+    // v7.94 — read the REACTIVE visible list directly (no remember): hidden
+    // lanes drop out and reordered lanes follow Manage Categories instantly.
+    val categories = CurioCategories.visible
     val gridState = rememberLazyGridState()
     // ── Category tint wash — this picker hands off straight to the Shuffle
     //    tab, so it wears the last-used deck's color story (same wash as the

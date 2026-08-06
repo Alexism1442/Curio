@@ -336,8 +336,31 @@ object CurioCategories {
     fun byRouteSlug(slug: String): CurioCategory? =
         all.firstOrNull { it.id.routeSlug == slug }
 
-    /** Visible-only list — for Home/Cabinet chip rows. Once §13.4 Manage Categories lands, this filters by isHidden. */
-    val visible: List<CurioCategory> = all.filterNot { it.isHidden }
+    /**
+     * Visible-only list — for Home/Cabinet chip rows, the Category Picker,
+     * and the Spin category sheet. v7.94 — this is now a REACTIVE getter
+     * backed by the persisted Manage Categories state in
+     * [com.curio.app.data.AppPreferences]: the user's hidden set is
+     * filtered out and the custom order is applied (falling back to the
+     * default order when none is saved). Reads [AppPreferences.hiddenCategoriesState]
+     * / [AppPreferences.categoryOrderState] inside composition, so screens
+     * recompose the moment a category is hidden/shown or reordered.
+     * (The old `isHidden` field on [CurioCategory] remains as the
+     * data-layer default — always false — and is superseded by the
+     * persisted user state.)
+     */
+    val visible: List<CurioCategory>
+        get() {
+            val hidden = AppPreferences.hiddenCategoriesState
+            val order = AppPreferences.categoryOrderState
+            val base = if (order.isEmpty()) {
+                all
+            } else {
+                order.mapNotNull { id -> all.firstOrNull { it.id == id } } +
+                    all.filter { it.id !in order }
+            }
+            return base.filterNot { it.id in hidden }
+        }
 
     /** Returns all categories in the given [family], in default order. */
     fun byFamily(family: CategoryFamily): List<CurioCategory> =

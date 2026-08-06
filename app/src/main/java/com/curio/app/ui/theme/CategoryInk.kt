@@ -101,6 +101,27 @@ fun pastelFillInk(fill: Color): Color = when {
     }
 }
 
+/**
+ * Non-composable twin of [CurioCategory.categoryInk] — the exact same
+ * resolution, parameterized by the two states that drive it (pastel mode +
+ * dark theme). The watermark backdrops use these inside `remember` blocks
+ * (whose calculation lambdas are @DisallowComposableCalls), so the 11-color
+ * accent map can be cached per theme change instead of rebuilt on every
+ * recomposition of animated screens. v7.94.
+ */
+internal fun CurioCategory.categoryInkFor(pastel: Boolean, dark: Boolean): Color = when {
+    dark -> lightAccent
+    pastel && accent.isPale() -> deepHueInk(accent)
+    else -> accent
+}
+
+/**
+ * Non-composable twin of [CurioCategory.themedAccent] — same resolution,
+ * parameterized by pastel mode + dark theme (see [categoryInkFor]).
+ */
+internal fun CurioCategory.themedAccentFor(pastel: Boolean, dark: Boolean): Color =
+    if (!pastel) accent else pastelAccent(accent, dark)
+
 /** Whether a color is pale enough to need a deep ink twin instead of itself. */
 private fun Color.isPale(): Boolean {
     val lum = 0.2126f * red + 0.7152f * green + 0.0722f * blue

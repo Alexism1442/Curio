@@ -351,14 +351,24 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     // back to the last-used single category when the slug is absent or
     // unresolvable.
     val initialCats = remember(categorySlug) {
+        // v7.94 — hidden lanes (Manage Categories) must NEVER be dealt, even
+        // when a slug or the last-used deck names them: filter through the
+        // reactive visible set and fall back to Wildcard when everything is
+        // hidden so the deck never opens empty.
+        val visibleIds = CurioCategories.visible.map { it.id }.toSet()
         val resolved = categorySlug
             ?.split(",")
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
             ?.mapNotNull { CurioCategories.byRouteSlug(it) }
+            ?.filter { it.id in visibleIds }
             .orEmpty()
-        if (resolved.isNotEmpty()) resolved
-        else AppPreferences.getLastSpinCategories(context).map { CurioCategories.byId(it) }
+        val fromPrefs = AppPreferences.getLastSpinCategories(context)
+            .map { CurioCategories.byId(it) }
+            .filter { it.id in visibleIds }
+        val cats = if (resolved.isNotEmpty()) resolved else fromPrefs
+        if (cats.isNotEmpty()) cats
+        else listOf(CurioCategories.byId(CategoryId.WILDCARD))
     }
 
     // v5.5 — remember which category this session opened in, so the plain
@@ -2965,7 +2975,9 @@ private fun CategoryPickerSheet(
     onCategoriesSelected: (List<CurioCategory>) -> Unit,
     onBrowseAll: () -> Unit
 ) {
-    val categories = remember { CurioCategories.visible }
+    // v7.94 — read the REACTIVE visible list directly (no remember): it
+    // recomposes when Manage Categories hides/shows/reorders lanes.
+    val categories = CurioCategories.visible
     // Default = tap-to-open (single). Long-press enters multi-select mode.
     var multiSelectMode by remember { mutableStateOf(false) }
     var selectedSlugs by remember { mutableStateOf(setOf<String>()) }
@@ -3214,6 +3226,22 @@ private fun buildDeckHand(pool: List<CurioTopic>, center: CurioTopic?): List<Cur
  * affinity (net likes − dislikes in that category) boosts or dampens the
  * whole genre — never fully blocked. Falls back gracefully when the pool
  * is all-recent or all-explored.
+ *
+ * v7.94 — FILMS get a recency nudge: the Films deck is dominated by
+ * classics (1940s–1970s), so older films are down-weighted and newer ones
+ * boosted. Nothing is removed — a 1950s classic can still land, just less
+ * often than a 2020s release.
+ *
+ * ───────────────────────────────────────────────────────────────────────
+ * AGENT NOTE (v7.94): the durable fix for the classic-heavy Films deck is
+ * CONTENT, not weights. The recency factor below only balances the odds;
+ * the real cure is adding MORE modern films to
+ * `app/src/main/assets/topics/films.json` (2010s/2020s, tier 1, with the
+ * standard decade tag like "2010s" / "2020s"). Target: bring the modern
+ * share up so the deck no longer skews pre-1980. The batch-authoring
+ * scripts were removed in v7.91, so append entries directly to
+ * `films.json` (validate with `python3 scripts/validate_topics.py`).
+ * ───────────────────────────────────────────────────────────────────────
  */
 private fun pickFrom(
     pool: List<CurioTopic>,
@@ -3239,6 +3267,29 @@ private fun pickFrom(
         else -> 30.0
     }
 
+    /**
+     * v7.94 — Films recency factor. The Films pool leans classic, so a
+     * film's decade tag ("1940s" … "2020s") scales its chance: newer films
+     * get a boost, pre-1980 classics are down-weighted but never blocked.
+     * Topics without a decade tag keep neutral weight.
+     */
+    val filmDecadeRe = Regex("""^\d{4}s$""")
+    fun recencyFactor(t: CurioTopic): Double {
+        if (t.categoryId != CategoryId.FILMS) return 1.0
+        val year = t.tags.firstNotNullOfOrNull { tag ->
+            if (filmDecadeRe.matches(tag)) tag.dropLast(1).toIntOrNull() else null
+        } ?: return 1.0
+        return when {
+            year >= 2020 -> 1.6
+            year >= 2010 -> 1.45
+            year >= 2000 -> 1.25
+            year >= 1990 -> 1.1
+            year >= 1980 -> 0.9
+            year >= 1970 -> 0.7
+            else -> 0.55
+        }
+    }
+
     fun weight(t: CurioTopic): Double {
         // Per-topic sentiment: a liked topic gets 2x, a disliked one drops
         // to 0.25x — it can still appear, just far less often.
@@ -3256,7 +3307,7 @@ private fun pickFrom(
             aff < 0 -> (1.0 + 0.4 * aff).coerceAtLeast(0.25)
             else -> 1.0
         }
-        return baseWeight(t) * topicFactor * categoryFactor
+        return baseWeight(t) * topicFactor * categoryFactor * recencyFactor(t)
     }
 
     val totalWeight = candidates.sumOf { weight(it) }

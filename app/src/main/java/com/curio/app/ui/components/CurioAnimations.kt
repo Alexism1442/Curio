@@ -1,6 +1,7 @@
 package com.curio.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -23,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -53,10 +53,14 @@ import com.curio.app.ui.theme.CurioMotion
  */
 @Composable
 fun ScreenEntrance(content: @Composable () -> Unit) {
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
+    // v7.94 — the entrance now starts on the FIRST composition frame: the
+    // old `var visible by remember(false)` + LaunchedEffect flip left the
+    // screen invisible for one frame before animating, which read as a
+    // delayed blank flash on every navigation. MutableTransitionState with
+    // targetState already true plays the enter transition immediately.
+    val state = remember { MutableTransitionState(false).apply { targetState = true } }
     AnimatedVisibility(
-        visible = visible,
+        visibleState = state,
         enter = fadeIn(animationSpec = tween(CurioMotion.Durations.Standard)) +
                 slideInVertically(
                     animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
@@ -75,10 +79,11 @@ fun ScreenEntrance(content: @Composable () -> Unit) {
 fun MorphEntrance(
     content: @Composable () -> Unit
 ) {
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
+    // v7.94 — same first-frame fix as ScreenEntrance: start the morph on
+    // composition instead of one frame later.
+    val state = remember { MutableTransitionState(false).apply { targetState = true } }
     AnimatedVisibility(
-        visible = visible,
+        visibleState = state,
         enter = fadeIn(
             animationSpec = tween(
                 durationMillis = CurioMotion.Durations.Reveal,

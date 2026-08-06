@@ -25,16 +25,14 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
@@ -53,43 +51,34 @@ import com.curio.app.ui.theme.categoryInk
  * The settings-family torn-rose hero (shared `SettingsHeroHeader`) on a
  * watermark backdrop, with FLAT category rows (no card shells — icon chip,
  * name + Hidden status, reorder steppers + drag handle, visibility switch)
- * that scroll under the ragged tear. Functionality is unchanged: reorder
- * via the up/down steppers (wired to [moveCategory]) + visibility toggle
- * (live, in-memory for the placeholder phase; lands into DataStore
- * alongside the settings persistence work).
+ * that scroll under the ragged tear.
  *
- * CurioCategory is a data-layer singleton with [CurioCategory.isHidden]
- * defaulting to false. We mirror it via a local [mutableStateListOf] so
- * toggling visibility is reactive in the UI without mutating the source
- * list directly.
+ * v7.94 — the screen now works FOR REAL: order + visibility are persisted
+ * to [AppPreferences] (reactive state), and [CurioCategories.visible]
+ * consumes them everywhere — Home/Cabinet chip rows, the Category Picker,
+ * and the Spin category sheet all drop hidden lanes and honor the reorder
+ * instantly and across restarts. The screen shows ALL categories (hidden
+ * ones included, flagged) so nothing can get permanently lost.
  */
-
-// v5.8 — saveable: persists category order + visibility toggles as
-// "id.name:hidden" tokens so rotation doesn't wipe the user's edits.
-private val CategoryListSaver = listSaver<SnapshotStateList<CurioCategory>, String>(
-    save = { list -> list.map { "${it.id.name}:${it.isHidden}" } },
-    restore = { tokens ->
-        val byId = CurioCategories.all.associateBy { it.id }
-        val restored = tokens.mapNotNull { token ->
-            val parts = token.split(':')
-            if (parts.size != 2) return@mapNotNull null
-            val id = CategoryId.values().firstOrNull { it.name == parts[0] }
-            id?.let { byId[it] }?.copy(isHidden = parts[1] == "true")
-        }
-        // Keep the saved order, then append any categories the token list
-        // predates (e.g. a category added in a newer app version).
-        val savedIds = restored.map { it.id }.toSet()
-        mutableStateListOf<CurioCategory>().apply {
-            addAll(restored)
-            addAll(CurioCategories.all.filter { it.id !in savedIds })
-        }
-    }
-)
 
 @Composable
 fun ManageCategoriesScreen(navController: NavController) {
-    val items = rememberSaveable(saver = CategoryListSaver) {
-        mutableStateListOf<CurioCategory>().apply { addAll(CurioCategories.all) }
+    val context = LocalContext.current
+    // The full ordered list — the persisted order (falling back to the
+    // default), with every category shown so hidden lanes stay restorable.
+    // Reactive: recomposes the instant order/hidden change elsewhere.
+    val items: List<CurioCategory> = remember(
+        AppPreferences.categoryOrderState,
+        AppPreferences.hiddenCategoriesState
+    ) {
+        val order = AppPreferences.categoryOrderState
+        val base = if (order.isEmpty()) {
+            CurioCategories.all
+        } else {
+            order.mapNotNull { id -> CurioCategories.all.firstOrNull { it.id == id } } +
+                CurioCategories.all.filter { it.id !in order }
+        }
+        base.map { cat -> cat.copy(isHidden = cat.id in AppPreferences.hiddenCategoriesState) }
     }
     // v5.8 — saveable-backed: keep the list's scroll position on rotation.
     val listState = rememberLazyListState()
@@ -141,13 +130,12 @@ fun ManageCategoriesScreen(navController: NavController) {
                         category = category,
                         isFirst = items.firstOrNull()?.id == category.id,
                         isLast = items.lastOrNull()?.id == category.id,
-                        onMoveUp = { moveCategory(items, category.id, -1) },
-                        onMoveDown = { moveCategory(items, category.id, +1) },
+                        onMoveUp = { moveCategory(context, items, category.id, -1) },
+                        onMoveDown = { moveCategory(context, items, category.id, +1) },
                         onVisibilityToggle = { visible ->
-                            val i = items.indexOfFirst { it.id == category.id }
-                            if (i >= 0) {
-                                items[i] = category.copy(isHidden = !visible)
-                            }
+                            // Persist instantly — the app-wide reactive state
+                            // updates and every consumer recomposes.
+                            AppPreferences.setCategoryHidden(context, category.id, !visible)
                         }
                     )
                     // Hairline between rows — the flat-list divider language.
@@ -297,11 +285,14 @@ private fun ReorderButton(glyph: String, enabled: Boolean, onClick: () -> Unit) 
 
 
 /**
- * Move the category matching [id] by [delta] positions in the list.
+ * Move the category matching [id] by [delta] positions and PERSIST the new
+ * order to [AppPreferences] — the app-wide reactive order state updates,
+ * so Home/Cabinet/Picker chip rows follow the reorder immediately.
  * No-op if at the boundary or if the id is not found.
  */
 private fun moveCategory(
-    list: MutableList<CurioCategory>,
+    context: android.content.Context,
+    list: List<CurioCategory>,
     id: CategoryId,
     delta: Int
 ) {
@@ -309,6 +300,9 @@ private fun moveCategory(
     if (current < 0) return
     val target = (current + delta).coerceIn(0, list.lastIndex)
     if (target == current) return
-    val moved = list.removeAt(current)
-    list.add(target, moved)
+    val reordered = list.toMutableList().apply {
+        val moved = removeAt(current)
+        add(target, moved)
+    }
+    AppPreferences.setCategoryOrder(context, reordered.map { it.id })
 }

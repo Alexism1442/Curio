@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
@@ -75,8 +76,13 @@ fun TopicDatabaseScreen(navController: NavController) {
     val doneTopics = ExploreSessionStore.doneTopicsState
 
     // Load + cache every category pool once; carry the topics alongside so
-    // the filtered list stays a pure derivation.
-    val catalog by produceState<List<Pair<CurioCategory, List<CurioTopic>>>>(initialValue = emptyList()) {
+    // the filtered list stays a pure derivation. v7.94 — keyed on the
+    // Manage Categories state so hidden/reordered lanes refresh on revisit.
+    val catalog by produceState<List<Pair<CurioCategory, List<CurioTopic>>>>(
+        initialValue = emptyList(),
+        AppPreferences.hiddenCategoriesState,
+        AppPreferences.categoryOrderState
+    ) {
         value = withContext(Dispatchers.Default) {
             TopicJsonLoader.preloadAll()
             CurioCategories.visible
