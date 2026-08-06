@@ -96,7 +96,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 
 ### Discovery — The Spin
 - **11 curated lanes**: Artists · Albums · Directors · Films · Authors · Books · Painters · Artworks · Scientists · Discoveries · Wildcard
-- **2,312 hand-curated topics** — each with teaser, imagery, and structured explore action (verb, target, suggested duration, step-by-step guide)
+- **2,312+  topics** — each with teaser, imagery, and structured explore action (verb, target, suggested duration, step-by-step guide)
 - Roulette deck with stacked cards, category-tinted edges, shadows, and satisfying shuffle
 - Single-lane or mixed decks (2–4 categories blended into one)
 - Anti-repeat history — never see the same topic twice in a row
