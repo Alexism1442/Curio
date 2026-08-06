@@ -33,7 +33,10 @@ import kotlinx.coroutines.withContext
  *    capture to the restored file path — provider URIs from a document
  *    picker would otherwise be dead on a new device.
  *  - the user-facing prefs: [AppPreferences], [AudioQualitySettings],
- *    [StreakTracker] and the onboarding-completed flag
+ *    [StreakTracker], the quests/levels state ([CurioQuests]), the
+ *    explore-session state (done topics / mark-as-done, active + queued
+ *    sessions, recently explored / unexplored), autosaved capture drafts
+ *    ([CaptureDraftStore]) and the onboarding-completed flag
  *
  * **What is not backed up:** crash-log prefs (device noise). Cloud Auto
  * Backup still excludes audio via `data_extraction_rules.xml` to protect
@@ -79,6 +82,9 @@ object CurioBackupManager {
         "curio_audio_quality",    // AudioQualitySettings
         "curio_streak",           // StreakTracker
         "curio_quests",           // CurioQuests — XP, journey, daily, badges
+        "curio_prefs",            // ExploreSessionStore — done topics (mark-as-done),
+                                  //   active/queued sessions, explored/unexplored recents;
+                                  //   CaptureDraftStore — autosaved capture drafts
         "curio_onboarding"        // onboarding-completed flag
     )
 
@@ -392,6 +398,12 @@ object CurioBackupManager {
         } else {
             DailyReminderScheduler.cancel(context)
         }
+        // curio_prefs rides in the generic prefs map — re-seed the reactive
+        // explore-session state (done topics, recents, active/queued
+        // sessions) so the UI reflects the restored data immediately instead
+        // of after a process restart. CaptureDraftStore reads prefs fresh on
+        // every access, so drafts need no re-seed.
+        ExploreSessionStore.seed(context)
         return RestoreResult(payloadCaptures.size, payloadPreferences.size)
     }
 
