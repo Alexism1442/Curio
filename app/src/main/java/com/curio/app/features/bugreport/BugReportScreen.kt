@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.curio.app.BuildConfig
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.theme.CurioColors
@@ -28,8 +30,9 @@ import com.curio.app.ui.theme.CurioColors
 /**
  * Curio bug report screen — simple, clean form for sending feedback.
  *
- * Users can describe an issue, attach crash logs, and share via
- * email or GitHub issues.
+ * Users describe an issue, optionally attach crash logs, and tap the button
+ * to open a pre-filled GitHub issue in the browser. The report is also
+ * copied to the clipboard as a safety net.
  */
 @Composable
 fun BugReportScreen(navController: NavController) {
@@ -149,10 +152,10 @@ fun BugReportScreen(navController: NavController) {
 
             Spacer(Modifier.height(8.dp))
 
-            // Submit button
+            // Submit button — opens GitHub Issues with the report pre-filled.
             Button(
                 onClick = {
-                    shareReport(context, title, description, includeCrashLog, crashHistory)
+                    openGitHubReport(context, title, description, includeCrashLog, crashHistory)
                 },
                 enabled = title.isNotBlank(),
                 shape = RoundedCornerShape(28.dp),
@@ -164,17 +167,23 @@ fun BugReportScreen(navController: NavController) {
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
                 Text(
-                    text = "Share report",
+                    text = "Report on GitHub",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
             }
+            Text(
+                text = "Opens GitHub Issues with your report pre-filled — just tap Submit. The report is also copied to your clipboard.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
 
             Spacer(Modifier.height(32.dp))
         }
     }
 }
 
-private fun shareReport(
+private fun openGitHubReport(
     context: Context,
     title: String,
     description: String,
@@ -182,13 +191,12 @@ private fun shareReport(
     crashHistory: List<String>
 ) {
     val body = buildString {
-        appendLine("**$title**")
-        appendLine()
         appendLine(description)
         appendLine()
         appendLine("---")
         appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
         appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
+        appendLine("Curio: ${BuildConfig.VERSION_NAME}")
 
         if (includeCrashLog && crashHistory.isNotEmpty()) {
             appendLine()
@@ -203,15 +211,20 @@ private fun shareReport(
         }
     }
 
-    // Copy to clipboard
+    // Copy to clipboard — a safety net in case the browser flow is skipped.
     (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
         .setPrimaryClip(ClipData.newPlainText("Curio Bug Report", body))
 
-    // Open share chooser
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_SUBJECT, "Curio Bug: $title")
-        putExtra(Intent.EXTRA_TEXT, body)
+    // GitHub pre-fills a new issue from the title/body query parameters, so
+    // the user only has to review and tap "Submit new issue". GitHub caps
+    // issue titles at 256 characters.
+    val uri = Uri.parse("https://github.com/firefly-sylestia/Curio/issues/new")
+        .buildUpon()
+        .appendQueryParameter("title", title.take(256))
+        .appendQueryParameter("body", body)
+        .build()
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
     }
-    context.startActivity(Intent.createChooser(intent, "Share bug report"))
 }

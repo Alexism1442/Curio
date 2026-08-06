@@ -223,6 +223,18 @@ fun CurioCrashScreen(navController: NavController) {
             }
         }
 
+        // Report the crash through the full bug-report form — one tap right
+        // after a crash, so the user can file a GitHub issue with the saved
+        // crash logs attached via the form's "Include crash logs" toggle.
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(
+            onClick = { navController.navigate(CurioRoutes.BUG_REPORT) { launchSingleTop = true } },
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Report a bug", style = MaterialTheme.typography.labelLarge)
+        }
+
         // Expandable log
         if (showFullLog) {
             Spacer(Modifier.height(12.dp))

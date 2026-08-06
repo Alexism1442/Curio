@@ -189,7 +189,7 @@ We'd love contributions! Here's how:
 ### Report Bugs
 1. Check [existing issues](https://github.com/firefly-sylestia/Curio/issues) first
 2. Use the **Bug Report** template with steps, screenshots, and version info
-3. Or use the in-app bug report (Profile → Support & diagnostics → **Report a bug**)
+3. Or use the in-app bug report (Profile → Support & diagnostics → **Report a bug**), which opens a pre-filled GitHub issue
 
 ### Request Features or Topics
 - Open an issue with the **Feature Request** template
@@ -236,7 +236,7 @@ Curio is **free and open source** under the [MIT License](LICENSE). See LICENSE 
 Found a bug? Have an idea? Want to request a topic?
 
 - **GitHub Issues** — [Report bugs or request features](https://github.com/firefly-sylestia/Curio/issues)
-- **In-app** — Profile → Support & diagnostics → **Report a bug**
+- **In-app** — Profile → Support & diagnostics → **Report a bug** (opens a pre-filled GitHub issue)
 - **Discussions** — Coming soon for general questions and ideas
 
 ---
