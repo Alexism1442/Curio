@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -308,12 +309,13 @@ fun ProfileScreen(navController: NavController) {
         }
 
         // ── Pinned Back + Settings pills — Home's scroll-reactive sticky
-        // bar, adapted for Profile: resting on the hero they wear the
-        // hero-ink glass; as the hero scrolls away they POP (scale up from
-        // 0.97) and continuously color-morph into solid frosted floating
-        // pills. The scale is tied directly to the same eased scroll
-        // progress (no post-pop bounce), and the colors are animated paint
-        // values (no ripple flash) — the exact Home mechanism.
+        // bar, adapted for Profile: resting on the hero they wear the SOLID
+        // hero-card color (opaque, like Home's pills); as the hero scrolls
+        // away they POP (scale up from 0.97) and continuously color-morph
+        // into solid frosted floating pills. The scale is tied directly to
+        // the same eased scroll progress (no post-pop bounce), and the
+        // colors are animated paint values (no ripple flash) — the exact
+        // Home mechanism.
         val stickyThresholdPx = with(LocalDensity.current) { ProfilePillThreshold.toPx() }
         val stickyProgress by remember {
             derivedStateOf {
@@ -324,10 +326,12 @@ fun ProfileScreen(navController: NavController) {
         val frostShift = FastOutSlowInEasing.transform(stickyProgress)
         val pillScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
         val stickyDark = isCurioDarkTheme()
-        // Resting state = the current hero-ink glass pills (unchanged look
-        // over the banner); scrolled state = solid frosted pills.
-        val restPillBg = heroInk.copy(alpha = 0.18f)
-        val restPillRim = heroInk.copy(alpha = 0.32f)
+        // Resting state = SOLID hero-card-color pills — the banner's own
+        // fill at full opacity with a rim blended toward the readable ink,
+        // so the back + settings pills read as part of the hero (Home's
+        // exact construction); scrolled state = solid frosted pills.
+        val restPillBg = heroFill
+        val restPillRim = lerp(heroFill, heroInk, 0.42f)
         val frostPillBg = if (stickyDark) Color(0xFF23242C) else Color.White
         val frostPillRim = if (stickyDark) Color.White else Color(0xFFD9DEE6)
         val frostPillIcon = if (stickyDark) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
@@ -350,9 +354,11 @@ fun ProfileScreen(navController: NavController) {
             animationSpec = tween(CurioMotion.Durations.Quick),
             label = "profilePillIcon"
         )
-        // The hairline rim only appears once the pills start popping out of
-        // the hero — at rest they stay exactly as before (borderless glass).
-        val pillBorder = if (frostShift > 0.01f) BorderStroke(1.dp, pillRim) else null
+        // The hairline rim rides the pills the whole way — at rest it lifts
+        // the solid hero-color pill off the banner, and it eases into the
+        // frost rim as the pill pops out (Home's TopBarPill always wears its
+        // border).
+        val pillBorder = BorderStroke(1.dp, pillRim)
         Row(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -576,7 +582,8 @@ private fun ProfileHero(
                             modifier = Modifier
                                 .size(72.dp)
                                 .clip(CircleShape)
-                                .background(ink.copy(alpha = 0.22f)),
+                                .background(fill)
+                                .border(BorderStroke(1.dp, ink.copy(alpha = 0.30f)), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

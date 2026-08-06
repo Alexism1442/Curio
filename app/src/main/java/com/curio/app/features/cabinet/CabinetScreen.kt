@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
@@ -41,21 +44,28 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioEntry
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.AudioStorageManager
 import com.curio.app.data.ImageStorageManager
+import com.curio.app.features.settings.settingsReadableInk
+import com.curio.app.features.settings.settingsRoseAccent
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.ui.components.CurioBackButton
@@ -64,6 +74,8 @@ import com.curio.app.ui.components.CurioNavTint
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.CurioEntryCard
 import com.curio.app.ui.components.MorphEntrance
+import com.curio.app.ui.components.SoftTornBottomShape
+import com.curio.app.ui.components.SoftTornSheetShape
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
 import com.curio.app.ui.theme.categoryBackgroundWash
@@ -216,11 +228,12 @@ fun CabinetScreen(navController: NavController) {
         onDispose { CurioNavTint.publishCabinetWash(null) }
     }
 
+    // The hero banner runs up BEHIND the status bar (it applies its own
+    // status-bar inset), so the root Box carries no status-bar padding.
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
     ) {
         // Muted category-glyph watermark behind the grid — the same
         // backdrop language as Home / Spin / the saved-entry page, so the
@@ -231,22 +244,97 @@ fun CabinetScreen(navController: NavController) {
         // "shifting watermark". Fixed, so switching All / categories /
         // Legacy never moves a glyph; the active category is already
         // carried by the page wash, the chip row and the card tints.
+        // v7.77 — the flat grid sits directly on this backdrop, so the
+        // glyphs stay a faint whisper and the cards always read first.
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            alphaScale = 0.45f
         )
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-        // ── Top bar ────────────────────────────────────────────────────────
+        // ── Torn rose hero banner — the Profile/Settings hero-card language,
+        // with the Cabinet's own fixed tear seed. The title + subtitle sit
+        // pinned just above the tear and the search/sort/select pills ride
+        // the banner's top row as ink-glass pills so they read on the rose.
+        val cabinetTitle = when {
+            selectionMode -> "${selectedEntryIds.size} selected"
+            showLegacyOnly -> "Legacy Cabinet"
+            else -> "The Cabinet"
+        }
+        val cabinetSubtitle = when {
+            selectionMode -> "Long-press cards to select · ${if (showLegacyOnly) "legacy" else "current filter"}"
+            showLegacyOnly -> "Restored FieldMind records"
+            else -> selectedFilter?.let { "Showing ${CurioCategories.byId(it).displayName}" } ?: "Your saved captures"
+        }
+        CabinetHeroHeader(
+            title = cabinetTitle,
+            subtitle = cabinetSubtitle,
+            sheetColor = filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background,
+            backVisible = selectedFilter != null || showLegacyOnly,
+            onBack = { selectedFilter = null; showLegacyOnly = false }
+        ) { ink ->
+            if (selectionMode) {
+                CabinetHeroActionPill(
+                    onClick = {
+                        selectedEntryIds = if (allVisibleSelected) {
+                            selectedEntryIds - categorySelectionIds
+                        } else {
+                            selectedEntryIds + categorySelectionIds
+                        }
+                    },
+                    label = if (allVisibleSelected) "Clear" else "Select all",
+                    ink = ink,
+                    emphasized = true
+                )
+                CabinetHeroActionPill(
+                    onClick = {
+                        if (selectedEntryIds.isNotEmpty()) showBulkDeleteConfirm = true
+                    },
+                    label = "Delete (${selectedEntryIds.size})",
+                    ink = ink,
+                    emphasized = true,
+                    destructive = true
+                )
+                CabinetHeroActionPill(
+                    onClick = { selectionMode = false; selectedEntryIds = emptySet() },
+                    glyph = CurioIcons.Close,
+                    contentDescription = "Cancel selection",
+                    ink = ink
+                )
+            } else if (!searchActive) {
+                CabinetHeroActionPill(
+                    onClick = {
+                        selectionMode = true
+                        selectedEntryIds = emptySet()
+                    },
+                    label = "Select",
+                    ink = ink
+                )
+                CabinetHeroActionPill(
+                    onClick = { sortNewestFirst = !sortNewestFirst },
+                    glyph = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
+                    contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
+                    ink = ink,
+                    emphasized = sortNewestFirst
+                )
+                CabinetHeroActionPill(
+                    onClick = { searchActive = true },
+                    glyph = CurioIcons.Search,
+                    contentDescription = "Search captures",
+                    ink = ink
+                )
+            }
+        }
         if (searchActive) {
-            // Search mode — the title row is replaced by a real filter bar
-            // that narrows the grid by topic name / custom title. Auto-focus
-            // pulls the keyboard up the moment it expands.
+            // Search mode — a real filter bar below the hero narrows the grid
+            // by topic name / custom title. Auto-focus pulls the keyboard up
+            // the moment it expands.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, top = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -266,8 +354,6 @@ fun CabinetScreen(navController: NavController) {
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(50),
-                    // Filtering trims the query itself, so the IME search key
-                    // only needs to dismiss the keyboard — no state write.
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {}),
                     modifier = Modifier
@@ -290,154 +376,6 @@ fun CabinetScreen(navController: NavController) {
                         size = 24.dp,
                         modifier = Modifier.padding(8.dp)
                     )
-                }
-            }
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 0.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (selectedFilter != null || showLegacyOnly) {
-                        // Same top back button as the filters page — tapping it
-                        // dismisses the active category/legacy section back to
-                        // native Curio captures.
-                        CurioBackButton(onClick = { selectedFilter = null; showLegacyOnly = false })
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = if (selectionMode) "${selectedEntryIds.size} selected"
-                            else if (showLegacyOnly) "Legacy Cabinet" else "The Cabinet",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        if (selectionMode) {
-                            Text(
-                                text = "Long-press cards to select · ${if (showLegacyOnly) "legacy" else "current filter"}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (selectionMode) {
-                        Surface(
-                            onClick = {
-                                selectedEntryIds = if (allVisibleSelected) {
-                                    selectedEntryIds - categorySelectionIds
-                                } else {
-                                    selectedEntryIds + categorySelectionIds
-                                }
-                            },
-                            shape = RoundedCornerShape(50),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        ) {
-                            Text(
-                                if (allVisibleSelected) "Clear" else "Select all",
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp)
-                            )
-                        }
-                        Surface(
-                            onClick = { showBulkDeleteConfirm = true },
-                            enabled = selectedEntryIds.isNotEmpty(),
-                            shape = RoundedCornerShape(50),
-                            color = if (selectedEntryIds.isNotEmpty()) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceVariant
-                        ) {
-                            CurioIcon(
-                                CurioIcons.Delete,
-                                "Delete selected",
-                                tint = if (selectedEntryIds.isNotEmpty()) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                                size = 22.dp,
-                                modifier = Modifier.padding(9.dp)
-                            )
-                        }
-                        Surface(
-                            onClick = { selectionMode = false; selectedEntryIds = emptySet() },
-                            shape = RoundedCornerShape(50),
-                            color = MaterialTheme.colorScheme.surfaceVariant
-                        ) {
-                            CurioIcon(CurioIcons.Close, "Cancel selection", size = 22.dp, modifier = Modifier.padding(9.dp))
-                        }
-                    }
-                    if (!selectionMode) {
-                        // Selection is explicit as well as long-press driven,
-                        // so bulk delete is discoverable without guessing the
-                        // gesture. Once active, the toolbar replaces search
-                        // and sort with Select all / Delete / Cancel.
-                        Surface(
-                            onClick = {
-                                selectionMode = true
-                                selectedEntryIds = emptySet()
-                            },
-                            shape = RoundedCornerShape(50),
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                        ) {
-                            Text(
-                                text = "Select",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(horizontal = 11.dp, vertical = 10.dp)
-                            )
-                        }
-
-                        // Sort toggle — newest-first (⬇) / oldest-first (⬆). The
-                        // arrow points in the direction the list now runs.
-                        Surface(
-                            onClick = { sortNewestFirst = !sortNewestFirst },
-                        shape = RoundedCornerShape(50),
-                        color = if (sortNewestFirst) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        },
-                        border = if (sortNewestFirst) null
-                                else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                    ) {
-                        CurioIcon(
-                            name = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
-                            contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
-                            tint = if (sortNewestFirst) {
-                                MaterialTheme.colorScheme.onPrimaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
-                            size = 22.dp,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-                        Surface(
-                            onClick = { searchActive = true },
-                            shape = RoundedCornerShape(50),
-                            // Always neutral — the search button never wears the category
-                            // tint, only the page background does (when a filter is set).
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                        ) {
-                            CurioIcon(
-                                name = CurioIcons.Search,
-                                contentDescription = "Search captures",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                size = 24.dp,
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -606,6 +544,230 @@ fun CabinetScreen(navController: NavController) {
                 }
             }
         }
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════════════════════════════════
+// Torn rose hero banner — the Profile/Settings hero-card language, with
+// the Cabinet's own fixed tear seed. Title + subtitle pinned just above
+// the tear; the top row carries the back pill (when a filter/legacy view
+// is active) and the search/sort/select action pills as ink-glass pills.
+// ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+/** The hero banner's solid body height — compact, like the settings hero. */
+private val CabinetHeroBannerHeight = 180.dp
+/** Extra layout space reserved for the under-sheet below the torn banner. */
+private val CabinetHeroSheetExtent = 24.dp
+/** Total header footprint — the torn banner plus its under-sheet extent. */
+private val CabinetHeroTotalHeight = CabinetHeroBannerHeight + CabinetHeroSheetExtent
+/** Fixed tear seed — the Cabinet tears in its own bold pattern, never re-rolls. */
+private const val CABINET_TEAR_SEED = 0xCAB1N
+
+/** One mirrored hero watermark pair (the settings/profile collage). */
+private data class CabinetHeroPair(
+    val biasX: Float,
+    val biasY: Float,
+    val size: Dp,
+    val rotation: Float,
+    val alpha: Float
+)
+
+/**
+ * The Cabinet's torn rose hero banner — the shared Profile/Settings
+ * construction: a solid rose banner with the same bold SoftTorn tear and a
+ * theme-matched under-sheet, the mirrored wildcard watermark collage, the
+ * back pill (when a filter/legacy view is active) and the caller-provided
+ * action pills riding the top row, and the title + subtitle pinned just
+ * above the tear. Runs up behind the status bar; [sheetColor] lets the
+ * under-sheet match the page (the category tint wash when a filter is on).
+ */
+@Composable
+private fun CabinetHeroHeader(
+    title: String,
+    subtitle: String,
+    sheetColor: Color,
+    backVisible: Boolean,
+    onBack: () -> Unit,
+    trailing: @Composable (ink: Color) -> Unit
+) {
+    val heroTornShape = remember(CABINET_TEAR_SEED) { SoftTornBottomShape(CABINET_TEAR_SEED, bold = true) }
+    val sheetShape = remember(CABINET_TEAR_SEED) {
+        SoftTornSheetShape(CABINET_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
+    }
+    val fill = settingsRoseAccent()
+    val ink = settingsReadableInk(fill)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(CabinetHeroTotalHeight)
+    ) {
+        // ── Under-sheet — the page's own color (tint wash when a filter is
+        // active), so the tear sits on the page in every state.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .offset(y = CabinetHeroBannerHeight - 18.dp)
+                .clip(sheetShape)
+                .background(sheetColor)
+        )
+        // ── Torn-edge shadow — hairline dark rim under the seam.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(CabinetHeroBannerHeight)
+                .offset(y = 1.dp)
+                .clip(heroTornShape)
+                .background(Color.Black.copy(alpha = 0.20f))
+        )
+        // ── Solid rose banner, torn bottom edge — shares the exact rose
+        // family as Profile/Settings (settingsRoseAccent).
+        Surface(
+            shape = heroTornShape,
+            color = fill,
+            shadowElevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(CabinetHeroBannerHeight)
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Mirrored watermark collage — the wildcard family's symbols
+                // pop around the banner edges (the settings/profile collage).
+                val symbols = CurioIcons.heroWatermarkSymbols(CategoryFamily.WILDCARD)
+                val pairs = listOf(
+                    CabinetHeroPair(biasX = 0.93f, biasY = -0.85f, size = 44.dp, rotation = 12f, alpha = 0.11f),
+                    CabinetHeroPair(biasX = 0.55f, biasY = -0.64f, size = 48.dp, rotation = 8f, alpha = 0.13f),
+                    CabinetHeroPair(biasX = 0.94f, biasY = -0.12f, size = 56.dp, rotation = 14f, alpha = 0.14f),
+                    CabinetHeroPair(biasX = 0.56f, biasY = 0.54f, size = 50.dp, rotation = 10f, alpha = 0.13f),
+                    CabinetHeroPair(biasX = 0.94f, biasY = 0.80f, size = 44.dp, rotation = 6f, alpha = 0.11f)
+                )
+                pairs.forEachIndexed { i, pair ->
+                    CabinetHeroSymbol(symbols[i * 2], BiasAlignment(-pair.biasX, pair.biasY), pair.size, -pair.rotation, pair.alpha, ink)
+                    CabinetHeroSymbol(symbols[i * 2 + 1], BiasAlignment(pair.biasX, pair.biasY), pair.size, pair.rotation, pair.alpha, ink)
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 16.dp)
+                ) {
+                    // ── Top row — back pill (when needed) + action pills ──
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        if (backVisible) {
+                            CurioBackButton(
+                                onClick = onBack,
+                                containerColor = ink.copy(alpha = 0.18f),
+                                contentColor = ink,
+                                disableRipple = true
+                            )
+                        } else {
+                            // Balance the row when there's no back pill.
+                            Spacer(Modifier.size(42.dp))
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            trailing(ink)
+                        }
+                    }
+                    // Flex spacer — pins the title block just above the tear.
+                    Spacer(Modifier.weight(1f))
+                    // ── Title + subtitle — the Cabinet's identity ──
+                    Column {
+                        Text(
+                            title,
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                            color = ink,
+                            maxLines = 1
+                        )
+                        Text(
+                            subtitle,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ink.copy(alpha = 0.82f),
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** One mirrored watermark glyph on the Cabinet hero (settings/profile style). */
+@Composable
+private fun BoxScope.CabinetHeroSymbol(
+    glyph: String,
+    alignment: Alignment,
+    size: Dp,
+    rotation: Float,
+    alpha: Float,
+    tint: Color
+) {
+    CurioIcon(
+        name = glyph,
+        contentDescription = null,
+        tint = tint.copy(alpha = alpha),
+        size = size,
+        modifier = Modifier
+            .align(alignment)
+            .padding(10.dp)
+            .graphicsLayer { rotationZ = rotation }
+    )
+}
+
+/** One ink-glass action pill on the Cabinet hero — the banner's readable
+ *  ink at a soft alpha (the Profile edit-pill language), so the Select /
+ *  Sort / Search / selection buttons read on the rose in every theme.
+ *  [emphasized] deepens the fill for the active/primary state;
+ *  [destructive] deepens it further for the delete action. */
+@Composable
+private fun CabinetHeroActionPill(
+    onClick: () -> Unit,
+    ink: Color,
+    label: String? = null,
+    glyph: String? = null,
+    contentDescription: String? = null,
+    emphasized: Boolean = false,
+    destructive: Boolean = false
+) {
+    val fill = when {
+        destructive -> ink.copy(alpha = 0.55f)
+        emphasized -> ink.copy(alpha = 0.42f)
+        else -> ink.copy(alpha = 0.18f)
+    }
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = fill,
+        border = BorderStroke(1.dp, ink.copy(alpha = 0.28f)),
+        shadowElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            if (glyph != null) {
+                CurioIcon(
+                    name = glyph,
+                    contentDescription = contentDescription,
+                    tint = ink,
+                    size = 18.dp
+                )
+            }
+            if (label != null) {
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = ink
+                )
+            }
         }
     }
 }

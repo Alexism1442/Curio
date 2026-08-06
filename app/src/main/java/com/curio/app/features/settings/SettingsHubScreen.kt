@@ -225,9 +225,10 @@ private fun BoxScope.SettingsHeroSymbol(
 
 /** The settings hero's rose-wood fill — the SAME treatment as Home/Profile
  *  (the muted rose-wood base, its airy pastel twin in pastel mode) so
- *  Settings reads as part of the same torn-banner family. */
+ *  Settings reads as part of the same torn-banner family. Shared (public)
+ *  so the Cabinet's hero banner wears the identical rose. */
 @Composable
-private fun settingsRoseAccent(): Color {
+fun settingsRoseAccent(): Color {
     val base = toHsl(CurioColors.HomeRosewood)
     return if (AppPreferences.pastelColorsState) {
         val pinkHue = (base.h - 15f + 360f) % 360f
@@ -242,9 +243,9 @@ private fun settingsRoseAccent(): Color {
 }
 
 /** Readable ink for content sitting on the settings rose banner (Home's
- *  helper, replicated for this file). */
+ *  helper, shared so the Cabinet hero uses the same ink). */
 @Composable
-private fun settingsReadableInk(fill: Color): Color = if (
+fun settingsReadableInk(fill: Color): Color = if (
     !AppPreferences.pastelColorsState && !isCurioDarkTheme()
 ) {
     MaterialTheme.colorScheme.onSurface
