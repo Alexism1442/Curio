@@ -1,4 +1,4 @@
-# FieldMind Project — Root AGENTS.md (DOX Rail)
+# Curio Project — Root AGENTS.md (DOX Rail)
 
 ## DOX Framework
 
@@ -12,7 +12,7 @@ This file is part of the **DOX framework** defined in `master.md`. All agents MU
 
 ## Purpose
 
-Top-level instruction file for all AI agents (Codebuff/Buffy and spawned sub-agents) working on the FieldMind Android project. Project-wide rules, global preferences, and the top-level Child DOX Index.
+Top-level instruction file for all AI agents (Codebuff/Buffy and spawned sub-agents) working on the Curio Android project. Project-wide rules, global preferences, and the top-level Child DOX Index.
 
 ## ❓ ASK WHEN UNSURE
 

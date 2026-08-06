@@ -222,7 +222,7 @@ The user said "we ill go each category one by one." Concretely:
 
 | Order | Category         | Why this slot |
 |-------|------------------|---------------|
-| 1     | **Music**        | Existing FieldMind team's native expertise (the legacy app was a music player). Lowest authoring risk; highest prompt-quality ceiling. |
+| 1     | **Music**        | Existing Curio team's native expertise (the legacy app was a music player). Lowest authoring risk; highest prompt-quality ceiling. |
 | 2     | **Movies**       | Visual/film literacy transfers; rich Wikimedia Commons image pool; Reel Notes capture format is well-suited to "watch this film." |
 | 3     | **Books**        | Books are the spine of "curiosity" — and the Marginalia capture format has the highest long-term re-read value. |
 | 4     | **Visual Art**   | Gallery Wall moodboard capture format + strong Wikimedia coverage. |

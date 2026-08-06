@@ -31,5 +31,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FieldMind"
+rootProject.name = "Curio"
 include(":app")

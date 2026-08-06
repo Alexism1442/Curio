@@ -100,3 +100,12 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Re-targeted the android.yml `push` and `pull_request` triggers from the removed `revamp` branch to `main`, the repository's active branch, so CI runs on every push to main.
 - Updated `.github/AGENTS.md` to describe the `main` trigger target.
 - Validation: both workflow YAML files parsed successfully, action versions resolve, and `git diff --check` is clean. No Gradle command run per repository rules.
+
+## v7.64 — rebrand project to Curio (config and branding only)
+
+- Changed `rootProject.name` in `settings.gradle.kts` from "FieldMind" to "Curio" (the old app name).
+- Rebranded the root `AGENTS.md` title and purpose line from FieldMind to Curio.
+- Updated stale FieldMind headers/comments in `app/proguard-rules.pro`, `scripts/generate_sounds.mjs` (header + console title), and `scripts/generate_species_catalog.py` (header + iNaturalist User-Agent), plus the team-expertise row in `app/CURIO_DATA_PLAN.md`.
+- Per user decision, the FieldMind legacy import feature (FieldMindLegacyImport, FieldMindObservationScreen, FieldMindMetadata/Species, Legacy Cabinet chip/section, restore UI) and all its code references remain fully intact; only config, branding, and stale comments were touched.
+- Historical release notes (fastlane changelogs) and the Prompt.md request log retain their original FieldMind references as records.
+- Validation: remaining FieldMind references are confined to feature code, feature documentation, and historical records; `git diff --check` clean. No Gradle command run per repository rules.

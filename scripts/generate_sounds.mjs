@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * FieldMind Sound Effect Generator
- * Generates simple WAV files for the FieldMind sound design system.
+ * Curio Sound Effect Generator
+ * Generates simple WAV files for the Curio sound design system.
  * Uses PCM 16-bit mono, 44100 Hz sample rate.
  */
 
@@ -442,7 +442,7 @@ function generateRain() {
 //  Main
 // ═══════════════════════════════════════════════════════════════════
 
-console.log('\n🎵 FieldMind Sound Effect Generator\n');
+console.log('\n🎵 Curio Sound Effect Generator\n');
 console.log(`Output: ${OUT_DIR}\n`);
 
 console.log('Generating sounds...\n');

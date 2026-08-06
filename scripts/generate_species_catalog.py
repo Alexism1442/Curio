@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FieldMind Species Catalog Generator
+Curio Species Catalog Generator
 Expands the bundled species catalog to 500+ species by:
 1. Fixing missing taxonomic data for existing species
 2. Fetching real species from iNaturalist API
@@ -212,7 +212,7 @@ def fetch_inat(url, retries=3):
     """Fetch data from iNaturalist API with rate limiting."""
     for attempt in range(retries):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "FieldMind/1.0"})
+            req = urllib.request.Request(url, headers={"User-Agent": "Curio/1.0"})
             with urllib.request.urlopen(req, timeout=15) as resp:
                 return json.loads(resp.read().decode())
         except (urllib.error.HTTPError, urllib.error.URLError, ConnectionError) as e:
