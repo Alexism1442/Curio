@@ -99,6 +99,7 @@ import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.CurioTopic
+import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.SmartDensityMode
 import com.curio.app.data.StreakTracker
 import com.curio.app.data.TopicJsonLoader
@@ -454,6 +455,13 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
         }
         r
     }
+    // v7.80 — done topics (explored or marked "Already …") never appear in
+    // the deck — not even as fan/peek cards. Falls back to the full
+    // filtered pool when everything is done so the fan never empties.
+    val deckPool = remember(filteredPool, ExploreSessionStore.doneTopicsState) {
+        val open = filteredPool.filterNot { ExploreSessionStore.isDone(it.categoryId, it.name) }
+        if (open.isNotEmpty()) open else filteredPool
+    }
     // Smart filter groups — buckets raw tags into Type · Genre · Era ·
     // Origin sections and caps each, so the sheet stays ~10-15 chips
     // instead of dumping every raw tag (albums alone has 256 unique tags).
@@ -506,7 +514,7 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     // after the back-stack drops the composition. Keyed on filteredPool
     // ONLY — not on landedTopicName — so the spin start (which nulls the
     // landed topic) never re-deals the hand mid-flow.
-    var hand by remember(filteredPool) { mutableStateOf(buildDeckHand(filteredPool, landedTopic)) }
+    var hand by remember(deckPool) { mutableStateOf(buildDeckHand(deckPool, landedTopic)) }
     // cycleIndex is NOT reset per spin — the reel starts from wherever the
     // deck stopped (the landed topic sits at hand[0]), so the first tick is
     // a seamless continuation instead of a jump cut.
@@ -670,14 +678,22 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
 
         // Pick a single topic — tier-biased, sentiment-weighted (liked /
         // disliked topics + category affinity), and never an already-
-        // explored topic while alternatives remain.
+        // explored or done topic while alternatives remain. "Done" topics
+        // (explored, or marked "Already watched / listened / read / explored"
+        // on the reveal screen) are excluded exactly like captured ones —
+        // v7.80. pickFrom still falls back to the full pool when everything
+        // is exhausted, so the shuffle never runs dry.
         val exploredIds = runCatching {
             CurioRepositoryHolder.repo.getAll().map { it.topic.id }.toSet()
         }.getOrDefault(emptySet())
+        val doneIds = filteredPool
+            .filter { ExploreSessionStore.isDone(it.categoryId, it.name) }
+            .map { it.id }
+            .toSet()
         val primary = pickFrom(
             filteredPool,
             recentTopicIds,
-            exploredIds,
+            exploredIds + doneIds,
             AppPreferences.topicSentimentsState,
             AppPreferences.categoryAffinityMap()
         )
@@ -687,7 +703,7 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
             // the pick and its neighbors fill the fan — so the deck stops
             // on a coherent spread and the NEXT spin starts from it
             // seamlessly. This re-deal is masked by the confetti burst.
-            hand = buildDeckHand(filteredPool, primary)
+            hand = buildDeckHand(deckPool, primary)
             cycleIndex = 0
             recentTopicIds = (recentTopicIds + primary.id).toList().takeLast(20).toSet()
             StreakTracker.recordActivity(context)

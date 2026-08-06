@@ -34,7 +34,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -81,7 +80,6 @@ import com.curio.app.data.PinnedTopic
 import com.curio.app.data.SavedQuote
 import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
-import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSession
@@ -504,13 +502,6 @@ fun HomeScreen(navController: NavController) {
                     }
                 )
             }
-            Spacer(Modifier.height(20.dp))
-
-            // ── Quests & levels summary — the next journey step, one tap
-            // from anywhere on Home (v7.40).
-            QuestSummaryCard(
-                onOpen = { navController.navigate(CurioRoutes.QUESTS) { launchSingleTop = true } }
-            )
             Spacer(Modifier.height(20.dp))
 
             // ── 2. Currently exploring — live session card ──────────────
@@ -970,87 +961,6 @@ private fun TopBarPill(
                 contentDescription = contentDescription,
                 tint = iconTint,
                 size = 22.dp
-            )
-        }
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Quest summary — a compact level + current-quest card linking to the
-// Quests page (v7.40).
-// ═══════════════════════════════════════════════════════════════════════
-
-@Composable
-private fun QuestSummaryCard(onOpen: () -> Unit) {
-    val current = CurioQuests.currentJourneyQuest()
-    val xp = CurioQuests.xpState
-    val level = CurioQuests.levelForXp(xp)
-    val (progress, _) = CurioQuests.xpProgress(xp)
-    val roseAccent = homeRoseAccent()
-    Surface(
-        onClick = onOpen,
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, roseAccent.copy(alpha = 0.30f)),
-        shadowElevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(13.dp))
-                        .background(roseAccent.copy(alpha = 0.16f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CurioIcon(
-                        CurioIcons.EmojiEvents, null,
-                        tint = roseAccent,
-                        size = 21.dp
-                    )
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "Level $level · ${CurioQuests.levelTitle(level)}",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.ExtraBold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        current?.let { "Next quest: ${it.title}" } ?: "Journey complete — every badge is open",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                CurioForwardArrow(
-                    "Open quests",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-            }
-            Spacer(Modifier.height(10.dp))
-            LinearProgressIndicator(
-                progress = { progress.coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(5.dp)
-                    .clip(RoundedCornerShape(50)),
-                color = roseAccent,
-                trackColor = roseAccent.copy(alpha = 0.14f)
-            )
-            Spacer(Modifier.height(5.dp))
-            Text(
-                "$xp XP earned · tap for quests, levels & badges",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

@@ -177,6 +177,10 @@ fun TopicRevealScreen(
     // recently-unexplored so Home can offer to resume it.
     var engaged by rememberSaveable { mutableStateOf(false) }
     var showExploreDialog by rememberSaveable { mutableStateOf(false) }
+    // v7.80 — "Already watched/listened/read/explored" — marks the topic
+    // done (never shows in the shuffle again) and asks whether to write
+    // about it now.
+    var showAlreadyDoneDialog by rememberSaveable { mutableStateOf(false) }
 
     // Android 13+ needs POST_NOTIFICATIONS before the persistent explore
     // notification can show — requested when the user starts exploring with
@@ -623,25 +627,40 @@ fun TopicRevealScreen(
                     }
                 }
 
-                // ── 8. Secondary action text button ────────────────────────
-                TextButton(
+                // ── 8. "Already …" — marks the topic DONE (it never shows
+                //    in the shuffle again) and asks if the user wants to
+                //    write about it now. No explore session is started and
+                //    the topic is never recorded as unexplored.
+                Surface(
                     onClick = {
-                        if (!engaged) {
-                            resolved?.let { ExploreSessionStore.recordUnexplored(context, cat.id, it.name) }
-                        }
-                        navController.popBackStack()
+                        val topic = resolved ?: return@Surface
+                        // Marking done IS engaging — backing out must not
+                        // record the topic as unexplored afterwards.
+                        engaged = true
+                        // Records explored (Home recents + quests) AND marks
+                        // it done so the spin deck never deals it again.
+                        ExploreSessionStore.markDone(context, cat.id, topic.name)
+                        showAlreadyDoneDialog = true
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    enabled = resolved != null,
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    border = BorderStroke(1.dp, cat.themedAccent().copy(alpha = 0.35f)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
                 ) {
                     Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        CurioIcon(CurioIcons.Refresh, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, size = 16.dp)
+                        CurioIcon(CurioIcons.Check, null, tint = cat.themedAccent(), size = 18.dp)
+                        Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Shuffle again instead",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = alreadyDoneLabel(cat),
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -725,6 +744,37 @@ fun TopicRevealScreen(
                     pendingOverlaySession = null
                     if (s != null) continueExploreFlow(s)
                 }) { Text("Not now") }
+            }
+        )
+    }
+
+    // v7.80 — "Already …" confirmation: the topic is already marked done;
+    // the dialog only asks whether to write about it now. "Not now" keeps
+    // it marked done (never unexplored, never back in the shuffle).
+    if (showAlreadyDoneDialog && resolved != null) {
+        val topic = resolved
+        AlertDialog(
+            // Dismissing keeps the topic marked done (never unexplored, never
+            // back in the shuffle) and returns to the deck — this button
+            // replaced "Shuffle again instead", so its natural end is back.
+            onDismissRequest = { navController.popBackStack() },
+            title = { Text("${alreadyDoneLabel(cat)}?") },
+            text = {
+                Text(
+                    "${topic.name} is marked as done and won't show up in the " +
+                        "shuffle again. Want to write about it now?"
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showAlreadyDoneDialog = false
+                    navController.navigate(CurioRoutes.captureFor(cat.id.routeSlug, topic.name)) {
+                        launchSingleTop = true
+                    }
+                }) { Text("Write about it") }
+            },
+            dismissButton = {
+                TextButton(onClick = { navController.popBackStack() }) { Text("Not now") }
             }
         )
     }
@@ -1126,6 +1176,18 @@ private fun verbIcon(verb: String): String = when (verb.lowercase().trim()) {
     "write" -> "edit"
     "play" -> "play_arrow"
     else -> "auto_awesome"
+}
+
+/** The "Already …" label — the category's verb, per category (v7.80).
+ *  Films/Directors → watched, Albums/Artists → listened, Books/Authors →
+ *  read, Artworks/Painters → seen, everything else → explored. */
+private fun alreadyDoneLabel(cat: com.curio.app.data.CurioCategory): String = when (cat.id) {
+    CategoryId.FILMS, CategoryId.DIRECTORS -> "Already watched"
+    CategoryId.ALBUMS, CategoryId.ARTISTS -> "Already listened"
+    CategoryId.BOOKS, CategoryId.AUTHORS -> "Already read"
+    CategoryId.ARTWORKS -> "Already seen"
+    CategoryId.PAINTERS -> "Already explored"
+    else -> "Already explored"
 }
 
 /** Circular like/dislike toggle — active state fills with the category accent. */

@@ -88,6 +88,11 @@ object ExploreSessionStore {
     private const val KEY_EXPLORED = "explore_recently_explored"
     private const val KEY_UNEXPLORED = "explore_recently_unexplored"
     private const val KEY_QUEUED_SESSIONS = "explore_queued_sessions"
+    // v7.80 — topics the user has EXPLORED or marked "Already watched /
+    // listened / read / explored". Persistent and unbounded (unlike the
+    // capped recents list) because the shuffle deck must never deal one of
+    // these again while alternatives remain.
+    private const val KEY_DONE = "explore_done_topics"
 
     // Cap the Home lists so they never grow unbounded.
     private const val MAX_LIST = 12
@@ -103,6 +108,10 @@ object ExploreSessionStore {
         private set
     var recentlyUnexploredState by mutableStateOf<List<UnexploredTopic>>(emptyList())
         private set
+    // v7.80 — done-topic keys ("CATEGORY::topicName"), read by the Spin
+    // deck so explored topics never reappear in the shuffle.
+    var doneTopicsState by mutableStateOf<Set<String>>(emptySet())
+        private set
 
     private fun prefs(context: Context) =
         context.getSharedPreferences("curio_prefs", Context.MODE_PRIVATE)
@@ -113,6 +122,7 @@ object ExploreSessionStore {
         queuedSessionsState = readQueued(context)
         recentlyExploredState = readExplored(context)
         recentlyUnexploredState = readUnexplored(context)
+        doneTopicsState = readDone(context)
     }
 
     // ── Active session ─────────────────────────────────────────────────
@@ -274,6 +284,9 @@ object ExploreSessionStore {
         // from the resume list so the merged Home "Recents" never shows the
         // same topic twice (once "Resumed", once "Unexplored").
         if (wasUnexplored) removeUnexplored(context, categoryId, topicName)
+        // v7.80 — exploring a topic marks it DONE: the shuffle deck never
+        // deals it again while alternatives remain.
+        addDone(context, categoryId, topicName)
         // Feed the quests system — explores drive journey + daily + badges.
         CurioQuests.onExplore(context, categoryId)
     }
@@ -285,6 +298,76 @@ object ExploreSessionStore {
                 it.categoryId == categoryId && it.topicName == topicName
             }
         )
+        // Rolling back an explore record also rolls back its done mark, so
+        // the topic returns to the shuffle (the conflict-dismissal path).
+        removeDone(context, categoryId, topicName)
+    }
+
+    // ── Done topics (v7.80) ────────────────────────────────────────────
+    // Explored topics (and topics the user marks "Already watched / listened
+    // / read / explored") are permanently done: they never appear in the
+    // shuffle deck again while unvisited alternatives remain. Unlike the
+    // capped recents list this set is unbounded, so an explored topic can't
+    // quietly roll back into the deck.
+
+    /**
+     * Marks a topic as done — recorded as explored (shows in Home recents,
+     * feeds the quests system) AND excluded from the shuffle deck. Called by
+     * the reveal screen's "Already …" button.
+     */
+    fun markDone(context: Context, categoryId: CategoryId, topicName: String) {
+        if (topicName.isBlank()) return
+        recordExplored(context, categoryId, topicName)
+    }
+
+    /** True if the topic is marked done (explored or "already seen"). */
+    fun isDone(categoryId: CategoryId, topicName: String): Boolean =
+        doneKey(categoryId, topicName) in doneTopicsState
+
+    private fun addDone(context: Context, categoryId: CategoryId, topicName: String) {
+        if (topicName.isBlank()) return
+        val key = doneKey(categoryId, topicName)
+        if (key in doneTopicsState) return
+        saveDone(context, doneTopicsState + key)
+    }
+
+    private fun removeDone(context: Context, categoryId: CategoryId, topicName: String) {
+        val key = doneKey(categoryId, topicName)
+        if (key !in doneTopicsState) return
+        saveDone(context, doneTopicsState - key)
+    }
+
+    private fun doneKey(categoryId: CategoryId, topicName: String): String =
+        "${categoryId.name}::$topicName"
+
+    private fun readDone(context: Context): Set<String> {
+        val raw = prefs(context).getString(KEY_DONE, null) ?: return emptySet()
+        return try {
+            val arr = JSONArray(raw)
+            val out = mutableSetOf<String>()
+            for (i in 0 until arr.length()) {
+                val obj = arr.optJSONObject(i) ?: continue
+                val id = obj.optString("categoryId")
+                val cat = CategoryId.values().firstOrNull { it.name == id } ?: continue
+                val name = obj.optString("topicName")
+                if (name.isNotBlank()) out.add(doneKey(cat, name))
+            }
+            out
+        } catch (_: Exception) {
+            emptySet()
+        }
+    }
+
+    private fun saveDone(context: Context, keys: Set<String>) {
+        val arr = JSONArray()
+        keys.forEach { key ->
+            val sep = key.indexOf("::")
+            if (sep <= 0) return@forEach
+            val id = key.substring(0, sep)
+            arr.put(JSONObject().put("categoryId", id).put("topicName", key.substring(sep + 2)))
+        }
+        prefs(context).edit().putString(KEY_DONE, arr.toString()).apply()
+        doneTopicsState = keys
     }
 
     private fun readExplored(context: Context): List<ExploredTopic> {
