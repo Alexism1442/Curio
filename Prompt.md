@@ -109,3 +109,11 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Per user decision, the FieldMind legacy import feature (FieldMindLegacyImport, FieldMindObservationScreen, FieldMindMetadata/Species, Legacy Cabinet chip/section, restore UI) and all its code references remain fully intact; only config, branding, and stale comments were touched.
 - Historical release notes (fastlane changelogs) and the Prompt.md request log retain their original FieldMind references as records.
 - Validation: remaining FieldMind references are confined to feature code, feature documentation, and historical records; `git diff --check` clean. No Gradle command run per repository rules.
+
+## v7.65 — sign CI release APKs with the production keystore (best-effort)
+
+- The Android CI workflow (push to `main`, PRs, manual dispatch) now signs its `assembleRelease` output with the same `KEYSTORE_*` secrets as the release workflow instead of the debug-signing fallback.
+- Added a best-effort keystore decode step: when `KEYSTORE_BASE64` is present it decodes `release.keystore` and exports the four signing env vars to the Gradle build; when absent (fork PRs, where GitHub strips secrets) it warns and the build falls back to debug signing per the existing `hasReleaseSigningMaterial` guard in `app/build.gradle.kts`.
+- Added a signature-verification step that runs only when a keystore was actually decoded; it fails if no signed release APK is produced or if the release APK is signed with the Android debug key.
+- Updated `.github/AGENTS.md` to describe the best-effort signing contract.
+- Validation: workflow YAML parsed successfully and `git diff --check` is clean. No Gradle command run per repository rules.

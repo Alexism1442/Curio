@@ -39,8 +39,55 @@ jobs:
       - name: Validate topic catalogs without Gradle
         run: python3 scripts/validate_topics.py
 
+      - name: Decode release keystore when signing secrets are available
+        id: keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::Release signing secrets not available (fork PR or unconfigured repo) — release APK will use the debug-signing fallback."
+            echo "decoded=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > release.keystore
+          size=$(wc -c < release.keystore)
+          if [ "$size" -lt 100 ]; then
+            echo "::error::Decoded release keystore is unexpectedly small (${size} bytes)."
+            exit 1
+          fi
+          echo "Release keystore decoded (${size} bytes)."
+          echo "decoded=true" >> "$GITHUB_OUTPUT"
+
       - name: Run Android checks and build debug and release APKs
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew lintDebug validateTopics assembleDebug assembleRelease --stacktrace
+
+      - name: Verify release APK and signature
+        if: steps.keystore.outputs.decoded == 'true'
+        run: |
+          set -euo pipefail
+          apk=$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' ! -name '*-unsigned.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::No signed release APK was produced."
+            exit 1
+          fi
+          echo "Release APK: $apk"
+          sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          apksigner=$(find "$sdk_root/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          if [ -z "$apksigner" ]; then
+            echo "::error::Android build-tools apksigner was not found."
+            exit 1
+          fi
+          "$apksigner" verify --print-certs "$apk"
+          if "$apksigner" verify --print-certs "$apk" 2>&1 | grep -q 'CN=Android Debug'; then
+            echo "::error::Release APK is signed with the Android debug key."
+            exit 1
+          fi
 
       - name: Upload lint reports
         if: always()

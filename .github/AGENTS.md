@@ -29,7 +29,7 @@ GitHub Actions automation and contributor templates for the Curio Android reposi
 - Validates all topic catalogs with `python3 scripts/validate_topics.py`.
 - Runs the Gradle `lintDebug`, `validateTopics`, `assembleDebug`, and `assembleRelease` checks in GitHub Actions using the hosted Android toolchain.
 - Uploads lint reports plus both the debug APK and the release-variant APK for 14 days.
-- Uses no signing secrets; the PR release variant uses the app module's debug-signing fallback and is not an official production release.
+- Signs the release variant with the same `KEYSTORE_*` signing secrets as the release workflow when GitHub provides them (pushes to `main`, same-repo PRs, manual dispatch) and verifies the APK signature is not the debug key. On fork PRs, where GitHub strips secrets, the release variant falls back to the app module's debug-signing config so CI still passes.
 - Cancels an older in-progress run for the same ref when a newer run starts.
 
 ### Release workflow
@@ -49,7 +49,7 @@ GitHub Actions automation and contributor templates for the Curio Android reposi
 
 ### Secrets
 
-Only the release workflow consumes signing secrets:
+The release workflow requires the signing secrets; the Android CI workflow consumes them when GitHub provides them (fork PRs do not receive secrets):
 
 - `KEYSTORE_BASE64` — Base64-encoded Android keystore
 - `KEYSTORE_PASSWORD` — Keystore password
