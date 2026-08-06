@@ -1,8 +1,10 @@
 package com.curio.app.features.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -27,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -37,20 +41,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.curio.app.data.AppPreferences
+import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioRepositoryHolder
@@ -63,25 +72,58 @@ import com.curio.app.ui.components.CurioForwardArrow
 import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioWatermarkBackdrop
+import com.curio.app.ui.components.SoftTornBottomShape
+import com.curio.app.ui.components.SoftTornSheetShape
 import com.curio.app.ui.theme.CurioColors
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
+import com.curio.app.ui.theme.fromHsl
+import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.pastelFillInk
 import com.curio.app.ui.theme.themedAccent
+import com.curio.app.ui.theme.toHsl
 import kotlinx.coroutines.launch
 
 /**
- * Profile hub — identity + stats only (v7.3 revamp).
+ * Profile hub — identity + stats only (v7.38 — Home torn-banner redesign).
  *
  * Personalization lives entirely in Settings (appearance, notifications,
- * categories, backup — plus the Experimental section). Profile keeps the
- * quest-card hero, glanceable stats, the level tracker, your lanes, a single
- * Settings entry card, and the support/diagnostics card. Every visual
- * follows the app's shared language: paper cards with hairline borders,
- * solid surface stat pills, and a category-tinted gradient hero (the accent
- * of your most-explored lane, brand coral before your first save).
+ * categories, backup — plus the Experimental section). Profile opens with
+ * the Home quest family's TORN rose banner: solid rose fill with the same
+ * bold soft tear and a theme-matched under-sheet, a mirrored watermark
+ * collage of your most-explored lane's symbols, and the Streak · Saved ·
+ * Lanes stats pinned INSIDE the banner above the tear (no standalone strip
+ * below). Behind everything sits the shared watermark backdrop (glyphs kept
+ * below the banner). Below the hero: the level tracker, your lanes, a
+ * single Settings entry card, and the support/diagnostics card — paper
+ * cards with hairline borders, the app's shared language.
  */
+
+/** The torn banner's solid body height — tall enough for the top pills,
+ *  identity row, edit pill and the stat bar pinned above the tear, with
+ *  flex slack held against large font scales. */
+private val ProfileHeroHeight = 372.dp
+/** Extra layout space reserved for the under-sheet below the torn banner. */
+private val ProfileHeroSheetExtent = 24.dp
+/** Total hero footprint — keeps the watermark backdrop's glyphs below the
+ *  banner (lower-band mode). */
+private val ProfileHeroTotalHeight = ProfileHeroHeight + ProfileHeroSheetExtent
+/** Fixed tear seed — Profile tears in the SAME bold pattern as Home's quest
+ *  hero (same seed + personality), so both banners read as one family. */
+private const val PROFILE_TEAR_SEED = 0xC0FEE
+
+/** One mirrored hero watermark pair — the left glyph mirrors the right
+ *  (the Home quest hero's construction, adapted for Profile). */
+private data class ProfileHeroPair(
+    val biasX: Float,
+    val biasY: Float,
+    val size: Dp,
+    val rotation: Float,
+    val alpha: Float
+)
+
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
@@ -125,15 +167,16 @@ fun ProfileScreen(navController: NavController) {
     val level = levelFor(totalSaved)
     val progress = progressTowardsNextLevel(totalSaved)
 
-    // Hero accent/glyph follow your most-explored lane; brand coral +
-    // sparkles before the first save (mirrors the Home quest card's
-    // wildcard treatment). themedAccent() is @Composable, so these live
-    // in the body (not a remember block).
+    // The hero wears the Home quest family's rose torn banner — your most-
+    // explored lane still personalizes the page: its family's symbols
+    // scatter across the banner and its glyph leads the watermark backdrop
+    // (wildcard sparkles before the first save).
     val topLane = categoryCounts.maxByOrNull { it.value }?.key
-    val heroAccent = topLane?.let { CurioCategories.byId(it).themedAccent() }
-        ?: CurioColors.CategoryCoral
-    val heroGlyph = topLane?.let { CurioCategories.byId(it).iconGlyph }
-        ?: CurioIcons.AutoAwesome
+    val heroFamily = topLane?.let { CategoryFamily.of(it) } ?: CategoryFamily.WILDCARD
+    val backdropActiveCat = topLane?.let { CurioCategories.byId(it) }
+        ?: CurioCategories.byId(CategoryId.WILDCARD)
+    val heroFill = profileRoseAccent()
+    val heroInk = profileReadableInk(heroFill)
 
     ProfileDialogs(
         showNameDialog = showNameDialog,
@@ -147,105 +190,85 @@ fun ProfileScreen(navController: NavController) {
         }
     )
 
-    Column(
+    // v7.38 — Profile joins the Home torn-banner family: the rose banner
+    // tears at the bottom (same bold soft tear + theme under-sheet), wears
+    // the mirrored watermark collage, and the Streak · Saved · Lanes stats
+    // now live INSIDE the banner above the tear — the standalone strip
+    // below is gone.
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            CurioBackButton(onClick = { navController.popBackStack() })
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "Profile",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    "Your curiosity, in one place",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            // Gear entry → full Settings screen (appearance, notifications,
-            // categories, backup, experimental). Mirror of CurioBackButton so
-            // the top bar stays balanced: back arrow left, gear right.
-            Surface(
-                onClick = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } },
-                shape = RoundedCornerShape(50),
-                color = MaterialTheme.colorScheme.surfaceVariant
-            ) {
-                CurioIcon(
-                    name = CurioIcons.Settings,
-                    contentDescription = "Settings",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    size = 24.dp,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
-
+        // ── Watermark backdrop — muted category glyphs behind the content
+        // (the Home/Spin language). The active glyph is your most-explored
+        // lane (wildcard sparkles before the first save); the glyphs keep
+        // below the hero banner.
+        CurioWatermarkBackdrop(
+            activeCat = backdropActiveCat,
+            topClearance = ProfileHeroTotalHeight
+        )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 24.dp),
+            contentPadding = PaddingValues(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 ProfileHero(
                     name = displayName,
                     streakDays = streakDays,
-                    accent = heroAccent,
-                    glyph = heroGlyph,
+                    saved = totalSaved,
+                    lanes = if (categoryCounts.isEmpty()) CurioCategories.visible.size else categoryCounts.size,
+                    family = heroFamily,
+                    fill = heroFill,
+                    ink = heroInk,
+                    onBack = { navController.popBackStack() },
+                    onSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } },
                     onEditName = {
                         nameInput = displayName
                         showNameDialog = true
                     }
                 )
             }
+            // Breathing room below the torn seam (≈ Home's quest-block gap).
+            item { Spacer(Modifier.height(6.dp)) }
             item {
-                StatsStrip(
-                    streak = streakDays,
-                    saved = totalSaved,
-                    // Used lanes once entries exist (matches the Lanes card);
-                    // the visible lane count before the first save.
-                    lanes = if (categoryCounts.isEmpty()) CurioCategories.visible.size else categoryCounts.size
-                )
-            }
-            item {
-                LevelCard(
-                    level = level,
-                    saved = totalSaved,
-                    progress = progress.first,
-                    nextThreshold = progress.second,
-                    isMaxLevel = level >= 9
-                )
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    LevelCard(
+                        level = level,
+                        saved = totalSaved,
+                        progress = progress.first,
+                        nextThreshold = progress.second,
+                        isMaxLevel = level >= 9
+                    )
+                }
             }
             if (categoryCounts.isNotEmpty()) {
                 item {
-                    LanesCard(
-                        counts = categoryCounts,
-                        onCabinet = { navController.navigate(CurioRoutes.CABINET) { launchSingleTop = true } }
+                    Box(Modifier.padding(horizontal = 16.dp)) {
+                        LanesCard(
+                            counts = categoryCounts,
+                            onCabinet = { navController.navigate(CurioRoutes.CABINET) { launchSingleTop = true } }
+                        )
+                    }
+                }
+            }
+            item {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    SettingsNavCard(
+                        onOpenSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } }
                     )
                 }
             }
             item {
-                SettingsNavCard(
-                    onOpenSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } }
-                )
-            }
-            item {
-                SupportCard(
-                    crashCount = crashCount,
-                    onTestCrash = { CurioCrashReporter.testCrash() },
-                    onCrashLogs = { navController.navigate(CurioRoutes.CRASH) { launchSingleTop = true } },
-                    onReportBug = { navController.navigate(CurioRoutes.BUG_REPORT) { launchSingleTop = true } }
-                )
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    SupportCard(
+                        crashCount = crashCount,
+                        onTestCrash = { CurioCrashReporter.testCrash() },
+                        onCrashLogs = { navController.navigate(CurioRoutes.CRASH) { launchSingleTop = true } },
+                        onReportBug = { navController.navigate(CurioRoutes.BUG_REPORT) { launchSingleTop = true } }
+                    )
+                }
             }
             item { Spacer(Modifier.navigationBarsPadding().height(4.dp)) }
         }
@@ -284,136 +307,272 @@ private fun ProfileDialogs(
 }
 
 /**
- * Quest-card hero (v7.3) — same treatment as Home's quest card so Profile
- * reads as part of the family: category-tinted gradient (your most-explored
- * lane's accent), a watermark glyph in the corner, a letter-spaced kicker,
- * and white content. Edit + streak ride as white-glass pills.
+ * v7.38 — Profile's hero joins the Home torn-banner family. The solid rose
+ * banner tears at the bottom with the SAME bold soft tear + theme under-
+ * sheet as Home (so the tear reads as a real paper edge), wears the
+ * mirrored watermark collage of your most-explored lane's symbols, and
+ * carries the identity row (avatar, name, tagline) plus the Edit pill. The
+ * Streak · Saved · Lanes stats now live INSIDE the banner, pinned just
+ * above the torn seam on a soft rose gradient pane — the exact Home stat
+ * bar. Back + Settings ride as glass pills over the banner (Home's
+ * top-bar treatment).
  */
 @Composable
 private fun ProfileHero(
     name: String,
     streakDays: Int,
-    accent: Color,
-    glyph: String,
+    saved: Int,
+    lanes: Int,
+    family: CategoryFamily,
+    fill: Color,
+    ink: Color,
+    onBack: () -> Unit,
+    onSettings: () -> Unit,
     onEditName: () -> Unit
 ) {
     val initial = name.firstOrNull()?.uppercase().orEmpty()
-    val gradient = CurioGradients.cardGradient(accent)
-    // v7.5 — pastel mode lightens the hero gradient, so the hero content
-    // flips from white to a deep ink of the lane accent (brand maroon on the
-    // coral before your first save). White when pastel mode is off.
-    val ink = pastelFillInk(accent)
-    Surface(
-        shape = RoundedCornerShape(28.dp),
-        color = Color.Transparent,
-        shadowElevation = 0.dp,
-        modifier = Modifier.fillMaxWidth()
+    val heroTornShape = remember(PROFILE_TEAR_SEED) { SoftTornBottomShape(PROFILE_TEAR_SEED, bold = true) }
+    val sheetShape = remember(PROFILE_TEAR_SEED) {
+        SoftTornSheetShape(PROFILE_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(ProfileHeroTotalHeight)
     ) {
+        // ── Under-sheet — the theme's own background (Home hardcodes a
+        // creamy white; Profile matches the UI, so the tear sits on the
+        // page color in every theme). Same seeded torn top as the banner,
+        // hidden behind it except through the up-bites.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Brush.verticalGradient(gradient), RoundedCornerShape(28.dp))
-                .padding(20.dp)
+                .height(42.dp)
+                .offset(y = ProfileHeroHeight - 18.dp)
+                .clip(sheetShape)
+                .background(MaterialTheme.colorScheme.background)
+        )
+        // ── Torn-edge shadow — hairline dark rim under the seam so the
+        // tear reads as a real paper edge (the Home construction).
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(ProfileHeroHeight)
+                .offset(y = 1.dp)
+                .clip(heroTornShape)
+                .background(Color.Black.copy(alpha = 0.20f))
+        )
+        // ── Solid rose banner, torn bottom edge ────────────────────────
+        Surface(
+            shape = heroTornShape,
+            color = fill,
+            shadowElevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(ProfileHeroHeight)
         ) {
-            // Watermark glyph — the lane you explore most (sparkles before
-            // your first save), always a whisper behind the content.
-            CurioIcon(
-                glyph,
-                null,
-                tint = ink.copy(alpha = 0.20f),
-                size = 120.dp,
-                modifier = Modifier.align(Alignment.BottomEnd)
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                // ── Kicker — mirrors the quest card's "TODAY'S QUEST" ──
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .width(3.dp)
-                            .height(16.dp)
-                            .background(ink.copy(alpha = 0.60f), RoundedCornerShape(2.dp))
-                    )
-                    Text(
-                        "YOUR PROFILE",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 1.2.sp
-                        ),
-                        color = ink.copy(alpha = 0.88f)
-                    )
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Mirrored watermark collage — your most-explored lane's
+                // family symbols pop around the banner edges (the Home
+                // quest hero's exact construction; wildcard before the
+                // first save).
+                val symbols = CurioIcons.heroWatermarkSymbols(family)
+                val pairs = listOf(
+                    ProfileHeroPair(biasX = 0.93f, biasY = -0.85f, size = 44.dp, rotation = 12f, alpha = 0.11f),
+                    ProfileHeroPair(biasX = 0.55f, biasY = -0.64f, size = 48.dp, rotation = 8f, alpha = 0.13f),
+                    ProfileHeroPair(biasX = 0.94f, biasY = -0.12f, size = 56.dp, rotation = 14f, alpha = 0.14f),
+                    ProfileHeroPair(biasX = 0.56f, biasY = 0.54f, size = 50.dp, rotation = 10f, alpha = 0.13f),
+                    ProfileHeroPair(biasX = 0.94f, biasY = 0.80f, size = 44.dp, rotation = 6f, alpha = 0.11f)
+                )
+                pairs.forEachIndexed { i, pair ->
+                    ProfileHeroSymbol(symbols[i * 2], BiasAlignment(-pair.biasX, pair.biasY), pair.size, -pair.rotation, pair.alpha, ink)
+                    ProfileHeroSymbol(symbols[i * 2 + 1], BiasAlignment(pair.biasX, pair.biasY), pair.size, pair.rotation, pair.alpha, ink)
                 }
-                // ── Avatar + name ──────────────────────────────────────
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .clip(CircleShape)
-                            .background(ink.copy(alpha = 0.22f)),
-                        contentAlignment = Alignment.Center
+                    // ── Back + Settings — glass pills over the banner ──
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            initial,
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-                            color = ink
+                        CurioBackButton(
+                            onClick = onBack,
+                            containerColor = ink.copy(alpha = 0.18f),
+                            contentColor = ink,
+                            disableRipple = true
                         )
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            name,
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                            color = ink,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            taglineForStreak(streakDays),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = ink.copy(alpha = 0.78f),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-                // ── Edit + streak — white-glass pills like the quest CTA ──
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Surface(
-                        onClick = onEditName,
-                        shape = RoundedCornerShape(50),
-                        color = ink.copy(alpha = 0.18f),
-                        contentColor = ink,
-                        shadowElevation = 0.dp
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            CurioIcon(CurioIcons.Edit, null, tint = ink, size = 16.dp)
-                            Text("Edit profile", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = ink)
-                        }
-                    }
-                    if (streakDays > 0) {
                         Surface(
-                            shape = RoundedCornerShape(50.dp),
+                            onClick = onSettings,
+                            shape = CircleShape,
                             color = ink.copy(alpha = 0.18f)
                         ) {
+                            CurioIcon(
+                                name = CurioIcons.Settings,
+                                contentDescription = "Settings",
+                                tint = ink,
+                                size = 24.dp,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    // ── Kicker — mirrors the quest card's "TODAY'S QUEST" ──
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(3.dp)
+                                .height(16.dp)
+                                .background(ink.copy(alpha = 0.60f), RoundedCornerShape(2.dp))
+                        )
+                        Text(
+                            "YOUR PROFILE",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.2.sp
+                            ),
+                            color = ink.copy(alpha = 0.88f)
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    // ── Avatar + name + tagline ────────────────────────
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .clip(CircleShape)
+                                .background(ink.copy(alpha = 0.22f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                initial,
+                                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                                color = ink
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                name,
+                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                                color = ink,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                taglineForStreak(streakDays),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = ink.copy(alpha = 0.78f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    // ── Edit + streak — glass pills (the quest CTA language) ──
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Surface(
+                            onClick = onEditName,
+                            shape = RoundedCornerShape(50),
+                            color = ink.copy(alpha = 0.18f),
+                            contentColor = ink,
+                            shadowElevation = 0.dp
+                        ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                modifier = Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                CurioIcon(CurioIcons.LocalFire, null, tint = ink, size = 16.dp)
-                                Text("$streakDays-day streak", style = MaterialTheme.typography.labelMedium, color = ink, fontWeight = FontWeight.Bold)
+                                CurioIcon(CurioIcons.Edit, null, tint = ink, size = 16.dp)
+                                Text("Edit profile", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = ink)
+                            }
+                        }
+                        if (streakDays > 0) {
+                            Surface(
+                                shape = RoundedCornerShape(50.dp),
+                                color = ink.copy(alpha = 0.18f)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    CurioIcon(CurioIcons.LocalFire, null, tint = ink, size = 16.dp)
+                                    Text("$streakDays-day streak", style = MaterialTheme.typography.labelMedium, color = ink, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                    // Flex spacer — pins the stat bar just above the tear.
+                    Spacer(Modifier.weight(1f))
+                    // ── Streak · Saved · Lanes — the stats INSIDE the hero,
+                    // pinned above the torn seam on a soft rose gradient pane
+                    // (the exact Home stat bar; icons in the hero ink).
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color.Transparent,
+                        border = BorderStroke(1.dp, ink.copy(alpha = 0.28f)),
+                        shadowElevation = 0.dp
+                    ) {
+                        Box(
+                            modifier = Modifier.background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        fill.copy(alpha = 0.12f),
+                                        lerp(fill, Color.White, 0.26f).copy(alpha = 0.55f)
+                                    )
+                                ),
+                                RoundedCornerShape(20.dp)
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 6.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                ProfileHeroStat(
+                                    glyph = CurioIcons.LocalFire,
+                                    value = "$streakDays",
+                                    label = "Streak",
+                                    ink = ink,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                VerticalDivider(
+                                    modifier = Modifier.height(34.dp),
+                                    color = ink.copy(alpha = 0.22f)
+                                )
+                                ProfileHeroStat(
+                                    glyph = CurioIcons.Inventory2,
+                                    value = "$saved",
+                                    label = "Saved",
+                                    ink = ink,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                VerticalDivider(
+                                    modifier = Modifier.height(34.dp),
+                                    color = ink.copy(alpha = 0.22f)
+                                )
+                                ProfileHeroStat(
+                                    glyph = CurioIcons.Palette,
+                                    value = "$lanes",
+                                    label = "Lanes",
+                                    ink = ink,
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
                         }
                     }
@@ -423,38 +582,89 @@ private fun ProfileHero(
     }
 }
 
-/**
- * Solid stat pills — the same language as Home's stat strip (surface pill,
- * tinted icon, onSurface value + label) instead of the old gradient-and-
- * plum treatment that didn't belong to the app.
- */
+/** One stat segment on the hero's gradient pane — icon / value / label in
+ *  the banner's readable ink (the Home stat bar's design). */
 @Composable
-private fun StatsStrip(streak: Int, saved: Int, lanes: Int) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        ProfileStat(Modifier.weight(1f), CurioIcons.LocalFire, "$streak", "Streak", CurioColors.CoralBlush)
-        ProfileStat(Modifier.weight(1f), CurioIcons.Inventory2, "$saved", "Saved", CurioColors.Sage)
-        ProfileStat(Modifier.weight(1f), CurioIcons.Palette, "$lanes", "Lanes", CurioColors.Teal)
+private fun ProfileHeroStat(
+    glyph: String,
+    value: String,
+    label: String,
+    ink: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        CurioIcon(name = glyph, contentDescription = null, tint = ink, size = 18.dp)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.ExtraBold),
+            color = ink,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = ink.copy(alpha = 0.85f)
+        )
     }
 }
 
+/** One mirrored watermark glyph on the banner — the hero's readable ink at a
+ *  soft alpha (the Home quest hero's collage construction). */
 @Composable
-private fun ProfileStat(modifier: Modifier, icon: String, value: String, label: String, tint: Color) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shadowElevation = 0.dp
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 11.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            CurioIcon(icon, null, tint = tint, size = 18.dp)
-            Text(value, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold), color = MaterialTheme.colorScheme.onSurface)
-            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun BoxScope.ProfileHeroSymbol(
+    glyph: String,
+    alignment: Alignment,
+    size: Dp,
+    rotation: Float,
+    alpha: Float,
+    tint: Color
+) {
+    CurioIcon(
+        name = glyph,
+        contentDescription = null,
+        tint = tint.copy(alpha = alpha),
+        size = size,
+        modifier = Modifier
+            .align(alignment)
+            .padding(10.dp)
+            .graphicsLayer { rotationZ = rotation }
+    )
+}
+
+/**
+ * The Profile hero's rose-wood fill — the SAME treatment as Home's quest
+ * banner (the muted rose-wood base, its airy pastel twin when pastel mode
+ * is on) so Profile reads as part of the Home family.
+ */
+@Composable
+private fun profileRoseAccent(): Color {
+    val base = toHsl(CurioColors.HomeRosewood)
+    return if (AppPreferences.pastelColorsState) {
+        val pinkHue = (base.h - 15f + 360f) % 360f
+        if (isCurioDarkTheme()) {
+            fromHsl(pinkHue, (base.s * 0.55f).coerceIn(0f, 0.55f), 0.42f)
+        } else {
+            fromHsl(pinkHue, (base.s * 0.90f).coerceIn(0f, 0.80f), 0.82f)
         }
+    } else {
+        fromHsl(base.h, (base.s * 0.80f).coerceAtMost(0.40f), (base.l * 1.06f).coerceAtMost(0.70f))
     }
+}
+
+/** Readable ink for content sitting on the rose banner (Home's helper). */
+@Composable
+private fun profileReadableInk(fill: Color): Color = if (
+    !AppPreferences.pastelColorsState && !isCurioDarkTheme()
+) {
+    MaterialTheme.colorScheme.onSurface
+} else {
+    pastelFillInk(fill)
 }
 
 @Composable

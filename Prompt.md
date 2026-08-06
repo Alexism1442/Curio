@@ -117,3 +117,13 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Added a signature-verification step that runs only when a keystore was actually decoded; it fails if no signed release APK is produced or if the release APK is signed with the Android debug key.
 - Updated `.github/AGENTS.md` to describe the best-effort signing contract.
 - Validation: workflow YAML parsed successfully and `git diff --check` is clean. No Gradle command run per repository rules.
+
+## v7.66 — Profile hero joins the Home torn-banner family
+
+- Replaced Profile's category-gradient hero card with the Home quest family's TORN rose banner (ProfileScreen.kt only): solid rose-wood fill resolved exactly like Home's (`profileRoseAccent`/`profileReadableInk` private replicas), the same bold `SoftTornBottomShape`/`SoftTornSheetShape` tear (seed `0xC0FEE`, `bold = true`), a hairline torn-edge shadow, and a theme-matched under-sheet (`MaterialTheme.colorScheme.background`) instead of Home's hardcoded creamy white — the tear now sits on the page color in every theme.
+- Added the mirrored watermark collage INSIDE the banner — `CurioIcons.heroWatermarkSymbols` for your most-explored lane's family (wildcard before the first save) — the "pop-up icons" treatment from Home's quest hero.
+- Moved the Streak · Saved · Lanes stats INTO the hero: the standalone `StatsStrip` below is gone, replaced by a stat bar pinned just above the tear on the soft rose gradient pane with icon/value/label segments and `VerticalDivider` hairlines (the exact Home stat bar, icons in the hero ink).
+- Back + Settings now ride as glass pills over the banner (Home's top-bar treatment); the old top title bar was removed in favor of the "YOUR PROFILE" kicker inside the banner.
+- Added the shared `CurioWatermarkBackdrop` behind the page with `topClearance` (lower-band mode) so glyphs stay below the hero; content cards are wrapped in 16dp padding so the banner bleeds edge-to-edge.
+- Fixed-height hero (372dp) holds flex slack for large font scales; tagline capped at one line. Level, Lanes, Settings, and Support cards unchanged.
+- Validation: ProfileScreen.kt brace check BALANCED and `git diff --check` clean. No Gradle command run per repository rules (CI compiles on push).
