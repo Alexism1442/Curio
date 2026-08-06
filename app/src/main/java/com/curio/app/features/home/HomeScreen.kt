@@ -88,6 +88,7 @@ import com.curio.app.data.ExploreSession
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.StreakTracker
 import com.curio.app.data.formatElapsed
+import com.curio.app.features.onboarding.CurioOnboardingState
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
@@ -1476,6 +1477,18 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
                         label = "Support & diagnostics",
                         iconTint = CurioColors.CoralBlush
                     ) { onNavigate(CurioRoutes.SUPPORT) }
+                }
+                item("replay") {
+                    DrawerNavItem(
+                        icon = CurioIcons.Replay,
+                        label = "Replay intro",
+                        iconTint = CurioColors.HomeRosewood
+                    ) {
+                        // Re-show the welcome screens: reset the completed
+                        // flag, then open onboarding like Settings' replay.
+                        CurioOnboardingState.reset(context)
+                        onNavigate(CurioRoutes.ONBOARDING)
+                    }
                 }
             }
 

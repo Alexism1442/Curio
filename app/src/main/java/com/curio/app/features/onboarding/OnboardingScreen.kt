@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,6 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -86,20 +88,20 @@ import com.curio.app.ui.components.SoftTornSheetShape
 import com.curio.app.ui.theme.CurioColors
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
-import com.curio.app.ui.theme.isCurioDarkTheme
-import com.curio.app.ui.theme.pastelFillInk
 import kotlinx.coroutines.launch
 
 /**
- * First-launch onboarding — the torn-rose family redesign.
+ * First-launch onboarding — the torn-rose family redesign (v7.102).
  *
- * The screen wears the SAME hero language as Settings/Profile/Home: a solid
- * rose banner torn with the shared [SoftTornBottomShape] seam (mirrored
- * wildcard watermark collage, brand title + tagline pinned above the tear),
- * a muted watermark backdrop behind the slides, and torn-PAPER illustration
- * tiles (calm rose ink on a paper slip) instead of the old colorful gradient
- * blocks. The setup step's permission cards are borderless
- * [CurioSettingsCard] boxes with coral icon chips.
+ * The hero is the whole show: a solid rose banner torn with the shared
+ * [SoftTornBottomShape] seam covers well over HALF the screen, and every
+ * slide's content — the intro kicker + headline + subtext, the theme
+ * options, and the permission cards — lives INSIDE the banner in its
+ * readable ink. The illustration tiles are gone; only a slim Curio
+ * wordmark (with the tagline) sits at the top of the banner above a
+ * subtle mirrored watermark collage. Below the tear: page dots and the
+ * Skip / Next controls. The setup step's permission cards are borderless
+ * [CurioSettingsCard] paper boxes with coral icon chips.
  */
 @Composable
 fun OnboardingScreen(navController: NavController) {
@@ -185,51 +187,83 @@ fun OnboardingScreen(navController: NavController) {
             alphaScale = 0.45f
         )
         Column(modifier = Modifier.fillMaxSize()) {
-            // ── Torn-rose brand hero — the Settings/Profile family's banner:
-            // solid rose, torn seam, mirrored watermark collage, and the
-            // brand title + tagline pinned above the tear.
-            OnboardingHero()
-
-            // ── Slide area ─────────────────────────────────────────────
+            // ── The big torn-rose hero — covers well over half the screen
+            //    (v7.102). EVERY slide renders INSIDE the banner: intro
+            //    texts, the theme options and the permission cards all sit
+            //    on the rose fill in its readable ink, with a slim Curio
+            //    wordmark + tagline at the top. Below the tear are only
+            //    the page dots and the Skip / Next controls.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .fillMaxHeight(0.62f)
             ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize()
-                ) { pageIndex ->
-                    when (pageIndex) {
-                        OnboardingSlides.size -> {
-                            // Theme step: light / dark / system + pastel toggle.
-                            MorphEntrance {
-                                ThemeSlide()
+                // The rose banner + ragged tear + watermark collage fill the
+                // whole box (drawn first; the wordmark + pager overlay it).
+                OnboardingHeroBackdrop()
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                ) {
+                    // ── Brand wordmark + tagline — the hero's top line ──
+                    Text(
+                        text = "Curio",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                        color = heroInk(),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = stringResource(R.string.app_tagline),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = heroInk().copy(alpha = 0.82f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(Modifier.height(4.dp))
+
+                    // ── Slide area — the pager fills the rest of the banner ──
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(start = 24.dp, end = 24.dp, bottom = 30.dp)
+                    ) { pageIndex ->
+                        when (pageIndex) {
+                            OnboardingSlides.size -> {
+                                // Theme step: light / dark / system + pastel toggle.
+                                MorphEntrance {
+                                    ThemeSlide()
+                                }
                             }
-                        }
-                        OnboardingSlides.size + 1 -> {
-                            // Final step: permission setup, not an intro slide.
-                            SetupSlide(
-                                notificationGranted = notificationGranted,
-                                micGranted = micGranted,
-                                overlayGranted = overlayGranted,
-                                reminderWanted = reminderWanted,
-                                onReminderChange = { wanted ->
-                                    reminderWanted = wanted
-                                    AppPreferences.setReminderEnabled(context, wanted)
-                                },
-                                onRequestNotifications = {
-                                    requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                },
-                                onRequestMic = {
-                                    requestMic.launch(Manifest.permission.RECORD_AUDIO)
-                                },
-                                onRequestOverlay = { openOverlaySettings() }
-                            )
-                        }
-                        else -> {
-                            MorphEntrance {
-                                OnboardingSlide(slide = OnboardingSlides[pageIndex])
+                            OnboardingSlides.size + 1 -> {
+                                // Final step: permission setup, not an intro slide.
+                                SetupSlide(
+                                    notificationGranted = notificationGranted,
+                                    micGranted = micGranted,
+                                    overlayGranted = overlayGranted,
+                                    reminderWanted = reminderWanted,
+                                    onReminderChange = { wanted ->
+                                        reminderWanted = wanted
+                                        AppPreferences.setReminderEnabled(context, wanted)
+                                    },
+                                    onRequestNotifications = {
+                                        requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    },
+                                    onRequestMic = {
+                                        requestMic.launch(Manifest.permission.RECORD_AUDIO)
+                                    },
+                                    onRequestOverlay = { openOverlaySettings() }
+                                )
+                            }
+                            else -> {
+                                MorphEntrance {
+                                    OnboardingSlide(slide = OnboardingSlides[pageIndex])
+                                }
                             }
                         }
                     }
@@ -298,26 +332,17 @@ fun OnboardingScreen(navController: NavController) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Torn-rose brand hero — the Settings/Profile banner construction, compact
-// and back-button-free: the solid rose banner tears with the shared bold
-// seam, a mirrored wildcard watermark collage floats on the edges, and the
-// brand name + tagline are pinned just above the tear.
+// Big torn-rose hero backdrop — v7.102: the banner now fills the whole top
+// half of the screen (its host Box is sized to 62% height in the screen
+// body), tears with the shared bold seam at its bottom edge, and wears the
+// mirrored wildcard watermark collage at a whisper. The wordmark + pager
+// overlay it. The tear geometry adapts to the banner's height (align + small
+// offsets instead of the old fixed 170dp construction).
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Fixed tear seed — the onboarding hero always tears in the SAME pattern
  *  (its own seed; Settings wears 0x5EED, Profile 0xC0FEE). Never re-rolls. */
 private const val ONBOARDING_TEAR_SEED = 0x0B0A5EED
-/** Fixed tear seed for the setup slide's paper tile (same rule: stable,
- *  never re-rolls). */
-private const val ONBOARDING_SETUP_TEAR_SEED = 0xACE0
-/** The hero's solid body height — brand-only, so a touch slimmer than the
- *  Settings banner (which also holds the back pill). */
-private val OnboardingHeroBannerHeight = 170.dp
-/** Extra layout space reserved for the under-sheet below the torn banner. */
-private val OnboardingHeroSheetExtent = 24.dp
-/** Total hero footprint — the torn banner plus its under-sheet extent; the
- *  pager content starts just below it. */
-private val OnboardingHeroTotalHeight = OnboardingHeroBannerHeight + OnboardingHeroSheetExtent
 
 /** One mirrored hero watermark pair — the left glyph mirrors the right
  *  (the Settings/Profile hero construction). */
@@ -329,8 +354,13 @@ private data class OnboardingHeroPair(
     val alpha: Float
 )
 
+/** The hero's readable ink — shared by the backdrop, the wordmark and every
+ *  slide that renders inside the banner. */
 @Composable
-private fun OnboardingHero() {
+private fun heroInk(): Color = settingsReadableInk(settingsRoseAccent())
+
+@Composable
+private fun OnboardingHeroBackdrop() {
     val heroTornShape = remember(ONBOARDING_TEAR_SEED) {
         SoftTornBottomShape(ONBOARDING_TEAR_SEED, bold = true)
     }
@@ -342,23 +372,25 @@ private fun OnboardingHero() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(OnboardingHeroTotalHeight)
+            .fillMaxSize()
     ) {
         // ── Under-sheet — the theme's own background, so the tear sits on
-        // the page color in every theme (the Profile construction).
+        // the page color in every theme (the Profile construction). It
+        // pokes a couple of dp BELOW the hero so the ragged seam reads.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(42.dp)
-                .offset(y = OnboardingHeroBannerHeight - 18.dp)
+                .align(Alignment.BottomCenter)
+                .offset(y = 12.dp)
+                .height(46.dp)
                 .clip(sheetShape)
                 .background(MaterialTheme.colorScheme.background)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(OnboardingHeroBannerHeight)
+                .fillMaxSize()
+                .align(Alignment.BottomCenter)
                 .offset(y = 1.dp)
                 .clip(heroTornShape)
                 .background(Color.Black.copy(alpha = 0.20f))
@@ -368,20 +400,20 @@ private fun OnboardingHero() {
             shape = heroTornShape,
             color = fill,
             shadowElevation = 0.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(OnboardingHeroBannerHeight)
+            modifier = Modifier.fillMaxSize()
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 // Mirrored watermark collage — the wildcard family's symbols
-                // pop around the banner edges (Settings' exact construction).
+                // float near the banner edges at a whisper so the slide
+                // content always reads first (Settings' exact construction,
+                // spread for the taller banner).
                 val symbols = CurioIcons.heroWatermarkSymbols(CategoryFamily.WILDCARD)
                 val pairs = listOf(
-                    OnboardingHeroPair(biasX = 0.93f, biasY = -0.82f, size = 40.dp, rotation = 10f, alpha = 0.11f),
-                    OnboardingHeroPair(biasX = 0.57f, biasY = -0.60f, size = 44.dp, rotation = 8f, alpha = 0.13f),
-                    OnboardingHeroPair(biasX = 0.95f, biasY = -0.10f, size = 50.dp, rotation = 14f, alpha = 0.14f),
-                    OnboardingHeroPair(biasX = 0.60f, biasY = 0.44f, size = 44.dp, rotation = 10f, alpha = 0.13f),
-                    OnboardingHeroPair(biasX = 0.95f, biasY = 0.80f, size = 40.dp, rotation = 6f, alpha = 0.11f)
+                    OnboardingHeroPair(biasX = 0.93f, biasY = -0.80f, size = 46.dp, rotation = 12f, alpha = 0.10f),
+                    OnboardingHeroPair(biasX = 0.58f, biasY = -0.55f, size = 50.dp, rotation = 8f, alpha = 0.11f),
+                    OnboardingHeroPair(biasX = 0.95f, biasY = 0.10f, size = 58.dp, rotation = 14f, alpha = 0.10f),
+                    OnboardingHeroPair(biasX = 0.60f, biasY = 0.70f, size = 52.dp, rotation = 10f, alpha = 0.11f),
+                    OnboardingHeroPair(biasX = 0.95f, biasY = 1.05f, size = 46.dp, rotation = 6f, alpha = 0.10f)
                 )
                 pairs.forEachIndexed { i, pair ->
                     OnboardingHeroSymbol(
@@ -400,30 +432,6 @@ private fun OnboardingHero() {
                         alpha = pair.alpha,
                         tint = ink
                     )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding()
-                        .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 14.dp)
-                ) {
-                    // Flex spacer — pins the brand block just above the tear.
-                    Spacer(Modifier.weight(1f))
-                    // ── Brand name + tagline — the onboarding identity ──
-                    Column {
-                        Text(
-                            text = "Curio",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-                            color = ink,
-                            maxLines = 1
-                        )
-                        Text(
-                            text = stringResource(R.string.app_tagline),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = ink.copy(alpha = 0.82f),
-                            maxLines = 1
-                        )
-                    }
                 }
             }
         }
@@ -454,150 +462,56 @@ private fun BoxScope.OnboardingHeroSymbol(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Torn-paper illustration tile — replaces the old colorful gradient block
-// with the app's PAPER language: a soft paper slip (the theme's low surface,
-// like the settings boxes) torn with the hero's seeded bottom seam, the
-// slide's glyph in calm rose ink, and a whisper of watermark glyphs at the
-// corners. No more loud rainbow gradient + white icon.
+// Intro slides — v7.102: no more illustration tile. Each slide renders INSIDE
+// the big rose hero: a step kicker, a bold headline and a short subtext, all
+// in the banner's readable ink.
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
-private fun OnboardingTile(
-    glyph: String,
-    seed: Int,
-    size: Dp = 172.dp
-) {
-    val heroTornShape = remember(seed) { SoftTornBottomShape(seed, bold = true) }
-    val sheetShape = remember(seed) { SoftTornSheetShape(seed, lip = 8.dp, baseline = 12.dp, bold = true) }
-    val fill = settingsRoseAccent()
-    // The glyph ink: the rose itself in light mode (soft pink on cream
-    // paper), its readable light twin over the dark surface in dark mode.
-    val glyphTint = if (isCurioDarkTheme()) pastelFillInk(fill) else fill
-    Box(
-        modifier = Modifier
-            .size(size)
-            .graphicsLayer { rotationZ = 1.5f }
-    ) {
-        // ── Under-sheet — the page color behind the tear.
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clip(sheetShape)
-                .background(MaterialTheme.colorScheme.background)
-        )
-        // ── Torn-edge shadow — hairline dark rim under the seam.
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .offset(y = 1.dp)
-                .clip(heroTornShape)
-                .background(Color.Black.copy(alpha = 0.14f))
-        )
-        // ── The paper slip — cream in light, soft dark in dark mode.
-        Surface(
-            shape = heroTornShape,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            shadowElevation = 0.dp,
-            modifier = Modifier.matchParentSize()
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                // Faint watermark whispers at the corners — the collage
-                // language, barely there so the main glyph reads first.
-                val symbols = CurioIcons.heroWatermarkSymbols(CategoryFamily.WILDCARD)
-                OnboardingTileGlyph(
-                    glyph = symbols[0],
-                    alignment = BiasAlignment(-0.92f, -0.92f),
-                    size = size * 0.22f,
-                    rotation = -8f,
-                    tint = glyphTint.copy(alpha = 0.08f)
-                )
-                OnboardingTileGlyph(
-                    glyph = symbols[2],
-                    alignment = BiasAlignment(0.92f, -0.92f),
-                    size = size * 0.20f,
-                    rotation = 10f,
-                    tint = glyphTint.copy(alpha = 0.08f)
-                )
-                OnboardingTileGlyph(
-                    glyph = symbols[4],
-                    alignment = BiasAlignment(0.94f, 0.86f),
-                    size = size * 0.26f,
-                    rotation = 12f,
-                    tint = glyphTint.copy(alpha = 0.07f)
-                )
-                // ── The slide's glyph — calm rose ink on paper.
-                CurioIcon(
-                    name = glyph,
-                    contentDescription = null,
-                    tint = glyphTint,
-                    size = size * 0.40f,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .graphicsLayer { rotationZ = -2f }
-                )
-            }
-        }
-    }
-}
-
-/** One faint watermark glyph on the paper tile — ink at a whisper. */
-@Composable
-private fun BoxScope.OnboardingTileGlyph(
-    glyph: String,
-    alignment: Alignment,
-    size: Dp,
-    rotation: Float,
-    tint: Color
-) {
-    CurioIcon(
-        name = glyph,
-        contentDescription = null,
-        tint = tint,
-        size = size,
-        modifier = Modifier
-            .align(alignment)
-            .padding(6.dp)
-            .graphicsLayer { rotationZ = rotation }
-    )
-}
-
-@Composable
 private fun OnboardingSlide(slide: OnboardingSlideData) {
-    // The pager area sits below the torn hero, so on compact screens the
-    // centered column would clip with a fixed-size tile — the tile (and
-    // spacing) shrink under a height threshold to always fit.
+    val ink = heroInk()
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val compact = maxHeight < 480.dp
-        val tileSize = if (compact) 136.dp else 168.dp
+        val compact = maxHeight < 300.dp
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // ── Illustration — torn-paper tile (no more colorful gradient block) ─
-            OnboardingTile(glyph = slide.glyph, seed = slide.seed, size = tileSize)
-
-            Spacer(Modifier.height(if (compact) 16.dp else 24.dp))
-
+            // ── Step kicker — SHUFFLE / EXPLORE / KEEP ────────────────
             Text(
-                text = slide.headline,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                text = slide.kicker,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp
+                ),
+                color = ink.copy(alpha = 0.75f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(if (compact) 8.dp else 10.dp))
+            Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
+
+            Text(
+                text = slide.headline,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = if (compact) 34.sp else 42.sp
+                ),
+                color = ink,
+                textAlign = TextAlign.Center,
+                maxLines = 3
+            )
+
+            Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
 
             Text(
                 text = slide.subtext,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                color = ink.copy(alpha = 0.85f),
+                textAlign = TextAlign.Center,
+                maxLines = 4
             )
         }
     }
@@ -614,45 +528,38 @@ private fun SetupSlide(
     onRequestMic: () -> Unit,
     onRequestOverlay: () -> Unit
 ) {
-    // Centered when the content fits, scrollable on very small screens —
-    // the Box centers the scrollable column as a whole, so short content
-    // stays vertically centered like the intro slides.
+    // Renders INSIDE the big rose hero (v7.102): heading in the banner's
+    // ink, permission cards as paper boxes. Centered when the content fits,
+    // scrollable on very small screens — the Box centers the scrollable
+    // column as a whole.
+    val ink = heroInk()
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .padding(horizontal = 24.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ── Illustration — the same torn-paper tile, smaller ──────
-            OnboardingTile(
-                glyph = CurioIcons.Settings,
-                seed = ONBOARDING_SETUP_TEAR_SEED,
-                size = 118.dp
-            )
-
-            Spacer(Modifier.height(18.dp))
-
             Text(
                 text = "Make Curio yours",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = ink,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
 
             Text(
                 text = "Grant what you like — you can change it anytime in Settings.",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = ink.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(14.dp))
 
             // ── Notifications ─────────────────────────────────────────
             PermissionCard(
@@ -861,37 +768,30 @@ private fun finishOnboarding(context: Context, navController: NavController) {
 }
 
 private data class OnboardingSlideData(
-    val glyph: String,
+    val kicker: String,
     val headline: String,
-    val subtext: String,
-    val seed: Int
+    val subtext: String
 )
 
-// v7.100 — intro copy rewritten around the three beats of the loop:
-// shuffle → explore → keep.
+// v7.102 — intro copy rewritten; each slide opens with a step kicker and
+// renders inside the big rose hero (no illustration tiles).
 private val OnboardingSlides = listOf(
     OnboardingSlideData(
-        glyph = CurioIcons.Casino,
-        headline = "Something new, every shuffle",
-        subtext = "Spin the deck and Curio deals a topic you didn't know you'd love — a film, an album, a book, a discovery.",
-        seed = 0xBEEF
+        kicker = "SHUFFLE",
+        headline = "Every shuffle, something new",
+        subtext = "Spin the deck and Curio deals you a film, an album, a book, or a discovery you didn't know you wanted."
     ),
     OnboardingSlideData(
-        glyph = CurioIcons.AutoAwesome,
+        kicker = "EXPLORE",
         headline = "Explore it your way",
-        subtext = "Listen, read, watch, or scroll. Your explore is timed, never rushed — wander wherever curiosity leads.",
-        seed = 0xF00D
+        subtext = "Listen, read, watch, or scroll. Your time is timed, never rushed — wander wherever curiosity leads."
     ),
     OnboardingSlideData(
-        glyph = CurioIcons.Inventory2,
+        kicker = "KEEP",
         headline = "Keep what moves you",
-        subtext = "Voice notes, reviews, moodboards, journal pages — save what stays with you in the format that fits.",
-        seed = 0xCAFE
+        subtext = "Voice notes, reviews, moodboards, journal pages — save what stays with you, in the format that fits how you think."
     )
 )
-
-/** Fixed tear seed for the theme step's paper tile (stable, never re-rolls). */
-private const val ONBOARDING_THEME_TEAR_SEED = 0x7E57E
 
 /** The theme step — a simple Light / Dark / System picker and one pastel
  *  toggle, nothing else (v7.100). Applies instantly via the reactive
@@ -902,33 +802,40 @@ private fun ThemeSlide() {
     val context = LocalContext.current
     val mode = AppPreferences.themeModeState
     val pastel = AppPreferences.pastelColorsState
+    val fill = settingsRoseAccent()
+    val ink = settingsReadableInk(fill)
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val compact = maxHeight < 520.dp
-        val tileSize = if (compact) 100.dp else 120.dp
+        val compact = maxHeight < 380.dp
         Column(
-            // Scrollable like the setup step — the theme row is taller than
-            // the intro slides, so short screens must never clip the pastel
-            // card (the Box centers the scrollable column as a whole).
+            // Scrollable like the setup step — short screens must never
+            // clip the pastel card (the Box centers the scrollable column
+            // as a whole).
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // ── Illustration — the torn-paper tile with a palette glyph ──
-            OnboardingTile(glyph = CurioIcons.Palette, seed = ONBOARDING_THEME_TEAR_SEED, size = tileSize)
+            // ── Step kicker ───────────────────────────────────────────
+            Text(
+                text = "THEME",
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp
+                ),
+                color = ink.copy(alpha = 0.75f),
+                textAlign = TextAlign.Center
+            )
 
-            Spacer(Modifier.height(if (compact) 14.dp else 20.dp))
+            Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
 
             Text(
                 text = "Pick your look",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = ink,
                 textAlign = TextAlign.Center
             )
 
@@ -937,11 +844,11 @@ private fun ThemeSlide() {
             Text(
                 text = "Light, dark, or follow your phone — and keep Curio's soft pastel colors?",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = ink.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(if (compact) 18.dp else 24.dp))
+            Spacer(Modifier.height(if (compact) 16.dp else 22.dp))
 
             // ── Mode chips — Light / Dark / System (and nothing else) ──
             Row(
@@ -952,23 +859,29 @@ private fun ThemeSlide() {
                     label = "Light",
                     glyph = CurioIcons.LightMode,
                     selected = mode == AppPreferences.THEME_LIGHT,
+                    fill = fill,
+                    ink = ink,
                     onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_LIGHT) }
                 )
                 ThemeModeChip(
                     label = "Dark",
                     glyph = CurioIcons.DarkMode,
                     selected = mode == AppPreferences.THEME_DARK,
+                    fill = fill,
+                    ink = ink,
                     onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_DARK) }
                 )
                 ThemeModeChip(
                     label = "System",
                     glyph = CurioIcons.Contrast,
                     selected = mode == AppPreferences.THEME_SYSTEM,
+                    fill = fill,
+                    ink = ink,
                     onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_SYSTEM) }
                 )
             }
 
-            Spacer(Modifier.height(if (compact) 14.dp else 18.dp))
+            Spacer(Modifier.height(if (compact) 12.dp else 16.dp))
 
             // ── Pastel toggle — borderless box, the setup-card language ──
             CurioSettingsCard(border = null) {
@@ -1005,20 +918,23 @@ private fun ThemeSlide() {
     }
 }
 
-/** One mode chip in the theme picker — filled with the primary color when
- *  selected, a soft surface with a hairline rim otherwise. */
+/** One mode chip in the theme picker — sits ON the rose banner: selected
+ *  fills with the banner's ink (text flips to the rose fill), unselected is
+ *  a translucent ink glass pill with a hairline ink rim. */
 @Composable
 private fun ThemeModeChip(
     label: String,
     glyph: String,
     selected: Boolean,
+    fill: Color,
+    ink: Color,
     onClick: () -> Unit
 ) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
-        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        color = if (selected) ink else ink.copy(alpha = 0.14f),
+        border = if (selected) null else BorderStroke(1.dp, ink.copy(alpha = 0.45f))
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
@@ -1028,13 +944,13 @@ private fun ThemeModeChip(
             CurioIcon(
                 name = glyph,
                 contentDescription = null,
-                tint = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (selected) fill else ink.copy(alpha = 0.9f),
                 size = 16.dp
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                color = if (selected) fill else ink
             )
         }
     }
