@@ -67,6 +67,7 @@ import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.CurioTopic
 import com.curio.app.data.StreakTracker
@@ -301,6 +302,13 @@ fun SaveCaptureScreen(
                             savedEntryId = entry.id
                             saveError = null
                             StreakTracker.recordActivity(context)
+                            // Feed the quests system — NEW saves drive journey +
+                            // daily + badges (the format feeds Every Format).
+                            // Edit re-saves never re-count: they update an
+                            // existing keepsake, not a new discovery.
+                            if (editEntryId == null) {
+                                CurioQuests.onSave(context, entry.format)
+                            }
                             // Saved — the autosaved draft is now redundant. Null the
                             // snapshot too, so a debounced write that re-fires when
                             // saveInProgress flips back can't resurrect it.

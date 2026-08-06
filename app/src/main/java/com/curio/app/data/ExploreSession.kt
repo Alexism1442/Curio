@@ -274,6 +274,8 @@ object ExploreSessionStore {
         // from the resume list so the merged Home "Recents" never shows the
         // same topic twice (once "Resumed", once "Unexplored").
         if (wasUnexplored) removeUnexplored(context, categoryId, topicName)
+        // Feed the quests system — explores drive journey + daily + badges.
+        CurioQuests.onExplore(context, categoryId)
     }
 
     fun removeExplored(context: Context, categoryId: CategoryId, topicName: String) {

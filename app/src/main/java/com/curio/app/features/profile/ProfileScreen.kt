@@ -70,6 +70,7 @@ import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.StreakTracker
 import com.curio.app.infrastructure.CurioCrashReporter
@@ -166,7 +167,11 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 
-    LaunchedEffect(Unit) { refreshStats() }
+    LaunchedEffect(Unit) {
+        refreshStats()
+        // Feed the quests system — visiting Profile completes the journey quest.
+        CurioQuests.onProfileVisited(context)
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -180,8 +185,11 @@ fun ProfileScreen(navController: NavController) {
     }
 
     val streakDays = StreakTracker.getStreak(context)
-    val level = levelFor(totalSaved)
-    val progress = progressTowardsNextLevel(totalSaved)
+    // v7.40 — the level tracker is now the shared XP system (quests/levels):
+    // level + progress come from earned XP instead of raw saved counts.
+    val questXp = CurioQuests.xpState
+    val level = CurioQuests.levelForXp(questXp)
+    val progress = CurioQuests.xpProgress(questXp)
 
     // The hero wears the Home quest family's rose torn banner — your most-
     // explored lane still personalizes the page: its family's symbols
@@ -252,10 +260,17 @@ fun ProfileScreen(navController: NavController) {
                 Box(Modifier.padding(horizontal = 16.dp)) {
                     LevelCard(
                         level = level,
-                        saved = totalSaved,
+                        xp = questXp,
                         progress = progress.first,
                         nextThreshold = progress.second,
-                        isMaxLevel = level >= 9
+                        isMaxLevel = level >= CurioQuests.maxLevel
+                    )
+                }
+            }
+            item {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    QuestsNavCard(
+                        onOpenQuests = { navController.navigate(CurioRoutes.QUESTS) { launchSingleTop = true } }
                     )
                 }
             }
@@ -775,7 +790,7 @@ private fun profileReadableInk(fill: Color): Color = if (
 }
 
 @Composable
-private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
+private fun LevelCard(level: Int, xp: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
     CurioSettingsCard {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(
@@ -788,10 +803,10 @@ private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: In
                 Text("$level", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold), color = Color.White)
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text("Level $level · ${levelTitle(level)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                Text("Level $level · ${CurioQuests.levelTitle(level)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                 Text(
                     if (isMaxLevel) "Your curiosity has no ceiling."
-                    else "$saved / $nextThreshold saved · ${nextThreshold - saved} to next level",
+                    else "$xp / $nextThreshold XP · ${(nextThreshold - xp).coerceAtLeast(0)} XP to next level",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -805,6 +820,48 @@ private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: In
                 color = CurioColors.CoralBlush,
                 trackColor = CurioColors.CoralBlush.copy(alpha = 0.14f)
             )
+        }
+    }
+}
+
+/** Quests entry — Profile owns identity/stats; Quests owns the gamification. */
+@Composable
+private fun QuestsNavCard(onOpenQuests: () -> Unit) {
+    val currentQuest = CurioQuests.currentJourneyQuest()
+    CurioSettingsCard {
+        Surface(
+            onClick = onOpenQuests,
+            color = Color.Transparent,
+            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Brush.verticalGradient(CurioGradients.cardGradient(CurioColors.CoralBlush))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CurioIcon(CurioIcons.EmojiEvents, null, tint = Color.White, size = 23.dp)
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Quests & achievements", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold))
+                    Text(
+                        currentQuest?.let { "Next: ${it.title}" }
+                            ?: "Journey complete — every badge is open",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                CurioForwardArrow(tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f), size = 18.dp)
+            }
         }
     }
 }
@@ -912,30 +969,6 @@ private fun taglineForStreak(streakDays: Int): String = when {
     else -> "Stay curious. There is always more to find."
 }
 
-private val levelThresholds = listOf(0, 1, 5, 15, 30, 60, 100, 250, 500)
-
-private fun levelFor(saved: Int): Int {
-    var level = 1
-    levelThresholds.forEachIndexed { index, threshold -> if (saved >= threshold) level = index + 1 }
-    return level.coerceIn(1, 9)
-}
-
-private fun progressTowardsNextLevel(saved: Int): Pair<Float, Int> {
-    val level = levelFor(saved)
-    if (level >= 8) return 1f to 500
-    val from = levelThresholds[level - 1]
-    val to = levelThresholds[level]
-    return ((saved - from).toFloat() / (to - from).coerceAtLeast(1)) to to
-}
-
-private fun levelTitle(level: Int): String = when (level) {
-    1 -> "First spark"
-    2 -> "Curious newcomer"
-    3 -> "Tuned ear"
-    4 -> "Pattern spotter"
-    5 -> "Comparator"
-    6 -> "Synthesizer"
-    7 -> "Curator"
-    8 -> "Master curator"
-    else -> "Master explorer"
-}
+// v7.40 — level math now lives in the shared quests system (CurioQuests):
+// XP-based thresholds, titles, and progress. Removed the old saved-count
+// levelFor / progressTowardsNextLevel / levelTitle helpers.

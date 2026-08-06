@@ -138,6 +138,12 @@ object CurioIcons {
     // ── Entry meta card glyph (date & time segment)
     const val CalendarToday  = "calendar_today"
 
+    // ── Quests / levels / achievements (v7.40)
+    const val EmojiEvents     = "emoji_events"          // trophy — achievements shelf
+    const val Flag            = "flag"                  // journey marker
+    const val WorkspacePremium = "workspace_premium"    // badge — level milestones
+    const val TaskAlt         = "task_alt"              // current quest
+
     /**
      * Per-family symbol sets for the saved-entry hero's decorative watermark
      * scatter — instruments for Music, camera kit for Movies, books for

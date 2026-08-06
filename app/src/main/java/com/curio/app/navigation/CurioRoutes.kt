@@ -92,6 +92,7 @@ object CurioRoutes {
 
     // ── Push destinations (no bottom nav)
     const val PROFILE = "profile"
+    const val QUESTS = "quests"
     const val ENTRY_DETAIL = "detail/{entryId}"
     const val EDIT_MOODBOARD = "edit-moodboard/{entryId}"
     const val EDIT_ENTRY = "edit-entry/{entryId}"

@@ -96,6 +96,7 @@ import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioCategory
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.CurioTopic
 import com.curio.app.data.SmartDensityMode
@@ -690,6 +691,8 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
             cycleIndex = 0
             recentTopicIds = (recentTopicIds + primary.id).toList().takeLast(20).toSet()
             StreakTracker.recordActivity(context)
+            // Feed the quests system — spins drive journey + daily + badges.
+            CurioQuests.onSpin(context)
             // Final reel clunk — strong confirmation the wheel locked in.
             haptics.performHapticFeedback(HapticFeedbackType.Confirm)
         }

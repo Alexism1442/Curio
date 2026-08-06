@@ -78,6 +78,7 @@ object CurioBackupManager {
         "curio_app_prefs",        // AppPreferences — name, theme, reminder
         "curio_audio_quality",    // AudioQualitySettings
         "curio_streak",           // StreakTracker
+        "curio_quests",           // CurioQuests — XP, journey, daily, badges
         "curio_onboarding"        // onboarding-completed flag
     )
 

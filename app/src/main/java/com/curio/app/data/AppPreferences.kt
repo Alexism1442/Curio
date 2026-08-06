@@ -653,6 +653,7 @@ object AppPreferences {
         if (current.any { it.categoryId == categoryId && it.topicName == topicName }) return
         val updated = listOf(PinnedTopic(categoryId, topicName, System.currentTimeMillis())) + current
         savePinnedTopics(context, updated)
+        CurioQuests.onTopicPinned(context)
     }
 
     fun unpinTopic(context: Context, categoryId: CategoryId, topicName: String) {
@@ -716,6 +717,7 @@ object AppPreferences {
             SavedQuote(entryId, topicName, categoryId, quoteText, System.currentTimeMillis())
         ) + current
         saveSavedQuotes(context, updated)
+        CurioQuests.onQuoteSaved(context)
     }
 
     fun removeSavedQuote(context: Context, entryId: String, quoteText: String) {
@@ -767,6 +769,11 @@ object AppPreferences {
         val updated = getTopicSentiments(context).toMutableMap()
         if (sentiment == SENTIMENT_NONE) updated.remove(key) else updated[key] = sentiment
         saveTopicSentiments(context, updated)
+        // Feed the quests system — like/dislike votes power the daily + badges.
+        when (sentiment) {
+            SENTIMENT_LIKE -> CurioQuests.onTopicLiked(context)
+            SENTIMENT_DISLIKE -> CurioQuests.onTopicDisliked(context)
+        }
     }
 
     private fun saveTopicSentiments(context: Context, sentiments: Map<String, String>) {

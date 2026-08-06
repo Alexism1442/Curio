@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.CaptureRepository
 import com.curio.app.data.CurioDatabase
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.TopicJsonLoader
@@ -60,6 +61,9 @@ class MainActivity : ComponentActivity() {
         // Load the persisted explore-session flow state (active session +
         // recently explored/unexplored lists) before any screen reads it.
         ExploreSessionStore.seed(this)
+        // Load the persisted quests/levels state (XP, journey, daily quests,
+        // achievements) before any screen reads it.
+        CurioQuests.seed(this)
         if (AppPreferences.isReminderEnabled(this)) {
             com.curio.app.data.DailyReminderScheduler.schedule(
                 this,

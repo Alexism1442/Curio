@@ -42,6 +42,8 @@ object StreakTracker {
             .putLong(KEY_LAST_EPOCH_DAY, today)
             .putInt(KEY_CURRENT_STREAK, newStreak)
             .apply()
+        // Feed the quests system — streak milestones unlock the streak badges.
+        CurioQuests.onStreakRecorded(context, newStreak)
     }
 
     /**

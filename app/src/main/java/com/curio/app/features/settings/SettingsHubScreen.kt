@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
@@ -26,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryFamily
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.navigation.CurioRoutes
@@ -254,6 +257,9 @@ private fun settingsReadableInk(fill: Color): Color = if (
  *  hero header on a watermark backdrop, with clean settings cards. */
 @Composable
 fun SettingsHubScreen(navController: NavController) {
+    val context = LocalContext.current
+    // Feed the quests system — opening Settings completes the journey quest.
+    LaunchedEffect(Unit) { CurioQuests.onSettingsVisited(context) }
     Box(
         modifier = Modifier
             .fillMaxSize()
