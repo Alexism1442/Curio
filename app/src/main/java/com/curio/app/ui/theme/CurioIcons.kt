@@ -121,6 +121,7 @@ object CurioIcons {
     const val ErrorOutline = "error_outline"
     const val BugReport     = "bug_report"
     const val Warning       = "warning"
+    const val Download      = "download"     // ⬇ — check for updates
     const val Notifications = "notifications"
     const val BubbleChart   = "bubble_chart"   // floating explore bubble
     const val Schedule      = "schedule"

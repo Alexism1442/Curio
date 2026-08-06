@@ -80,7 +80,9 @@ import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
 import com.curio.app.ui.components.CurioSettingsDivider
+import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioUpdateCheckRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
 import com.curio.app.ui.components.SoftTornSheetShape
@@ -971,6 +973,16 @@ private fun SupportCard(
             CurioSettingsDivider()
             CurioSettingsRow(CurioIcons.History, "Crash logs", "$crashCount saved report${if (crashCount == 1) "" else "s"}", onCrashLogs)
         }
+        CurioSettingsDivider()
+        // Version straight from the build — VERSION_NAME is the release tag
+        // this APK was built from, VERSION_CODE the per-build number.
+        CurioSettingsInfoRow(
+            CurioIcons.Info,
+            "Version",
+            "${com.curio.app.BuildConfig.VERSION_NAME} · build ${com.curio.app.BuildConfig.VERSION_CODE}"
+        )
+        CurioSettingsDivider()
+        CurioUpdateCheckRow()
         CurioSettingsDivider()
         CurioSettingsRow(CurioIcons.ErrorOutline, "Test crash", "Diagnostic tool", onTestCrash)
     }

@@ -55,6 +55,7 @@ import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioUpdateCheckRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.formatHour
 import com.curio.app.ui.theme.CurioIcons
@@ -297,7 +298,16 @@ private fun AboutSection(navController: NavController) {
             navController.navigate(CurioRoutes.ONBOARDING) { launchSingleTop = true }
         }
         CurioSettingsDivider()
-        CurioSettingsInfoRow(CurioIcons.Info, "Version", com.curio.app.BuildConfig.VERSION_NAME)
+        // Version straight from the build — VERSION_NAME is the release tag
+        // this APK was built from (e.g. "1.0.0"), VERSION_CODE is the
+        // per-build number, so the readout is always accurate.
+        CurioSettingsInfoRow(
+            CurioIcons.Info,
+            "Version",
+            "${com.curio.app.BuildConfig.VERSION_NAME} · build ${com.curio.app.BuildConfig.VERSION_CODE}"
+        )
+        CurioSettingsDivider()
+        CurioUpdateCheckRow()
     }
 }
 
