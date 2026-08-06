@@ -1,55 +1,80 @@
-# ✨ Curio v1.0 — The Launch
+# 🌍 Curio
 
 > **Explore something. Notice more. Keep the discovery.**
 
-We scroll past interesting things every day and forget them. Curio turns passive scrolling into active, real-world exploration — and gives you a warm, tactile place to keep what you found. No accounts. No feed. No ads. Just you, a topic, and the world.
-
-**v1.0 is a complete, self-contained release.** It ships with 2,312 hand-curated topics across 11 discovery lanes, a beautiful roulette deck, six rich capture formats, timed explore sessions with floating timer bubbles, and a full offline library — everything you need to turn curiosity into a habit.
+A curated discovery app for curious people. Spin a roulette deck of 2,312 hand-curated topics across 11 lanes (more coming) , then capture what you notice in a beautiful, personal offline library. No accounts. No feed. No ads. Just you, a topic, and the world.
 
 ---
 
-## ✨ What's New in v1.0
+## About
+
+We scroll past interesting things every day and forget them. Curio turns passive scrolling into active, real-world exploration — and gives you a warm, tactile place to keep what you found. Six rich capture formats (voice notes, reviews, journals, mood boards, field notes, and more) live on a paper-textured editor with ruled lines, torn edges, and coffee stains. Everything stays on your device. Your journal is yours.
+
+Built with **Kotlin + Jetpack Compose** on Android 8.0+.
+
+---
+
+## ✨ Features
 
 ### 🎡 The Spin — Your Discovery Deck
 Pick from 11 curated lanes (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries, or Wildcard) — or blend 2–4 into a mixed deck. Curio shuffles a roulette of topics, each with a teaser, imagery, and a structured "go do this" explore action with a suggested time. The deck *feels* like a deck: stacked peek cards, category-tinted edges, shadows, and a satisfying shuffle. Anti-repeat history means you'll never see the same topic back-to-back.
 
-Hit **"Today's Quest"** on the home screen for one-tap random discovery whenever the mood strikes.
-
 ### 📝 Six Capture Formats on Paper-Textured Notes
-Whatever you discover, there's a format waiting:
+Whatever you discover, there's a format waiting: **SoundBite** (voice notes) · **ReelNotes** (reviews) · **Marginalia** (journals) · **Gallery Wall** (mood boards) · **Field Notes** (observations) · **Open Notebook** (wildcard). Every note lives on a rich, paper-styled editor with ruled lines, torn edges, coffee stains, and watermark paper. Full rich text, quotes, images, audio, and tags — all autosaving.
 
-- **SoundBite** — voice note with waveform trimming, playback, and optional voice-to-text transcription
-- **ReelNotes** — review with room for a photo collage
-- **Marginalia** — journal page with pull-quotes
-- **Gallery Wall** — mood board with hand-placed, draggable quote boxes; export as high-res PNG
-- **Field Notes** — structured three-section observation report
-- **Open Notebook** — the wildcard: pick any format per entry
-
-Every note lives on a rich, paper-styled editor with ruled lines, torn edges, coffee stains, folded corners, red margins, and watermark paper in six colors. Full rich text, quotes, images, audio, and tags — all autosaving as you type.
-
-### ⏱️ Explore Sessions with a Floating Timer Bubble
-When a topic deserves real exploration, start a timed session. Curio runs a persistent notification with a **floating bubble that follows you over other apps** (like Messenger) — so you can open the browser, dig in, and always see how much time you planned. Sessions survive reboots, queue and pause for later, and nudge you when it's time to write it down.
+### ⏱️ Explore Sessions with Floating Timer Bubble
+Start a timed session and a persistent floating bubble follows you over other apps (like Messenger) — so you can open the browser, dig in, and always see how much time you planned. Sessions survive reboots and queue for later.
 
 ### 🗄️ The Cabinet — Your Personal Museum
-Every capture lands in your library: browse by category, search your whole collection, zoom into images in a full lightbox, and explore rich entry pages with hero cards and metadata. **Streaks, levels, and lane stats** in your Profile make the habit of noticing feel rewarding.
+Browse by category, search your collection, zoom images in a lightbox, and explore rich entry pages. Streaks, levels, and lane stats make the habit rewarding.
 
-### 🎨 A Real Design Identity
-Material 3 as the foundation, wrapped in Curio's own warm-cream paper world: torn-paper hero cards, category color systems, custom typography, subtle watermark backdrops, and motion throughout. Three theme styles (Curio, AMOLED, Material You) and a pastel color mode.
+### 🎨 Design Identity
+Material 3 with Curio's warm-cream paper world: torn-paper heroes, category colors, custom typography, and motion throughout. Three theme styles (Curio, AMOLED, Material You).
 
-### 🔒 Truly Private by Default
-Everything lives on your device. No accounts. No analytics. No tracking. No cloud. Your journal is yours — and always will be.
+### 🔒 Privacy First
+Everything lives on your device. No accounts. No analytics. No tracking. Open source.
 
 ---
 
-## 🚀 Installation
+## 🚀 Quick Start
 
-**Curio v1.0 is distributed as a signed APK via GitHub Releases.**
+### Install from Release APK
 
 1. Download the latest `release` APK from the [Releases page](https://github.com/firefly-sylestia/Curio/releases)
 2. Install it on any Android 8.0+ device
 3. Android will ask you to allow "install from unknown sources" for your browser — that's normal for sideloaded apps
 
-> **Google Play support is planned as a follow-up.** v1.0 ships via GitHub.
+> **Google Play support is planned.** v1.0 ships via GitHub Releases.
+
+### Build from Source
+
+```bash
+git clone https://github.com/firefly-sylestia/Curio.git
+cd Curio
+./gradlew build
+```
+
+**Requirements:**
+- Android Studio (latest stable or Canary)
+- Kotlin 1.9+
+- Gradle 8.0+
+- Android SDK 26+ (API level)
+
+For a signed release build:
+```bash
+./gradlew bundleRelease
+```
+
+---
+
+## 📖 Usage
+
+1. **Discover** — Open the Spin on Home, pick a lane or create a mixed deck, and hit shuffle
+2. **Explore** — Read the explore action and step-by-step guide, then go find the topic in the real world
+3. **Capture** — When done exploring, tap the floating timer bubble (or open Curio) and pick a format to capture what you noticed
+4. **Keep** — Your entry lands in the Cabinet, tagged and searchable, ready to revisit anytime
+
+Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random discovery whenever the mood strikes.
 
 ---
 
@@ -137,15 +162,54 @@ Everything lives on your device. No accounts. No analytics. No tracking. No clou
 
 ---
 
-## 📢 Feedback & Support
+## ⚙️ Configuration & Customization
 
-Found a bug? Have a feature idea? Want to request a topic or category? We'd love to hear from you:
+### Themes
+- **Curio** — warm cream + category tints (default)
+- **AMOLED** — pure black for dark screens
+- **Material You** — your device's Material palette
+- **Light / Dark / System** mode selection
+- **Pastel color mode** for softer aesthetics
 
-- **GitHub Issues** — [Report bugs or request features](https://github.com/firefly-sylestia/Curio/issues)
-  - Use the **Bug Report** template (with steps, screenshots, version)
-  - Use the **Feature Request** template (for features, categories, or topics)
-- **In-app bug report** — Profile → Support & diagnostics → **Report a bug** (sends feedback directly from the app; includes crash logs for diagnostics)
-- **Topic requests** — open a Feature Request and name the category + topic you'd like to see
+### Settings
+- **Notifications** — daily shuffle reminders, reminder time, explore controls
+- **Recording** — voice quality, dictation (voice-to-text)
+- **Manage Categories** — show, hide, or reorder lanes
+- **Backup & Restore** — export and import full backups; legacy FieldMind archive import
+- **Experiments** — 30+ optional UI tweaks (deck styling, smart density, etc.)
+
+See Settings in-app for the full list.
+
+---
+
+## 🤝 Contributing
+
+We'd love contributions! Here's how:
+
+### Report Bugs
+1. Check [existing issues](https://github.com/firefly-sylestia/Curio/issues) first
+2. Use the **Bug Report** template with steps, screenshots, and version info
+3. Or use the in-app bug report (Profile → Support & diagnostics → **Report a bug**)
+
+### Request Features or Topics
+- Open an issue with the **Feature Request** template
+- For new topics, name the category and the specific topic you'd like to see
+- Topic requests help grow the catalog over time
+
+### Code Contributions
+- Fork the repo and create a feature branch
+- Follow the existing code style (Kotlin + Jetpack Compose conventions)
+- Submit a pull request with a clear description
+- Link to any related issues
+
+### Topic Contributions
+The 2,312 curated topics are hand-picked. If you have topics to suggest for any lane (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries), open a **Feature Request** with specifics.
+
+---
+
+## 📜 License
+
+Curio is **free and open source** under the [MIT License](LICENSE). See LICENSE for details.
 
 ---
 
@@ -156,22 +220,32 @@ Found a bug? Have a feature idea? Want to request a topic or category? We'd love
 - **Cloud sync** — all data is local. Use Backup & Restore (Settings) to export and keep your library safe
 - **Localization** — English only in v1.0
 - **Google Play** — distributed via GitHub Releases; Play Store support coming next
-- **Content depth varies** — all 11 lanes ship, but topic counts differ per category; the catalog grows over time
+- **Content depth varies** — all 11 lanes ship, but topic counts differ per category
 - **Images need network** — topic and entry images load from the web (your data is always offline)
 
-### Coming Next
-- **More topics and categories** — the catalog is open for suggestions; new content drops are planned
-- **Google Play listing** — once polished, Curio will be on the Play Store
-- **Accessibility & localization** — ongoing after launch
-- **Performance tuning** — continued polish
+### Planned
+- **More topics and categories** — the catalog grows over time; suggestions welcome
+- **Google Play listing** — once polished
+- **Accessibility & localization** — after launch
+- **iOS version** — long-term goal
 
 ---
 
-## 👋 About
+## 📬 Support & Feedback
 
-**Curio** is free and open source. The entire project lives on [GitHub](https://github.com/firefly-sylestia/Curio).
+Found a bug? Have an idea? Want to request a topic?
 
-**Made with curiosity** by Firefly.
+- **GitHub Issues** — [Report bugs or request features](https://github.com/firefly-sylestia/Curio/issues)
+- **In-app** — Profile → Support & diagnostics → **Report a bug**
+- **Discussions** — Coming soon for general questions and ideas
+
+---
+
+## 👋 Credits
+
+**Made by Firefly** — design, code, and curated topic catalog.
+
+Special thanks to the early testers and people who shared topics and feedback.
 
 ---
 
