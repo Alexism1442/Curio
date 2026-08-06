@@ -31,15 +31,20 @@ import com.curio.app.ui.theme.CurioIcon
  * headers, arrow rows for navigation, inset dividers).
  */
 
-/** 28dp paper card — the shared container for Profile and Settings cards. */
+/** 28dp paper card — the shared container for Profile and Settings cards.
+ *  [border] defaults to the soft hairline outline; pass `null` for a
+ *  borderless box (the Settings-hub sections and Profile cards wear this). */
 @Composable
-fun CurioSettingsCard(content: @Composable ColumnScope.() -> Unit) {
+fun CurioSettingsCard(
+    border: BorderStroke? = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.38f)),
+    content: @Composable ColumnScope.() -> Unit
+) {
     Surface(
         shape = RoundedCornerShape(28.dp),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 3.dp,
         shadowElevation = 0.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.38f)),
+        border = border,
         modifier = Modifier.fillMaxWidth()
     ) { Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp), content = content) }
 }

@@ -79,6 +79,7 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
+import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
@@ -261,45 +262,59 @@ fun ProfileScreen(navController: NavController) {
             item { Spacer(Modifier.height(6.dp)) }
             item {
                 Box(Modifier.padding(horizontal = 16.dp)) {
-                    LevelCard(
-                        level = level,
-                        xp = questXp,
-                        progress = progress.first,
-                        nextThreshold = progress.second,
-                        isMaxLevel = level >= CurioQuests.maxLevel
-                    )
-                }
-            }
-            item {
-                Box(Modifier.padding(horizontal = 16.dp)) {
-                    QuestsNavCard(
-                        onOpenQuests = { navController.navigate(CurioRoutes.QUESTS) { launchSingleTop = true } }
-                    )
-                }
-            }
-            if (categoryCounts.isNotEmpty()) {
-                item {
-                    Box(Modifier.padding(horizontal = 16.dp)) {
-                        LanesCard(
-                            counts = categoryCounts,
-                            onCabinet = { navController.navigate(CurioRoutes.CABINET) { launchSingleTop = true } }
+                    // v7.93 — Profile cards sit in BORDERLESS boxes
+                    // (CurioSettingsCard with border = null): the soft
+                    // surface container groups each block without the
+                    // hairline outline the Quests/Support cards wear.
+                    CurioSettingsCard(border = null) {
+                        LevelCard(
+                            level = level,
+                            xp = questXp,
+                            progress = progress.first,
+                            nextThreshold = progress.second,
+                            isMaxLevel = level >= CurioQuests.maxLevel
                         )
                     }
                 }
             }
             item {
                 Box(Modifier.padding(horizontal = 16.dp)) {
-                    SettingsNavCard(
-                        onOpenSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } }
-                    )
+                    CurioSettingsCard(border = null) {
+                        QuestsNavCard(
+                            onOpenQuests = { navController.navigate(CurioRoutes.QUESTS) { launchSingleTop = true } }
+                        )
+                    }
+                }
+            }
+            if (categoryCounts.isNotEmpty()) {
+                item {
+                    Box(Modifier.padding(horizontal = 16.dp)) {
+                        CurioSettingsCard(border = null) {
+                            LanesCard(
+                                counts = categoryCounts,
+                                onCabinet = { navController.navigate(CurioRoutes.CABINET) { launchSingleTop = true } }
+                            )
+                        }
+                    }
                 }
             }
             item {
                 Box(Modifier.padding(horizontal = 16.dp)) {
-                    SupportCard(
-                        crashCount = crashCount,
-                        onOpenSupport = { navController.navigate(CurioRoutes.SUPPORT) { launchSingleTop = true } }
-                    )
+                    CurioSettingsCard(border = null) {
+                        SettingsNavCard(
+                            onOpenSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } }
+                        )
+                    }
+                }
+            }
+            item {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    CurioSettingsCard(border = null) {
+                        SupportCard(
+                            crashCount = crashCount,
+                            onOpenSupport = { navController.navigate(CurioRoutes.SUPPORT) { launchSingleTop = true } }
+                        )
+                    }
                 }
             }
             item { Spacer(Modifier.navigationBarsPadding().height(4.dp)) }

@@ -40,6 +40,7 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
+import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsRow
@@ -281,7 +282,11 @@ fun SettingsHubScreen(navController: NavController) {
             ) {
                     item { CurioSectionLabel("Personalize") }
                     item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
+                        // v7.93 — each Settings section sits in a BORDERLESS
+                        // box (CurioSettingsCard with border = null): the soft
+                        // surface container groups the rows without the
+                        // hairline outline the Quests/Support cards wear.
+                        CurioSettingsCard(border = null) {
                             CurioCardHeader(CurioIcons.AutoAwesome, "How Curio feels", "Appearance and color")
                             CurioSettingsRow(CurioIcons.DarkMode, "Appearance", "Theme, tint, and pastel color") {
                                 navController.navigate(CurioRoutes.SETTINGS_APPEARANCE) { launchSingleTop = true }
@@ -298,7 +303,7 @@ fun SettingsHubScreen(navController: NavController) {
                     }
                     item { CurioSectionLabel("Explore") }
                     item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
+                        CurioSettingsCard(border = null) {
                             CurioCardHeader(CurioIcons.ScienceGlyph, "Experiments", "Try visual ideas before they ship")
                             CurioSettingsRow(CurioIcons.Layers, "Card & deck experiments", "Main card, peek deck, and Spin tests") {
                                 navController.navigate(CurioRoutes.EXPERIMENTS) { launchSingleTop = true }
@@ -315,7 +320,7 @@ fun SettingsHubScreen(navController: NavController) {
                     }
                     item { CurioSectionLabel("Safety & support") }
                     item {
-                        Column(modifier = Modifier.fillMaxWidth()) {
+                        CurioSettingsCard(border = null) {
                             CurioCardHeader(CurioIcons.Backup, "Your data", "Backups and restore")
                             CurioSettingsRow(CurioIcons.Backup, "Backup & restore", "Keep captures and settings safe") {
                                 navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
