@@ -3241,14 +3241,15 @@ private fun buildDeckHand(pool: List<CurioTopic>, center: CurioTopic?): List<Cur
  * often than a 2020s release.
  *
  * ───────────────────────────────────────────────────────────────────────
- * AGENT NOTE (v7.94): the durable fix for the classic-heavy Films deck is
- * CONTENT, not weights. The recency factor below only balances the odds;
- * the real cure is adding MORE modern films to
- * `app/src/main/assets/topics/films.json` (2010s/2020s, tier 1, with the
- * standard decade tag like "2010s" / "2020s"). Target: bring the modern
- * share up so the deck no longer skews pre-1980. The batch-authoring
- * scripts were removed in v7.91, so append entries directly to
- * `films.json` (validate with `python3 scripts/validate_topics.py`).
+ * AGENT NOTE (v7.110): the content fix called for in v7.94 is DONE.
+ * `films.json` grew from ~460 to 802 topics via `scripts/batch_films_modern_1.py`
+ * (342 modern Hollywood crowd-pleasers, 2000–2025, proper teasers/facts and
+ * personalized watch instructions). Decade share is now healthy: 2000s ~90,
+ * 2010s ~202, 2020s ~204, so the deck no longer skews pre-1980. The recency
+ * factor below is now a gentle tiebreak, not the cure. Future films work:
+ * re-run `scripts/batch_films_modern_1.py` (it dedupes by normalized title)
+ * or append directly to `films.json` and validate with
+ * `python3 scripts/validate_topics.py`.
  * ───────────────────────────────────────────────────────────────────────
  */
 private fun pickFrom(
