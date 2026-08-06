@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -55,7 +54,6 @@ import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.formatHour
@@ -82,7 +80,9 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
-        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        // The hero banner runs up BEHIND the status bar (the header applies
+        // its own status-bar inset for the back pill) — Profile/Home style.
+        Column(modifier = Modifier.fillMaxSize()) {
             SettingsHeroHeader(title = page.title, subtitle = page.subtitle, onBack = { navController.popBackStack() })
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -113,7 +113,7 @@ private fun AppearanceSection() {
     val themeMode = AppPreferences.themeModeState
     val styleIndex = themeStyles.indexOf(themeStyle).coerceAtLeast(0)
     val themeIndex = themes.indexOf(themeMode).coerceAtLeast(0)
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.AutoAwesome, "Visual language", "Small choices shape every page")
         CompactSegmentedRow("Theme style", listOf("Curio", "AMOLED", "Material"), styleIndex) { index ->
             AppPreferences.setThemeStyle(context, themeStyles[index])
@@ -178,7 +178,7 @@ private fun NotificationsSection() {
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Notifications, "Notifications", "Quiet nudges, when you want them")
         CompactSwitchRow("Daily shuffle reminder", if (AppPreferences.reminderEnabledState) "Every day at ${formatHour(AppPreferences.getReminderHour(context))}" else "Off", AppPreferences.reminderEnabledState) { enabled ->
             if (enabled) enableNotifications { AppPreferences.setReminderEnabled(context, true) } else AppPreferences.setReminderEnabled(context, false)
@@ -245,7 +245,7 @@ private fun RecordingSection() {
     val context = LocalContext.current
     var quality by remember { mutableStateOf(AudioQualitySettings.get(context)) }
     var showQualityDialog by remember { mutableStateOf(false) }
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Mic, "Recording", "Voice notes that sound like you")
         CurioSettingsRow(CurioIcons.Mic, "Audio quality", quality.label) {
             showQualityDialog = true
@@ -270,7 +270,7 @@ private fun RecordingSection() {
 
 @Composable
 private fun DataSection(navController: NavController) {
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Backup, "Backup & restore", "Your captures stay yours")
         CurioSettingsRow(CurioIcons.Backup, "Open backup tools", "Export, restore, or import FieldMind data") {
             navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
@@ -283,7 +283,7 @@ private fun DataSection(navController: NavController) {
 @Composable
 private fun AboutSection(navController: NavController) {
     val context = LocalContext.current
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Info, "About Curio", "Help and app details")
         CurioSettingsRow(CurioIcons.Replay, "Replay intro", "See the welcome screens again") {
             CurioOnboardingState.reset(context)

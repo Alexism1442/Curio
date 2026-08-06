@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +37,6 @@ import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
@@ -218,7 +216,9 @@ fun BackupToolsScreen(navController: NavController) {
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
-        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        // The hero banner runs up BEHIND the status bar (the header applies
+        // its own status-bar inset for the back pill) — Profile/Home style.
+        Column(modifier = Modifier.fillMaxSize()) {
             SettingsHeroHeader(
                 title = "Backup & restore",
                 subtitle = "Keep your captures safe",
@@ -231,7 +231,7 @@ fun BackupToolsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Your data") }
             item {
-                CurioSettingsCard {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     CurioCardHeader(CurioIcons.Backup, "Backup & restore", "A complete, portable copy of Curio")
                     CurioSettingsRow(CurioIcons.Backup, "Back up now", "Save captures, settings + recordings") {
                         backupLauncher.launch(CurioBackupManager.suggestedFileName())
@@ -249,7 +249,7 @@ fun BackupToolsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Legacy import") }
             item {
-                CurioSettingsCard {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     CurioCardHeader(CurioIcons.History, "FieldMind archive", "Add older observations to your Cabinet")
                     CurioSettingsRow(
                         CurioIcons.History,

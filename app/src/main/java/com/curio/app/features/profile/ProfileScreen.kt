@@ -78,7 +78,6 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
@@ -107,8 +106,8 @@ import kotlinx.coroutines.launch
  * Lanes stats pinned INSIDE the banner above the tear (no standalone strip
  * below). Behind everything sits the shared watermark backdrop (glyphs kept
  * below the banner). Below the hero: the level tracker, your lanes, a
- * single Settings entry card, and the support/diagnostics card — paper
- * cards with hairline borders, the app's shared language.
+ * single Settings entry row, and the support/diagnostics rows — flat
+ * content sitting directly on the watermark background (no card shells).
  */
 
 /** The torn banner's solid body height — tall enough for the top pills,
@@ -791,7 +790,11 @@ private fun profileReadableInk(fill: Color): Color = if (
 
 @Composable
 private fun LevelCard(level: Int, xp: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
-    CurioSettingsCard {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(
                 modifier = Modifier
@@ -828,7 +831,7 @@ private fun LevelCard(level: Int, xp: Int, progress: Float, nextThreshold: Int, 
 @Composable
 private fun QuestsNavCard(onOpenQuests: () -> Unit) {
     val currentQuest = CurioQuests.currentJourneyQuest()
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Surface(
             onClick = onOpenQuests,
             color = Color.Transparent,
@@ -869,7 +872,7 @@ private fun QuestsNavCard(onOpenQuests: () -> Unit) {
 /** Single Settings entry — Profile owns identity/stats, Settings owns every preference. */
 @Composable
 private fun SettingsNavCard(onOpenSettings: () -> Unit) {
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Surface(
             onClick = onOpenSettings,
             color = Color.Transparent,
@@ -906,7 +909,7 @@ private fun SettingsNavCard(onOpenSettings: () -> Unit) {
 
 @Composable
 private fun LanesCard(counts: Map<CategoryId, Int>, onCabinet: () -> Unit) {
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Palette, "Your lanes", "Where you've been exploring")
         Spacer(Modifier.height(6.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -950,7 +953,7 @@ private fun SupportCard(
     onCrashLogs: () -> Unit,
     onReportBug: () -> Unit
 ) {
-    CurioSettingsCard {
+    Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Info, "Support & diagnostics", "Help, reports, and developer tools")
         CurioSettingsRow(CurioIcons.BugReport, "Report a bug", "Send feedback or an issue", onReportBug)
         if (crashCount > 0) {

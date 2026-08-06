@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -31,7 +30,6 @@ import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
@@ -53,7 +51,9 @@ fun ExperimentsScreen(navController: NavController) {
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
-        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        // The hero banner runs up BEHIND the status bar (the header applies
+        // its own status-bar inset for the back pill) — Profile/Home style.
+        Column(modifier = Modifier.fillMaxSize()) {
             SettingsHeroHeader(
                 title = "Experiments",
                 subtitle = "Try ideas before they ship",
@@ -66,7 +66,7 @@ fun ExperimentsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Card surfaces") }
             item {
-                CurioSettingsCard {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     CurioCardHeader(CurioIcons.Layers, "Card & deck look", "Independent visual tests for Spin")
                     ExperimentSwitchRow("Top-lit deck cards", "Peek cards catch light at the top edge", AppPreferences.peekGradientState) {
                         AppPreferences.setPeekGradientEnabled(context, it)
@@ -111,7 +111,7 @@ fun ExperimentsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Layout & input") }
             item {
-                CurioSettingsCard {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     CurioCardHeader(CurioIcons.ScienceGlyph, "Behavior tests", "Temporary options for tuning")
                     ExperimentSwitchRow("Smart Spin layout", "Fits the deck on short screens", AppPreferences.smartSpinLayoutState) {
                         AppPreferences.setSmartSpinLayoutEnabled(context, it)
