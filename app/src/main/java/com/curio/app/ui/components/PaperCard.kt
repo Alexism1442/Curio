@@ -66,7 +66,6 @@ import com.curio.app.data.NotePaperColor
 import com.curio.app.data.NotePaperStyle
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
-import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.notePaperBorder
 import com.curio.app.ui.theme.notePaperInk
 import com.curio.app.ui.theme.notePaperRule
@@ -1628,7 +1627,7 @@ fun NotePaperStyleToggle(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Base — Ruled (sharp ruled page) · Torn (ragged slip).
@@ -1735,7 +1734,11 @@ fun NotePaperStyleToggle(
     }
 }
 
-/** Compact paper-style pill chip — label-only, tight padding, tiny font. */
+/** Compact paper-style pill chip — label-only, tight padding, tiny font.
+ *  v7.98 — theme-aware capsules: inactive chips follow the theme's muted
+ *  tokens (outline-variant rim + on-surface-variant ink), active chips
+ *  bloom in the paper accent — no hardcoded dark-mode color branches, so
+ *  the strip reads correctly on the tool dock AND the tinted page. */
 @Composable
 private fun CompactPaperChip(
     label: String,
@@ -1744,30 +1747,22 @@ private fun CompactPaperChip(
     enabled: Boolean,
     onClick: () -> Unit
 ) {
-    // INACTIVE chips on the dark page background were invisible — the warm
-    // dark-brown paper ink at 50% vanished against midnight. Same rule the
-    // toolbar already uses: in dark/AMOLED the label flips to a warm light
-    // tan and the hairline border strengthens, so every option reads
-    // clearly; light mode keeps the warm-brown paper look, just a touch
-    // more present.
-    val inactiveInk = if (isCurioDarkTheme()) Color(0xFFE0D5BC).copy(alpha = 0.90f)
-    else paperInk().copy(alpha = 0.62f)
-    val inactiveBorderAlpha = if (isCurioDarkTheme()) 0.42f else 0.24f
     Surface(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(6.dp),
-        color = if (active) accent.copy(alpha = 0.20f) else Color.Transparent,
+        shape = RoundedCornerShape(50),
+        color = if (active) accent.copy(alpha = 0.18f) else Color.Transparent,
         border = BorderStroke(
             1.dp,
-            if (active) accent.copy(alpha = 0.55f) else accent.copy(alpha = inactiveBorderAlpha)
+            if (active) accent.copy(alpha = 0.55f)
+            else MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (active) accent else inactiveInk,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+            style = MaterialTheme.typography.labelMedium,
+            color = if (active) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
         )
     }
 }
@@ -1791,25 +1786,23 @@ fun NotePaperColorToggle(
     // the toolbar rows stay clean; the chip's own dot shows the current
     // paper color, and tapping expands the swatch row below it.
     var expanded by remember { mutableStateOf(false) }
-    // Inactive chip on the dark page background was invisible (dark-brown
-    // paper ink at 55% vanished against midnight) — same dark-mode bump as
-    // the style chips: warm light-tan label + stronger hairline.
-    val inactiveInk = if (isCurioDarkTheme()) Color(0xFFE0D5BC).copy(alpha = 0.90f)
-    else paperInk().copy(alpha = 0.62f)
-    val inactiveBorderAlpha = if (isCurioDarkTheme()) 0.42f else 0.30f
+    // Theme-aware on the dock/page: collapsed follows the theme's muted
+    // tokens, expanded blooms in the accent (no hardcoded dark-mode bumps).
+    val ink = if (expanded) accent else MaterialTheme.colorScheme.onSurfaceVariant
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Surface(
             onClick = { expanded = !expanded },
             enabled = enabled,
-            shape = RoundedCornerShape(8.dp),
-            color = if (expanded) accent.copy(alpha = 0.18f) else Color.Transparent,
+            shape = RoundedCornerShape(10.dp),
+            color = if (expanded) accent.copy(alpha = 0.16f) else Color.Transparent,
             border = BorderStroke(
                 1.dp,
-                if (expanded) accent.copy(alpha = 0.6f) else accent.copy(alpha = inactiveBorderAlpha)
+                if (expanded) accent.copy(alpha = 0.55f)
+                else MaterialTheme.colorScheme.outlineVariant
             )
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -1825,13 +1818,13 @@ fun NotePaperColorToggle(
                 CurioIcon(
                     name = CurioIcons.Palette,
                     contentDescription = null,
-                    tint = if (expanded) accent else inactiveInk,
+                    tint = ink,
                     size = 14.dp
                 )
                 Text(
                     text = "Color",
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (expanded) accent else inactiveInk
+                    color = ink
                 )
             }
         }

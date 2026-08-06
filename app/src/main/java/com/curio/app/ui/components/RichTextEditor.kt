@@ -6,15 +6,20 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -64,10 +69,10 @@ import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
 import com.curio.app.ui.theme.notePaperHighlight
 import com.curio.app.ui.theme.notePaperInk
+import com.curio.app.ui.theme.notePaperSurface
 import com.curio.app.ui.theme.paperControlAccent
 import com.curio.app.ui.theme.paperHighlight
 import com.curio.app.ui.theme.PatrickHandFontFamily
-import com.curio.app.ui.theme.isCurioDarkTheme
 
 /**
  * The rich-text flags the toolbar can apply. [TextSpan] stores each as a
@@ -346,11 +351,12 @@ private fun clearSpanSize(spans: List<TextSpan>, s: Int, e: Int): List<TextSpan>
 
 /**
  * Rich-text editor shared by the capture formats — bold / italic / highlight
- * over the current selection. Since v7.39 BOTH toolbar modes present the
- * tools behind compact text buttons ("Paper" for the note-paper style +
- * color pickers, "Format" for the B / I / highlight / size tools), and
- * opening one collapses the other — the mode enum is kept for callers but
- * the tool rows no longer stay visible all the time.
+ * over the current selection. v7.98 — every tool lives in ONE theme-aware
+ * tool dock above the field ("Paper" for the note-paper style + color
+ * pickers — wearing a live dot of the current sheet color — "Format" for
+ * the B / I / highlight / size tools), and opening one collapses the
+ * other. The mode enum is kept for callers but the tool rows no longer
+ * stay visible all the time.
  *
  * Edits flow through `BasicTextField`'s AnnotatedString value, so span styles
  * are preserved while typing; a small common-prefix/suffix diff re-applies an
@@ -454,14 +460,6 @@ fun RichTextEditor(
     val effectiveFieldPadding = if (paper) PaddingValues(0.dp) else fieldPadding
     val effectiveAccent = if (paper) paperControlAccent() else accent
     val effectiveInk = if (paper) notePaperInk(paperColor) else ink
-    // Toolbar buttons on the dark page background need stronger definition
-    // than on cream — bump the border/icon alphas in dark/AMOLED so the
-    // icons stay clearly visible (they looked washed-out against midnight).
-    val toolbarBorderAlpha = if (isCurioDarkTheme()) 0.75f else 0.45f
-    val toolbarIconAlpha = if (isCurioDarkTheme()) 1f else 0.75f
-    val toolbarActiveBorderAlpha = if (isCurioDarkTheme()) 0.9f else 0.6f
-    val toolbarActiveFillAlpha = if (isCurioDarkTheme()) 0.28f else 0.18f
-
     LaunchedEffect(text, spans) {
         if (tfv.text != text) {
             tfv = TextFieldValue(buildRichAnnotated(text, spans, effectiveHighlight))
@@ -711,103 +709,117 @@ fun RichTextEditor(
     }
 
     Column(modifier = modifier) {
-        // ── Toolbar ─────────────────────────────────────────────────────
-        // v7.39 — one compact row; every tool sits behind a TEXT button so
-        // the page stays uncluttered. "Paper" reveals the style + color
-        // pickers, "Format" reveals the B / I / highlight / size tools, and
-        // opening one closes the other (mutual exclusion) — no more stacked
-        // rows of tools. Both toolbar modes now collapse the same way, so
-        // the format tools no longer stay visible all the time.
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        // ── Tool dock — one theme-aware strip above the field ───────────
+        // v7.98 — redesigned: a single rounded dock (theme surface)
+        // replaces the old floating bordered text buttons. Collapsed it is
+        // ONE slim row — [Paper] / [Format] toggles (Paper wears a LIVE dot
+        // of the current paper color) plus the trailing action; opening a
+        // toggle expands its tools INSIDE the dock behind a hairline
+        // divider. Every color comes from theme tokens (surface container,
+        // outline variant, accent), so the dock is properly theme-aware in
+        // light, dark, AMOLED and pastel — no hardcoded alpha bumps.
+        Surface(
+            shape = RoundedCornerShape(14.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = BorderStroke(1.dp, effectiveAccent.copy(alpha = 0.40f)),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                if (paper) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 6.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (paper) {
+                        ToolToggleButton(
+                            icon = CurioIcons.Palette,
+                            label = "Paper",
+                            expanded = styleExpanded,
+                            accent = effectiveAccent,
+                            dot = notePaperSurface(paperColor),
+                            enabled = enabled,
+                            onToggle = {
+                                val next = !styleExpanded
+                                if (next) toolbarExpanded = false
+                                styleExpanded = next
+                            }
+                        )
+                    }
                     ToolToggleButton(
-                        icon = CurioIcons.Palette,
-                        label = "Paper",
-                        expanded = styleExpanded,
+                        icon = CurioIcons.FormatText,
+                        label = "Format",
+                        expanded = toolbarExpanded,
                         accent = effectiveAccent,
-                        borderAlpha = toolbarBorderAlpha,
-                        fillAlpha = toolbarActiveFillAlpha,
                         enabled = enabled,
                         onToggle = {
-                            val next = !styleExpanded
-                            if (next) toolbarExpanded = false
-                            styleExpanded = next
-                        },
-                        modifier = Modifier.padding(bottom = 2.dp)
+                            val next = !toolbarExpanded
+                            if (next) styleExpanded = false
+                            toolbarExpanded = next
+                        }
                     )
+                    Spacer(Modifier.weight(1f))
+                    trailingAction?.invoke()
                 }
-                ToolToggleButton(
-                    icon = CurioIcons.FormatText,
-                    label = "Format",
-                    expanded = toolbarExpanded,
-                    accent = effectiveAccent,
-                    borderAlpha = toolbarBorderAlpha,
-                    fillAlpha = toolbarActiveFillAlpha,
-                    enabled = enabled,
-                    onToggle = {
-                        val next = !toolbarExpanded
-                        if (next) styleExpanded = false
-                        toolbarExpanded = next
-                    },
-                    modifier = Modifier.padding(bottom = 2.dp)
-                )
-            }
-            trailingAction?.invoke()
-        }
-        AnimatedVisibility(
-            visible = paper && styleExpanded,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(1.dp)
-            ) {
-                NotePaperStyleToggle(
-                    style = paperStyle,
-                    onStyleChange = onPaperStyleChange,
-                    accent = effectiveAccent,
-                    enabled = enabled,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                if (showColorTool) {
-                    NotePaperColorToggle(
-                        color = paperColor,
-                        onColorChange = onPaperColorChange,
-                        accent = effectiveAccent,
-                        enabled = enabled
-                    )
+                AnimatedVisibility(
+                    visible = paper && styleExpanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        HorizontalDivider(color = effectiveAccent.copy(alpha = 0.16f))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            NotePaperStyleToggle(
+                                style = paperStyle,
+                                onStyleChange = onPaperStyleChange,
+                                accent = effectiveAccent,
+                                enabled = enabled,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            if (showColorTool) {
+                                NotePaperColorToggle(
+                                    color = paperColor,
+                                    onColorChange = onPaperColorChange,
+                                    accent = effectiveAccent,
+                                    enabled = enabled
+                                )
+                            }
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = toolbarExpanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        HorizontalDivider(color = effectiveAccent.copy(alpha = 0.16f))
+                        FormatToolbar(
+                            boldActive = hasFlagAt(RichFlag.BOLD),
+                            italicActive = hasFlagAt(RichFlag.ITALIC),
+                            highlightActive = hasFlagAt(RichFlag.HIGHLIGHT),
+                            sizeActive = pendingSizeSp != null,
+                            accent = effectiveAccent,
+                            enabled = enabled,
+                            currentSp = currentSizeSp(),
+                            onBold = { applyFlag(RichFlag.BOLD) },
+                            onItalic = { applyFlag(RichFlag.ITALIC) },
+                            onHighlight = { applyFlag(RichFlag.HIGHLIGHT) },
+                            onSizePick = { applyExactSize(it) },
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                        )
+                    }
                 }
             }
         }
-        AnimatedVisibility(
-            visible = toolbarExpanded,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            FormatToolbar(
-                boldActive = hasFlagAt(RichFlag.BOLD),
-                italicActive = hasFlagAt(RichFlag.ITALIC),
-                highlightActive = hasFlagAt(RichFlag.HIGHLIGHT),
-                sizeActive = pendingSizeSp != null,
-                accent = effectiveAccent,
-                enabled = enabled,
-                currentSp = currentSizeSp(),
-                toolbarBorderAlpha = toolbarBorderAlpha,
-                toolbarIconAlpha = toolbarIconAlpha,
-                toolbarActiveBorderAlpha = toolbarActiveBorderAlpha,
-                toolbarActiveFillAlpha = toolbarActiveFillAlpha,
-                onBold = { applyFlag(RichFlag.BOLD) },
-                onItalic = { applyFlag(RichFlag.ITALIC) },
-                onHighlight = { applyFlag(RichFlag.HIGHLIGHT) },
-                onSizePick = { applyExactSize(it) }
-            )
-        }
+        // Small air gap so the dock reads as one unit above the field/paper.
+        Spacer(Modifier.height(5.dp))
 
         // ── The field ───────────────────────────────────────────────────
         // On note-paper ([paper]) the field renders inside a PaperCard with
@@ -895,10 +907,6 @@ fun RichTextEditor(
                                 accent = effectiveAccent,
                                 enabled = enabled,
                                 currentSp = currentSizeSp(),
-                                toolbarBorderAlpha = toolbarBorderAlpha,
-                                toolbarIconAlpha = toolbarIconAlpha,
-                                toolbarActiveBorderAlpha = toolbarActiveBorderAlpha,
-                                toolbarActiveFillAlpha = toolbarActiveFillAlpha,
                                 onBold = { applyFlag(RichFlag.BOLD) },
                                 onItalic = { applyFlag(RichFlag.ITALIC) },
                                 onHighlight = { applyFlag(RichFlag.HIGHLIGHT) },
@@ -978,10 +986,6 @@ private fun SelectionFormatBar(
     accent: Color,
     enabled: Boolean,
     currentSp: Float,
-    toolbarBorderAlpha: Float,
-    toolbarIconAlpha: Float,
-    toolbarActiveBorderAlpha: Float,
-    toolbarActiveFillAlpha: Float,
     onBold: () -> Unit,
     onItalic: () -> Unit,
     onHighlight: () -> Unit,
@@ -991,7 +995,7 @@ private fun SelectionFormatBar(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         shadowElevation = 4.dp,
-        border = BorderStroke(1.dp, accent.copy(alpha = toolbarBorderAlpha)),
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.45f)),
         modifier = Modifier.padding(bottom = 2.dp)
     ) {
         Row(
@@ -999,42 +1003,9 @@ private fun SelectionFormatBar(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FormatToolButton(
-                icon = CurioIcons.FormatBold,
-                label = "Bold",
-                active = boldActive,
-                accent = accent,
-                enabled = enabled,
-                borderAlpha = toolbarBorderAlpha,
-                iconAlpha = toolbarIconAlpha,
-                activeBorderAlpha = toolbarActiveBorderAlpha,
-                activeFillAlpha = toolbarActiveFillAlpha,
-                onClick = onBold
-            )
-            FormatToolButton(
-                icon = CurioIcons.FormatItalic,
-                label = "Italic",
-                active = italicActive,
-                accent = accent,
-                enabled = enabled,
-                borderAlpha = toolbarBorderAlpha,
-                iconAlpha = toolbarIconAlpha,
-                activeBorderAlpha = toolbarActiveBorderAlpha,
-                activeFillAlpha = toolbarActiveFillAlpha,
-                onClick = onItalic
-            )
-            FormatToolButton(
-                icon = CurioIcons.FormatHighlight,
-                label = "Highlight",
-                active = highlightActive,
-                accent = accent,
-                enabled = enabled,
-                borderAlpha = toolbarBorderAlpha,
-                iconAlpha = toolbarIconAlpha,
-                activeBorderAlpha = toolbarActiveBorderAlpha,
-                activeFillAlpha = toolbarActiveFillAlpha,
-                onClick = onHighlight
-            )
+            FormatToolButton(CurioIcons.FormatBold, "Bold", boldActive, accent, enabled, onBold)
+            FormatToolButton(CurioIcons.FormatItalic, "Italic", italicActive, accent, enabled, onItalic)
+            FormatToolButton(CurioIcons.FormatHighlight, "Highlight", highlightActive, accent, enabled, onHighlight)
             // One text-size button — the A+/A− pair both opened the same
             // size-picker dropdown, so they collapsed into a single button.
             SizePickerButton(
@@ -1044,10 +1015,6 @@ private fun SelectionFormatBar(
                 accent = accent,
                 enabled = enabled,
                 currentSp = currentSp,
-                borderAlpha = toolbarBorderAlpha,
-                iconAlpha = toolbarIconAlpha,
-                activeBorderAlpha = toolbarActiveBorderAlpha,
-                activeFillAlpha = toolbarActiveFillAlpha,
                 onPick = onSizePick
             )
         }
@@ -1064,56 +1031,20 @@ private fun FormatToolbar(
     accent: Color,
     enabled: Boolean,
     currentSp: Float,
-    toolbarBorderAlpha: Float,
-    toolbarIconAlpha: Float,
-    toolbarActiveBorderAlpha: Float,
-    toolbarActiveFillAlpha: Float,
     onBold: () -> Unit,
     onItalic: () -> Unit,
     onHighlight: () -> Unit,
-    onSizePick: (Float) -> Unit
+    onSizePick: (Float) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.padding(bottom = 2.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FormatToolButton(
-            icon = CurioIcons.FormatBold,
-            label = "Bold",
-            active = boldActive,
-            accent = accent,
-            enabled = enabled,
-            borderAlpha = toolbarBorderAlpha,
-            iconAlpha = toolbarIconAlpha,
-            activeBorderAlpha = toolbarActiveBorderAlpha,
-            activeFillAlpha = toolbarActiveFillAlpha,
-            onClick = onBold
-        )
-        FormatToolButton(
-            icon = CurioIcons.FormatItalic,
-            label = "Italic",
-            active = italicActive,
-            accent = accent,
-            enabled = enabled,
-            borderAlpha = toolbarBorderAlpha,
-            iconAlpha = toolbarIconAlpha,
-            activeBorderAlpha = toolbarActiveBorderAlpha,
-            activeFillAlpha = toolbarActiveFillAlpha,
-            onClick = onItalic
-        )
-        FormatToolButton(
-            icon = CurioIcons.FormatHighlight,
-            label = "Highlight",
-            active = highlightActive,
-            accent = accent,
-            enabled = enabled,
-            borderAlpha = toolbarBorderAlpha,
-            iconAlpha = toolbarIconAlpha,
-            activeBorderAlpha = toolbarActiveBorderAlpha,
-            activeFillAlpha = toolbarActiveFillAlpha,
-            onClick = onHighlight
-        )
+        FormatToolButton(CurioIcons.FormatBold, "Bold", boldActive, accent, enabled, onBold)
+        FormatToolButton(CurioIcons.FormatItalic, "Italic", italicActive, accent, enabled, onItalic)
+        FormatToolButton(CurioIcons.FormatHighlight, "Highlight", highlightActive, accent, enabled, onHighlight)
         // Text size — tapping opens a dropdown of fixed sizes; picking one
         // applies it to the selection (if any) and arms it as the sticky
         // size so the next text typed carries it. The button stays lit
@@ -1128,10 +1059,6 @@ private fun FormatToolbar(
             accent = accent,
             enabled = enabled,
             currentSp = currentSp,
-            borderAlpha = toolbarBorderAlpha,
-            iconAlpha = toolbarIconAlpha,
-            activeBorderAlpha = toolbarActiveBorderAlpha,
-            activeFillAlpha = toolbarActiveFillAlpha,
             onPick = onSizePick
         )
     }
@@ -1146,32 +1073,46 @@ private fun ToolToggleButton(
     enabled: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
-    borderAlpha: Float = 0.35f,
-    fillAlpha: Float = 0.15f
+    /** Live swatch — e.g. the current paper color, shown before the icon. */
+    dot: Color? = null
 ) {
+    // Theme-aware on the dock: collapsed follows the theme's muted tokens,
+    // expanded blooms in the accent — no hardcoded dark-mode alphas.
+    val ink = if (expanded) accent else MaterialTheme.colorScheme.onSurfaceVariant
+    val fill = if (expanded) accent.copy(alpha = 0.16f) else Color.Transparent
+    val rim = if (expanded) accent.copy(alpha = 0.55f)
+              else MaterialTheme.colorScheme.outlineVariant
     Surface(
         onClick = onToggle,
         enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
-        color = if (expanded) accent.copy(alpha = fillAlpha) else Color.Transparent,
-        border = BorderStroke(1.dp, accent.copy(alpha = borderAlpha)),
+        shape = RoundedCornerShape(10.dp),
+        color = fill,
+        border = BorderStroke(1.dp, rim),
         modifier = modifier
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (dot != null) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(dot, CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                )
+            }
             CurioIcon(
                 name = icon,
                 contentDescription = if (expanded) "Hide $label" else "Show $label",
-                tint = accent,
+                tint = ink,
                 size = 16.dp
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = accent
+                color = ink
             )
         }
     }
@@ -1185,34 +1126,29 @@ private fun FormatToolButton(
     accent: Color,
     enabled: Boolean,
     onClick: () -> Unit,
-    borderAlpha: Float = 0.45f,
-    iconAlpha: Float = 0.75f,
-    activeBorderAlpha: Float = 0.6f,
-    activeFillAlpha: Float = 0.18f
+    modifier: Modifier = Modifier
 ) {
     Surface(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
-        color = if (active) accent.copy(alpha = activeFillAlpha) else Color.Transparent,
+        shape = RoundedCornerShape(10.dp),
+        color = if (active) accent.copy(alpha = 0.16f) else Color.Transparent,
         border = BorderStroke(
             1.dp,
-            if (active) accent.copy(alpha = activeBorderAlpha) else accent.copy(alpha = borderAlpha)
-        )
+            if (active) accent.copy(alpha = 0.55f)
+            else MaterialTheme.colorScheme.outlineVariant
+        ),
+        modifier = modifier
     ) {
         CurioIcon(
             name = icon,
             contentDescription = label,
-            // Inactive buttons fade the accent — on cream paper (both themes)
-            // the theme's onSurfaceVariant reads washed-out/wrong, and the
-            // old 0.45 alpha vanished on the dark page background in dark
-            // mode (the toolbar row sits OUTSIDE the paper slip). The
-            // stronger alpha keeps the same hue legible on both cream and
-            // midnight. Dark/AMOLED pass fuller alphas (see the caller) so
-            // the icons read clearly against the midnight page.
-            tint = if (active) accent else accent.copy(alpha = iconAlpha),
+            // Theme-aware: inactive tools follow the theme's muted ink (which
+            // reads on the dock surface AND the floating bar in every theme),
+            // active tools bloom in the accent.
+            tint = if (active) accent else MaterialTheme.colorScheme.onSurfaceVariant,
             size = 16.dp,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+            modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp)
         )
     }
 }
@@ -1234,11 +1170,7 @@ private fun SizePickerButton(
     accent: Color,
     enabled: Boolean,
     currentSp: Float,
-    onPick: (Float) -> Unit,
-    borderAlpha: Float = 0.45f,
-    iconAlpha: Float = 0.75f,
-    activeBorderAlpha: Float = 0.6f,
-    activeFillAlpha: Float = 0.18f
+    onPick: (Float) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -1248,10 +1180,6 @@ private fun SizePickerButton(
             active = active,
             accent = accent,
             enabled = enabled,
-            borderAlpha = borderAlpha,
-            iconAlpha = iconAlpha,
-            activeBorderAlpha = activeBorderAlpha,
-            activeFillAlpha = activeFillAlpha,
             onClick = { expanded = true }
         )
         DropdownMenu(

@@ -439,10 +439,13 @@ fun SaveCaptureScreen(
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
+            // v7.98 — the format body fills the page: 16dp side margins
+            // (the app-standard edge) instead of the old 24dp, so the paper
+            // fields and tool docks breathe edge-to-edge.
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                     if (editEntryId != null && editingEntry == null) {
