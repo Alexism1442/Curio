@@ -916,7 +916,9 @@ private fun SettingsNavCard(onOpenSettings: () -> Unit) {
                     modifier = Modifier
                         .size(46.dp)
                         .clip(RoundedCornerShape(15.dp))
-                        .background(Brush.verticalGradient(CurioGradients.cardGradient(CurioColors.CoralBlush))),
+                        // Blue settings block — the cog reads distinctly from
+                        // the coral quests/level chips (v7.103).
+                        .background(Brush.verticalGradient(CurioGradients.cardGradient(CurioColors.DustyBlue))),
                     contentAlignment = Alignment.Center
                 ) {
                     CurioIcon(CurioIcons.Settings, null, tint = Color.White, size = 23.dp)
@@ -924,7 +926,7 @@ private fun SettingsNavCard(onOpenSettings: () -> Unit) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Settings & preferences", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold))
                     Text(
-                        "Appearance · notifications · backup",
+                        "Appearance, notifications, backup & more",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

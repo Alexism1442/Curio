@@ -167,7 +167,7 @@ private fun LevelCard(level: Int, xp: Int, nextThreshold: Int, progress: Float, 
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    "$xp XP earned",
+                    "Earning XP with every explore",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -175,7 +175,9 @@ private fun LevelCard(level: Int, xp: Int, nextThreshold: Int, progress: Float, 
             CurioIcon(
                 name = CurioIcons.WorkspacePremium,
                 contentDescription = null,
-                tint = CurioColors.CoralBlush,
+                // Gold trophy — an earned rank reads better in warm gold
+                // than the coral used everywhere else (v7.103).
+                tint = CurioColors.ButterYellow,
                 size = 30.dp
             )
         }

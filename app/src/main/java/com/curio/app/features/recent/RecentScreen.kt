@@ -159,8 +159,8 @@ fun RecentScreen(navController: NavController) {
             if (feed.isEmpty()) {
                 CurioEmptyState(
                     glyph = CurioIcons.History,
-                    headline = "Nothing recent yet",
-                    subtext = "Explore a topic or save a capture and it will appear here.",
+                    headline = "No discoveries yet",
+                    subtext = "Explore a topic or save a capture — your recent finds will show up here.",
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f)
                 )
             } else {

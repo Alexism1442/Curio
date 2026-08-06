@@ -308,7 +308,7 @@ fun CabinetScreen(navController: NavController) {
                     CurioEmptyState(
                         glyph = CurioIcons.Inventory2,
                         headline = "Your Cabinet is empty",
-                        subtext = "Everything you save will live here. Shuffle to find your first one.",
+                        subtext = "Every capture you save will live here — shuffle to find your first one.",
                         tint = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f),
                         ctaLabel = "Discover something",
                         onCtaClick = {

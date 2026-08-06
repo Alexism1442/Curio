@@ -1728,13 +1728,13 @@ private fun EmptyPoolHint(cat: CurioCategory) {
                 )
                 Spacer(Modifier.height(14.dp))
                 Text(
-                    text = "Coming soon",
+                    text = "Nothing here yet",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Spin the wheel once topics land.",
+                    text = "This lane is still forming — new topics will appear here as you explore.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
