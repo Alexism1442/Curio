@@ -229,8 +229,12 @@ fun ProfileScreen(navController: NavController) {
         // banner and the torn paper cards, showing through the gutters and
         // the tears. The active glyph is your most-explored lane (wildcard
         // sparkles before the first save).
+        // v7.76 — the flat content below the hero sits directly on this
+        // backdrop, so the glyphs drop to a faint whisper and the rows,
+        // headers and chips always read first.
         CurioWatermarkBackdrop(
-            activeCat = backdropActiveCat
+            activeCat = backdropActiveCat,
+            alphaScale = 0.45f
         )
         LazyColumn(
             state = listState,

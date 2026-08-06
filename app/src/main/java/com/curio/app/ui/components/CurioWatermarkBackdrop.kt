@@ -65,8 +65,9 @@ fun CurioWatermarkBackdrop(
     // hero banner) — the layout switches to a lower-band slot set tuned so
     // no glyph crosses the clearance or the screen edges on any screen.
     topClearance: Dp = 0.dp,
-    // Per-screen readability tuning. Detail pages use a quieter backdrop so
-    // the saved entry remains the visual priority without removing the glyphs.
+    // Per-screen readability tuning. Detail pages, Profile, and the Settings
+    // family pass a quieter scale so flat content and saved entries remain
+    // the visual priority without removing the glyphs entirely.
     alphaScale: Float = 1f
 ) {
     val isDark = isCurioDarkTheme()

@@ -287,7 +287,9 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         CurioWatermarkBackdrop(
             activeCat = cat,
             topClearance = EntryDetailHeroClearance,
-            alphaScale = 0.68f,
+            // v7.76 — quieter still: the glyphs now sit at a faint whisper so
+            // the text below the hero always reads first.
+            alphaScale = 0.45f,
             modifier = Modifier.fillMaxSize()
         )
         // Hoisted scroll state — the sticky top bar (back + more controls)

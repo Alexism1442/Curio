@@ -267,8 +267,12 @@ fun SettingsHubScreen(navController: NavController) {
         // ── Watermark backdrop — muted category glyphs behind the content
         // (the Home/Profile language). Settings is category-neutral, so the
         // wildcard sparkle leads the collage.
+        // v7.76 — the flat rows below the hero sit directly on this
+        // backdrop, so the glyphs drop to a faint whisper and the text,
+        // headers and chips always read first.
         CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
+            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+            alphaScale = 0.45f
         )
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — the Profile/Home

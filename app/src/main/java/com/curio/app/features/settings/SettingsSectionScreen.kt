@@ -77,8 +77,12 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
     ) {
         // ── Watermark backdrop — muted category glyphs behind the content
         // (wildcard sparkle leads; settings is category-neutral).
+        // v7.76 — the flat rows below the hero sit directly on this
+        // backdrop, so the glyphs drop to a faint whisper and the text,
+        // headers and chips always read first.
         CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
+            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+            alphaScale = 0.45f
         )
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — Profile/Home style.
