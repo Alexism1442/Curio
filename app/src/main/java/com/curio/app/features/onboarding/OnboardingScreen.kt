@@ -188,15 +188,16 @@ fun OnboardingScreen(navController: NavController) {
         )
         Column(modifier = Modifier.fillMaxSize()) {
             // ── The big torn-rose hero — covers well over half the screen
-            //    (v7.102). EVERY slide renders INSIDE the banner: intro
-            //    texts, the theme options and the permission cards all sit
-            //    on the rose fill in its readable ink, with a slim Curio
-            //    wordmark + tagline at the top. Below the tear are only
-            //    the page dots and the Skip / Next controls.
+            //    (v7.111: deepened from 0.62 to 0.70 of the screen height so
+            //    the tear dips toward the lower third). EVERY slide renders
+            //    INSIDE the banner: intro texts, the theme options and the
+            //    permission cards all sit on the rose fill in its readable
+            //    ink, with the Curio wordmark + tagline at the top. Below
+            //    the tear are only the page dots and the Skip / Next controls.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.62f)
+                    .fillMaxHeight(0.70f)
             ) {
                 // The rose banner + ragged tear + watermark collage fill the
                 // whole box (drawn first; the wordmark + pager overlay it).
@@ -207,15 +208,15 @@ fun OnboardingScreen(navController: NavController) {
                         .fillMaxSize()
                         .statusBarsPadding()
                 ) {
-                    // ── Brand wordmark + tagline — v7.108: pushed down off
-                    //    the status bar, one size bigger, and letterspaced so
-                    //    it reads as a real wordmark, not a plain line ──
+                    // ── Brand wordmark + tagline — v7.111: bumped up again
+                    //    (headlineLarge + 4sp letterspacing) so the name
+                    //    leads the banner; still pushed off the status bar ──
                     Spacer(Modifier.height(26.dp))
                     Text(
                         text = "Curio",
-                        style = MaterialTheme.typography.headlineMedium.copy(
+                        style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 3.sp
+                            letterSpacing = 4.sp
                         ),
                         color = heroInk(),
                         textAlign = TextAlign.Center,
@@ -295,14 +296,15 @@ fun OnboardingScreen(navController: NavController) {
                 }
             }
 
-            // ── Bottom controls — v7.108: pushed clear of the ragged tear
-            //    with extra breathing room below the dots + taller padding ──
-            Spacer(Modifier.height(12.dp))
+            // ── Bottom controls — v7.111: dropped further toward the bottom
+            //    edge (bigger gap below the dots + taller vertical padding)
+            //    so they sit clear of the deeper tear ──
+            Spacer(Modifier.height(20.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(horizontal = 24.dp, vertical = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -340,12 +342,12 @@ fun OnboardingScreen(navController: NavController) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Big torn-rose hero backdrop — v7.102: the banner now fills the whole top
-// half of the screen (its host Box is sized to 62% height in the screen
-// body), tears with the shared bold seam at its bottom edge, and wears the
-// mirrored wildcard watermark collage at a whisper. The wordmark + pager
-// overlay it. The tear geometry adapts to the banner's height (align + small
-// offsets instead of the old fixed 170dp construction).
+// Big torn-rose hero backdrop — v7.102, deepened in v7.111: the banner now
+// fills well past half the screen (its host Box is sized to 70% height in
+// the screen body), tears with the shared bold seam at its bottom edge, and
+// wears the mirrored wildcard watermark collage at a whisper. The wordmark
+// + pager overlay it. The tear geometry adapts to the banner's height
+// (align + small offsets instead of the old fixed 170dp construction).
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Fixed tear seed — the onboarding hero always tears in the SAME pattern
