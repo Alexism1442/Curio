@@ -404,3 +404,9 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - CurioIcons.kt: added LightMode (light_mode) + Contrast (contrast) glyph constants for the theme chips.
 - Reviewer pass (1 issue fixed): ThemeSlide was taller than the intros but not scrollable — now verticalScroll like SetupSlide. Behavior note accepted: done-state tap undoes silently (exactly what was asked).
 - Validation: braces/parens balanced on all 5 files (comment-stripped), no leftover unwatchLabel refs, new imports all used (only getValue/setValue flagged — by-delegate imports, required), `git diff --check` clean. No Gradle command run per repository rules; CI validates on push.
+
+## v7.100b — CI fix: missing `size` import in RichTextEditor
+
+- CI (compileDebugKotlin/compileReleaseKotlin) failed on the v7.98 editor redesign: `RichTextEditor.kt:1101:26 Unresolved reference 'size'` — the tool-dock dot (`Modifier.size(12.dp)` in ToolToggleButton) was added in the redesign but `androidx.compose.foundation.layout.size` was dropped from the imports (the old code never used Modifier.size — CurioIcon's `size` param is a named arg).
+- Fix: restored `import androidx.compose.foundation.layout.size`.
+- Proactive sweep: verified all recently-touched files (RichTextEditor, Onboarding, SettingsHub, TopicReveal, Profile, ManageCategories, TopicDatabase, PaperCard, SaveCapture) resolve every chained layout extension (`size/height/width/padding/fillMaxWidth/fillMaxSize/heightIn/offset/statusBarsPadding/navigationBarsPadding/...`) against imports — ALL OK (weight is a RowScope member). Braces/parens balanced, `git diff --check` clean. No Gradle command run per repository rules; CI validates on push.
