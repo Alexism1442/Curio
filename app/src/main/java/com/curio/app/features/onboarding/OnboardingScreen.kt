@@ -207,10 +207,16 @@ fun OnboardingScreen(navController: NavController) {
                         .fillMaxSize()
                         .statusBarsPadding()
                 ) {
-                    // ── Brand wordmark + tagline — the hero's top line ──
+                    // ── Brand wordmark + tagline — v7.108: pushed down off
+                    //    the status bar, one size bigger, and letterspaced so
+                    //    it reads as a real wordmark, not a plain line ──
+                    Spacer(Modifier.height(26.dp))
                     Text(
                         text = "Curio",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 3.sp
+                        ),
                         color = heroInk(),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -289,12 +295,14 @@ fun OnboardingScreen(navController: NavController) {
                 }
             }
 
-            // ── Bottom controls ────────────────────────────────────────────────
+            // ── Bottom controls — v7.108: pushed clear of the ragged tear
+            //    with extra breathing room below the dots + taller padding ──
+            Spacer(Modifier.height(12.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 12.dp),
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
