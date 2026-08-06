@@ -1393,7 +1393,10 @@ private fun ReminderNudgeCard(onTap: () -> Unit, surface: Color = MaterialTheme.
 // and every row is flat (no card shell) with an icon chip + chevron.
 // ================================================================
 
-private val HomeDrawerHeroHeight = 168.dp
+// v7.96 — the hero grew (168 → 186dp) so the torn banner covers a little
+// more of the area below it: the menu rows start lower and more of them
+// disappear under the ragged seam when scrolling.
+private val HomeDrawerHeroHeight = 186.dp
 private val HomeDrawerSheetExtent = 22.dp
 private const val HOME_DRAWER_TEAR_SEED = 0xD2A7E
 

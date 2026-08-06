@@ -2,8 +2,10 @@ package com.curio.app.features.cabinet
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -55,8 +57,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -67,6 +71,7 @@ import kotlinx.coroutines.launch
 import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
+import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.AudioStorageManager
@@ -91,6 +96,7 @@ import com.curio.app.ui.theme.categoryBackgroundWash
 import com.curio.app.ui.theme.categoryBorder
 import com.curio.app.ui.theme.categoryChipSurface
 import com.curio.app.ui.theme.categoryInk
+import com.curio.app.ui.theme.onAccent
 import com.curio.app.ui.theme.themedAccent
 
 /**
@@ -410,6 +416,8 @@ fun CabinetScreen(navController: NavController) {
             title = cabinetTitle,
             subtitle = cabinetSubtitle,
             sheetColor = filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background,
+            activeCat = filterCat,
+            legacyMode = showLegacyOnly,
             backVisible = selectedFilter != null || showLegacyOnly,
             onBack = { selectedFilter = null; showLegacyOnly = false },
             searchActive = searchActive,
@@ -515,19 +523,26 @@ private data class CabinetHeroPair(
 )
 
 /**
- * The Cabinet's torn rose hero banner — the shared Profile/Settings
- * construction: a solid rose banner with the same bold SoftTorn tear and a
- * theme-matched under-sheet, the mirrored wildcard watermark collage, the
- * back pill (when a filter/legacy view is active) and the caller-provided
- * action pills riding the top row, and the title + subtitle pinned just
- * above the tear. Runs up behind the status bar; [sheetColor] lets the
- * under-sheet match the page (the category tint wash when a filter is on).
+ * The Cabinet's torn hero banner — the shared Profile/Settings construction:
+ * a solid banner with the same bold SoftTorn tear and a theme-matched
+ * under-sheet, the mirrored watermark collage, the back pill (when a
+ * filter/legacy view is active) and the caller-provided action pills riding
+ * the top row, and the title + subtitle pinned just above the tear. Runs up
+ * behind the status bar; [sheetColor] lets the under-sheet match the page
+ * (the category tint wash when a filter is on).
+ *
+ * v7.96 — the banner MATCHES the active category: a filtered view wears the
+ * category's own accent (and its family's watermark scatter), the Legacy
+ * view wears the tertiary accent, and All stays on the shared rose. The
+ * fill and ink MORPH smoothly when the filter changes.
  */
 @Composable
 private fun CabinetHeroHeader(
     title: String,
     subtitle: String,
     sheetColor: Color,
+    activeCat: CurioCategory?,
+    legacyMode: Boolean,
     backVisible: Boolean,
     onBack: () -> Unit,
     searchActive: Boolean,
@@ -541,8 +556,23 @@ private fun CabinetHeroHeader(
     val sheetShape = remember(CABINET_TEAR_SEED) {
         SoftTornSheetShape(CABINET_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
     }
-    val fill = settingsRoseAccent()
-    val ink = settingsReadableInk(fill)
+    // v7.96 — category-matched hero: the fill/ink resolve from the active
+    // filter (category accent + onAccent ink, tertiary for Legacy, rose for
+    // All) and ANIMATE between states so the banner visibly morphs into the
+    // category's color instead of snapping.
+    val targetFill = when {
+        legacyMode -> MaterialTheme.colorScheme.tertiary
+        activeCat != null -> activeCat.themedAccent()
+        else -> settingsRoseAccent()
+    }
+    val targetInk = when {
+        legacyMode -> MaterialTheme.colorScheme.onTertiary
+        activeCat != null -> activeCat.onAccent()
+        else -> settingsReadableInk(targetFill)
+    }
+    val fill by animateColorAsState(targetFill, tween(CurioMotion.Durations.Morph), label = "cabinetHeroFill")
+    val ink by animateColorAsState(targetInk, tween(CurioMotion.Durations.Morph), label = "cabinetHeroInk")
+    val heroSymbols = CurioIcons.heroWatermarkSymbols(activeCat?.family ?: CategoryFamily.WILDCARD)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -578,9 +608,10 @@ private fun CabinetHeroHeader(
                 .height(CabinetHeroBannerHeight)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                // Mirrored watermark collage — the wildcard family's symbols
-                // pop around the banner edges (the settings/profile collage).
-                val symbols = CurioIcons.heroWatermarkSymbols(CategoryFamily.WILDCARD)
+                // Mirrored watermark collage — the ACTIVE category's family
+                // symbols pop around the banner edges (the settings/profile
+                // collage), so a Movies view scatters film glyphs, etc.
+                val symbols = heroSymbols
                 val pairs = listOf(
                     CabinetHeroPair(biasX = 0.93f, biasY = -0.85f, size = 44.dp, rotation = 12f, alpha = 0.11f),
                     CabinetHeroPair(biasX = 0.55f, biasY = -0.64f, size = 48.dp, rotation = 8f, alpha = 0.13f),
@@ -709,8 +740,10 @@ private fun CabinetHeroHeader(
  *
  * Scroll-reactive, like Profile's pinned pills: as the grid scrolls, the
  * row lifts a few dp to pin just below the hero's ragged tear, and every
- * pill pops on its own (scale 0.97 → 1.0, eased) — no card background
- * behind the chips (v7.89). The entry cards scroll underneath the row.
+ * pill pops on its own — scale 0.90 → 1.0, staggered left→right, with a
+ * COLOR MORPH: each pill's surface blooms toward its category accent and
+ * it lifts with a soft shadow as it pops (v7.96) — no card background
+ * behind the chips. The entry cards scroll underneath the row.
  */
 @Composable
 private fun BoxScope.CabinetStickyChipBar(
@@ -758,7 +791,12 @@ private fun BoxScope.CabinetStickyChipBar(
             }
     ) {
         item("all") {
-            CabinetChipPop(index = 0, frostShift = frostShift) {
+            CabinetChipPop(
+                index = 0,
+                frostShift = frostShift,
+                restSurface = MaterialTheme.colorScheme.surfaceVariant,
+                popSurface = MaterialTheme.colorScheme.primaryContainer
+            ) { popProgress, surface, elevation ->
                 FilterChipLite(
                     label = "All",
                     accent = MaterialTheme.colorScheme.primary,
@@ -766,18 +804,29 @@ private fun BoxScope.CabinetStickyChipBar(
                     ink = MaterialTheme.colorScheme.onPrimaryContainer,
                     // Opaque unselected pill — the chip reads as a solid
                     // surface over the backdrop, not a see-through wash.
-                    chipSurface = MaterialTheme.colorScheme.surfaceVariant,
+                    chipSurface = surface,
                     chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    popProgress = popProgress,
+                    elevation = elevation,
                     selected = selectedFilter == null && !showLegacyOnly,
                     onClick = onSelectAll
                 )
             }
         }
         itemsIndexed(CurioCategories.visible) { i, cat ->
-            CabinetChipPop(index = i + 1, frostShift = frostShift) {
+            val restSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant)
+            CabinetChipPop(
+                index = i + 1,
+                frostShift = frostShift,
+                restSurface = restSurface,
+                // The color bloom — the neutral pill morphs toward its
+                // accent as it pops (a 30% pull keeps the capsule tasteful
+                // at full pop).
+                popSurface = lerp(restSurface, cat.themedAccent(), 0.30f)
+            ) { popProgress, surface, elevation ->
                 FilterChipLite(
                     label = cat.displayName,
-                    accent = cat.themedAccent(),
+                    accent = cat.categoryInk(),
                     tint = cat.tint,
                     // The button (label text) never adapts to the category —
                     // it stays on the neutral theme ink in every state, so
@@ -785,10 +834,12 @@ private fun BoxScope.CabinetStickyChipBar(
                     ink = MaterialTheme.colorScheme.onSurfaceVariant,
                     // Opaque category pill — full-strength chip surface so
                     // the tinted pill reads solid on the backdrop.
-                    chipSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant),
+                    chipSurface = surface,
                     chipBorder = cat.categoryBorder(
                         fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ),
+                    popProgress = popProgress,
+                    elevation = elevation,
                     selected = selectedFilter == cat.id && !showLegacyOnly,
                     onClick = { onSelectCategory(cat.id) }
                 )
@@ -799,14 +850,25 @@ private fun BoxScope.CabinetStickyChipBar(
         // open, so the active chip stays visible/deselectable).
         if (hasLegacyEntries || showLegacyOnly) {
             item("legacy") {
-                CabinetChipPop(index = CurioCategories.visible.size + 1, frostShift = frostShift) {
+                CabinetChipPop(
+                    index = CurioCategories.visible.size + 1,
+                    frostShift = frostShift,
+                    restSurface = MaterialTheme.colorScheme.surfaceVariant,
+                    popSurface = lerp(
+                        MaterialTheme.colorScheme.surfaceVariant,
+                        MaterialTheme.colorScheme.tertiary,
+                        0.30f
+                    )
+                ) { popProgress, surface, elevation ->
                     FilterChipLite(
                         label = "Legacy",
                         accent = MaterialTheme.colorScheme.tertiary,
                         tint = MaterialTheme.colorScheme.tertiaryContainer,
                         ink = MaterialTheme.colorScheme.onTertiaryContainer,
-                        chipSurface = MaterialTheme.colorScheme.surfaceVariant,
+                        chipSurface = surface,
                         chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        popProgress = popProgress,
+                        elevation = elevation,
                         selected = showLegacyOnly,
                         onClick = onToggleLegacy
                     )
@@ -816,27 +878,38 @@ private fun BoxScope.CabinetStickyChipBar(
     }
 }
 
-/** Per-pill pop — each chip scales 0.90 → 1.0 as the bar lifts, staggered
- *  per pill so the row ripples left→right instead of scaling as one block.
- *  No frosted card behind the row (v7.89). */
+/** Per-pill pop — each chip scales 0.90 → 1.0 AND morphs its surface from
+ *  [restSurface] toward [popSurface] as the bar lifts, staggered per pill so
+ *  the row ripples left→right with its own color bloom instead of scaling
+ *  as one block. No frosted card behind the row (v7.89). */
 @Composable
 private fun CabinetChipPop(
     index: Int,
     frostShift: Float,
-    content: @Composable () -> Unit
+    restSurface: Color,
+    popSurface: Color,
+    content: @Composable (popProgress: Float, surface: Color, elevation: Dp) -> Unit
 ) {
     // Each pill starts its pop a beat after its left neighbor, so the row
     // reads as per-pill motion while the whole bar pins. Normalized so the
-    // last pill still reaches full scale at full scroll.
+    // last pill still reaches full pop at full scroll.
     val stagger = (index * 0.07f).coerceAtMost(0.85f)
     val pillProgress = ((frostShift - stagger) / (1f - stagger)).coerceIn(0f, 1f)
     val pillScale = androidx.compose.ui.util.lerp(0.90f, 1f, pillProgress)
+    // v7.96 — COLOR MORPH: as each pill pops, its neutral surface blooms
+    // toward its accent [popSurface] and it lifts with a soft shadow — every
+    // chip ripples with its own color as the bar pins, instead of scaling
+    // alone.
+    val morphedSurface = lerp(restSurface, popSurface, pillProgress)
+    val popElevation = 6.dp * pillProgress
     Box(
         modifier = Modifier.graphicsLayer {
             scaleX = pillScale
             scaleY = pillScale
         }
-    ) { content() }
+    ) {
+        content(pillProgress, morphedSurface, popElevation)
+    }
 }
 
 /** One mirrored watermark glyph on the Cabinet hero (settings/profile style). */
@@ -918,22 +991,62 @@ private fun FilterChipLite(
     accent: Color,
     tint: Color,
     ink: Color,
-    chipSurface: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+    chipSurface: Color = MaterialTheme.colorScheme.surfaceVariant,
     chipBorder: BorderStroke? = null,
+    // v7.96 — premium pop: the capsule wears a soft vertical sheen (top
+    // light / slightly deeper base) instead of a flat fill; as [popProgress]
+    // goes 0→1 the unselected label blooms toward [accent] and the pill
+    // lifts with [elevation]'s shadow — the per-pill color pop on top of
+    // the scale pop. Selected chips keep their accent-container gradient.
+    popProgress: Float = 0f,
+    elevation: Dp = 0.dp,
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val labelColor = if (selected) {
+        ink
+    } else {
+        lerp(
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            accent,
+            popProgress * 0.55f
+        )
+    }
+    val fillBrush = if (selected) {
+        // Accent-container gradient — deeper at the base like the category
+        // card fills, so the active pill reads premium rather than flat.
+        Brush.verticalGradient(listOf(tint, lerp(tint, Color.Black, 0.10f)))
+    } else {
+        // Neutral capsule with a whisper of top light (the rigid-card sheen).
+        Brush.verticalGradient(
+            listOf(lerp(chipSurface, Color.White, 0.06f), chipSurface)
+        )
+    }
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        color = if (selected) tint else chipSurface,
-        border = if (selected) null else chipBorder
+        color = Color.Transparent,
+        shadowElevation = if (selected) elevation.coerceAtLeast(3.dp) else elevation
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = if (selected) ink else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(fillBrush)
+                .then(
+                    if (selected || chipBorder == null) {
+                        Modifier
+                    } else {
+                        Modifier.border(chipBorder, RoundedCornerShape(50))
+                    }
+                )
+                .padding(horizontal = 16.dp, vertical = 9.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = labelColor,
+                maxLines = 1
+            )
+        }
     }
 }
