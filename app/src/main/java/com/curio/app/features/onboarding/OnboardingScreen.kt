@@ -370,9 +370,7 @@ private fun OnboardingHeroBackdrop() {
     val fill = settingsRoseAccent()
     val ink = settingsReadableInk(fill)
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         // ── Under-sheet — the theme's own background, so the tear sits on
         // the page color in every theme (the Profile construction). It
@@ -476,7 +474,13 @@ private fun OnboardingSlide(slide: OnboardingSlideData) {
     ) {
         val compact = maxHeight < 300.dp
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            // Scrollable like the theme/setup steps — large system font
+            // scales must never clip the headline/subtext (the Box centers
+            // the scrollable column as a whole, so it stays centered when
+            // it fits).
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
