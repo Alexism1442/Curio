@@ -2,9 +2,9 @@ name: Curio Android CI
 
 on:
   push:
-    branches: [revamp]
+    branches: [main]
   pull_request:
-    branches: [revamp]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew

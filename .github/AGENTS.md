@@ -24,7 +24,7 @@ GitHub Actions automation and contributor templates for the Curio Android reposi
 
 ### Android CI workflow
 
-`android.yml` runs on pushes and pull requests targeting `revamp`, plus manual dispatch. It:
+`android.yml` runs on pushes and pull requests targeting `main`, plus manual dispatch. It:
 
 - Validates all topic catalogs with `python3 scripts/validate_topics.py`.
 - Runs the Gradle `lintDebug`, `validateTopics`, `assembleDebug`, and `assembleRelease` checks in GitHub Actions using the hosted Android toolchain.

@@ -92,3 +92,11 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Tag-based release publishing remains unchanged and still requires the official signing secrets.
 - Updated `.github/AGENTS.md` and the PR template to describe both build variants.
 - Validation: GitHub YAML structure and workflow assertions passed; no Gradle command run.
+
+## v7.63 — upgrade GitHub Actions to Node 24 and re-target CI to main
+
+- Upgraded `gradle/actions/setup-gradle` from v4 to v6 (Node 24 runtime) in both workflows, clearing the Node.js 20 deprecation annotation for that action.
+- Upgraded `softprops/action-gh-release` from v2 to v3 (Node 24 runtime) in the release workflow, clearing its Node.js 20 deprecation annotation; the `prerelease`, `generate_release_notes`, `files`, and `fail_on_unmatched_files` inputs are unchanged in v3.
+- Re-targeted the android.yml `push` and `pull_request` triggers from the removed `revamp` branch to `main`, the repository's active branch, so CI runs on every push to main.
+- Updated `.github/AGENTS.md` to describe the `main` trigger target.
+- Validation: both workflow YAML files parsed successfully, action versions resolve, and `git diff --check` is clean. No Gradle command run per repository rules.

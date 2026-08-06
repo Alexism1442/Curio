@@ -30,7 +30,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew
@@ -108,7 +108,7 @@ jobs:
           fi
 
       - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           prerelease: ${{ steps.prerelease.outputs.value }}
           generate_release_notes: true
