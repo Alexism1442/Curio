@@ -79,10 +79,7 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
-import com.curio.app.ui.components.CurioSettingsDivider
-import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
-import com.curio.app.ui.components.CurioUpdateCheckRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
 import com.curio.app.ui.components.SoftTornSheetShape
@@ -301,9 +298,7 @@ fun ProfileScreen(navController: NavController) {
                 Box(Modifier.padding(horizontal = 16.dp)) {
                     SupportCard(
                         crashCount = crashCount,
-                        onTestCrash = { CurioCrashReporter.testCrash() },
-                        onCrashLogs = { navController.navigate(CurioRoutes.CRASH) { launchSingleTop = true } },
-                        onReportBug = { navController.navigate(CurioRoutes.BUG_REPORT) { launchSingleTop = true } }
+                        onOpenSupport = { navController.navigate(CurioRoutes.SUPPORT) { launchSingleTop = true } }
                     )
                 }
             }
@@ -962,29 +957,21 @@ private fun LanesCard(counts: Map<CategoryId, Int>, onCabinet: () -> Unit) {
 @Composable
 private fun SupportCard(
     crashCount: Int,
-    onTestCrash: () -> Unit,
-    onCrashLogs: () -> Unit,
-    onReportBug: () -> Unit
+    onOpenSupport: () -> Unit
 ) {
+    // One toggle row — the whole Support & diagnostics suite (update check,
+    // release notes, bug reports, crash logs) now lives on its own page.
     Column(modifier = Modifier.fillMaxWidth()) {
-        CurioCardHeader(CurioIcons.Info, "Support & diagnostics", "Help, reports, and developer tools")
-        CurioSettingsRow(CurioIcons.BugReport, "Report a bug", "Send feedback or an issue", onReportBug)
-        if (crashCount > 0) {
-            CurioSettingsDivider()
-            CurioSettingsRow(CurioIcons.History, "Crash logs", "$crashCount saved report${if (crashCount == 1) "" else "s"}", onCrashLogs)
-        }
-        CurioSettingsDivider()
-        // Version straight from the build — VERSION_NAME is the release tag
-        // this APK was built from, VERSION_CODE the per-build number.
-        CurioSettingsInfoRow(
-            CurioIcons.Info,
-            "Version",
-            "${com.curio.app.BuildConfig.VERSION_NAME} · build ${com.curio.app.BuildConfig.VERSION_CODE}"
+        CurioSettingsRow(
+            icon = CurioIcons.Info,
+            title = "Support & diagnostics",
+            subtitle = if (crashCount > 0) {
+                "$crashCount saved crash report${if (crashCount == 1) "" else "s"} · updates, reports & help"
+            } else {
+                "Updates, release notes, and bug reports"
+            },
+            onClick = onOpenSupport
         )
-        CurioSettingsDivider()
-        CurioUpdateCheckRow()
-        CurioSettingsDivider()
-        CurioSettingsRow(CurioIcons.ErrorOutline, "Test crash", "Diagnostic tool", onTestCrash)
     }
 }
 

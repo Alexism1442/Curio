@@ -148,6 +148,7 @@ object CurioRoutes {
     const val LIGHTBOX = "lightbox"
     const val CRASH = "crash"
     const val BUG_REPORT = "bug-report"
+    const val SUPPORT = "support"
     const val FIELDMIND_OBSERVATION = "fieldmind-observation"
 
     // ── Route builders ──────────────────────────────────────────────────────
