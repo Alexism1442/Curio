@@ -749,9 +749,10 @@ private fun MoodBoardFloatingCard(
     val density = LocalDensity.current
     var dragDelta by remember { mutableStateOf(Offset.Zero) }
     var dragging by remember { mutableStateOf(false) }
-    // The editing preview can grow to fit the five allowed visual lines.
-    // Keep drag bounds tied to its measured height rather than the original
-    // compact slot height, so a taller card stays fully on the board.
+    // The editing preview is capped at two visual lines, so a card's
+    // measured height can only exceed the slot by one extra line. Keeping
+    // drag bounds tied to its measured height (rather than the slot height)
+    // still lets a slightly taller card stay fully on the board.
     var measuredHeightPx by remember { mutableIntStateOf(0) }
     // pointerInput never restarts, so the gesture coroutine must read the
     // LATEST geometry/callbacks — never the first composition's.
@@ -775,11 +776,18 @@ private fun MoodBoardFloatingCard(
             .width(with(density) { w.toDp() })
             .then(
                 if (currentOnEdit != null) {
-                    // While editing, let the paper slip grow with its content
-                    // instead of trapping the typed quote in the small board
-                    // preview. Saved/read-only cards retain the stable board
-                    // slot height below.
-                    Modifier.heightIn(min = with(density) { h.toDp() })
+                    // Editor cards keep the board slot's minimum height, but
+                    // the preview itself is capped at two lines (see below) —
+                    // so a long quote can never stretch the slip to the
+                    // board's full length. The explicit max makes that bound
+                    // structural: even if the preview's maxLines ever grew,
+                    // the slip stays at most 1.5× the slot height (two lines
+                    // at any sane font scale). Saved/read-only cards retain
+                    // the stable board slot height below.
+                    Modifier.heightIn(
+                        min = with(density) { h.toDp() },
+                        max = with(density) { h.toDp() * 1.5f }
+                    )
                 } else {
                     Modifier.height(with(density) { h.toDp() })
                 }
@@ -847,18 +855,20 @@ private fun MoodBoardFloatingCard(
             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            // The saved board preview is intentionally compact and bounded;
-            // it must never mutate the source text just because the preview
-            // is smaller than the quote. The editor card uses the expanding
-            // branch above and its RichTextEditor enforces the real 280-char /
-            // five-line input limit.
+            // Quote cards show up to TWO lines on the board — editor and
+            // saved views alike. The old editor branch used Int.MAX_VALUE, so
+            // a long quote stretched the paper slip to the full board height;
+            // the full text stays editable in the edit sheet. The preview
+            // never mutates the source text — it only truncates the rendered
+            // copy (RichTextEditor enforces the real 280-char / five-line
+            // input limit when editing).
             val previewText = limitQuoteContent(text).first
             Text(
                 text = if (previewText.isBlank()) "Quote…" else "“$previewText”",
                 style = MaterialTheme.typography.bodySmall.copy(fontFamily = PatrickHandFontFamily),
                 color = notePaperInk(color),
-                maxLines = if (currentOnEdit != null) Int.MAX_VALUE else 5,
-                overflow = if (currentOnEdit != null) TextOverflow.Clip else TextOverflow.Ellipsis
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

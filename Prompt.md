@@ -127,3 +127,16 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Added the shared `CurioWatermarkBackdrop` behind the page with `topClearance` (lower-band mode) so glyphs stay below the hero; content cards are wrapped in 16dp padding so the banner bleeds edge-to-edge.
 - Fixed-height hero (372dp) holds flex slack for large font scales; tagline capped at one line. Level, Lanes, Settings, and Support cards unchanged.
 - Validation: ProfileScreen.kt brace check BALANCED and `git diff --check` clean. No Gradle command run per repository rules (CI compiles on push).
+
+## v7.67 — v1.0 launch document
+
+- Added `docs/v1.0-launch.md` — a complete, launch-facing product document for Curio v1.0: app basics (name, pitch, problem solved), why-now highlights, 3-5 marquee features (Spin deck, six capture formats + paper editor, mood-board quote boxes, explore sessions with floating bubble, Cabinet), platform & requirements (Android 8.0+/API 26, English, permissions), how to get it (GitHub Releases APK — not on Play at v1.0), honest limitations/roadmap (Android-only, no cloud sync/accounts, English-only, content growth open for topic suggestions), feedback & support (GitHub Issues + in-app bug report), an exhaustive category-organized feature list (discovery, exploring, capturing, mood boards, Cabinet, Profile, Settings, design, privacy, reliability), and credits (Firefly).
+- Facts sourced from the codebase: 2,312 topics across 11 lanes, six CaptureFormat values, minSdk 26 / targetSdk 37 / version 1.0.0, Manifest permissions, Settings hub/Experiments surface, backup + FieldMind import, and the release workflow. Per user answers: distribution = GitHub Releases APK; support = GitHub Issues + in-app report; credits = "just Firefly"; file = `docs/v1.0-launch.md`; roadmap = Android-only, no cloud/accounts, content growth with open topic suggestions, plus explicit callouts of the Material+custom style, Spin deck, mood-board quotes, and explore sessions.
+- Validation: `git diff --check` clean; markdown content reviewed. No Gradle command run per repository rules.
+
+## v7.68 — cap mood-board quote cards at two lines
+
+- Fixed a bug where a long mood-board quote stretched its paper slip to the full board height: the editor preview rendered the quote with `maxLines = Int.MAX_VALUE` in `MoodBoardFloatingCard` (MoodBoardZoom.kt), so the card grew with content and could cover the entire board.
+- Quote cards now show up to TWO lines with ellipsis on the board — editor and saved/read-only views alike (the full text stays editable in the edit sheet, where the RichTextEditor still enforces the real 280-char / five-line input limit). The editor's `heightIn(min = slot)` now only ever exceeds the slot by one extra line, so drag bounds stay sane.
+- All four render paths (editor via GalleryWallFormat, saved entry detail ×2, PNG export) go through the single fixed component; the RichTextEditor's typing field was verified to be the edit surface, not the board preview, so it was left untouched.
+- Validation: MoodBoardZoom.kt brace check BALANCED and `git diff --check` clean. No Gradle command run per repository rules.
