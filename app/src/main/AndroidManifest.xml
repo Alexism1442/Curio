@@ -14,6 +14,22 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
+    <!-- Android 11+ package visibility: without this, resolveActivity() /
+         queryIntentActivities() return nothing for OTHER apps' activities,
+         which broke external launches like the bug-report "Report on GitHub"
+         button (it silently skipped the browser). Declaring the VIEW
+         intent for web URLs makes browser launches visible and checkable. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

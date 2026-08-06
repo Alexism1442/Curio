@@ -224,7 +224,12 @@ private fun openGitHubReport(
         .appendQueryParameter("body", body)
         .build()
     val intent = Intent(Intent.ACTION_VIEW, uri)
-    if (intent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(intent)
-    }
+    // Launch directly (no resolveActivity guard): on Android 11+ package
+    // visibility, resolveActivity returns null for OTHER apps unless a
+    // <queries> declaration exists, which would silently skip the browser
+    // and leave the user thinking the button only copies. startActivity
+    // resolves at the system level and works regardless; runCatching just
+    // protects the rare no-browser device (the clipboard copy above is the
+    // safety net either way).
+    runCatching { context.startActivity(intent) }
 }
