@@ -1,0 +1,3130 @@
+[
+  {
+    "id": "book-iliad",
+    "categoryId": "BOOKS",
+    "subtype": "Epic",
+    "name": "The Iliad",
+    "teaser": "A long oral-formulaic poem about 51 days of the Trojan War and the wrath of Achilles. Most estimates put the composition around 750 BCE.",
+    "imageUrl": "",
+    "byline": "Homer",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Book I (the quarrel between Achilles and Agamemnon)",
+      "durationMinutes": 90,
+      "instruction": "Read the opening aloud. The 'μῆνιν ἄειδε θεά' is widened intentionally so a singer could pause for breath. Then read Achilles' reply to Agamemnon's messenger. Iliad I ends with a plague and a quarrel — Homer's entire structure for the rest of the poem."
+    },
+    "tags": [
+      "Epic",
+      "Greek",
+      "Ancient"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-odyssey",
+    "categoryId": "BOOKS",
+    "subtype": "Epic",
+    "name": "The Odyssey",
+    "teaser": "Ten years after Troy, Odysseus is trying to come home. The poem is the first novel written in Europe — and Homer uses sensory details ('wine-dark sea') as much as narrative.",
+    "imageUrl": "",
+    "byline": "Homer",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Books 5–8 (Calypso to Alcinoüs)",
+      "durationMinutes": 90,
+      "instruction": "These four books are the emotional center. Odysseus mourns on Calypso's island, shipwrecks, washes ashore, and is welcomed by the Phaeacians. Listen to the formulaic recursions — Homer is teaching you the song structure as he sings."
+    },
+    "tags": [
+      "Epic",
+      "Greek",
+      "Ancient"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-aeneid",
+    "categoryId": "BOOKS",
+    "subtype": "Epic",
+    "name": "The Aeneid",
+    "teaser": "Virgil's Roman epic, written on his deathbed under Augustus's request. Half of the first half is Aeneas fleeing Troy; most of the second half is Odysseus's epic reversed — but with a Latin soul.",
+    "imageUrl": "",
+    "byline": "Virgil",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Book IV (Dido's tragedy)",
+      "durationMinutes": 60,
+      "instruction": "Read Book IV aloud. It's the smallest book of the Aeneid and the most-quoted single book of Latin literature. Virgil wrote the death of Dido to outdo Homer by writing the death of a queen who is not in the Iliad. It's the whole epic's emotional pivot."
+    },
+    "tags": [
+      "Epic",
+      "Latin",
+      "Ancient"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-divine-comedy",
+    "categoryId": "BOOKS",
+    "subtype": "Epic",
+    "name": "The Divine Comedy",
+    "teaser": "Dante's 14,233-line Italian vernacular poem about a man walking through Hell, Purgatory, and Paradise in the Easter week of 1300. He completed Inferno in 1314, Paradiso in 1320, six months before he died.",
+    "imageUrl": "",
+    "byline": "Dante Alighieri",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Inferno, Canto V (the story of Paolo and Francesca)",
+      "durationMinutes": 30,
+      "instruction": "Read this canto aloud. The Italian terza rima (three-line stanzas rhymed ABA BCB CDC) is the actual meter. Then notice the famous moment where Dante faints at the lovers' story — Virgil has to nudge him back awake. By fainting, Dante has admitted he can be moved by Hell."
+    },
+    "tags": [
+      "Medieval",
+      "Italian",
+      "Poetry"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-don-quixote",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Don Quixote",
+    "teaser": "Spanish novel published in two parts (1605, 1615) by Cervantes, the first modern novel and arguably the first work of metafiction. Famous broken-nosed knight and his practical-minded squire.",
+    "imageUrl": "",
+    "byline": "Miguel de Cervantes",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Part I, Chapters 1–8",
+      "durationMinutes": 90,
+      "instruction": "Read the first 50 pages carefully. Don't rush. Cervantes starts as a parody of chivalric romance — within 8 chapters the protagonist has been beaten up and dragged home. Now read a 19th-century Russian novel, then return — you'll see Don Quixote's DNA in every..."
+    },
+    "tags": [
+      "Spanish Golden Age",
+      "Spanish",
+      "Novel"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-pride-and-prejudice",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Pride and Prejudice",
+    "teaser": "Austen's first mature novel (1813), originally drafted as 'First Impressions' in 1796. The book's opening line is in the top-ten most-quoted English-literature sentences.",
+    "imageUrl": "",
+    "byline": "Jane Austen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Volume I (Chapters 1–23)",
+      "durationMinutes": 90,
+      "instruction": "Read the opening aloud. Notice Austen's free indirect style — she writes 'she felt' as if Darcy's nerves are inside Elizabeth's mind. By chapter 23, you've heard everyone say everything slightly wrong. That's Austen's technique — observe the social bright surface, and..."
+    },
+    "tags": [
+      "Regency",
+      "British",
+      "Novel"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-jane-eyre",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Jane Eyre",
+    "teaser": "Charlotte Brontë's 1847 novel that became the template for the female bildungsroman — first-person narration, declining marriage plot, and a heroine who refuses the role of victim.",
+    "imageUrl": "",
+    "byline": "Charlotte Brontë",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Jane Eyre, Chapters 1–4 and Chapters 12–15",
+      "durationMinutes": 90,
+      "instruction": "Read what Jane tells Mr. Lloyd. Then read the Red Room passage — Jane is locked in the red room for misbehaving. The Red Room is the novel's first major image. Then jump to chapter 12 onward (Rochester enters). The novel has been aware of him since chapter 4."
+    },
+    "tags": [
+      "Victorian",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-wuthering-heights",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Wuthering Heights",
+    "teaser": "Emily Brontë's 1847 novel — a love story told through tenant-farmer Lockwood and housekeeper Nelly Dean, who disagree violently about what they remember. The book has been called unreadable by generations of critics.",
+    "imageUrl": "",
+    "byline": "Emily Brontë",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Wuthering Heights, Chapters 1–9",
+      "durationMinutes": 60,
+      "instruction": "Read carefully through chapter 9 (Heathcliff's departure). Emily Brontë writes in second-person voice from inside a tenant's mind. The novel breaks every convention of Victorian moralism. Some Early critics called it unreadable — that criticism is the novel's point."
+    },
+    "tags": [
+      "Victorian",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-frankenstein",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Frankenstein; or, The Modern Prometheus",
+    "teaser": "Mary Shelley's 1818 novel, written at 19 on a bet with Byron and Percy Shelley. The novel invented both science fiction and the recurring motif of creators failing at their own creations.",
+    "imageUrl": "",
+    "byline": "Mary Shelley",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Volume I (Letters + first 4 chapters)",
+      "durationMinutes": 90,
+      "instruction": "Skip the famous horror scenes. Read the framing structure: a polar explorer named Walton writes letters home. The novel you're reading is one long letter he sends his sister. Walton's ambition — and the monster's revenge — are both inside that frame."
+    },
+    "tags": [
+      "Romantic",
+      "British",
+      "Gothic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-great-expectations",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Great Expectations",
+    "teaser": "Dickens's 1861 bildungsroman — the only one of his novels to be a first-person narration. The novel's famous original ending was so bleak Dickens rewrote it on Bulwer-Lytton's advice.",
+    "imageUrl": "",
+    "byline": "Charles Dickens",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Great Expectations, Chapters 1–8 and the original 1860 ending",
+      "durationMinutes": 90,
+      "instruction": "Read the opening — Pip in the graveyard at his parents' headstone. Then read chapters 7–8 (the convict scene). Then read the *original* ending (freely available online). Then read the published ending. Dickens's novel is built around that single revision."
+    },
+    "tags": [
+      "Victorian",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-oliver-twist",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Oliver Twist",
+    "teaser": "Dickens's second novel (1837–39), the first major Victorian novel to focus on a working-class child protagonist, and the origins of 'Please sir, I want some more' as the most-quoted Dickens line.",
+    "imageUrl": "",
+    "byline": "Charles Dickens",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Chapters 1–8",
+      "durationMinutes": 60,
+      "instruction": "Read the first eight chapters. Notice Dickens's gift for naming institutions (the workhouse, Fagin's den). The novel's first great risk is choosing Oliver — an orphan with no interior cache of being — as narrator's central living thing. Dickens compensates by giving..."
+    },
+    "tags": [
+      "Victorian",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-war-and-peace",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "War and Peace",
+    "teaser": "Tolstoy's 1225-page epic of Russian families during the Napoleonic Wars (1869). Tolstoy refused the copyright revenue to his wife's fury. He said he wrote the book 'to teach Russians to love history.'",
+    "imageUrl": "",
+    "byline": "Leo Tolstoy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "War and Peace, Book I, opening 50 pages",
+      "durationMinutes": 90,
+      "instruction": "Read the first 30 pages. Then pages 100–150 (the hunt scene). The novel trains you to read two scales of time: Napoleon's movements across Europe, and a young woman explaining why she won't marry. Tolstoy is doing this on purpose — he wants you to feel his philosophy of history."
+    },
+    "tags": [
+      "Russian",
+      "Novel",
+      "19th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-crime-and-punishment",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Crime and Punishment",
+    "teaser": "Dostoevsky's 1866 novel, written in 1866 to escape gambling debts. The novel became the prototype for the 'psychological thriller' — its protagonist is redeemed before the plot begins.",
+    "imageUrl": "",
+    "byline": "Fyodor Dostoevsky",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Crime and Punishment, Part I (the murder scene only)",
+      "durationMinutes": 60,
+      "instruction": "Read just the murder scene. The axe. The room. The footsteps from the upstairs tenant. Dostoevsky decides to show you the murder from inside the killer's mind — showing how a murderer thinks in advance, not in cold blood. The novel never forgets this perspective."
+    },
+    "tags": [
+      "Russian",
+      "Novel",
+      "19th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-madame-bovary",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Madame Bovary",
+    "teaser": "Flaubert's 1856 novel, the subject of an 1857 obscenity trial in Paris. He spent 5 years writing it. The novel's mid-book agricultural fair scene is the most quoted single chapter in French literature.",
+    "imageUrl": "",
+    "byline": "Gustave Flaubert",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Madame Bovary, Part I, Chapter 9 (the agricultural fair)",
+      "durationMinutes": 30,
+      "instruction": "Read the agricultural fair. Emma Bovary is sitting with her husband while a politician gives a long speech. Then she meets Léon — a stranger at another table. The scene shifts to them. Read both paragraphs as if you were blindfolded — Flaubert's rhythm section is the instrument."
+    },
+    "tags": [
+      "French",
+      "Realism",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-brothers-karamazov",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Brothers Karamazov",
+    "teaser": "Dostoevsky's last novel (1880), unfinished at his death. The novel's central argument between Ivan and Alyosha — 'If God does not exist, is everything permitted?' — became the most-argued theological question in 20th-century European fiction.",
+    "imageUrl": "",
+    "byline": "Fyodor Dostoevsky",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Book V, Chapter 4 (\"Rebellion\") + Book V, Chapter 5 (\"The Grand Inquisitor\")",
+      "durationMinutes": 90,
+      "instruction": "Read both chapters in one sitting. They're the most quoted chapters in Dostoevsky's last novel. The Grand Inquisitor argument is small: the Church took the wrong road by giving people 12 million in miracles when all they needed was freedom. The novel then leaves it..."
+    },
+    "tags": [
+      "Russian",
+      "Novel",
+      "19th Century"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-moby-dick",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Moby-Dick; or, The Whale",
+    "teaser": "Melville's 1851 novel of a whaling voyage and a one-legged captain mad enough to chase a white sperm whale around the world. The book sold 3,000 copies in life; 30 years later critics proclaimed it America's first great novel.",
+    "imageUrl": "",
+    "byline": "Herman Melville",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Moby-Dick, Chapter 1 (Loomings) and Chapter 42 (\"The Whiteness of the Whale\")",
+      "durationMinutes": 90,
+      "instruction": "Read the opening chapter. Then jump straight to chapter 42. The novel's voice is established in the first — Ishmael decides that everyone who goes to sea becomes 'insane.' The middle chapter turns whiteness into an existential problem. The novel never returns to either..."
+    },
+    "tags": [
+      "American",
+      "Novel",
+      "19th Century"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-leaves-of-grass",
+    "categoryId": "BOOKS",
+    "subtype": "Poetry Collection",
+    "name": "Leaves of Grass",
+    "teaser": "Whitman's self-published 1855 collection (12 poems) became the founding document of American poetry. He revised and expanded the work for 39 years.",
+    "imageUrl": "",
+    "byline": "Walt Whitman",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "\"Song of Myself\" (Sections 1–10) + \"Crossing Brooklyn Ferry\" (any 5 sections)",
+      "durationMinutes": 60,
+      "instruction": "Read these aloud. Whitman taught himself that verse could be a list. The lists are tactile, physical. Notice the repeated use of the word 'and' — he's building a Long sentence. Compare to Dickinson who edited ruthlessly — Whitman's opposite."
+    },
+    "tags": [
+      "American",
+      "Poetry",
+      "19th Century"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-emma",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Emma",
+    "teaser": "Austen's 1815 novel of a wealthy young woman who teaches herself to be a matchmaker — and learns that matchmaking is the wrong activity. The novel is intentionally comedic and unreachable.",
+    "imageUrl": "",
+    "byline": "Jane Austen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Emma, Volume I (Chapters 1–18)",
+      "durationMinutes": 90,
+      "instruction": "Read the first volume. Emma is endowed with 'a great deal of imagination' — Austen tells you that's a problem. The chapters run as vignettes; each is a case study in Emma's confidence surpassing her perception. Austen asks you to be more skeptical than Emma is."
+    },
+    "tags": [
+      "Regency",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-picture-of-dorian-gray",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Picture of Dorian Gray",
+    "teaser": "Wilde's 1890 novel — a Faustian aspect-fable whose only real horror is the portrait in the attic and the question who looks at it.",
+    "imageUrl": "",
+    "byline": "Oscar Wilde",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Picture of Dorian Gray, Chapters 1–5",
+      "durationMinutes": 60,
+      "instruction": "Read the preface before anything else — it's Wilde's manifesto. Then read chapters 1–5. Wilde structures chapters as a series of aphorisms; he said the novel was 'a lesson in the non-moral ideal of beauty.' Read the last chapter carefully — Wilde knew the end was..."
+    },
+    "tags": [
+      "Victorian",
+      "Irish-British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-trial",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Trial",
+    "teaser": "Kafka's 1925 novel (published posthumously by Max Brod, who ignored Kafka's request to burn his papers). The novel's most-quoted line: 'Someone must have been telling lies about Josef K., for one morning he was arrested without having done anything wrong.'",
+    "imageUrl": "",
+    "byline": "Franz Kafka",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Trial, Chapter 1 (\"Someone must have slandered Josef K...\")",
+      "durationMinutes": 30,
+      "instruction": "Read the first 10 pages. K is arrested on his 30th birthday by officials who tell him to keep working. He's never told what he's accused of. The novel's pre-WWII German-language nightmare ended up as prophecy. Read another Kafka work in the same week — the metaphor..."
+    },
+    "tags": [
+      "Modernist",
+      "Czech-Austrian",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-ulysses",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Ulysses",
+    "teaser": "Joyce's 1922 novel of one day in Dublin (June 16, 1904) — Bloomsday is still celebrated annually worldwide. The novel was banned in the US for obscenity in 1922; the ban was lifted in 1934.",
+    "imageUrl": "",
+    "byline": "James Joyce",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Ulysses, Episode 3 (\"Proteus\") and Episode 18 (\"Penelope\")",
+      "durationMinutes": 90,
+      "instruction": "Skip the first two episodes and start at \"Proteus.\" Joyce writes Stephen Dedalus thinking by rolling his mind over language — that's the modernist twist. Then jump to the last episode — Molly Bloom's monologue. It's 30 pages of punctuation-free sentences; that voice..."
+    },
+    "tags": [
+      "Modernist",
+      "Irish",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-mrs-dalloway",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Mrs Dalloway",
+    "teaser": "Woolf's 1925 novel — one day in Clarissa Dalloway's life as she prepares for a party in post-war London. The novel hosts Septimus Smith's parallel interior life, a WWI veteran about to fail at suicide.",
+    "imageUrl": "",
+    "byline": "Virginia Woolf",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Mrs Dalloway, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read aloud. Woolf's sentences are doing two things at once: giving you the time of day and showing you what's inside one woman's mind. By the end of the first chapter you've been on a London street and inside a thought of suicide without being told there was a transition."
+    },
+    "tags": [
+      "Modernist",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-in-search-of-lost-time",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "In Search of Lost Time",
+    "teaser": "Proust's 1913–27 seven-volume novel (the 7th was posthumous). The novel is the longest in the canon, and the opening madeleine passage is the most quoted 200 words in literature.",
+    "imageUrl": "",
+    "byline": "Marcel Proust",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Swann's Way, \"Combray\" opening 30 pages",
+      "durationMinutes": 90,
+      "instruction": "Read the madeleine passage. Then read the passage on falling in love. Proust's gift is showing you how memory isn't a recording — it's a state. The same madeleine tastes different to the same man in different decades. That's the book's most-quoted idea and the simplest."
+    },
+    "tags": [
+      "Modernist",
+      "French",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-waste-land",
+    "categoryId": "BOOKS",
+    "subtype": "Poem",
+    "name": "The Waste Land (1922)",
+    "teaser": "T.S. Eliot's 434-line modernist poem, written in notes, edited by Ezra Pound down from 800 lines. The poem opens with 'April is the cruellest month' — one of the most-quoted opening lines ever.",
+    "imageUrl": "",
+    "byline": "T.S. Eliot",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Waste Land (esp. lines 1–18, 60–75, and the final lines \"These fragments I have shored against my ruins\")",
+      "durationMinutes": 60,
+      "instruction": "Read the 434 lines. Then read the original Pound annotations. The poem is a collage and Eliot wants you to read it as if you crash-landed in a continent's songbook mid-song. Then read the final 10 lines and notice Eliot is asking you to 'shore' fragments against something."
+    },
+    "tags": [
+      "Modernist",
+      "American-British",
+      "Poetry"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-brave-new-world",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Brave New World",
+    "teaser": "Huxley's 1932 dystopian novel. The opening paragraph queues 11 cloned embryos into a continuous conveyor belt. The novel is structured around a long tour through a perfect society — and the question whether perfect is enough.",
+    "imageUrl": "",
+    "byline": "Aldous Huxley",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Brave New World, Chapters 1–6",
+      "durationMinutes": 90,
+      "instruction": "Read the first six chapters. The Hatchery tour is the novel's most quoted section. Then read chapters 9–12. Huxley wrote the book in three months during a 1931 trip to the United States. The novel notices that felt-pleasure and freedom are not the same thing."
+    },
+    "tags": [
+      "Dystopian",
+      "British",
+      "Novel"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-1984",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Nineteen Eighty-Four",
+    "teaser": "Orwell's 1949 dystopian novel, written in the English countryside as Orwell was dying of tuberculosis. The novel coined the words 'doublethink' and 'thoughtcrime,' among others.",
+    "imageUrl": "",
+    "byline": "George Orwell",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "1984, Part I (the opening + the manifesto + the two-minute hate)",
+      "durationMinutes": 90,
+      "instruction": "Read Part I. The opening paragraph introduces Big Brother. The middle of Part I rewrites Goldstein's book. By Part II, Orwell's structure trains you to expect betrayal. The novel's last sentence is the most famous in 20th-century English fiction. Read it and ask: is it..."
+    },
+    "tags": [
+      "Dystopian",
+      "British",
+      "Novel"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-the-catcher-in-the-rye",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Catcher in the Rye",
+    "teaser": "Salinger's 1951 novel — Holden Caulfield narrates three days in NYC after being expelled from prep school. The novel became the most popular coming-of-age novel in American high-school English curricula.",
+    "imageUrl": "",
+    "byline": "J.D. Salinger",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Catcher in the Rye, Chapters 1–7",
+      "durationMinutes": 90,
+      "instruction": "Read the first 70 pages aloud. Salinger's gift is Holden's consciousness — he never finishes thoughts and never stops starting new ones. Now read the same chapters silently. Then read a chapter where Holden is angry. Notice which word Salinger repeats for emphasis."
+    },
+    "tags": [
+      "American",
+      "Novel",
+      "Mid-20th"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-beloved",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Beloved",
+    "teaser": "Morrison's 1987 novel, based on the true story of Margaret Garner, an enslaved woman who killed her daughter rather than return her to bondage. Morrison won the Pulitzer the year after.",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Beloved, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the opening: 124 Bluestone Road is haunted. Morrison's first sentence is too famous to discuss — read it again. Then watch how the present and the past stack. The novel is a ghost story that has nothing to do with haunting and everything to do with what you'd need..."
+    },
+    "tags": [
+      "American",
+      "Novel",
+      "Modern"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-one-hundred-years-of-solitude",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "One Hundred Years of Solitude",
+    "teaser": "Márquez's 1967 novel, the founding work of magical realism. The novel traces seven generations of the Buendía family in the fictional town of Macondo over a hundred years. Márquez wrote it in 18 months.",
+    "imageUrl": "",
+    "byline": "Gabriel García Márquez",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "One Hundred Years of Solitude, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the opening: a man faces a firing squad, goes back in memory to his village, his grandfather takes him to see ice. The novel's time-machine is the family. Márquez wrote it in nine months while living in Mexico City. Read until you understand 'solitude' as the..."
+    },
+    "tags": [
+      "Magical Realism",
+      "Colombian",
+      "Novel"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-if-on-a-winters-night-a-traveler",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "If on a winter's night a traveler",
+    "teaser": "Calvino's 1979 novel — a book where each even-numbered chapter is the first page of a different novel that ends, and each odd-numbered chapter is about you, the reader, trying to read the missing novels.",
+    "imageUrl": "",
+    "byline": "Italo Calvino",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "\"If on a winter's night a traveler\" — Chapters 1–5 of each kind",
+      "durationMinutes": 60,
+      "instruction": "Read carefully. The novel alternates between an embedded-novel opening and a real-world frame. The trick is that the embedded novel always breaks. By chapter 10, you'll be reading like the protagonist: looking at the next-new story with a small frustration that's also..."
+    },
+    "tags": [
+      "Postmodern",
+      "Italian",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-house-of-leaves",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "House of Leaves",
+    "teaser": "Danielewski's 2000 novel of a house that's larger inside than outside. The novel's layout requires you to flip sections and read the footnotes to follow a family, an academic, and an extra-space documentarian.",
+    "imageUrl": "",
+    "byline": "Mark Z. Danielewski",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "House of Leaves, opening 60 pages",
+      "durationMinutes": 90,
+      "instruction": "Read carefully — the typography is the meaning. The novel's footnotes include a fictional academic essay; the academic essay is about a fictional documentary; the documentary is about a house that's inside-out. By page 60, you've learned that 'House of Leaves' is also..."
+    },
+    "tags": [
+      "Postmodern",
+      "American",
+      "Horror"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "book-the-collected-poems-of-pablo-neruda",
+    "categoryId": "BOOKS",
+    "subtype": "Poetry Collection",
+    "name": "Pablo Neruda — Twenty Love Poems and a Song of Despair",
+    "teaser": "Neruda's 1924 debut collection at 19 — became the foundational erotic-poetry book of 20th-century Spanish-language writing. He won the Nobel for Literature in 1971.",
+    "imageUrl": "",
+    "byline": "Pablo Neruda",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Neruda's 1, 5, 10, 15, 20 + the final \"Song of Despair\"",
+      "durationMinutes": 60,
+      "instruction": "Read in Spanish if you can. Then read in English. Notice that Neruda's central figure is not 'I' but 'we' — the lovers are inside an outside ('es tan corto el amor / y es tan largo el olvido'). Read them to each other if you have a friend who would do that."
+    },
+    "tags": [
+      "Chilean",
+      "Poetry",
+      "Latin-American"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-second-sex",
+    "categoryId": "BOOKS",
+    "subtype": "Essay",
+    "name": "The Second Sex",
+    "teaser": "Beauvoir's 1949 essay on the construction of Woman. The book's opening chapter — 'The Second Sex is not a separate species...' — has been called the founding text of second-wave feminism.",
+    "imageUrl": "",
+    "byline": "Simone de Beauvoir",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Second Sex, Volume I, Chapter 1 + Volume II, Chapter 10 (\"The Independent Woman\")",
+      "durationMinutes": 90,
+      "instruction": "Read Volume I Chapter 1 and Volume II Chapter 10. Volume I is the diagnosis; Volume II is the prescription. Between them is the famous line — 'One is not born, but rather becomes, a woman.' Notice how Beauvoir weaves together biology, history, and phenomenology."
+    },
+    "tags": [
+      "French",
+      "Essays",
+      "Feminist"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-myth-of-sisyphus",
+    "categoryId": "BOOKS",
+    "subtype": "Essay",
+    "name": "The Myth of Sisyphus",
+    "teaser": "Camus's 1942 philosophical essay. The book's title essay opens with 'There is but one truly serious philosophical problem, and that is suicide.' The book argues absurdism and accepts that we must imagine Sisyphus happy.",
+    "imageUrl": "",
+    "byline": "Albert Camus",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Myth of Sisyphus (only the title essay, ~80 pages)",
+      "durationMinutes": 90,
+      "instruction": "Read the title essay. Take a breath at the opening. Camus is asking you to stare at the moment when you wonder if life is meaningful at all. Then read the conclusion — he says you must imagine Sisyphus happy. Note Camus doesn't resolve the absurdity; he works within it."
+    },
+    "tags": [
+      "French",
+      "Essays",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-god-of-small-things",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The God of Small Things",
+    "teaser": "Roy's 1997 debut novel (Booker Prize 1997) about an Indian family in Kerala. The novel layers caste, family, and the consequences of small gestures across time jumps that are tighter than Faulkner.",
+    "imageUrl": "",
+    "byline": "Arundhati Roy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The God of Small Things, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the opening carefully. Roy tells you the ending in the first 10 pages — then circles back to show you how everyone got there. Notice the small things: a touch on skin, a sound at night, a smell of food. They're the actual mechanism. Notice the 'Love Laws' passage..."
+    },
+    "tags": [
+      "Indian",
+      "Novel",
+      "Late 20th"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-left-hand-of-darkness",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Left Hand of Darkness",
+    "teaser": "Le Guin's 1969 sci-fi novel of an envoy arriving on Gethen, a planet whose inhabitants cycle through male and female. The novel won both Hugo and Nebula in 1970.",
+    "imageUrl": "",
+    "byline": "Ursula K. Le Guin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Left Hand of Darkness, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the first chapter. The envoy arrives on a planet whose inhabitants change sex. Le Guin refuses allegory — the planet's biology is its own argument. Then read 'The Ones Who Walk Away from Omelas' (short story, ~5 pages). Read both in the same week; you'll start..."
+    },
+    "tags": [
+      "Sci-Fi",
+      "American",
+      "Feminist"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-three-body-problem",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Three-Body Problem",
+    "teaser": "Liu Cixin's 2008 sci-fi novel, the first Asian novel to win the Hugo Award for Best Novel. The novel makes the Cultural Revolution a first-class sci-fi premise.",
+    "imageUrl": "",
+    "byline": "Liu Cixin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Three-Body Problem, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the opening. By the third chapter you've been transported to China's Cultural Revolution. Liu writes science detail at the level of a physics paper; then the world starts unraveling. Read the first 50 pages and you'll finish the trilogy. Read it on a quiet evening."
+    },
+    "tags": [
+      "Sci-Fi",
+      "Chinese",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-foundation",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Foundation",
+    "teaser": "Isaac Asimov's 1951 sci-fi novel — the foundation's premise that an empire's predicted fall can be shortened emerged from his reading of Gibbon's Decline and Fall of the Roman Empire. He was 31 and a chemistry PhD.",
+    "imageUrl": "",
+    "byline": "Isaac Asimov",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Foundation, first 4 chapters",
+      "durationMinutes": 60,
+      "instruction": "Read the opening. Asimov invented the concept of 'psychohistory' for this novel. Then read the first crisis (chapter 9). The novel's larger structure is five volumes spanning a thousand years. Read this one book and you'll know what every Star Wars story owes to it."
+    },
+    "tags": [
+      "Sci-Fi",
+      "American",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-dune",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Dune",
+    "teaser": "Frank Herbert's 1965 sci-fi novel set on a desert planet. The novel won the first Hugo and Nebula to do so; it's the bestselling single sci-fi novel of all time.",
+    "imageUrl": "",
+    "byline": "Frank Herbert",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Dune, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the opening. By the second chapter you meet the Bene Gesserit, by the third you meet the spice. Herbert's gift is that he slows the reader down to the pace his characters think. Read the spice-visions chapter — then read the second book only after you've absorbed..."
+    },
+    "tags": [
+      "Sci-Fi",
+      "American",
+      "20th Century"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "book-the-master-and-margarita",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "The Master and Margarita",
+    "teaser": "Bulgakov's 1967 novel (published posthumously after 26 years in Soviet censorship). The novel's most famous line: 'Manuscripts don't burn.'",
+    "imageUrl": "",
+    "byline": "Mikhail Bulgakov",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Master and Margarita, opening 30 pages",
+      "durationMinutes": 60,
+      "instruction": "Read the first chapter: the Devil arrives at a Moscow park. The novel's most-quoted line is 'Manuscripts don't burn.' Read until chapter 13 (Pontius Pilate) — that's a quarter-century waiting. Then read chapter 25 (the master writes a novel). The book is structured..."
+    },
+    "tags": [
+      "Soviet",
+      "Russian",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-persuasion",
+    "categoryId": "BOOKS",
+    "subtype": "Novel",
+    "name": "Persuasion",
+    "teaser": "Austen's last completed novel (1818), a short, melancholy work about a 27-year-old woman who broke off an engagement with a poor man eight years before and now encounters him again, wealthy.",
+    "imageUrl": "",
+    "byline": "Jane Austen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Persuasion, Volume I (Chapters 1-12)",
+      "durationMinutes": 60,
+      "instruction": "Read the opening chapter. Austen wrote it while ill and mostly bedridden. The novel's tone is half-Romantic, half-classical; Anne Elliot never speaks angrily. By volume II, she's watching Captain Wentworth move through rooms. The famous final letter is what the whole..."
+    },
+    "tags": [
+      "Regency",
+      "British",
+      "Novel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-godfather-1969-145",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Godfather (1969)",
+    "teaser": "Mario Puzo was 45, broke, and drowning in gambling debt when he wrote it — 'I was 45 years old and tired of being an artist.' He sold the movie rights for $12,500 before the book even hit shelves, and the novel spent 67 weeks on the bestseller list while the film he'd half-joked about became the greatest in Hollywood history.",
+    "imageUrl": "",
+    "byline": "Mario Puzo",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Godfather (1969) — the opening wedding and the baptism finale",
+      "durationMinutes": 40,
+      "instruction": "Read the opening wedding scene. Puzo's trick is that the violence happens off-screen — you hear about the horse's head and Sonny's beating through dialogue. Notice how the book's first chapter establishes the family's rule ('never go against the family') through ceremony, not shooting."
+    },
+    "tags": [
+      "Classic",
+      "Crime",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-fear-and-loathing-in-146",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Fear and Loathing in Las Vegas (1971)",
+    "teaser": "Hunter S. Thompson wrote it in a rented room in 1971 with a typewriter, a bottle of Chivas, and a note taped to the wall: 'Never again.' It ran in Rolling Stone as a 40,000-word magazine piece — about a drug-fueled trip to Las Vegas that was actually an assignment to cover a motorcycle race — and invented 'gonzo journalism' where the reporter is the story.",
+    "imageUrl": "",
+    "byline": "Hunter S. Thompson",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Fear and Loathing in Las Vegas (1971) — the opening and the casino scenes",
+      "durationMinutes": 32,
+      "instruction": "Read the opening — 'We were somewhere around Barstow on the edge of the desert when the drugs began to take hold.' Thompson builds the whole book on that one sentence's rhythm: a journalist's matter-of-fact tone colliding with the surreal. Notice how he treats Las Vegas as a symbol — the 'American Dream' as a casino that always wins. The book's actual event, the Mint 400 race, barely appears; the story is the hallucination, and that's the point."
+    },
+    "tags": [
+      "Classic",
+      "Gonzo",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-sula-1973-133",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Sula (1973)",
+    "teaser": "Toni Morrison's second novel splits its story between two Black girls in the 'Bottom' neighborhood — Sula Peace, who leaves and returns as the town's scapegoat, and Nel Wright, who stays. Morrison called it a book about good and evil, then admitted she meant 'to ask how evil comes to be.'",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Sula (1973) — chapters '1919' and '1941'",
+      "durationMinutes": 45,
+      "instruction": "Read the first chapter, '1919,' and find the image that starts everything: Shadrack's National Suicide Day. Then read the chapter where the town's 'goodness' is revealed as a reaction to Sula's freedom — Morrison arranges the neighbors' sudden virtue so you see it as their invention, not her absence."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "1970s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-song-of-solomon-1977-134",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Song of Solomon (1977)",
+    "teaser": "Morrison's third novel follows Milkman Dead — a Black man in Michigan who sets out to find a bag of gold and instead finds his family's story, ending with a leap that re-enacts his enslaved ancestor's flight. The title is taken from the biblical book; Morrison said the novel is about flight and who gets to take it.",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Song of Solomon (1977) — the opening 'leap' and the Shalimar song",
+      "durationMinutes": 22,
+      "instruction": "Read the first pages for the tone: a man leaps from the roof of Mercy Hospital, and the narrator treats it as a neighborhood fact, not a mystery. Then follow Milkman's discovery in Shalimar — the children's song about Solomon, the flying African — and notice how the novel's biggest plot reveal is hidden in a playground rhyme."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "1970s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-midnights-children-1981-135",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Midnight's Children (1981)",
+    "teaser": "Rushdie's Booker-winning novel gives Saleem Sinai, born at the exact stroke of India's independence, telepathic connection to the other 1,000 children of midnight — and makes his life a running allegory for the nation's first 30 years. The novel's conceit: one man's cracked nose contains a country.",
+    "imageUrl": "",
+    "byline": "Salman Rushdie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Midnight's Children (1981) — the birth scene and the Children's Conference",
+      "durationMinutes": 42,
+      "instruction": "Read the opening — Saleem's birth scene, where the switching of two babies at the hospital sets up the whole book. Then read the chapter where the midnight children convene, and notice how Rushdie turns the 'Children of Midnight' conference into a satire of Indian politics. The voice — grand, self-mocking, digressive — is the actual protagonist."
+    },
+    "tags": [
+      "Indian",
+      "Magic Realism",
+      "Postcolonial"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-neuromancer-1984-136",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Neuromancer (1984)",
+    "teaser": "William Gibson coined 'cyberspace' in this novel — 'a consensual hallucination experienced daily by billions' — and invented the cyberpunk template: washed-up console cowboy Case, a mysterious employer, an AI with a plan. It became the first novel to win the Hugo, Nebula, and Philip K. Dick awards in the same year.",
+    "imageUrl": "",
+    "byline": "William Gibson",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Neuromancer (1984) — the opening line and Case's first jack-in",
+      "durationMinutes": 16,
+      "instruction": "Read the famous first line and then the scene where Case first 'jacks in' — Gibson never explains the tech, he just narrates the sensation. Then track the AI's manipulation: Wintermute talks to Case through other characters' bodies, which is the book's real theme in disguise — who is running whom."
+    },
+    "tags": [
+      "Science Fiction",
+      "Cyberpunk",
+      "1980s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-beloved-1987-137",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Beloved (1987)",
+    "teaser": "Beloved is based on Margaret Garner, who killed her daughter rather than let her be returned to slavery — Morrison turns that act into a haunted-house story where the ghost is memory itself. It won the Pulitzer in 1988, and when it lost the National Book Award the year before, 48 Black writers published a protest letter.",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Beloved (1987) — the '124 was spiteful' opening and the milk passage",
+      "durationMinutes": 42,
+      "instruction": "Read the opening: '124 was spiteful.' The house's ghost is never explained, only experienced. Then read Sethe's account of the escape — the famous 'milk' passage, where her stolen milk becomes the story's central symbol of what slavery took. Notice how the ghost gets a name (Beloved) before the reader learns why."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Slavery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-satanic-verses-1988-138",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Satanic Verses (1988)",
+    "teaser": "Rushdie's novel about two Indian actors falling from a hijacked plane — one becomes an angel, one a devil — sparked the 1989 fatwa that forced him into hiding for nearly a decade. The 'satanic verses' of the title are a disputed episode in early Islam, and the book's dream sequences satirize a prophet named Mahound.",
+    "imageUrl": "",
+    "byline": "Salman Rushdie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Satanic Verses (1988) — the opening fall and the 'Mahound' chapters",
+      "durationMinutes": 38,
+      "instruction": "Read the opening fall from the plane — the two men singing 'born again' as they plummet — and notice how the book establishes its miracle/reality ambiguity in the first pages. Then read the chapter where the prophet-figure's followers consult an oracle; the 'satanic verses' episode is the hinge the whole controversy turns on, and Rushdie's framing of it is deliberately ambiguous."
+    },
+    "tags": [
+      "British",
+      "Magic Realism",
+      "Controversy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-things-they-carried-139",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Things They Carried (1990)",
+    "teaser": "Tim O'Brien's collection about Vietnam is built on the 'things' soldiers literally carried — rifles, letters, fear, grief — each weighed and named. Its central move is to blur memoir and invention, declaring 'story-truth' more real than what happened, in a war novel that is also a meditation on how we tell war.",
+    "imageUrl": "",
+    "byline": "Tim O'Brien",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Things They Carried (1990) — 'The Things They Carried' and 'How to Tell a True War Story'",
+      "durationMinutes": 20,
+      "instruction": "Read the title story's inventory — the exact weights of what each man carried — and notice the math: the heavier the object, the more it stands for something unnameable. Then read 'How to Tell a True War Story,' where O'Brien directly argues that a true war story is never about war, and that the one that feels true is usually invented."
+    },
+    "tags": [
+      "American",
+      "Vietnam",
+      "Short Stories"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-english-patient-1992-140",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The English Patient (1992)",
+    "teaser": "Ondaatje's Booker winner strands four people in an Italian villa at the end of World War II — a burned man who may be the real Hungarian desert explorer Count Almásy, a Canadian nurse, a Sikh sapper, and a thief. The novel won the Booker and was adapted into the 1996 Oscar-winning film.",
+    "imageUrl": "",
+    "byline": "Michael Ondaatje",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The English Patient (1992) — the villa's four voices and the desert chapters",
+      "durationMinutes": 34,
+      "instruction": "Read the opening — the burned man's 'I believe in such things as autumn' — and notice how Ondaatje gives each character a separate history that only intersects in the villa. Then read the desert chapters, where the affair with Katharine is narrated as cartography: the love story is told as a map being drawn."
+    },
+    "tags": [
+      "Canadian",
+      "Literary",
+      "WWII"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-snow-crash-1992-141",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Snow Crash (1992)",
+    "teaser": "Neal Stephenson's novel invented a 'Metaverse' before the internet was mainstream — a virtual city where the hero delivers pizza, then fights a virus that infects people through language itself, spreading via an ancient Sumerian brain hack. Hiro Protagonist (yes, that's his name) is a hacker and swordsman who works as a courier.",
+    "imageUrl": "",
+    "byline": "Neal Stephenson",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Snow Crash (1992) — the opening delivery and the Sumerian virus chapters",
+      "durationMinutes": 13,
+      "instruction": "Read the opening — Hiro is delivering pizza in a car with a nuclear bomb attached — and notice how fast Stephenson establishes the two worlds (real and Metaverse) as equal realities. Then follow the 'neurolinguistic virus' explanation, where the book's wildest idea — language as executable code — is delivered in straight-faced tech prose."
+    },
+    "tags": [
+      "Science Fiction",
+      "Cyberpunk",
+      "1990s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-infinite-jest-1996-142",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Infinite Jest (1996)",
+    "teaser": "Wallace's 1,079-page novel (plus 388 footnotes, some with their own footnotes) is set in a near-future where years are sponsored — 'Year of the Depend Adult Undergarment' — and centers on a film so entertaining it kills anyone who watches it. Its structure is famously a circle: the novel's first sentence continues its last.",
+    "imageUrl": "",
+    "byline": "David Foster Wallace",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Infinite Jest (1996) — the circular first/last sentences and a footnote chain",
+      "durationMinutes": 16,
+      "instruction": "Read the first chapter and the last chapter back to back — they're the same sentence split across the book, which is the novel's whole argument about addiction in a single formal gesture. Then read a block of footnotes end-to-end: Wallace does more world-building in the notes than in the main text, and skipping them is how the book punishes you."
+    },
+    "tags": [
+      "American",
+      "Postmodern",
+      "Addiction"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-memoirs-of-a-geisha-143",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Memoirs of a Geisha (1997)",
+    "teaser": "Arthur Golden's novel follows Sayuri from a fishing village to the geisha houses of Gion in 1920s–30s Kyoto — and its authenticity was contested from day one: Golden was accused of appropriating the life story of real geisha Mineko Iwasaki, who sued and later published her own memoir, Geisha, a Life.",
+    "imageUrl": "",
+    "byline": "Arthur Golden",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Memoirs of a Geisha (1997) — the auction scene and its controversy",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — Sayuri's childhood in Yoroido and the meeting with Mr. Tanaka — and notice how Golden builds the geisha world as a closed system with its own economics. Then read the scene where Sayuri's virginity is auctioned: the book's most controversial episode, and the one Iwasaki said misrepresented her life."
+    },
+    "tags": [
+      "Japanese",
+      "Historical",
+      "1990s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-god-of-small-144",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The God of Small Things (1997)",
+    "teaser": "Arundhati Roy's Booker-winning debut — she had written one novel, and it became a global phenomenon — is set in Kerala in 1969 and told by twins Rahel and Estha, whose childhood is destroyed by the 'Love Laws' that decide who can be loved and how much. Roy spent four years writing it; the advance and rights set records for a first novel.",
+    "imageUrl": "",
+    "byline": "Arundhati Roy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The God of Small Things (1997) — the opening and the twins' reckoning",
+      "durationMinutes": 19,
+      "instruction": "Read the opening — 'May in Ayemenem is a hot, brooding month' — and notice how Roy withholds the central event while circling it for pages. Then read the chapter where the twins' world comes apart, and track the recurring images (the river, the History House, the word 'later') that carry the book's grief."
+    },
+    "tags": [
+      "Indian",
+      "Literary",
+      "Family"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-white-teeth-2000-145",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "White Teeth (2000)",
+    "teaser": "Zadie Smith wrote White Teeth at 24, and the novel — two families, one Jamaican-British, one Bengali-British, meeting in North London — became the defining multicultural novel of the 2000s before its author could legally rent a car. It won multiple first-novel prizes and sold over a million copies.",
+    "imageUrl": "",
+    "byline": "Zadie Smith",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "White Teeth (2000) — the opening suicide scene and the Irie/Millat chapters",
+      "durationMinutes": 19,
+      "instruction": "Read the opening — Archie Jones attempting suicide in a car that won't start, saved by a butcher's shop — and notice how Smith sets the novel's tone: comic, generous, and determined to keep every character in the frame. Then read the Irie/Millat chapters, where the book's argument about inheritance and identity plays out between generations."
+    },
+    "tags": [
+      "British",
+      "Comedy",
+      "Multicultural"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-atonement-2001-146",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Atonement (2001)",
+    "teaser": "Ian McEwan's novel is a single lie and its lifelong consequences: 13-year-old Briony's false accusation splits two lovers apart before World War II, and the book's final section reveals the narrator has been controlling the story all along. The twist — revealed on the last pages — re-reads every chapter before it.",
+    "imageUrl": "",
+    "byline": "Ian McEwan",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Atonement (2001) — Part One's lie and the 1999 epilogue",
+      "durationMinutes": 18,
+      "instruction": "Read the first part as a closed story — the day at the Tallis house, the fountain, the accusation — and notice how Briony's literary imagination is the engine of the lie. Then read the epilogue, set in 1999, where the narrator confesses what really happened. The book asks you to re-judge everything you just read."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "WWII"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-middlesex-2002-147",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Middlesex (2002)",
+    "teaser": "Eugenides's Pulitzer winner is a Greek-American family saga narrated by Cal, a woman raised as Calliope who discovers she has 5-alpha-reductase deficiency — a condition that made her body develop as male at puberty. The novel opens with a line that announces the whole project: 'I was born twice.'",
+    "imageUrl": "",
+    "byline": "Jeffrey Eugenides",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Middlesex (2002) — the 'born twice' opening and the Detroit chapters",
+      "durationMinutes": 29,
+      "instruction": "Read the opening — 'I was born twice: first, as a baby girl, on a remarkably smogless Detroit day in January of 1960; and then again, as a teenage boy, in an emergency room near Petoskey, Michigan, in August of 1974' — and notice how Cal treats his intersex body as a family inheritance. Then read the Detroit chapters, where the novel becomes a history of a city as much as a person."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Family"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-cloud-atlas-2004-148",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Cloud Atlas (2004)",
+    "teaser": "David Mitchell's novel stacks six stories from the 1850s to a post-apocalyptic future, each nested inside the next — a journal found in a letter, a letter read in a manuscript, a manuscript seen in a film — then unwinds them in reverse. The Booker-shortlisted structure is the point: 'Souls cross ages like clouds cross skies.'",
+    "imageUrl": "",
+    "byline": "David Mitchell",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Cloud Atlas (2004) — the six nested stories and their shared souls",
+      "durationMinutes": 18,
+      "instruction": "Read the first and last halves of the nested structure deliberately: the novel cuts each inner story mid-sentence when the next one takes over. Track one 'soul' — the composer Frobisher's music, or the publisher's book — reappearing in each era, which is how Mitchell argues identity persists across time."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "Structure"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-road-2006-149",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Road (2006)",
+    "teaser": "McCarthy's Pulitzer winner is a father-and-son journey through an ash-grey post-apocalyptic America, written in stripped prose with no quotation marks. The father's only creed — 'carry the fire' — is never explained, which is the book's power: the boy asks what the fire is, and the father says he doesn't know either.",
+    "imageUrl": "",
+    "byline": "Cormac McCarthy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Road (2006) — the opening and the ending",
+      "durationMinutes": 42,
+      "instruction": "Read the first page and notice what McCarthy withholds: no cause for the apocalypse, no names, no history — just 'the road' and the pushcart. Then read the ending, where the father's death leaves the boy with strangers. The final lines resolve nothing and everything: the fire passes on, unproven."
+    },
+    "tags": [
+      "American",
+      "Post-Apocalyptic",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-wolf-hall-2009-150",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Wolf Hall (2009)",
+    "teaser": "Hilary Mantel's Booker winner follows Thomas Cromwell — the blacksmith's son who became Henry VIII's fixer — through the fall of Anne Boleyn, narrated in the present tense with a deliberately confusing 'he' that refuses to name who's speaking. It won the Booker and its sequel, Bring Up the Bodies, won it again two years later.",
+    "imageUrl": "",
+    "byline": "Hilary Mantel",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Wolf Hall (2009) — the opening and the shifting 'he' chapters",
+      "durationMinutes": 29,
+      "instruction": "Read the opening — the boy Cromwell beaten by his father, the future already decided — and notice how Mantel writes Cromwell from the inside, his memory as a tool. Then read a scene where 'he' shifts without warning between Cromwell and another man: the ambiguity is the technique, forcing you to think like a man who never reveals himself."
+    },
+    "tags": [
+      "British",
+      "Historical",
+      "Tudor"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-a-visit-from-the-151",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "A Visit from the Goon Squad (2010)",
+    "teaser": "Jennifer Egan's Pulitzer winner is 13 linked stories about music-industry people orbiting one record producer — told in different genres across decades, culminating in a chapter written entirely as a PowerPoint presentation by a 12-year-old. The title's 'goon squad' is time: 'the goon squad... at your back as you age.'",
+    "imageUrl": "",
+    "byline": "Jennifer Egan",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "A Visit from the Goon Squad (2010) — 'Found Objects' and the PowerPoint chapter",
+      "durationMinutes": 41,
+      "instruction": "Read the first story, 'Found Objects,' and the last, 'Pure Language,' as a pair — the same characters bookend the book 40 years apart. Then read the PowerPoint chapter: Egan uses the form's awkwardness on purpose, and its emotional payload lands because the format is so reductive. Notice how every story connects through one girl's lost bracelet."
+    },
+    "tags": [
+      "American",
+      "Experimental",
+      "Music"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-gone-girl-2012-152",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Gone Girl (2012)",
+    "teaser": "Gillian Flynn's thriller is famous for its midpoint rug-pull: the novel's second half reveals the 'victim' wife Amy is the architect of her own disappearance. The 'cool girl' passage — Amy's manifesto about performing the woman men want — became the book's most-quoted pages and its feminist thesis in one.",
+    "imageUrl": "",
+    "byline": "Gillian Flynn",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Gone Girl (2012) — the 'cool girl' monologue and the midpoint reveal",
+      "durationMinutes": 19,
+      "instruction": "Read to the chapter titled 'Amazing Amy' and stop before the reveal: notice how Flynn plants Amy's diary as an unreliable narrator in plain sight. Then read the 'cool girl' monologue aloud — it's the moment the novel stops being a mystery and starts being an argument. The ending offers no justice, only two people trapped in a marriage of mutual performance."
+    },
+    "tags": [
+      "American",
+      "Thriller",
+      "2010s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-americanah-2013-153",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Americanah (2013)",
+    "teaser": "Adichie's novel follows Ifemelu, a Nigerian woman who emigrates to America, becomes a successful blogger on race, and returns to Lagos — a story told against the immigrant's central question: which country is home? Its blog posts ('A Homogenized World of Racism for Dummies') are threaded through the novel verbatim.",
+    "imageUrl": "",
+    "byline": "Chimamanda Ngozi Adichie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Americanah (2013) — the hair salon opening and a full blog post",
+      "durationMinutes": 42,
+      "instruction": "Read the opening — Ifemelu in a Baltimore hair salon, getting her hair braided before returning to Nigeria — and notice how the scene sets up the book's thesis: hair, like race, is a system of judgment she can navigate but never escape. Then read one full blog post, which Adichie includes word for word: the novel's sharpest social analysis is meta-fictional."
+    },
+    "tags": [
+      "Nigerian",
+      "Literary",
+      "Immigration"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-between-the-world-and-154",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Between the World and Me (2015)",
+    "teaser": "Ta-Nehisi Coates's National Book Award winner is a letter to his teenage son about what it means to live in a Black body in America — a direct descendant of James Baldwin's The Fire Next Time, which Coates cites and revises. Its key image: the 'Dreamers' who built and benefit from a system they refuse to see.",
+    "imageUrl": "",
+    "byline": "Ta-Nehisi Coates",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Between the World and Me (2015) — the Prince Jones chapter",
+      "durationMinutes": 12,
+      "instruction": "Read the opening letter frame and then the chapter on Prince Jones, the Howard University student killed by police — Coates's most personal chapter, and the hinge where abstract analysis becomes grief. Notice how he refuses consolation: the book's power is that it never promises the son a way out."
+    },
+    "tags": [
+      "American",
+      "Memoir",
+      "Race"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-lincoln-in-the-bardo-155",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Lincoln in the Bardo (2017)",
+    "teaser": "George Saunders's Booker winner is set in a single night — the bardo, the Tibetan Buddhist limbo between death and rebirth — where Abraham Lincoln's son Willie, newly dead, refuses to move on, surrounded by a chorus of ghosts who narrate the novel together. It's built from hundreds of voices and invented historical quotations.",
+    "imageUrl": "",
+    "byline": "George Saunders",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Lincoln in the Bardo (2017) — the ghost chorus and the fake citations",
+      "durationMinutes": 34,
+      "instruction": "Read the opening — the ghosts introducing themselves in a crowded choral narration — and notice how Saunders makes you assemble the story from fragments. Then find the invented 'historical sources' footnoted throughout: Saunders fabricates quotes and attributions wholesale, a formal trick that asks whether any account of grief can be authoritative."
+    },
+    "tags": [
+      "American",
+      "Experimental",
+      "Historical"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-normal-people-2018-156",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Normal People (2018)",
+    "teaser": "Rooney's second novel traces Connell and Marianne from a small Irish town through Trinity College Dublin — a love story told almost entirely in what they don't say to each other, and rendered in a prose style so stripped it made 'Rooney realism' a genre. It won the Costa Novel Award and became a TV series.",
+    "imageUrl": "",
+    "byline": "Sally Rooney",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Normal People (2018) — the first chapter and a Trinity dialogue scene",
+      "durationMinutes": 20,
+      "instruction": "Read the first chapter — the teenagers' secret relationship in school — and notice how Rooney withholds interiority: the narration stays close to both characters but never lets them know each other's minds, which is the whole tragedy. Then read the 'conversation' chapters at Trinity, where their miscommunications are structured like dialogue that always arrives a beat too late."
+    },
+    "tags": [
+      "Irish",
+      "Literary",
+      "Romance"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-testaments-2019-157",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Testaments (2019)",
+    "teaser": "Atwood returned to Gilead 34 years after The Handmaid's Tale with this Booker-winning sequel, told in three voices — two young women raised inside the regime and Aunt Lydia, the system's most feared enforcer, revealed as a secret dissident. It won the Booker jointly with Bernardine Evaristo's Girl, Woman, Other.",
+    "imageUrl": "",
+    "byline": "Margaret Atwood",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Testaments (2019) — Aunt Lydia's Ardua Hall testimony",
+      "durationMinutes": 33,
+      "instruction": "Read Aunt Lydia's opening testimony — her 'Ardua Hall' chapters are the book's engine — and notice how Atwood makes the villain sympathetic without forgiving her. Then read the two girls' accounts side by side: the novel is structured as evidence in a trial, and the reader is the jury on whether Gilead can ever be dismantled from within."
+    },
+    "tags": [
+      "Canadian",
+      "Dystopian",
+      "Sequel"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-klara-and-the-sun-158",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Klara and the Sun (2021)",
+    "teaser": "Ishiguro's Nobel-winning follow-up to Never Let Me Go is narrated by Klara, an 'Artificial Friend' — a solar-powered robot companion — who watches the world from a shop window and makes bargains with the Sun. The novel is a study of love and sacrifice told from outside the human experience of them.",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Klara and the Sun (2021) — the shop window opening and the Sun bargain",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — Klara in the store window, dividing the world into grid squares — and notice how Ishiguro renders her perception as a machine's, then lets it shade into something else. Then read the chapter where Klara negotiates with the Sun to save her human: the book's emotional peak depends on you not knowing whether her sacrifice is real or a delusion."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "Science Fiction"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-demon-copperhead-2022-159",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Demon Copperhead (2022)",
+    "teaser": "Kingsolver's Pulitzer winner transplants David Copperfield to the mountains of southwest Virginia, where orphaned Demon grows up inside the opioid crisis — Dickens's Victorian poverty reimagined as modern Appalachia's. Kingsolver spent two decades planning the transposition and works in Dickens's plot beats chapter by chapter.",
+    "imageUrl": "",
+    "byline": "Barbara Kingsolver",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Demon Copperhead (2022) — the opening and the morphine economy chapters",
+      "durationMinutes": 25,
+      "instruction": "Read the opening — Demon's birth, the death of his mother, the 'copperhead' family — and notice how Kingsolver maps Dickens's characters onto new names. Then read the chapters where Demon discovers the morphine economy: the novel's thesis is that Dickens's world of debt, orphanhood, and addiction survived two centuries to become rural America."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Appalachia"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-chain-gang-all-stars-2023-160",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Chain-Gang All-Stars (2023)",
+    "teaser": "Adjei-Brenyah's novel imagines a near-future America where convicted prisoners fight gladiatorial battles to the death for televised entertainment — and follows two women superstars, 'Hammer' and 'Melancholia,' who have promised each other a final showdown. It was a National Book Award finalist and a literary satire of the prison-industrial complex.",
+    "imageUrl": "",
+    "byline": "Nana Kwame Adjei-Brenyah",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Chain-Gang All-Stars (2023) — the opening bout and the corporate framing",
+      "durationMinutes": 33,
+      "instruction": "Read the opening fight and the 'spectator experience' framing — Adjei-Brenyah shows the violence through the lens of the corporations selling it. Then read the chapters narrated by the prisoners' families and the abolitionist organizers: the novel keeps switching registers from spectacle to grief to policy, which is its argument in form."
+    },
+    "tags": [
+      "American",
+      "Dystopian",
+      "Satire"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-yellowface-2023-161",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Yellowface (2023)",
+    "teaser": "Kuang's novel is a satire of the publishing industry's race politics: white author June Hayward inherits a brilliant manuscript from her dead Asian-American friend, publishes it under the ethnically ambiguous pen name 'Juniper Song,' and watches it become a bestseller — while the truth sits in her desk drawer.",
+    "imageUrl": "",
+    "byline": "R.F. Kuang",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Yellowface (2023) — the opening theft and the cancellation chapters",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — the death of Athena Liu, June's 'friend' and rival, in a freak accident — and notice how Kuang makes you complicit before you've judged: June's voice is so plausible that the theft feels almost reasonable. Then read the internet-cancelation chapters, where the novel dramatizes how Twitter verdicts and book deals move at the same speed."
+    },
+    "tags": [
+      "American",
+      "Satire",
+      "Publishing"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-north-woods-2023-162",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "North Woods (2023)",
+    "teaser": "Daniel Mason's novel tells the story of one house in a Massachusetts forest over 400 years — through Puritan settlers, an apple farmer, a painter, an escaped enslaved man, and a 21st-century couple — in a different genre for each era. The house is the protagonist; the people are its weather.",
+    "imageUrl": "",
+    "byline": "Daniel Mason",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "North Woods (2023) — the opening and the house-narrated chapter",
+      "durationMinutes": 36,
+      "instruction": "Read the first chapter — the Puritan couple who build the house — and the last, and notice the recurring image that bookends them: the apple tree. Then read the chapter narrated by the house itself, where Mason breaks the historical pattern on purpose. The novel's argument is ecological: a place outlives every story told about it."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Experimental"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-wellness-2023-163",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Wellness (2023)",
+    "teaser": "Nathan Hill's novel — his follow-up to The Nix — follows a married couple, Jack and Elizabeth, whose relationship is examined through the wellness industry, internet placebo effects, and the science of belief. Its chapters are built around the couple's online relationship history, and Hill's research on placebo became the novel's spine.",
+    "imageUrl": "",
+    "byline": "Nathan Hill",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Wellness (2023) — the wrong-text opening and the placebo chapters",
+      "durationMinutes": 18,
+      "instruction": "Read the opening — the couple's affair 'ending' over a text message sent to the wrong person — and then the chapter where Hill explains the placebo research that underpins their marriage therapy. Notice the structure: every chapter pairs a present-tense relationship scene with a past-tense explanation of why we believe what we believe."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Marriage"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-birnam-wood-2023-164",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Birnam Wood (2023)",
+    "teaser": "Eleanor Catton's Booker-winning follow-up to The Luminaries is a thriller about a guerrilla-gardening collective that trespasses onto a billionaire's New Zealand estate — and gets tangled with an eco-terrorist who may be setting traps. The title nods to Macbeth: Birnam Wood comes to Dunsinane, but here the wood is activists.",
+    "imageUrl": "",
+    "byline": "Eleanor Catton",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Birnam Wood (2023) — the collective's founding and the funding vote",
+      "durationMinutes": 33,
+      "instruction": "Read the opening — the collective's founding and its moral compromises — and notice how Catton withholds the eco-terrorist's identity for hundreds of pages while making every character plausibly guilty. Then read the scene where the collective votes to accept the billionaire's money: the novel's whole argument about ethics under capitalism in one meeting."
+    },
+    "tags": [
+      "New Zealand",
+      "Thriller",
+      "Environmental"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-wager-2023-165",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Wager (2023)",
+    "teaser": "David Grann's nonfiction account of the 1742 wreck of the HMS Wager — a British warship that ran aground off Patagonia, whose crew split into mutiny and cannibalism — won the Baillie Gifford Prize and became a bestseller. The survivors' return to England produced two contradictory accounts, and the Admiralty's trial became a national sensation.",
+    "imageUrl": "",
+    "byline": "David Grann",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Wager (2023) — the wreck and the two rival accounts",
+      "durationMinutes": 17,
+      "instruction": "Read the opening — the wreck and the two survival narratives — and notice how Grann sets up the book's central problem: the same events, told by officers and crew, produce irreconcilable truths. Then read the mutiny chapters, where the book's claim — that the Wager's story is a microcosm of empire — becomes explicit."
+    },
+    "tags": [
+      "Nonfiction",
+      "Maritime",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-king-a-life-2023-166",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "King A Life (2023)",
+    "teaser": "Jonathan Eig's Pulitzer-winning biography of Martin Luther King Jr. was the first in decades to draw on the newly opened archives — including King's own FBI file and recordings of his marital infidelities, which Eig publishes with context rather than scandal. It restores King's radicalism: the Cold War warrior king is largely a later invention.",
+    "imageUrl": "",
+    "byline": "Jonathan Eig",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "King: A Life (2023) — the Atlanta childhood and the FBI chapters",
+      "durationMinutes": 27,
+      "instruction": "Read the opening — King's childhood in Atlanta, including the suicide attempt of his grandmother — and notice how Eig builds the man before the myth. Then read the chapters on the Montgomery bus boycott and the FBI's campaign against him: the book's argument is that King's government-sanctioned enemies did more to shape his fate than any single opponent."
+    },
+    "tags": [
+      "Nonfiction",
+      "Biography",
+      "Civil Rights"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-vaster-wilds-2023-167",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Vaster Wilds (2023)",
+    "teaser": "Lauren Groff's novel is a survival story set in 1609 colonial Virginia: a servant girl flees the Jamestown fort during a starvation winter and walks north through a hostile wilderness that is also a wonder. Groff wrote it as a deliberate counter-narrative to the myth of American origin — the story of one anonymous girl who escapes rather than conquers.",
+    "imageUrl": "",
+    "byline": "Lauren Groff",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Vaster Wilds (2023) — the escape and the abandoned village",
+      "durationMinutes": 37,
+      "instruction": "Read the opening — the girl's escape from the fort — and notice how Groff renders the wilderness as both threat and sanctuary, alternating terror with awe. Then read the chapter where she finds the abandoned indigenous village: the novel's argument — that the land was already a country with its own history — lands in that empty clearing."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-western-lane-2023-168",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Western Lane (2023)",
+    "teaser": "Chetna Maroo's Booker-shortlisted debut is a slim novel about an 11-year-old Gujarati girl in London who channels her grief for her mother into competitive squash. The book's prose is as spare as its heroine's game — every sentence is a rally, and the squash court becomes a place where the family's silences are played out.",
+    "imageUrl": "",
+    "byline": "Chetna Maroo",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Western Lane (2023) — the training opening and the tournament chapters",
+      "durationMinutes": 32,
+      "instruction": "Read the opening — the family's move after the mother's death, the father's stern training sessions — and notice how little Maroo explains: grief is expressed only through the sport. Then read the tournament chapters, where the novel's technical descriptions of squash become a language for things the characters cannot say."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "Debut"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-old-gods-time-2023-169",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Old God's Time (2023)",
+    "teaser": "Sebastian Barry's Booker-shortlisted novel follows Tom Kettle, a retired Irish policeman living a monkish life in a Dublin castle, whose quiet is broken by two detectives who bring up a case from decades past. It's a crime novel that is really a novel about memory, trauma, and the institutional abuses of the Catholic Church in Ireland.",
+    "imageUrl": "",
+    "byline": "Sebastian Barry",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Old God's Time (2023) — the castle opening and the case's return",
+      "durationMinutes": 35,
+      "instruction": "Read the opening — Tom's solitary life in the castle, the sea outside — and notice how Barry establishes his unreliable, drifting narration: Tom's memory is the novel's landscape, and the plot arrives through it. Then read the chapters where the case resurfaces, and notice that the crime is never the point — what happened after it is."
+    },
+    "tags": [
+      "Irish",
+      "Literary",
+      "Crime"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-guest-2023-170",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Guest (2023)",
+    "teaser": "Emma Cline's follow-up to The Girls follows Alex, a 22-year-old adrift on Long Island's wealthy summer circuit, who has been told to leave and instead keeps orbiting the people she's crashed with — borrowing, conning, and performing her way through a season. The novel is a study of a woman who is only ever 'the guest.'",
+    "imageUrl": "",
+    "byline": "Emma Cline",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Guest (2023) — the opening swim and the reinvention chapters",
+      "durationMinutes": 34,
+      "instruction": "Read the opening — Alex swimming at dawn, the text message that sets the plot in motion — and notice how Cline establishes her as a professional at being tolerated. Then read the chapter where Alex invents a story about her past for a new mark: the novel's whole method is watching her revise herself, and it asks how much of any identity is performance."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Summer"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-tremor-2023-171",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Tremor (2023)",
+    "teaser": "Teju Cole's novel follows Tunde, a Nigerian-born art professor at Harvard, through a year of lectures, galleries, and travels — interleaved with accounts of empire, violence, and the objects museums keep. Cole writes the novel as a series of scenes and digressions that refuse a single plot, in the tradition of his Open City.",
+    "imageUrl": "",
+    "byline": "Teju Cole",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Tremor (2023) — the Benin bronze lecture and the repatriation chapters",
+      "durationMinutes": 11,
+      "instruction": "Read the opening — Tunde in a Harvard lecture hall, a slide of a Benin bronze on the screen — and notice how Cole immediately links the art object to the colonial violence that took it. Then read the chapters on the Benin bronzes' repatriation, where the novel's essayistic strain becomes its argument: whose history does the museum display?"
+    },
+    "tags": [
+      "Nigerian-American",
+      "Literary",
+      "Essayistic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-everythings-fine-2023-172",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Everything's Fine (2023)",
+    "teaser": "Cecilia Rabess's debut follows Jess, a young Black woman who takes a job at Goldman Sachs and falls for a white co-worker who votes against everything she believes — a 'love across the aisle' romance that was itself controversial before publication, with a publisher's sensitivity read generating headlines. The novel's debate is the point: can intimacy survive politics?",
+    "imageUrl": "",
+    "byline": "Cecilia Rabess",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Everything's Fine (2023) — the first-day opening and the Josh arguments",
+      "durationMinutes": 19,
+      "instruction": "Read the opening — Jess's first day at the bank, the whiteness of the trading floor — and notice how Rabess renders the workplace as a system of micro-judgments. Then read the scenes where Jess and Josh argue politics in private: the novel deliberately stages the same fights its readers were having about it, and leaves the central question — is Josh a good man or a comfortable bigot? — unresolved."
+    },
+    "tags": [
+      "American",
+      "Romance",
+      "Debate"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-new-naturals-2023-173",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The New Naturals (2023)",
+    "teaser": "Gabriel Bump's National Book Award finalist imagines a group of Black Americans who abandon the country to found a utopian community in an abandoned mall — and the novel tracks the dream from its founding euphoria to its unraveling. It's a comedy about utopia, written in the shadow of every failed paradise that came before.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The New Naturals (2023) — the founding and the first dispute",
+      "durationMinutes": 40,
+      "instruction": "Read the opening — the founding of 'The New Naturals' and the manifesto moment — and notice how Bump sets up the community's fatal tension: everyone agrees on the dream, nobody agrees on the rules. Then read the chapter where the mall's first dispute erupts, and see how the novel turns political argument into comedy without letting it stop being an argument."
+    },
+    "tags": [
+      "American",
+      "Utopia",
+      "Satire"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-pride-and-prejudice-1813-174",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Pride and Prejudice (1813)",
+    "teaser": "Austen's novel — originally titled First Impressions — opens with one of the most famous sentences in English, and its heroine Elizabeth Bennet rejects a marriage proposal from the wealthiest man she's ever met, then falls in love with him over two hundred pages of misunderstanding. The novel invented the enemies-to-lovers plot and has never been out of print.",
+    "imageUrl": "",
+    "byline": "Jane Austen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Pride and Prejudice (1813) — the first chapter and Darcy's letter",
+      "durationMinutes": 38,
+      "instruction": "Read the first chapter aloud — Mrs. Bennet's scheming dialogue — and notice how Austen establishes character entirely through speech. Then read the letter Darcy writes Elizabeth, the novel's hinge: every line re-reads what came before. Austen herself said she had no 'fondness' for Darcy; the novel is funnier if you remember the author is on Elizabeth's side, not his."
+    },
+    "tags": [
+      "British",
+      "Classic",
+      "Romance"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-crime-and-punishment-1866-175",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Crime and Punishment (1866)",
+    "teaser": "Dostoevsky's novel gives a poor St. Petersburg student a theory — that extraordinary men may break the law — and then makes him test it with an axe. Raskolnikov's murder of a pawnbroker occupies the first part; the other five parts are the punishment, which is not prison but his own unraveling mind.",
+    "imageUrl": "",
+    "byline": "Fyodor Dostoevsky",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Crime and Punishment (1866) — the murder scene and the epilogue",
+      "durationMinutes": 11,
+      "instruction": "Read just the murder scene and notice the details Dostoevsky withholds: the axe is described obsessively, but the violence is almost skipped, because the book isn't about the crime. Then read the epilogue, where Raskolnikov — in prison, convicted — finally collapses and accepts love. The novel argues the punishment was always internal, and the legal sentence is an afterthought."
+    },
+    "tags": [
+      "Russian",
+      "Classic",
+      "Psychology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-heart-of-darkness-1899-176",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Heart of Darkness (1899)",
+    "teaser": "Conrad's novella is a frame within a frame: a sailor on a Thames boat tells the story of Marlow's journey up the Congo to find Kurtz, an ivory agent who has gone native — and it became the most argued-over short novel in English, the source of 'The horror! The horror!' and of the critique that it both exposed and reproduced colonialism.",
+    "imageUrl": "",
+    "byline": "Joseph Conrad",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Heart of Darkness (1899) — the frame opening and Kurtz's report",
+      "durationMinutes": 45,
+      "instruction": "Read the opening — Marlow's listeners on the Thames, the city as 'the beginning of the world' — and notice how Conrad sets up the novel's central irony: the 'darkness' is in Europe all along. Then read Kurtz's report to the International Society, with its scrawled postscript — 'Exterminate all the brutes!' — which is the whole book in one line."
+    },
+    "tags": [
+      "British",
+      "Classic",
+      "Colonialism"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-to-the-lighthouse-1927-177",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "To the Lighthouse (1927)",
+    "teaser": "Woolf's novel is one family and one question — will the Ramsays ever sail to the lighthouse? — told in three movements, including 'Time Passes,' the famous middle section where a decade passes in twenty pages while the house decays. The novel is the masterpiece of her stream-of-consciousness method.",
+    "imageUrl": "",
+    "byline": "Virginia Woolf",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "To the Lighthouse (1927) — the opening and the 'Time Passes' section",
+      "durationMinutes": 17,
+      "instruction": "Read the first movement's opening — Mrs. Ramsay's consciousness as the house's center — and notice how Woolf moves between minds without scene breaks. Then read 'Time Passes' in one sitting: the bracketed death notices ('[Mr. Ramsay, stumbling along a passage one dark morning...]') are the novel's most radical formal gesture, grief reduced to a parenthesis."
+    },
+    "tags": [
+      "British",
+      "Modernist",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-grapes-of-wrath-178",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Grapes of Wrath (1939)",
+    "teaser": "Steinbeck's Pulitzer winner follows the Joad family from the Oklahoma dust bowl to California along Route 66 — and its ending, with Rose of Sharon nursing a starving stranger, scandalized and moved the country in equal measure. It sold 430,000 copies in its first year and was banned in its own state's farm country.",
+    "imageUrl": "",
+    "byline": "John Steinbeck",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Grapes of Wrath (1939) — the intercalary chapters and the ending",
+      "durationMinutes": 17,
+      "instruction": "Read the intercalary chapters — the dust storm, the used-car lot, the turtle — and notice how Steinbeck alternates the Joads' story with a sociological chorus that widens the book into the whole migration. Then read the final chapter twice: the milk poured on the ground by the California growers is the novel's argument, and Rose of Sharon's last gesture is its answer."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Depression"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-1984-1949-179",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "1984 (1949)",
+    "teaser": "Orwell's novel gave the world Big Brother, Newspeak, and doublethink — the vocabulary of totalitarianism itself — and it remains the best-selling dystopia ever written. Winston Smith's rebellion lasts exactly as long as it takes the Party to catch him, and the ending, in which he finds he loves Big Brother, is the bleakest in the canon.",
+    "imageUrl": "",
+    "byline": "George Orwell",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "1984 (1949) — the opening and the Room 101 scene",
+      "durationMinutes": 39,
+      "instruction": "Read the opening — the telescreen's 'Big Brother is watching you' — and then the appendix, which is written in standard English and dated years after the novel's events: the appendix quietly argues that Newspeak failed, which changes the ending's meaning. Then read the torture scene in Room 101 and decide whether the novel allows any hope at all."
+    },
+    "tags": [
+      "British",
+      "Dystopian",
+      "Classic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-invisible-man-1952-180",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Invisible Man (1952)",
+    "teaser": "Ellison's only completed novel opens with its narrator underground, 'invisible... simply because people refuse to see me' — and the 1,369 light bulbs he's stolen electricity to light are the novel's central image: he is making himself visible by force. It won the National Book Award in 1953, the first by a Black writer.",
+    "imageUrl": "",
+    "byline": "Ralph Ellison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Invisible Man (1952) — the Prologue and the battle royal",
+      "durationMinutes": 44,
+      "instruction": "Read the Prologue and the Epilogue together — they're the same man in the same basement, and the book between them is the explanation of how he got there. Then read the 'battle royal' scene, where the narrator is made to fight blindfolded for white men's entertainment: the novel's thesis — that Black Americans are given 'opportunity' only to be managed — is stated in that boxing ring."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Race"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-lord-of-the-flies-181",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Lord of the Flies (1954)",
+    "teaser": "Golding's novel strands a group of British schoolboys on an island and watches civilization evaporate in weeks: the conch shell that orders their meetings loses authority, the signal fire goes out, and the 'beast' they fear turns out to be the darkness in themselves. It was rejected by 21 publishers before becoming a school staple.",
+    "imageUrl": "",
+    "byline": "William Golding",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Lord of the Flies (1954) — the conch opening and the Simon scene",
+      "durationMinutes": 25,
+      "instruction": "Read the opening — Ralph and Piggy's first meeting, the conch discovery — and track the conch's power as the novel's measure of order: it works until it doesn't. Then read the chapter where the boys kill Simon, mistaking him for the beast: the novel's turning point, and the moment Golding stops being allegorical and becomes something harder to look at."
+    },
+    "tags": [
+      "British",
+      "Classic",
+      "Allegory"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-things-fall-apart-1958-182",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Things Fall Apart (1958)",
+    "teaser": "Achebe wrote Things Fall Apart at 28 as a deliberate answer to Heart of Darkness — the story of an Igbo village told from the inside, in which the title's collapse is both a man's and a culture's. Okonkwo, a wrestler who built his life on repressing everything he fears in his father, is destroyed by the arrival of missionaries and by his own rigidity.",
+    "imageUrl": "",
+    "byline": "Chinua Achebe",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Things Fall Apart (1958) — the opening and the final chapter",
+      "durationMinutes": 10,
+      "instruction": "Read the opening — Okonkwo's fame from wrestling, his dread of his lazy father — and notice how Achebe embeds Igbo proverbs, gods, and customs as the narrative's natural furniture, not exotica. Then read the final chapter, where the District Commissioner's thoughts close the novel: the colonizer's book about Okonkwo's world is a paragraph, and the joke is on him."
+    },
+    "tags": [
+      "Nigerian",
+      "Classic",
+      "Postcolonial"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-catch-22-1961-183",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Catch-22 (1961)",
+    "teaser": "Heller's novel invented the paradox that gave it its name — a soldier who asks to be grounded for madness proves he's sane by asking, so he can't be grounded — and turned the World War II novel into a time-loop comedy of bureaucratic terror. Its nonlinear structure was a scandal in 1961 and a template by 1970.",
+    "imageUrl": "",
+    "byline": "Joseph Heller",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Catch-22 (1961) — the opening and the Snowden chapter",
+      "durationMinutes": 36,
+      "instruction": "Read the first chapter and the last chapter back to back — Heller begins in the middle and ends with the event that explains everything: Snowden, and the secret Yossarian was never able to tell. Then read the catch-22 explanation scene aloud: the logic is airtight and insane at once, which is the novel's whole argument about institutions."
+    },
+    "tags": [
+      "American",
+      "Satire",
+      "WWII"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-bell-jar-1963-184",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Bell Jar (1963)",
+    "teaser": "Plath's only novel — published under the pseudonym Victoria Lucas a month before her death — follows Esther Greenwood, a college student in 1950s New York, through her internship at a fashion magazine and her slow descent into breakdown. Its famous fig-tree passage imagines all her possible futures as figs that rot as she hesitates to choose.",
+    "imageUrl": "",
+    "byline": "Sylvia Plath",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Bell Jar (1963) — the opening and the fig-tree passage",
+      "durationMinutes": 43,
+      "instruction": "Read the opening — Esther's New York internship, the Rosenberg executions as backdrop — and notice how Plath renders the 1950s woman's options as a series of doors closing. Then read the fig-tree paragraph: it's the novel's thesis in miniature, and it explains the 'bell jar' — the suffocation of every possibility by the pressure to choose one."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Mental Health"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-slaughterhouse-five-1969-185",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Slaughterhouse-Five (1969)",
+    "teaser": "Vonnegut's anti-war novel is built from his own experience as a POW in Dresden during the firebombing — he survived in a slaughterhouse, which is the book's title and its setting. Billy Pilgrim has 'come unstuck in time,' and the novel's response to mass death is the refrain 'So it goes.'",
+    "imageUrl": "",
+    "byline": "Kurt Vonnegut",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Slaughterhouse-Five (1969) — the frame chapter and the Dresden chapters",
+      "durationMinutes": 44,
+      "instruction": "Read the first chapter — Vonnegut as himself, trying to write the book for 23 years — and notice how it breaks the novel's frame before the novel starts. Then read the Dresden chapters, where the horror is delivered in the same flat tone as the jokes: the novel's method is the point, and 'So it goes' is not resignation but a refusal to dignify death with narrative."
+    },
+    "tags": [
+      "American",
+      "WWII",
+      "Anti-War"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-bluest-eye-1970-186",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Bluest Eye (1970)",
+    "teaser": "Morrison's debut is narrated over the frame of the Dick and Jane schoolbook primer, which it dismembers sentence by sentence — because the story is the anti-primer: Pecola Breedlove, an 11-year-old Black girl in 1940s Ohio, believes she will be loved only if she has blue eyes. It is a novel about how standards of beauty are taught, and who pays.",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Bluest Eye (1970) — the primer frame and the Cholly chapter",
+      "durationMinutes": 11,
+      "instruction": "Read the primer passages that open each section — 'Here is the house...' — and notice how Morrison's version of the sentences degrades as the book proceeds, mirroring what the ideal does to Pecola. Then read the chapter where Pecola's father rapes her, narrated in the same lyrical register as the novel's beauty: the horror is that Morrison refuses to separate the tenderness from the violation."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Race"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-gulag-archipelago-1973-187",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Gulag Archipelago (1973)",
+    "teaser": "Solzhenitsyn's three-volume history of the Soviet prison camp system is subtitled 'An Experiment in Literary Investigation' and is built from the testimony of 227 witnesses — including himself. The opening volume was smuggled to the West and published in 1973; Solzhenitsyn was stripped of his citizenship the following year.",
+    "imageUrl": "",
+    "byline": "Aleksandr Solzhenitsyn",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Gulag Archipelago (1973) — the arrest opening and the arithmetic",
+      "durationMinutes": 34,
+      "instruction": "Read the opening — the author's own arrest in 1945, for a joke in a letter — and the famous first line of the second part: 'Bless you, prison.' Then read the statistics chapter, where Solzhenitsyn assembles the arithmetic of the camps: he argues the total was tens of millions, and the book's power is that each number has a testimony attached to it."
+    },
+    "tags": [
+      "Russian",
+      "History",
+      "Testimony"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-hitchhikers-guide-to-188",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Hitchhiker's Guide to the Galaxy (1979)",
+    "teaser": "Douglas Adams's novel began as a radio series and answers the ultimate question of life, the universe, and everything with the number 42 — then reveals that the question itself was lost when Earth was demolished to make way for a hyperspace bypass. The Guide's advice on towels and the 'Don't Panic' cover made it a cult object before it was a bestseller.",
+    "imageUrl": "",
+    "byline": "Douglas Adams",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Hitchhiker's Guide to the Galaxy (1979) — the opening and Deep Thought",
+      "durationMinutes": 32,
+      "instruction": "Read the opening — Arthur Dent's house being demolished for a bypass, the prelude to Earth's demolition — and notice how Adams sets the novel's rule: the mundane and the cosmic run on the same absurd logic. Then read the scene where the supercomputer Deep Thought announces 42 after 7.5 million years of computation: the joke is that the answer is useless without the question."
+    },
+    "tags": [
+      "British",
+      "Science Fiction",
+      "Comedy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-color-purple-1982-189",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Color Purple (1982)",
+    "teaser": "Alice Walker's Pulitzer winner is written entirely as letters — first to God, then to her sister — from Celie, a poor Black woman in rural Georgia whose letters begin after she is married off at 14. It was the first novel by a Black woman to win the Pulitzer, and its frankness about abuse made it one of the most banned books of the 1980s.",
+    "imageUrl": "",
+    "byline": "Alice Walker",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Color Purple (1982) — the opening letters and the Shug chapters",
+      "durationMinutes": 16,
+      "instruction": "Read the first three letters and notice what Celie does not say: the abuse is reported in the same flat register as the weather, and the letters to God are her only privacy. Then read the letters after Celie meets Shug Avery, where the novel's radical claim — that love can be a way out — begins to take hold. The epistolary form is the point: the book is about who gets to have a voice."
+    },
+    "tags": [
+      "American",
+      "Epistolary",
+      "Classic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-handmaids-tale-1985-190",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Handmaid's Tale (1985)",
+    "teaser": "Atwood wrote Gilead — a theocratic United States where fertile women are assigned as 'handmaids' — by inventing nothing: every practice in the novel has a historical precedent she documented. Its narrator Offred tells her story in fragments to an unknown listener, and the novel's famous final section reveals the whole account as a historical transcript.",
+    "imageUrl": "",
+    "byline": "Margaret Atwood",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Handmaid's Tale (1985) — the opening and the Historical Notes",
+      "durationMinutes": 18,
+      "instruction": "Read the opening — the gymnasium scene, the women in red — and notice how Atwood withholds the world's rules and lets you assemble them. Then read the 'Historical Notes' epilogue, set 200 years later, where academics discuss Offred's testimony as a relic: the ending re-frames everything as evidence, and the novel's warning is that the scholars' comfort is the same comfort that let Gilead happen."
+    },
+    "tags": [
+      "Canadian",
+      "Dystopian",
+      "Classic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-norwegian-wood-1987-191",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Norwegian Wood (1987)",
+    "teaser": "Murakami's fifth novel was his breakthrough in Japan — selling millions, largely because it was, unusually for him, a realistic story: a love triangle among students in 1960s Tokyo, narrated by Toru Watanabe remembering his friend Kizuki's suicide and his love for Kizuki's girlfriend Naoko. Its first line — 'I was thirty-seven, then' — begins the memory.",
+    "imageUrl": "",
+    "byline": "Haruki Murakami",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Norwegian Wood (1987) — the opening and the sanatorium chapters",
+      "durationMinutes": 31,
+      "instruction": "Read the opening — Watanabe on a plane, hearing 'Norwegian Wood' by the Beatles, and the memory flooding back — and notice how Murakami frames the whole novel as recollection. Then read the scenes at Naoko's mountain sanatorium, where the novel's theme — that death is 'not the opposite of life but a part of it' — is stated almost as a thesis."
+    },
+    "tags": [
+      "Japanese",
+      "Literary",
+      "Romance"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-remains-of-the-192",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Remains of the Day (1989)",
+    "teaser": "Ishiguro's Booker winner is the memoir of Stevens, an aging English butler driving through the countryside and remembering his service at Darlington Hall — and gradually revealing that the 'greatness' he served was collaboration with fascism, and that his one possible love was lost to his own professional discipline. The novel is a tragedy told in the most polite voice in literature.",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Remains of the Day (1989) — the opening and the pier scene",
+      "durationMinutes": 40,
+      "instruction": "Read the opening — Stevens's employer, the American Mr. Farraday, teasing him about his dignity — and notice the voice: perfectly composed, and every evasion is visible through it. Then read the scene at the pier at the end, where Stevens thinks about his 'dignity' and his life: Ishiguro gives him the book's only moment of near-honesty, and the novel ends without him acting on it."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "Memory"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-american-psycho-1991-193",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "American Psycho (1991)",
+    "teaser": "Bret Easton Ellis's novel about Patrick Bateman, a Wall Street banker who tortures and murders with an accountant's obsession, was condemned before publication — its publisher dropped it, and the controversy made it famous. Its method is the point: the brand-name liturgy of Bateman's world is rendered in the same deadpan as the violence, which is the novel's argument that the two are one system.",
+    "imageUrl": "",
+    "byline": "Bret Easton Ellis",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "American Psycho (1991) — the morning routine and the therapy chapter",
+      "durationMinutes": 39,
+      "instruction": "Read the opening chapters — the restaurant reviews, the business cards, the morning routine — and notice how Ellis never signals irony: the obsession with status is narrated exactly like the murder scenes. Then read the chapter where Bateman describes his 'deepest, darkest fantasies' with his therapist: the novel's central ambiguity — is any of it real? — is never resolved, which is the whole design."
+    },
+    "tags": [
+      "American",
+      "Satire",
+      "Dark"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-virgin-suicides-1993-194",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Virgin Suicides (1993)",
+    "teaser": "Eugenides's debut is narrated by a collective 'we' — the neighborhood boys who never stop investigating the Lisbon sisters, five girls who kill themselves one by one in 1970s suburban Detroit. The novel is told entirely in retrospect, from the boys' obsession, and it never explains the suicides, which is the point.",
+    "imageUrl": "",
+    "byline": "Jeffrey Eugenides",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Virgin Suicides (1993) — the opening and the diaries ending",
+      "durationMinutes": 12,
+      "instruction": "Read the opening — Cecilia's first attempt, the party where she jumps — and notice how Eugenides withholds the sisters' interiority: the 'we' narrator can observe everything and understand nothing. Then read the ending, where the boys recover the sisters' diaries, journals, and records: the archive is all they ever had, and the novel's grief is that the explanation is in it and unreachable at once."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Suburbia"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-trainspotting-1993-195",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Trainspotting (1993)",
+    "teaser": "Irvine Welsh's novel about Edinburgh heroin addicts is written in a phonetic Scots dialect so dense it comes with its own reading challenge — and its opening monologue, 'Choose Life,' became one of the most-quoted passages in modern Scottish literature. It's a comedy of despair, narrated from inside the addiction it neither glamorizes nor judges.",
+    "imageUrl": "",
+    "byline": "Irvine Welsh",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Trainspotting (1993) — the 'Choose Life' monologue and the Begbie scenes",
+      "durationMinutes": 29,
+      "instruction": "Read the opening — Renton's 'Choose Life' monologue, delivered to no one — and notice how Welsh's phonetics force you to read aloud in your head: the dialect is the novel's method of making the world feel lived-in. Then read the scene where the crew discusses the 'Begbie problem' — the novel's comedy and its menace in the same paragraph."
+    },
+    "tags": [
+      "Scottish",
+      "Literary",
+      "Addiction"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-fight-club-1996-196",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Fight Club (1996)",
+    "teaser": "Palahniuk's novel about an insomniac office worker and the soap salesman who gives him a new religion — fight club, then Project Mayhem — became a generation's counterculture text and a film that outlived the book. Its twist, revealed in the final third, is that the narrator and Tyler Durden are the same man: the novel is a first-person account of schizophrenia, and the famous rule is that you don't talk about it.",
+    "imageUrl": "",
+    "byline": "Chuck Palahniuk",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Fight Club (1996) — the opening and the twist's setup chapters",
+      "durationMinutes": 40,
+      "instruction": "Read the first chapter — the narrator on the roof of the Parker-Morris building, Tyler's gun in his mouth — and notice how the novel begins at its own ending. Then re-read the book's first half after the reveal: Palahniuk plants the split in plain sight ('I know this because Tyler knows this'). The novel's argument is that consumer boredom and masculine violence are two ends of one system."
+    },
+    "tags": [
+      "American",
+      "Satire",
+      "Cult"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-harry-potter-1997-197",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Harry Potter (1997)",
+    "teaser": "Rowling's first novel — rejected by 12 publishers — introduced Harry Potter, the boy who discovers at 11 that he's a wizard and that the parents he thought died in a car crash were murdered by the most feared wizard in history. The series sold over 500 million copies and turned a children's book into a global industry.",
+    "imageUrl": "",
+    "byline": "J.K. Rowling",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Harry Potter and the Philosopher's Stone (1997) — the letters and Diagon Alley",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — the Dursleys, the letters arriving impossibly through every crack — and notice how Rowling sets the novel's engine: the ordinary world and the magical world run on parallel absurd rules. Then read the chapter where Harry first sees Diagon Alley and hears his own name: the world-building is the plot, and the mystery of the Boy Who Lived is the spine."
+    },
+    "tags": [
+      "British",
+      "Fantasy",
+      "Middle Grade"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-disgrace-1999-198",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Disgrace (1999)",
+    "teaser": "Coetzee's double Booker winner — he won the prize twice, and this was the second — follows David Lurie, a disgraced professor who moves to his daughter's small farm in South Africa, where a violent attack forces him to confront everything he assumed about power, race, and his own body. Its title names its subject: the novel is about what it means to lose standing and keep living.",
+    "imageUrl": "",
+    "byline": "J.M. Coetzee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Disgrace (1999) — the opening and the post-attack chapters",
+      "durationMinutes": 27,
+      "instruction": "Read the opening — Lurie's seduction of a student, narrated with a coldness that implicates the reader — and notice how Coetzee refuses to let the novel become a redemption story. Then read the chapters after the attack on the farm, where Lurie's daughter refuses his version of events: the novel's hardest argument is that his disgrace is deserved and his care is also real."
+    },
+    "tags": [
+      "South African",
+      "Literary",
+      "Booker"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-corrections-2001-199",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Corrections (2001)",
+    "teaser": "Franzen's third novel — a National Book Award winner that made him a celebrity after a public fight with Oprah — follows the Lambert family's final Christmas as the parents age and the three adult children fail at their own lives. The 'corrections' of the title are both the market's and the family's: everyone is being corrected, and no one is being saved.",
+    "imageUrl": "",
+    "byline": "Jonathan Franzen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Corrections (2001) — the opening and the Chip chapters",
+      "durationMinutes": 35,
+      "instruction": "Read the opening — Enid Lambert's desperation about Christmas, her husband Alfred's tremor — and notice how Franzen switches into each character's consciousness with no warning, giving every family member a full interior life. Then read the chapter where Chip's 'academic correction' career collapses: the novel's comedy and its grief are the same machinery."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Family"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-life-of-pi-2001-200",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Life of Pi (2001)",
+    "teaser": "Yann Martel's Booker winner is the story of Pi Patel, a zookeeper's son shipwrecked in the Pacific with a Bengal tiger named Richard Parker — 227 days on a lifeboat, told with such straight-faced realism that the tiger almost becomes plausible. Its final section offers a second version of the story, and the choice between them is the novel.",
+    "imageUrl": "",
+    "byline": "Yann Martel",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Life of Pi (2001) — the zoo opening and the two endings",
+      "durationMinutes": 21,
+      "instruction": "Read the opening — Pi's childhood at the zoo, the animals' escape attempts — and notice how the book earns its later symbolism: the zoo chapters are the novel's philosophy disguised as natural history. Then read the final version of the shipwreck, where no tiger appears: the novel's famous question — which story do you prefer? — is asked directly, and the reader's answer is the book's meaning."
+    },
+    "tags": [
+      "Canadian",
+      "Literary",
+      "Survival"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-kite-runner-2003-201",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Kite Runner (2003)",
+    "teaser": "Hosseini's debut — the first novel in English by an Afghan author to become a global bestseller — follows Amir, a privileged boy in 1970s Kabul, and Hassan, the Hazara servant's son who is his best friend and his shame. The kite tournament of the title is where Amir fails Hassan, and the novel spends the rest of its length on the debt.",
+    "imageUrl": "",
+    "byline": "Khaled Hosseini",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Kite Runner (2003) — the opening and the kite tournament",
+      "durationMinutes": 33,
+      "instruction": "Read the opening — Amir in California, a phone call from Pakistan that 'made me who I am today' — and notice how the novel frames itself as a confession. Then read the kite tournament and its aftermath, the novel's hinge: the moment Amir chooses not to save Hassan is rendered in a single image (the blue kite, the alley), and every later chapter is that image being paid back."
+    },
+    "tags": [
+      "Afghan",
+      "Literary",
+      "Redemption"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-never-let-me-go-202",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Never Let Me Go (2005)",
+    "teaser": "Ishiguro's sixth novel is narrated by Kathy H., recalling her childhood at Hailsham, an idyllic English boarding school — and slowly revealing that she and her friends are clones, raised to donate organs until they 'complete.' The novel's horror is that nobody in it finds this monstrous, which is the point.",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Never Let Me Go (2005) — the opening and the Miss Emily revelation",
+      "durationMinutes": 37,
+      "instruction": "Read the opening — Kathy's casual description of being a 'carer' and the word 'donations' — and notice how Ishiguro withholds the book's premise so gently that you may not register it at first. Then read the scene where the students learn the truth from Miss Emily and Madame: the revelation is delivered in the same quiet register as everything else, which is the novel's whole method of making you complicit."
+    },
+    "tags": [
+      "British",
+      "Literary",
+      "Science Fiction"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-brief-wondrous-life-203",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Brief Wondrous Life of Oscar Wao (2007)",
+    "teaser": "Junot Díaz's Pulitzer winner tells the story of Oscar de León, an overweight Dominican-American sci-fi nerd in New Jersey who wants nothing more than love — narrated by his cynical ex-roommate Yunior, who interrupts the story with footnotes about Dominican history, 'fukú' curses, and the Trujillo dictatorship. It mixes Spanish, sci-fi, and history into a new kind of novel.",
+    "imageUrl": "",
+    "byline": "Junot Díaz",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Brief Wondrous Life of Oscar Wao (2007) — the opening and the Beli chapters",
+      "durationMinutes": 21,
+      "instruction": "Read the opening — Yunior's first line about Oscar ('Our hero was not one of those Dominican cats...') — and notice how the footnotes work: they break the story to explain the Dominican context, which is the novel's argument that Oscar's family history and his comic-book life are the same story. Then read the chapters about Oscar's mother, Beli, in the Dominican Republic: the novel's heart is in the past its narrator keeps footnoting."
+    },
+    "tags": [
+      "Dominican-American",
+      "Literary",
+      "Pulitzer"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-help-2009-204",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Help (2009)",
+    "teaser": "Stockett's debut — set in Jackson, Mississippi, in 1962 — is narrated by three voices: Skeeter, a young white woman who wants to be a writer, and two Black maids, Aibileen and Minny, who agree to tell their stories for her book. It sold 10 million copies and became a film, and its central controversy — a white author writing Black maids' voices — is part of its history.",
+    "imageUrl": "",
+    "byline": "Kathryn Stockett",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Help (2009) — Aibileen's first chapter and Minny's pie",
+      "durationMinutes": 16,
+      "instruction": "Read Aibileen's first chapter and notice the 'story' she tells the white child she raises: 'You is kind. You is smart. You is important.' The novel's tenderness and its problem are in that sentence together. Then read Minny's pie chapter, the novel's most famous set piece, where the comedy and the fury are the same scene."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Civil Rights"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-swamplandia-2011-205",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Swamplandia (2011)",
+    "teaser": "Karen Russell's Pulitzer-finalist debut is narrated by Ava Bigtree, 12, whose family runs Swamplandia!, a failing alligator-wrestling theme park in the Florida Everglades. When her mother dies, the family scatters, and Ava sets off alone into the swamp to find the 'underworld' — a journey that is both a literal trip and a childhood ending.",
+    "imageUrl": "",
+    "byline": "Karen Russell",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Swamplandia (2011) — the opening and the underworld journey",
+      "durationMinutes": 29,
+      "instruction": "Read the opening — the Bigtree alligator act, the park's golden age — and notice how Russell makes the gothic and the comic share one register: the park's decline is narrated with the same wonder as its rise. Then read the chapters where Ava paddles into the swamp with the mysterious 'Oswald the Bird-Man': the novel's ending refuses to say what was real, which is the whole design."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Magic Realism"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-goldfinch-2013-206",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Goldfinch (2013)",
+    "teaser": "Donna Tartt's Pulitzer winner opens with a terrorist bomb in a museum that kills Theo Decker's mother and leaves him with a stolen painting — Carel Fabritius's The Goldfinch — which he keeps for the rest of the novel, across decades of grief, crime, and obsession. The novel is 771 pages about what art is for, disguised as a thriller.",
+    "imageUrl": "",
+    "byline": "Donna Tartt",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Goldfinch (2013) — the museum opening and the ending",
+      "durationMinutes": 20,
+      "instruction": "Read the opening — the museum, the bomb, the painting's chain being broken — and notice how Tartt makes the theft almost involuntary: Theo walks out with the painting because he can't put it down. Then read the ending, where Theo, having lost everything, delivers the book's thesis about art ('a great sorrow, and one that we... can transform'): the whole novel is an argument for why we keep beautiful things."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Art"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-all-the-light-we-207",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "All the Light We Cannot See (2014)",
+    "teaser": "Doerr's Pulitzer winner alternates between Marie-Laure, a blind French girl who flees Paris with a diamond hidden in her model of the city, and Werner, a German boy who becomes a radio operator for the Nazis. Their paths converge in the walled city of Saint-Malo in 1944, and the novel's title names its method: light as physics, light as hope, light as what we cannot see.",
+    "imageUrl": "",
+    "byline": "Anthony Doerr",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "All the Light We Cannot See (2014) — the model-city opening and the radio chapters",
+      "durationMinutes": 12,
+      "instruction": "Read the opening — Marie-Laure's father building her the model of the city, the braille labels — and notice how Doerr gives her a different sense of the world than sight. Then read the radio chapters, where Werner's gift for radios is both his escape and his complicity: the novel's argument is that the same technology can free and condemn, and it never lets either character be simply good or bad."
+    },
+    "tags": [
+      "American",
+      "WWII",
+      "Pulitzer"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-underground-railroad-2016-208",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Underground Railroad (2016)",
+    "teaser": "Colson Whitehead's Pulitzer and National Book Award winner takes the Underground Railroad literally: Cora, an enslaved woman in Georgia, escapes on an actual underground train, and each state she passes through is a different version of American racism — a plantation idyll, a white-supremacist laboratory, a surveillance state. The novel won both major American fiction prizes in the same year.",
+    "imageUrl": "",
+    "byline": "Colson Whitehead",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Underground Railroad (2016) — the plantation opening and the South Carolina chapters",
+      "durationMinutes": 27,
+      "instruction": "Read the opening — Cora's life on the Randall plantation, her mother's escape years before — and notice how Whitehead grounds the fantastical premise in brutal realism. Then read the South Carolina chapters, where the 'progressive' state's medicine and eugenics are exposed: the novel's horror is that the alternative states are not alternatives at all."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Slavery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-sing-unburied-sing-2017-209",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Sing Unburied Sing (2017)",
+    "teaser": "Jesmyn Ward's National Book Award winner follows 13-year-old Jojo on a road trip across Mississippi with his mother, who is chasing her white boyfriend, and his younger sister — a journey haunted by the ghost of a murdered boy who has unfinished business with Jojo's family. It's a ghost story about the living, and about who gets to appear in the story of the South.",
+    "imageUrl": "",
+    "byline": "Jesmyn Ward",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Sing, Unburied, Sing (2017) — the opening and the Richie chapters",
+      "durationMinutes": 33,
+      "instruction": "Read the opening — Jojo's care for his grandfather, the birth of the goat, and the presence of the 'dead' — and notice how Ward makes the supernatural feel like the most natural thing in the novel. Then read the chapters narrated by Richie, the ghost: the novel's structure — living narration interrupted by the dead — is its argument that the South's unburied history won't stay down."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Ghosts"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-circe-2018-210",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Circe (2018)",
+    "teaser": "Madeline Miller's retelling of Greek myth gives the witch Circe — a minor figure in the Odyssey — a full novel of her own, narrated in first person from her exile on the island of Aea. Its opening line — 'When I was born, the name for what I was did not exist' — announces its project: making a woman who was a plot device into a protagonist.",
+    "imageUrl": "",
+    "byline": "Madeline Miller",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Circe (2018) — the opening and the Odysseus chapters",
+      "durationMinutes": 11,
+      "instruction": "Read the opening — Circe's childhood among the gods, her discovery of her power — and notice how Miller turns the Odyssey's one-scene witch into a character with a history. Then read the chapters where Odysseus arrives: the novel's central scene, and its point is that the Odyssey's version was never Circe's story. Miller's sequel-novel, The Song of Achilles, is the same project in reverse."
+    },
+    "tags": [
+      "American",
+      "Mythology",
+      "Retelling"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-piranesi-2020-211",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Piranesi (2020)",
+    "teaser": "Susanna Clarke's follow-up to Jonathan Strange & Mr Norrell is set entirely inside the House — an infinite labyrinth of halls filled with statues, where Piranesi, the narrator, lives in blissful routine, keeping a journal and worshipping the tides. The reader slowly realizes what Piranesi doesn't: that he is a prisoner, and that his world is not what it seems. It won the Women's Prize and was shortlisted for the Booker.",
+    "imageUrl": "",
+    "byline": "Susanna Clarke",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Piranesi (2020) — the journal opening and the intruder chapters",
+      "durationMinutes": 12,
+      "instruction": "Read the opening — Piranesi's journal entries describing his daily circuit of the House — and notice how Clarke makes his contentment the mystery: the horror is not what he suffers but what he doesn't notice. Then read the chapter where the Other warns him about a new intruder: the novel's structure — revelation arriving in installments through an unreliable happy narrator — is its whole method."
+    },
+    "tags": [
+      "British",
+      "Fantasy",
+      "Mystery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-sea-of-tranquility-2022-212",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Sea of Tranquility (2022)",
+    "teaser": "Emily St. John Mandel's novel — a follow-up to Station Eleven — tracks one moment across centuries: a violinist in 1912, a wealthy exile in a moon colony, a writer during a pandemic, and a time traveler investigating an anomaly. The novel's twist is that its various centuries are a simulation, which makes its central question — what is real enough to mourn? — sharper than it first appears.",
+    "imageUrl": "",
+    "byline": "Emily St. John Mandel",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Sea of Tranquility (2022) — the 1912 opening and the simulation reveal",
+      "durationMinutes": 33,
+      "instruction": "Read the opening — the violinist in 1912 hearing the strange sound in the forest — and notice how Mandel plants the book's 'anomaly' as a recurring note across eras. Then read the chapters set in the pandemic-era 'gaslighting' arc: the novel's empathy for its fictional pandemic world is the same empathy it asks for ours, and the simulation reveal re-frames every chapter that came before."
+    },
+    "tags": [
+      "Canadian",
+      "Science Fiction",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-tomorrow-and-tomorrow-2022-213",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Tomorrow and Tomorrow (2022)",
+    "teaser": "Gabrielle Zevin's novel follows Sam and Sadie, childhood friends who become game designers — and whose collaboration, friendship, and unspoken love play out across three decades and several invented video games. The title, from Macbeth's 'tomorrow and tomorrow and tomorrow,' names its theme: time, and what we make with it.",
+    "imageUrl": "",
+    "byline": "Gabrielle Zevin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Tomorrow, and Tomorrow, and Tomorrow (2022) — the opening and the game-design chapters",
+      "durationMinutes": 12,
+      "instruction": "Read the opening — Sam's college years, the first game they build together — and notice how Zevin renders the games themselves as characters: each invented game is a chapter of Sam and Sadie's relationship. Then read the chapter where the two friends fight over the design of their hit game: the novel's argument — that creative work is a way of talking about feelings the characters can't say directly — is dramatized in that argument."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Games"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-fraud-2023-214",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Fraud (2023)",
+    "teaser": "Zadie Smith's historical novel is set in 1873 London and centers on the Tichborne Trial — the case of a butcher claiming to be a missing heir — told through Eliza Touchet, housekeeper to a minor novelist, who watches the trial consume Victorian England. It's Smith's first historical novel, and it's about how stories, lies, and England itself are all fictions.",
+    "imageUrl": "",
+    "byline": "Zadie Smith",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Fraud (2023) — the opening and the trial chapters",
+      "durationMinutes": 33,
+      "instruction": "Read the opening — Eliza Touchet's household, her employer William Ainsworth's literary decline — and notice how Smith establishes the novel's double subject: the trial's lies and the novelist's lies are the same industry. Then read the chapters where the trial testimony is quoted verbatim: the trial transcripts are the novel's strangest passages, and Smith's argument is that the Victorians' reality was already a courtroom drama."
+    },
+    "tags": [
+      "British",
+      "Historical",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-bee-sting-2023-215",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Bee Sting (2023)",
+    "teaser": "Paul Murray's Booker-shortlisted Irish novel is 650 pages of family catastrophe narrated from four perspectives — a father selling his BMW online, a mother running from her past, and two teenage children — each chapter a different voice, each hiding a different version of the truth. It's a comic tragedy that builds to a reckoning that never quite arrives.",
+    "imageUrl": "",
+    "byline": "Paul Murray",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Bee Sting (2023) — the opening and the Cass chapters",
+      "durationMinutes": 18,
+      "instruction": "Read the opening — Dickie Barnes's failed attempt to sell his car online, the 'Bee Sting' of the title's setup — and notice how Murray establishes each narrator's blind spot in the first chapters. Then read the chapters narrated by the daughter, Cass, whose 'Dark Web' section is the novel's formal experiment: Murray switches to a graphic-novel chapter mid-book, and the shift is doing real work about how teenagers process catastrophe."
+    },
+    "tags": [
+      "Irish",
+      "Literary",
+      "Family"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-tom-lake-2023-216",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Tom Lake (2023)",
+    "teaser": "Ann Patchett's novel is set in the spring of 2020, on a Michigan cherry farm, where three adult daughters are home with their mother — and the novel is mostly the mother telling them about the summer she spent in the 1980s doing community theater with a man who later became a movie star. The novel's frame is the pandemic; its content is the story about a story about love.",
+    "imageUrl": "",
+    "byline": "Ann Patchett",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Tom Lake (2023) — the farm opening and the 'Our Town' chapters",
+      "durationMinutes": 30,
+      "instruction": "Read the opening — the farm, the pandemic, the daughters — and notice how Patchett makes the quarantine the least interesting thing about the novel: it's the container, not the content. Then read the chapters where the mother describes rehearsing 'Our Town' with the future star: the novel's argument is that the play within the novel — about how little we notice the life we're living — is the novel's own method."
+    },
+    "tags": [
+      "American",
+      "Literary",
+      "Pandemic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-heaven-earth-grocery-217",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Heaven Earth Grocery (2023)",
+    "teaser": "James McBride's novel centers on a 1972 discovery: a skeleton in a well in Pottstown, Pennsylvania, behind the Heaven & Earth Grocery Store — the neighborhood's Black and Jewish community's meeting place. The novel moves backward to tell how the body got there, and forward to show a community holding together through a housing crisis, a dance hall, and a haunted boy.",
+    "imageUrl": "",
+    "byline": "James McBride",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Heaven & Earth Grocery Store (2023) — the well opening and the community chapters",
+      "durationMinutes": 11,
+      "instruction": "Read the opening — the skeleton in the well, and the woman who lowers herself down to look — and notice how McBride opens with the mystery's end and then builds the neighborhood from the ground up. Then read the chapters centered on the store's owner, Moshe, and the 'Benevolent Society' of Black church ladies: the novel's argument is that community is the miracle, and the well is just its evidence."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Community"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-lone-women-2023-218",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Lone Women (2023)",
+    "teaser": "Victor LaValle's novel is a 1915 western with a supernatural secret: Adelaide Henry leaves her family's California farm after a fire and travels to Montana with a heavy steamer trunk that she will not let anyone open — because it contains her mother's body, and her mother is not staying dead. The novel is both a pioneer story and a horror story about what women carried to survive.",
+    "imageUrl": "",
+    "byline": "Victor LaValle",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Lone Women (2023) — the trunk opening and the homestead chapters",
+      "durationMinutes": 34,
+      "instruction": "Read the opening — Adelaide's flight, the trunk, the fire — and notice how LaValle makes the trunk's weight the novel's central image: it is grief, guilt, and a monster in one. Then read the chapters on the homestead, where the novel's real subject — the brutal economics of being a woman alone in 1915 — is rendered with the same care as the horror."
+    },
+    "tags": [
+      "American",
+      "Horror",
+      "Western"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-how-to-say-babylon-219",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "How to Say Babylon (2023)",
+    "teaser": "Safiya Sinclair's memoir won the National Book Critics Circle Award: growing up in Montego Bay, Jamaica, under a Rastafari father who controlled every aspect of her life — including forbidding her to speak patois, cut her hair, or leave the house — while she escaped through poetry and education. It's a memoir of language as both cage and key.",
+    "imageUrl": "",
+    "byline": "Safiya Sinclair",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "How to Say Babylon (2023) — the opening and the poetry-escape chapters",
+      "durationMinutes": 26,
+      "instruction": "Read the opening — Sinclair's childhood, her father's rules about her voice — and notice how the memoir's title names its subject: 'Babylon' is the Rastafari term for the corrupt outside world her father kept out. Then read the chapters where she discovers English poetry and her own voice: the novel's argument is that the language her father used to cage her was also the tool she used to escape."
+    },
+    "tags": [
+      "Jamaican",
+      "Memoir",
+      "Poetry"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-blackouts-2023-220",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Blackouts (2023)",
+    "teaser": "Justin Torres's National Book Award winner is a conversation between two men — an aging queer historian and a young man — in a shuttered museum-like institution, built around the historical record of the 'Sex Variants' study of the 1930s–40s, which documented queer lives and then buried them. The novel's 'blackouts' are the passages the archive erased, and the book is about restoring them.",
+    "imageUrl": "",
+    "byline": "Justin Torres",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Blackouts (2023) — the museum opening and the Sex Variants chapters",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — the two men, the dying institution, the oral-history project — and notice how Torres structures the novel as a conversation that is also an archive: the men are literally reading the historical record into being. Then find the real 'Sex Variants' study references, which Torres quotes and embellishes: the novel's argument is that queer history is full of blackouts, and fiction is one way to fill them."
+    },
+    "tags": [
+      "American",
+      "Queer",
+      "Experimental"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-prophet-song-2023-221",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Prophet Song (2023)",
+    "teaser": "Paul Lynch's Booker winner is set in an Ireland sliding into authoritarianism: Eilish Stack, a biology teacher and mother of four, watches her trade unionist husband disappear and then her children, one by one, as the state's grip tightens. Written in a breathless, present-tense style, it won the Booker to some controversy — and reads as the most direct 'what if' about democracy's collapse since the dystopian canon.",
+    "imageUrl": "",
+    "byline": "Paul Lynch",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Prophet Song (2023) — the opening and the family-separation chapters",
+      "durationMinutes": 18,
+      "instruction": "Read the opening — Eilish's ordinary morning, the knock at the door — and notice how Lynch renders the slide into tyranny as a sequence of small accepted losses: each step is individually plausible, which is the horror. Then read the chapters where the family is separated and the state's 'compassion' becomes its cover: the novel's argument is that the first person to disappear is the one who asks questions."
+    },
+    "tags": [
+      "Irish",
+      "Dystopian",
+      "Booker"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-this-other-eden-2023-222",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "This Other Eden (2023)",
+    "teaser": "Paul Harding's Pulitzer winner is set on Apple Island, a real community of mixed-race and Native families off the Maine coast in 1911, whose residents are being evicted by a eugenics-minded state. It's a novel of a utopia under siege, narrated in the voices of the islanders and the men who would 'save' them by removing them.",
+    "imageUrl": "",
+    "byline": "Paul Harding",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "This Other Eden (2023) — the island opening and the authorities' chapters",
+      "durationMinutes": 38,
+      "instruction": "Read the opening — the island's founding, the families' mixed ancestry, the schoolteacher — and notice how Harding's prose (long, biblical, beautiful) makes the island's way of life feel like scripture being read aloud. Then read the chapters narrated by the visiting 'authorities': the novel's method is to alternate the island's tenderness with the state's cold paperwork, and the eugenics ideology is quoted in the officials' own words."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Pulitzer"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-in-memoriam-2023-223",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "In Memoriam (2023)",
+    "teaser": "Alice Winn's debut novel follows two boys at an English boarding school in 1914 who are in love but can't say so — and then enlists them in the trenches of the First World War, where their letters and the horror of the Somme force the question. It's a First World War novel told through the letters of the generation that wrote itself into history while dying.",
+    "imageUrl": "",
+    "byline": "Alice Winn",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "In Memoriam (2023) — the school opening and the war letters",
+      "durationMinutes": 32,
+      "instruction": "Read the opening — the school, the war-fever, the two boys' unspoken attachment — and notice how Winn sets the novel's engine: the public school's codes of honor are the same codes the war will use. Then read the letters from the front, which Winn researched from real war correspondence: the novel's power is that the boys write home about the war in the same voice they used about cricket."
+    },
+    "tags": [
+      "British",
+      "Historical",
+      "WWI"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-let-us-descend-2023-224",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Let Us Descend (2023)",
+    "teaser": "Jesmyn Ward's novel follows Annis, an enslaved woman in the Carolinas who is sold south and forced to walk the 'slave coffle' to New Orleans — and who is accompanied by spirits, including Aza, the warrior woman who guards her. It's a ghost-haunted historical novel in which the supernatural is not escape from the horror but the only way to survive it.",
+    "imageUrl": "",
+    "byline": "Jesmyn Ward",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Let Us Descend (2023) — the plantation opening and the spirit chapters",
+      "durationMinutes": 28,
+      "instruction": "Read the opening — Annis's life on the rice plantation, her mother's sale — and notice how Ward grounds the novel's mysticism in the physical: the spirits are present, but so is the mud, the heat, the hunger. Then read the chapters where Annis, walking south, is accompanied by Aza: the novel's argument is that the ancestors are not consolation in this book — they are company, and company is the only thing that cannot be taken."
+    },
+    "tags": [
+      "American",
+      "Historical",
+      "Slavery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-roman-stories-2023-225",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Roman Stories (2023)",
+    "teaser": "Jhumpa Lahiri's collection — written in Italian, her adopted literary language, and translated into English by the author herself — gathers stories of Rome's residents: the Roman-born, the migrants, the tourists, the servants of the rich. It's a portrait of a city told entirely in its outsiders, and a book about what it means to write in a language that isn't yours.",
+    "imageUrl": "",
+    "byline": "Jhumpa Lahiri",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Roman Stories (2023) — 'The Boundary' and the migrant stories",
+      "durationMinutes": 33,
+      "instruction": "Read the opening story, 'The Boundary,' and notice how Lahiri — writing in Italian — renders the city from the perspective of those who serve it: the stories are told from the edges of Rome's beauty. Then read the collection's middle stories, where migrants and tourists collide: Lahiri's project is to make the city's real residents — not its monuments — the subject."
+    },
+    "tags": [
+      "Italian",
+      "Short Stories",
+      "Translation"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-land-of-milk-and-226",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Land of Milk and Honey (2023)",
+    "teaser": "C Pam Zhang's novel is a foodie dystopia: in a near-future America collapsing under climate catastrophe, a young chef is hired to cook for a private community of the ultra-rich who have retreated to a bunker with a fully stocked pantry and a taste for the exotic. It's The Hunger Games for the tasting-menu set — a satire of luxury as the last thing worth saving.",
+    "imageUrl": "",
+    "byline": "C Pam Zhang",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Land of Milk and Honey (2023) — the tasting opening and the bunker chapters",
+      "durationMinutes": 22,
+      "instruction": "Read the opening — the chef's interview, the tastings, the vanishing of the outside world — and notice how Zhang makes the food writing do the political work: every luxury dish is a disappearing species or a borrowed culture. Then read the chapters where the bunker's residents' appetites turn literal: the novel's horror is that its satire never has to exaggerate much, because the rich already eat the world."
+    },
+    "tags": [
+      "American",
+      "Dystopian",
+      "Satire"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-family-meal-2023-227",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Family Meal (2023)",
+    "teaser": "Bryan Washington's novel follows Cam, a baker who returns to Houston after his boyfriend TJ dies of an overdose — and moves in with TJ's family, where he begins an affair with TJ's married best friend while working in the family's bakery. It's a novel about grief, food, and the families we make — written in Washington's signature tender-gritty register.",
+    "imageUrl": "",
+    "byline": "Bryan Washington",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Family Meal (2023) — the Houston opening and the bakery chapters",
+      "durationMinutes": 11,
+      "instruction": "Read the opening — Cam's return to Houston, the bakery, the grief — and notice how Washington uses food as the novel's emotional currency: every meal is a negotiation nobody can name. Then read the chapters where Cam and the married friend circle each other: the novel's argument is that mourning TJ and betraying his memory are, for Cam, the same act, and Washington refuses to resolve it."
+    },
+    "tags": [
+      "American",
+      "Queer",
+      "Grief"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-moby-dick-1851-228",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Moby-Dick (1851)",
+    "teaser": "Melville's novel — a whaling adventure that becomes a metaphysical epic — was a commercial failure in its time and is now one of the most-studied books in English. Its narrator Ishmael signs onto the Pequod, whose captain, Ahab, is hunting one whale: the white whale that took his leg. The novel is 135 chapters that spend hundreds of pages on the science of whales and then, in three chapters, destroy everyone.",
+    "imageUrl": "",
+    "byline": "Herman Melville",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Moby-Dick (1851) — 'Loomings' and the whiteness chapter",
+      "durationMinutes": 33,
+      "instruction": "Read the first chapter, 'Loomings,' — 'Call me Ishmael' and the sermon on Jonah — and notice how Melville sets up the book's two registers: the adventure and the sermon are the same thing. Then read the chapters on the 'whiteness of the whale' and the ending, where the Pequod sinks and only Ishmael survives on a coffin: the novel's final joke is that the one who tells the story is the one who floated."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Epic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-anna-karenina-1877-229",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Anna Karenina (1877)",
+    "teaser": "Tolstoy's novel opens with the sentence that makes marriages tremble — 'All happy families are alike; each unhappy family is unhappy in its own way' — and follows Anna's adulterous love affair to its destruction while the landowner Levin searches for meaning in work, faith, and love. The novel's two plots run side by side, and Tolstoy's point is that they're the same story.",
+    "imageUrl": "",
+    "byline": "Leo Tolstoy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Anna Karenina (1877) — the opening and Anna's final chapters",
+      "durationMinutes": 15,
+      "instruction": "Read the opening — the Oblonsky household in crisis, and the train where Anna first meets Vronsky — and notice how Tolstoy seeds the ending in the first chapters: the railway is the novel's symbol of the modern world that will destroy her."
+    },
+    "tags": [
+      "Russian",
+      "Classic",
+      "Literary"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-great-gatsby-1925-230",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Great Gatsby (1925)",
+    "teaser": "Fitzgerald's novel — set in the summer of 1922 and told by Nick Carraway, who rents next door to the mysterious Jay Gatsby — is the definitive American novel about money: Gatsby's parties are legend, his love for Daisy is the engine, and his death is the moral. It sold poorly at publication; it is now a fixture of every American reading list.",
+    "imageUrl": "",
+    "byline": "F. Scott Fitzgerald",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Great Gatsby (1925) — the opening and the ending",
+      "durationMinutes": 40,
+      "instruction": "Read the opening — Nick's move to West Egg, the first glimpse of Gatsby's mansion — and notice how Fitzgerald withholds Gatsby himself for fifty pages, which is the novel's method: Gatsby is built from rumor before he exists as a person. Then read the ending — the valley of ashes, the billboard of Dr. T. J. Eckleburg, and the final page's 'boats against the current': the novel's last paragraph is the most-quoted ending in American fiction."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Jazz Age"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-brave-new-world-1932-231",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Brave New World (1932)",
+    "teaser": "Huxley's novel imagined the future as a pleasure-state: people are bred in hatcheries, conditioned by caste, and pacified by the drug soma — and the 'savage' John, raised outside the system, is brought in to be exhibited and destroys himself instead. Huxley's famous claim was that his dystopia was more prophetic than Orwell's: we would be seduced, not tortured.",
+    "imageUrl": "",
+    "byline": "Aldous Huxley",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Brave New World (1932) — the Hatchery opening and the ending",
+      "durationMinutes": 14,
+      "instruction": "Read the opening — the Central London Hatchery, the Bokanovsky process — and notice how Huxley satirizes Fordism by making Henry Ford a god. Then read the ending, where John the Savage, unable to live in either world, hangs himself: Huxley's point is that the 'savage' world he romanticizes is as unlivable as the one he rejects — there is no third option, which is the tragedy."
+    },
+    "tags": [
+      "British",
+      "Dystopian",
+      "Classic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-native-son-1940-232",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Native Son (1940)",
+    "teaser": "Richard Wright's novel was the first by a Black American writer to become a Book-of-the-Month Club selection — and it opens with an accidental murder: Bigger Thomas, a young Black man in Chicago, smothers the white woman who hired him, then tries to escape a justice system that assumes his guilt. Wright wrote it as a provocation, and it worked.",
+    "imageUrl": "",
+    "byline": "Richard Wright",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Native Son (1940) — the opening and the trial chapters",
+      "durationMinutes": 38,
+      "instruction": "Read the opening — Bigger's first day, the rat in the room, the fear — and notice how Wright establishes Bigger's psychology as the novel's subject: his violence is born of the cage he lives in. Then read the trial chapters, where the communist lawyer's closing argument delivers the novel's thesis — that Bigger is 'created' by the society that condemns him: the book's power is that the argument is persuasive and also not the whole truth."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Race"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-catcher-in-the-233",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Catcher in the Rye (1951)",
+    "teaser": "Salinger's novel — the story of Holden Caulfield's three days in New York after being expelled from prep school — has sold 65 million copies and is the most-banned and most-taught American novel of the 20th century. Its title, from a misheard line of a Robert Burns poem, names Holden's fantasy: catching children before they fall off a cliff into adulthood.",
+    "imageUrl": "",
+    "byline": "J.D. Salinger",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Catcher in the Rye (1951) — the opening and the carousel ending",
+      "durationMinutes": 32,
+      "instruction": "Read the opening — Holden's expulsion, the 'phony' refrain — and notice how Salinger makes Holden's voice the entire novel: every judgment is his, and his unreliability is the point. Then read the carousel scene at the end, where Holden finally does what he imagined — catching the falling — and the novel ends with the famous 'Don't ever tell anybody anything' note."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Coming of Age"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-fahrenheit-451-1953-234",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Fahrenheit 451 (1953)",
+    "teaser": "Bradbury's novel is set in a future where firemen burn books instead of stopping fires — and fireman Guy Montag begins to steal the books he's supposed to destroy. Its title is the temperature at which paper burns, and Bradbury wrote it in the Los Angeles Public Library's basement on a rented typewriter at 10 cents for 10 minutes.",
+    "imageUrl": "",
+    "byline": "Ray Bradbury",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Fahrenheit 451 (1953) — the opening and the book-people ending",
+      "durationMinutes": 21,
+      "instruction": "Read the opening — Montag's pleasure in burning, the mechanical hound — and notice how Bradbury's feverish style is itself the novel's argument: the prose is overheated the way a society overheated on screens and slogans. Then read the ending, where Montag meets the 'book people' who memorize books to preserve them: Bradbury's famous claim was that the novel is about TV and screens more than censorship."
+    },
+    "tags": [
+      "American",
+      "Dystopian",
+      "Science Fiction"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-lolita-1955-235",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Lolita (1955)",
+    "teaser": "Nabokov's novel is narrated by Humbert Humbert, a middle-aged European professor who obsesses over his stepdaughter, Dolores 'Lolita' Haze — and the book's scandal obscured its design: it is a confession written for a jury, in which the monster is so eloquent that the reader must work to see past him. Nabokov called the novel his 'love affair with the English language.'",
+    "imageUrl": "",
+    "byline": "Vladimir Nabokov",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Lolita (1955) — the opening and the confession frame",
+      "durationMinutes": 13,
+      "instruction": "Read the opening — 'Lolita, light of my life, fire of my loins' — and notice how Nabokov makes Humbert's prose gorgeous precisely where his acts are indefensible: the style is the seduction, and the reader is the seducee."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Unreliable Narrator"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-to-kill-a-mockingbird-236",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "To Kill a Mockingbird (1960)",
+    "teaser": "Harper Lee's only novel for most of her life is narrated by Scout, six years old, in Maycomb, Alabama, during the Depression — as her father Atticus defends a Black man falsely accused of rape. The title names the novel's moral: 'it's a sin to kill a mockingbird' — killing what harms nothing, like Tom Robinson, or like Boo Radley, the recluse who saves the children.",
+    "imageUrl": "",
+    "byline": "Harper Lee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "To Kill a Mockingbird (1960) — the opening and the trial chapters",
+      "durationMinutes": 29,
+      "instruction": "Read the opening — Scout's first day of school, the Finch household — and notice how Lee renders adult moral crisis through a child's perfectly literal narration."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Race"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-one-flew-over-the-237",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "One Flew Over the Cuckoo's Nest (1962)",
+    "teaser": "Ken Kesey's novel — written after he worked overnight shifts in a VA hospital's psychiatric ward — follows McMurphy, a convict who fakes insanity to serve his sentence in a mental institution, where he wages war on the ward's tyrannical Nurse Ratched. The novel was a counterculture bible, and the film adaptation won five Oscars.",
+    "imageUrl": "",
+    "byline": "Ken Kesey",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "One Flew Over the Cuckoo's Nest (1962) — the opening and the ending",
+      "durationMinutes": 24,
+      "instruction": "Read the opening — McMurphy's admission, the ward's routine — and notice how Kesey sets up the novel's binary: McMurphy's chaos against Ratched's order, with the other patients as the battleground. Then read the ending, where McMurphy's lobotomy and the Chief's mercy-killing re-frame the whole book: the novel's argument is that the 'therapy' is punishment, and the 'madness' is freedom."
+    },
+    "tags": [
+      "American",
+      "Classic",
+      "Counterculture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-one-hundred-years-of-238",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "One Hundred Years of Solitude (1967)",
+    "teaser": "García Márquez's novel follows the Buendía family through seven generations in the fictional town of Macondo — a century of repetition, war, and solitude in which everyone is named José Arcadio or Aureliano until the reader needs a family tree (and the novel provides one). Its opening sentence — 'Many years later, as he faced the firing squad...' — taught a generation of writers how to begin.",
+    "imageUrl": "",
+    "byline": "Gabriel García Márquez",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "One Hundred Years of Solitude (1967) — the opening and the ending",
+      "durationMinutes": 15,
+      "instruction": "Read the opening — Colonel Aureliano Buendía facing the firing squad, remembering the afternoon his father took him to see ice — and notice how the first sentence compresses the whole novel's method: memory, prophecy, and time are the same tense."
+    },
+    "tags": [
+      "Colombian",
+      "Magic Realism",
+      "Classic"
+    ],
+    "tier": 2
+  }
+]

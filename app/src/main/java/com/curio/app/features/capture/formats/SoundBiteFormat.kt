@@ -1,0 +1,1152 @@
+package com.curio.app.features.capture.formats
+
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import java.util.Locale
+import com.curio.app.data.AppPreferences
+import com.curio.app.data.CaptureData
+import com.curio.app.data.NotePaperColor
+import com.curio.app.data.NotePaperStyle
+import com.curio.app.data.TextSpan
+import com.curio.app.features.capture.AudioRecorder
+import com.curio.app.ui.components.AudioTrimmer
+import com.curio.app.ui.components.RichTextEditor
+import com.curio.app.ui.components.RichTextToolbarMode
+import com.curio.app.ui.theme.paperInk
+import com.curio.app.ui.theme.pastelFillInk
+import com.curio.app.ui.components.LiveWaveform
+import com.curio.app.ui.components.TrimWaveform
+import com.curio.app.ui.components.WaveformExtractor
+import com.curio.app.ui.components.formatRecordingTime
+import com.curio.app.ui.components.rememberPulseScale
+import com.curio.app.ui.theme.CurioIcon
+import com.curio.app.ui.theme.CurioIcons
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+
+/**
+ * Which note field a dictation session lands its transcript in.
+ */
+private enum class TranscribeTarget(val label: String) {
+    TITLE("the title"),
+    NOTE("the note")
+}
+
+// v7.18 — how many silent re-listens before a NO_MATCH / SPEECH_TIMEOUT is
+// surfaced as an error (a mid-thought pause shouldn't end dictation early).
+private const val TRANSCRIBE_MAX_RETRIES = 2
+
+/**
+ * Sound Bite format body — CURIO_SPEC §8.1 (Music / Artists).
+ *
+ * 4-state machine: IDLE / RECORDING / PAUSED / STOPPED.
+ * - IDLE: big mic button to start, requests RECORD_AUDIO permission if needed
+ * - RECORDING / PAUSED: pulsing ring + live waveform + mm:ss timer +
+ *   Pause/Stop/Discard controls — driven by real [AudioRecorder] (MediaRecorder)
+ * - STOPPED: shows trim waveform with draggable handles, plus title field
+ *   and Record-over button. User can trim the audio before saving.
+ *
+ * Uses real [AudioRecorder] (MediaRecorder) for actual voice capture,
+ * and [AudioTrimmer] to trim the recorded file after recording stops.
+ * The audio file path is stored in [CaptureData.SoundBite.audioFilePath].
+ *
+ * Runtime permission (RECORD_AUDIO) is requested on first tap of the mic button.
+ */
+@Composable
+fun SoundBiteFormat(
+    accent: Color,
+    tint: Color,
+    onCanSaveChange: (Boolean) -> Unit,
+    onDataChanged: (CaptureData?) -> Unit = {},
+    onBusyChange: (Boolean) -> Unit = {},
+    initialData: CaptureData.SoundBite? = null
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val voiceToTextEnabled = AppPreferences.voiceToTextEnabledState
+    val recorder = remember(context) { AudioRecorder(context) }
+    // Edit mode: restore a saved recording as STOPPED with its file + title so
+    // re-saving preserves the original capture (no silent wipe). Keyed on
+    // initialData so a newly-loaded edit preloads once.
+    var recordingState by remember(initialData) {
+        mutableStateOf(if (initialData != null) AudioRecorder.State.STOPPED else AudioRecorder.State.IDLE)
+    }
+    var recordingSeconds by remember(initialData) { mutableIntStateOf(initialData?.durationSeconds ?: 0) }
+    var title by remember(initialData) { mutableStateOf(initialData?.title ?: "") }
+    var note by remember(initialData) { mutableStateOf(initialData?.note ?: "") }
+    // Rich-text formatting for the note — legacy entries lack it (Gson →
+    // null), guard with orEmpty().
+    var noteSpans by remember(initialData) { mutableStateOf(initialData?.noteSpans.orEmpty()) }
+    // Note-paper style per text box — the title slip and the note wear
+    // their OWN choice. Legacy entries lack the per-field fields (Gson →
+    // null), fall back to the take-level paperStyle → RULED.
+    var titleStyle by remember(initialData) {
+        mutableStateOf(initialData?.titleStyle ?: initialData?.paperStyle ?: NotePaperStyle.RULED)
+    }
+    var noteStyle by remember(initialData) {
+        mutableStateOf(initialData?.noteStyle ?: initialData?.paperStyle ?: NotePaperStyle.RULED)
+    }
+    // Note-paper color per text box — legacy entries lack the per-field
+    // fields (Gson → null), fall back to CREAM.
+    var titleColor by remember(initialData) {
+        mutableStateOf(initialData?.titleColor ?: NotePaperColor.CREAM)
+    }
+    var noteColor by remember(initialData) {
+        mutableStateOf(initialData?.noteColor ?: NotePaperColor.CREAM)
+    }
+    // Mood — the shared "How did it make you feel?" row. Optional; legacy
+    // entries have none (Gson → null).
+    var mood by remember(initialData) { mutableStateOf(initialData?.mood) }
+    // Quote cards — the SHARED hand-placed paper notecard section (same
+    // component Marginalia / Reel Notes / Mood Board use). Owns the parallel
+    // lists (text / spans / tilt / style / color); new cards inherit the
+    // note box's current paper style + color.
+    val quoteCards = rememberQuoteCardsState(
+        initialQuotes = initialData?.quotes.orEmpty(),
+        initialSpans = initialData?.quoteSpans.orEmpty(),
+        initialTilts = initialData?.quoteTilts.orEmpty(),
+        initialStyles = initialData?.quoteStyles.orEmpty(),
+        initialColors = initialData?.quoteColors.orEmpty(),
+        defaultStyle = initialData?.noteStyle ?: initialData?.paperStyle ?: NotePaperStyle.RULED,
+        defaultColor = initialData?.noteColor ?: NotePaperColor.CREAM
+    )
+    var savedFilePath by remember(initialData) { mutableStateOf(initialData?.audioFilePath) }
+    var permissionDenied by remember { mutableStateOf(false) }
+    // Edit-mode restore: a restored recording must NOT auto-open the trimmer —
+    // only freshly-recorded audio should. Cleared the moment the user (re)records.
+    var restoredRecording by remember { mutableStateOf(initialData != null) }
+
+    // ── Trim state ───────────────────────────────────────────────────────
+    var showTrimmer by remember { mutableStateOf(false) }
+    var startTrim by remember { mutableFloatStateOf(0f) }
+    var endTrim by remember { mutableFloatStateOf(1f) }
+    var trimInProgress by remember { mutableStateOf(false) }
+
+    // ── Voice-to-text (v7.17) ───────────────────────────────────────────
+    // The same RECORD_AUDIO permission powers both recording and dictation.
+    // `transcribeRequested` disambiguates a grant: the launcher starts the
+    // recognizer when the user asked for transcription, the recorder when
+    // they asked for a voice note.
+    //
+    // v7.18 — dictation targets a FIELD (the title slip or the note), is
+    // reachable in ANY state (idle OR after recording), and retries when the
+    // recognizer gives up on a mid-thought pause — so a take can hold BOTH a
+    // voice note and its text, and dictation doesn't stop too early.
+    var transcribing by remember { mutableStateOf(false) }
+    var partialTranscript by remember { mutableStateOf("") }
+    var transcribeError by remember { mutableStateOf<String?>(null) }
+    var transcribeRequested by remember { mutableStateOf(false) }
+    var transcribeTarget by remember { mutableStateOf(TranscribeTarget.NOTE) }
+    var transcribeRetries by remember { mutableIntStateOf(0) }
+    val speechRecognizer = remember(context, voiceToTextEnabled) {
+        if (voiceToTextEnabled && SpeechRecognizer.isRecognitionAvailable(context)) {
+            SpeechRecognizer.createSpeechRecognizer(context)
+        } else {
+            null
+        }
+    }
+
+    /** Lands a final transcript in the field the dictation targeted. */
+    fun commitTranscript(final: String) {
+        when (transcribeTarget) {
+            TranscribeTarget.TITLE ->
+                title = if (title.isBlank()) final else "$title $final"
+            TranscribeTarget.NOTE ->
+                note = if (note.isBlank()) final else "$note\n$final"
+        }
+    }
+
+    fun startTranscription(target: TranscribeTarget = TranscribeTarget.NOTE) {
+        if (!voiceToTextEnabled) return
+        val recognizer = speechRecognizer ?: run {
+            transcribeError = "Speech recognition isn't available on this device."
+            return
+        }
+        transcribing = true
+        transcribeError = null
+        partialTranscript = ""
+        transcribeRetries = 0
+        transcribeTarget = target
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+            // v7.18 — generous silence windows so a natural pause mid-thought
+            // doesn't end the dictation early (the defaults give up after
+            // roughly half a second of quiet). OEMs vary in honoring these,
+            // hence the retry loop in onError too.
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 2_500)
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 1_500)
+        }
+        fun beginListening() {
+            // v7.25 — a recognizer reused across sessions (second dictation,
+            // or a retry after NO_MATCH) can throw IllegalStateException /
+            // silently never call back on many devices unless the previous
+            // session is cancelled first.
+            runCatching { recognizer.cancel() }
+            recognizer.setRecognitionListener(object : RecognitionListener {
+                override fun onReadyForSpeech(params: Bundle?) {}
+                override fun onBeginningOfSpeech() {}
+                override fun onRmsChanged(rmsdB: Float) {}
+                override fun onBufferReceived(buffer: ByteArray?) {}
+                override fun onEndOfSpeech() {}
+                override fun onError(error: Int) {
+                    // A short pause between sentences makes some engines end
+                    // the session with NO_MATCH / SPEECH_TIMEOUT even though
+                    // the user is mid-thought — silently re-listen a couple
+                    // of times before surfacing an error.
+                    if ((error == SpeechRecognizer.ERROR_NO_MATCH ||
+                            error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) &&
+                        transcribeRetries < TRANSCRIBE_MAX_RETRIES
+                    ) {
+                        transcribeRetries++
+                        beginListening()
+                        return
+                    }
+                    transcribing = false
+                    transcribeError = when (error) {
+                        SpeechRecognizer.ERROR_NO_MATCH ->
+                            "No speech heard — try again."
+                        SpeechRecognizer.ERROR_SPEECH_TIMEOUT ->
+                            "Listening timed out — try again."
+                        SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS ->
+                            "Microphone access is needed to transcribe."
+                        SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT ->
+                            "Speech service unreachable — check your connection."
+                        SpeechRecognizer.ERROR_CLIENT ->
+                            "Speech recognition isn't available on this device."
+                        else -> "Couldn't transcribe — try again."
+                    }
+                    partialTranscript = ""
+                }
+                override fun onResults(results: Bundle?) {
+                    transcribing = false
+                    val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    // v7.25 — some engines finish with an EMPTY RESULTS list
+                    // but deliver the transcript as the final partial (or the
+                    // first match is blank) — fall back to the last partial we
+                    // already showed so a finished session never lands nothing.
+                    val final = matches?.firstOrNull { it.isNotBlank() }
+                        ?: partialTranscript.takeIf { it.isNotBlank() }.orEmpty()
+                    partialTranscript = ""
+                    if (final.isNotBlank()) {
+                        commitTranscript(final)
+                    } else if (transcribeRetries < TRANSCRIBE_MAX_RETRIES) {
+                        // No text at all — same recovery as a NO_MATCH: re-
+                        // listen a couple of times before surfacing an error.
+                        transcribeRetries++
+                        transcribing = true
+                        beginListening()
+                    } else {
+                        transcribing = false
+                        transcribeError = "No speech heard — try again."
+                    }
+                }
+                override fun onPartialResults(partialResults: Bundle?) {
+                    val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    partialTranscript = matches?.firstOrNull().orEmpty()
+                }
+                override fun onEvent(eventType: Int, params: Bundle?) {}
+            })
+            recognizer.startListening(intent)
+        }
+        beginListening()
+    }
+
+    fun stopTranscription() {
+        speechRecognizer?.cancel()
+        transcribing = false
+        partialTranscript = ""
+    }
+
+    // Runtime permission launcher — shared by recording AND dictation.
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            permissionDenied = false
+            if (transcribeRequested) {
+                // Consume a pending dictation grant even if the user turned
+                // the experiment off while Android's permission dialog was
+                // open. Never fall through to ordinary recording in that
+                // case; recording was not what this permission request meant.
+                transcribeRequested = false
+                if (voiceToTextEnabled) {
+                    startTranscription(transcribeTarget)
+                }
+            } else {
+                try {
+                    recorder.start()
+                    restoredRecording = false
+                    recordingState = recorder.state
+                    recordingSeconds = 0
+                } catch (_: Exception) {
+                    recordingState = AudioRecorder.State.IDLE
+                }
+            }
+        } else {
+            permissionDenied = true
+            // Denied for dictation — drop the pending flag so a later grant
+            // from the RECORD path can't accidentally start transcription.
+            transcribeRequested = false
+        }
+    }
+
+    // Turning the experiment off while a dictation or permission flow is
+    // active must release the recognizer and clear the pending request.
+    LaunchedEffect(voiceToTextEnabled) {
+        if (!voiceToTextEnabled) {
+            speechRecognizer?.cancel()
+            transcribeRequested = false
+            transcribing = false
+            partialTranscript = ""
+            transcribeError = null
+        }
+    }
+
+    // ── Tick the recording timer every second while RECORDING ────────────
+    LaunchedEffect(recordingState) {
+        if (recordingState == AudioRecorder.State.RECORDING) {
+            while (recordingState == AudioRecorder.State.RECORDING) {
+                delay(1000)
+                recordingSeconds = recorder.elapsedSeconds
+            }
+        }
+    }
+
+    // ── Real-time mic level (0..1) while recording — drives the live
+    //    visualizer with ACTUAL input (AudioRecorder.maxAmplitude), not a
+    //    fake sine, so the bars dance with the voice. Decays to 0 when idle.
+    var micLevel by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(recordingState) {
+        if (recordingState == AudioRecorder.State.RECORDING ||
+            recordingState == AudioRecorder.State.PAUSED
+        ) {
+            while (recordingState == AudioRecorder.State.RECORDING) {
+                micLevel = (recorder.maxAmplitude / 32767f).coerceIn(0f, 1f)
+                delay(70)
+            }
+            micLevel = 0f
+        }
+    }
+
+    // ── Extract waveform when entering STOPPED with a valid file ─────────
+    val waveformSamples by produceState<FloatArray>(
+        initialValue = FloatArray(120),
+        key1 = savedFilePath
+    ) {
+        if (savedFilePath != null) {
+            value = withContext(Dispatchers.Default) {
+                WaveformExtractor.extract(savedFilePath!!, barCount = 120)
+            } ?: FloatArray(120) { kotlin.random.Random.nextFloat() * 0.6f + 0.2f }
+        }
+    }
+
+    // ── Show trimmer when first entering STOPPED (fresh recordings only) ─
+    LaunchedEffect(recordingState, savedFilePath) {
+        if (recordingState == AudioRecorder.State.STOPPED &&
+            savedFilePath != null && !restoredRecording
+        ) {
+            showTrimmer = true
+            startTrim = 0f
+            endTrim = 1f
+        }
+    }
+
+    // ── Clean up recorder + recognizer on dispose ────────────────────────
+    DisposableEffect(Unit) {
+        onDispose {
+            recorder.release()
+            // Tell the parent the take is no longer busy (live recording or
+            // a live dictation lost with this editor) so format-switch
+            // confirmation can't be skipped.
+            onBusyChange(false)
+        }
+    }
+    DisposableEffect(speechRecognizer) {
+        onDispose { speechRecognizer?.destroy() }
+    }
+
+    // ── Report busy state (recording OR dictation in progress) so the
+    // universal picker can confirm before switching format on a live take ──
+    LaunchedEffect(recordingState, transcribing) {
+        onBusyChange(
+            recordingState == AudioRecorder.State.RECORDING ||
+                recordingState == AudioRecorder.State.PAUSED ||
+                transcribing
+        )
+    }
+
+    // ── Report can-save + capture data ───────────────────────────────────
+    // A completed recording is the primary content, but a take that only
+    // holds typed content (title / note / quotes, no recording) is still a
+    // saveable draft — the old recording-only rule silently dropped those
+    // on back/switch.
+    // A very short but valid recording can report 0 elapsed seconds because
+    // the UI timer is second-granular. Use the actual file as the save gate so
+    // those voice notes are not silently omitted from the saved entry.
+    val hasRecording = recordingState == AudioRecorder.State.STOPPED &&
+                       savedFilePath?.let { path ->
+                           File(path).isFile && File(path).length() > 0L
+                       } == true &&
+                       !trimInProgress
+    val hasTypedContent = title.isNotBlank() || note.isNotBlank() || quoteCards.hasContent
+    val canSave = hasRecording || hasTypedContent
+    LaunchedEffect(
+        canSave, savedFilePath, title, note, noteSpans, titleStyle, noteStyle,
+        titleColor, noteColor, mood, quoteCards.quotes.toList(), quoteCards.spans.toList(),
+        quoteCards.tilts.toList(), quoteCards.styles.toList(), quoteCards.colors.toList()
+    ) {
+        onCanSaveChange(canSave)
+        onDataChanged(
+            if (canSave) CaptureData.SoundBite(
+                durationSeconds = recordingSeconds,
+                title = title,
+                note = note,
+                noteSpans = noteSpans,
+                audioFilePath = savedFilePath,
+                titleStyle = titleStyle,
+                noteStyle = noteStyle,
+                titleColor = titleColor,
+                noteColor = noteColor,
+                quotes = quoteCards.quotes.toList(),
+                quoteSpans = quoteCards.spans.toList(),
+                quoteTilts = quoteCards.tilts.toList(),
+                quoteStyles = quoteCards.styles.toList(),
+                quoteColors = quoteCards.colors.toList(),
+                // Legacy fallback — mirror the primary field's style.
+                paperStyle = noteStyle,
+                mood = mood
+            )
+            else null
+        )
+    }
+
+    // ── Check initial permission state ───────────────────────────────────
+    // v7.25 — computed LIVE per dictation request (not remember-once): the
+    // remember-cached value stayed false forever after the user granted
+    // permission via the launcher, so every later mic tap re-launched the
+    // permission dialog instead of dictating.
+    fun hasMicrophonePermission(): Boolean =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) ==
+            PackageManager.PERMISSION_GRANTED
+
+    // v7.18 — per-field dictation: a small mic button sits on the title
+    // slip and the note field. Enabled in every non-recording state, so a
+    // take can pair a voice note with text (dictate after recording too).
+    val dictateEnabled = voiceToTextEnabled && !transcribing &&
+        recordingState != AudioRecorder.State.RECORDING &&
+        recordingState != AudioRecorder.State.PAUSED
+
+    fun requestDictation(target: TranscribeTarget) {
+        if (!voiceToTextEnabled) return
+        if (hasMicrophonePermission()) {
+            startTranscription(target)
+        } else {
+            transcribeTarget = target
+            transcribeRequested = true
+            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        // ── Format body (state-dependent) ────────────────────────────────
+        when (recordingState) {
+            AudioRecorder.State.IDLE -> {
+                IdleControls(
+                    accent = accent,
+                    hasPermission = hasMicrophonePermission(),
+                    permissionDenied = permissionDenied,
+                    onRecord = {
+                        if (hasMicrophonePermission()) {
+                            try {
+                                recorder.start()
+                                restoredRecording = false
+                                recordingState = recorder.state
+                                recordingSeconds = 0
+                            } catch (_: Exception) {
+                                recordingState = AudioRecorder.State.IDLE
+                            }
+                        } else {
+                            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        }
+                    }
+                )
+
+            }
+            AudioRecorder.State.RECORDING,
+            AudioRecorder.State.PAUSED -> LiveControls(
+                accent = accent,
+                tint = tint,
+                isPaused = recordingState == AudioRecorder.State.PAUSED,
+                seconds = recordingSeconds,
+                level = micLevel,
+                onPauseResume = {
+                    if (recordingState == AudioRecorder.State.RECORDING) {
+                        recorder.pause()
+                    } else {
+                        recorder.resume()
+                    }
+                    recordingState = recorder.state
+                },
+                onStop = {
+                    try {
+                        savedFilePath = recorder.stop()
+                    } catch (_: Exception) {
+                        savedFilePath = null
+                    }
+                    recordingState = recorder.state
+                    recordingSeconds = recorder.elapsedSeconds
+                },
+                onDiscard = {
+                    recorder.discard()
+                    recordingState = recorder.state
+                    recordingSeconds = 0
+                    savedFilePath = null
+                }
+            )
+            AudioRecorder.State.STOPPED -> {
+                // ── Trim mode (before trimming or after) ─────────────────
+                if (showTrimmer && savedFilePath != null) {
+                    TrimSection(
+                        accent = accent,
+                        tint = tint,
+                        seconds = recordingSeconds,
+                        waveformSamples = waveformSamples,
+                        startTrim = startTrim,
+                        endTrim = endTrim,
+                        trimInProgress = trimInProgress,
+                        onStartTrimChange = { startTrim = it },
+                        onEndTrimChange = { endTrim = it },
+                        onApplyTrim = {
+                            trimInProgress = true
+                            scope.launch {
+                                try {
+                                    val trimmedPath = withContext(Dispatchers.Default) {
+                                        AudioTrimmer.trim(
+                                            outputDir = context.cacheDir,
+                                            inputPath = savedFilePath!!,
+                                            startMs = (startTrim * recordingSeconds * 1000).toLong(),
+                                            endMs = (endTrim * recordingSeconds * 1000).toLong()
+                                        )
+                                    }
+                                    if (trimmedPath != null) {
+                                        // Update the file path and duration
+                                        savedFilePath = trimmedPath
+                                        recordingSeconds = ((endTrim - startTrim) * recordingSeconds).toInt()
+                                    }
+                                } catch (_: Exception) { /* keep original file */ }
+                                trimInProgress = false
+                                showTrimmer = false
+                            }
+                        },
+                        onKeepFull = {
+                            showTrimmer = false
+                        }
+                    )
+                } else {
+                    StoppedControls(
+                        accent = accent,
+                        tint = tint,
+                        seconds = recordingSeconds,
+                        onReRecord = {
+                            recorder.release()
+                            restoredRecording = false
+                            recordingState = recorder.state
+                            recordingSeconds = 0
+                            savedFilePath = null
+                            showTrimmer = false
+                            startTrim = 0f
+                            endTrim = 1f
+                        }
+                    )
+                }
+            }
+        }
+
+        // ── Voice-to-text panel (v7.18) — shown while dictating or after an
+        // error, in ANY state (idle OR after recording): a take can hold a
+        // voice note AND its text alongside each other. The per-field mic
+        // buttons below start it; the panel shows the live partials + the
+        // stop control. Stays up while an error is displayed (errors flip
+        // transcribing off, so a bare `if (transcribing)` would silently
+        // drop the message).
+        if (voiceToTextEnabled && (transcribing || transcribeError != null)) {
+            TranscribePanel(
+                accent = accent,
+                partial = partialTranscript,
+                error = transcribeError,
+                target = transcribeTarget,
+                onStop = {
+                    stopTranscription()
+                    transcribeError = null
+                }
+            )
+        }
+
+        // ── Permission denied hint ───────────────────────────────────────
+        if (permissionDenied) {
+            Text(
+                text = "Microphone access is needed to record. Grant permission in Settings.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+
+        // ── Optional title field — show always, disabled during trim ─────
+        // Wears the note-paper slip like the other text boxes. Its small mic
+        // button dictates straight into the title.
+        PaperLineField(
+            value = title,
+            onValueChange = { title = it },
+            label = "Add a quick title (optional)",
+            enabled = recordingState != AudioRecorder.State.RECORDING,
+            imeAction = ImeAction.Next,
+            paperStyle = titleStyle,
+            onPaperStyleChange = { titleStyle = it },
+            paperColor = titleColor,
+            onPaperColorChange = { titleColor = it },
+            trailingAction = if (voiceToTextEnabled) {
+                {
+                    DictateFieldButton(
+                        accent = accent,
+                        enabled = dictateEnabled,
+                        contentDescription = "Dictate title",
+                        onClick = { requestDictation(TranscribeTarget.TITLE) }
+                    )
+                }
+            } else null
+        )
+
+        // Rich-text note — formatting behind a small toggle. The toolbar
+        // renders OUTSIDE the paper slip (paper mode) so the ruled lines
+        // line up under the text while typing; the field itself sits
+        // directly on the paper (no inner box / double margin).
+        RichTextEditor(
+            modifier = Modifier.fillMaxWidth(),
+            text = note,
+            spans = noteSpans,
+            onRichTextChange = { newText, newSpans ->
+                note = newText
+                noteSpans = newSpans
+            },
+            placeholder = "What did this recording capture?",
+            toolbarMode = RichTextToolbarMode.TOGGLE,
+            minHeight = 96.dp,
+            enabled = recordingState != AudioRecorder.State.RECORDING,
+            ink = paperInk(),
+            accent = MaterialTheme.colorScheme.tertiary,
+            paper = true,
+            paperStyle = noteStyle,
+            onPaperStyleChange = { noteStyle = it },
+            paperColor = noteColor,
+            onPaperColorChange = { noteColor = it },
+            paperContentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+            // v7.18 — the small mic button on the note field's toolbar row
+            // dictates into the note (works before OR after recording).
+            trailingAction = if (voiceToTextEnabled) {
+                {
+                    DictateFieldButton(
+                        accent = MaterialTheme.colorScheme.tertiary,
+                        enabled = dictateEnabled,
+                        contentDescription = "Dictate note",
+                        onClick = { requestDictation(TranscribeTarget.NOTE) }
+                    )
+                }
+            } else null
+        )
+
+        // ── Quote cards — the SHARED hand-placed paper notecard section ──
+        // Frozen while actively recording (the cards need the keyboard).
+        QuoteCardsSection(
+            state = quoteCards,
+            enabled = recordingState != AudioRecorder.State.RECORDING,
+            newCardStyle = { noteStyle },
+            newCardColor = { noteColor }
+        )
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Trim section — shown when recording is stopped and trim UI is active
+// ═══════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun TrimSection(
+    accent: Color,
+    tint: Color,
+    seconds: Int,
+    waveformSamples: FloatArray,
+    startTrim: Float,
+    endTrim: Float,
+    trimInProgress: Boolean,
+    onStartTrimChange: (Float) -> Unit,
+    onEndTrimChange: (Float) -> Unit,
+    onApplyTrim: () -> Unit,
+    onKeepFull: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Saved indicator
+        Text(
+            text = "✓ Recording saved (${formatRecordingTime(seconds)})",
+            style = MaterialTheme.typography.titleSmall,
+            color = accent
+        )
+
+        // Waveform with trim handles
+        TrimWaveform(
+            samples = waveformSamples,
+            startTrim = startTrim,
+            endTrim = endTrim,
+            accent = accent,
+            tint = tint,
+            totalSeconds = seconds,
+            onTrimChange = { start, end ->
+                onStartTrimChange(start)
+                onEndTrimChange(end)
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Action buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Keep Full — dismiss trim UI
+            Surface(
+                onClick = onKeepFull,
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "Keep full",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+
+            // Apply Trim — enabled when range is narrower than full
+            val hasTrim = startTrim > 0.01f || endTrim < 0.99f
+            Button(
+                onClick = onApplyTrim,
+                enabled = hasTrim && !trimInProgress,
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = accent,
+                    contentColor = pastelFillInk(accent),
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(vertical = 12.dp)
+            ) {
+                if (trimInProgress) {
+                    CircularProgressIndicator(
+                        color = pastelFillInk(accent),
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                }
+                Text(
+                    text = if (trimInProgress) "Trimming…" else "Apply trim",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Private sub-composables
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Live voice-to-text panel (v7.17) — shown while [SpeechRecognizer] is
+ * listening. Live partial results stream in; a pulsing mic + stop control
+ * mirror the recording state's visual language so dictation reads as the
+ * sibling of a voice note. Errors render in place.
+ *
+ * v7.18 — [target] names the field the transcript will land in, and the
+ * panel is reachable from every state (not just idle), so a voice note and
+ * its text can live alongside each other in one take.
+ */
+@Composable
+private fun TranscribePanel(
+    accent: Color,
+    partial: String,
+    error: String?,
+    target: TranscribeTarget,
+    onStop: () -> Unit
+) {
+    val pulseScale = rememberPulseScale(active = true)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = accent.copy(alpha = 0.1f),
+            border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Pulsing mic — same ring language as live recording.
+                Box(
+                    modifier = Modifier.size(64.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = accent.copy(alpha = 0.2f),
+                        modifier = Modifier
+                            .size(64.dp)
+                            .scale(pulseScale)
+                    ) {}
+                    Surface(
+                        shape = CircleShape,
+                        color = accent,
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            CurioIcon(
+                                name = CurioIcons.Mic,
+                                contentDescription = null,
+                                tint = pastelFillInk(accent),
+                                size = 24.dp
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = if (error != null) error
+                           else "Listening… speak now (into ${target.label})",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = if (error != null) MaterialTheme.colorScheme.error else accent,
+                    textAlign = TextAlign.Center
+                )
+                if (partial.isNotBlank()) {
+                    Text(
+                        text = partial,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                // Error panel needs its own dismissal (transcribing is off,
+                // so the plain button below would otherwise stay hidden and
+                // the message would be stuck on screen).
+                TextButton(
+                    onClick = onStop,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = if (error != null) "Dismiss" else "Stop transcription",
+                        color = if (error != null) MaterialTheme.colorScheme.error else accent
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** The small mic chip that sits on each note field — dictates into that
+ *  field. Disabled while recording or dictating. */
+@Composable
+private fun DictateFieldButton(
+    accent: Color,
+    enabled: Boolean,
+    contentDescription: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(8.dp),
+        color = if (enabled) accent.copy(alpha = 0.10f)
+                else MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(
+            1.dp,
+            if (enabled) accent.copy(alpha = 0.40f)
+            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        ),
+        shadowElevation = 0.dp
+    ) {
+        CurioIcon(
+            name = CurioIcons.Mic,
+            contentDescription = contentDescription,
+            tint = if (enabled) accent
+                   else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            size = 16.dp,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+        )
+    }
+}
+
+@Composable
+private fun IdleControls(
+    accent: Color,
+    hasPermission: Boolean,
+    permissionDenied: Boolean,
+    onRecord: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Surface(
+            onClick = onRecord,
+            shape = CircleShape,
+            color = accent,
+            modifier = Modifier.size(96.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                CurioIcon(
+                    name = CurioIcons.Mic,
+                    contentDescription = "Start recording",
+                    tint = pastelFillInk(accent),
+                    size = 48.dp
+                )
+            }
+        }
+        Text(
+            text = if (!hasPermission && !permissionDenied) "Tap to grant mic access & record"
+                   else "Tap to record your take",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun LiveControls(
+    accent: Color,
+    tint: Color,
+    isPaused: Boolean,
+    seconds: Int,
+    level: Float,
+    onPauseResume: () -> Unit,
+    onStop: () -> Unit,
+    onDiscard: () -> Unit
+) {
+    val pulseScale = rememberPulseScale(active = !isPaused)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        // Pulsing outer ring + solid mic center
+        Box(
+            modifier = Modifier.size(140.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = tint,
+                modifier = Modifier
+                    .size(120.dp)
+                    .scale(pulseScale)
+            ) {}
+            Surface(
+                shape = CircleShape,
+                color = accent,
+                modifier = Modifier.size(96.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    CurioIcon(
+                        name = if (isPaused) CurioIcons.MicNone else CurioIcons.Mic,
+                        contentDescription = null,
+                        tint = pastelFillInk(accent),
+                        size = 48.dp
+                    )
+                }
+            }
+        }
+
+        // Live waveform — real mic amplitude (level 0..1) drives the bars.
+        LiveWaveform(
+            color = accent,
+            active = !isPaused,
+            level = level,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+        )
+
+        // Running mm:ss timer
+        Text(
+            text = formatRecordingTime(seconds),
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        // Pause / Stop / Discard controls
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ControlButton(
+                icon = if (isPaused) CurioIcons.PlayArrow else CurioIcons.Pause,
+                label = if (isPaused) "Resume" else "Pause",
+                tint = accent,
+                onClick = onPauseResume
+            )
+            ControlButton(
+                icon = CurioIcons.Stop,
+                label = "Stop",
+                tint = accent,
+                onClick = onStop
+            )
+            ControlButton(
+                icon = CurioIcons.Replay,
+                label = "Discard",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                onClick = onDiscard
+            )
+        }
+    }
+}
+
+@Composable
+private fun StoppedControls(
+    accent: Color,
+    tint: Color,
+    seconds: Int,
+    onReRecord: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = tint,
+            modifier = Modifier.size(96.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                CurioIcon(
+                    name = CurioIcons.Mic,
+                    contentDescription = null,
+                    tint = accent,
+                    size = 48.dp
+                )
+            }
+        }
+        Text(
+            text = "Recording saved (${formatRecordingTime(seconds)})",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        TextButton(
+            onClick = onReRecord,
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+        ) {
+            Text(text = "Record over", color = accent)
+        }
+    }
+}
+
+@Composable
+private fun ControlButton(
+    icon: String,
+    label: String,
+    tint: Color,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Surface(
+            onClick = onClick,
+            shape = CircleShape,
+            color = tint.copy(alpha = 0.15f)
+        ) {
+            Box(
+                modifier = Modifier.padding(12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CurioIcon(
+                    name = icon,
+                    contentDescription = label,
+                    tint = tint,
+                    size = 24.dp
+                )
+            }
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}

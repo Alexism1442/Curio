@@ -1,0 +1,3082 @@
+[
+  {
+    "id": "wildcard-stonehenge",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Stonehenge",
+    "teaser": "30 standing stones on a Salisbury plain, hauled from Wales 240km away 4000 years ago by a culture whose only metal tools were made of copper. None of the stones match the local geology.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Stonehenge, Wiltshire, UK (tour + viewing from the visitor path; no touching stones)",
+      "durationMinutes": 90,
+      "instruction": "Walk the path around the stones clockwise. Look at the heel stone, off-axis with sunrise on midsummer. Walkers are not allowed into the inner circle except for solstice. The layout is engineered; we don't know what its purpose was or which we've forgotten."
+    },
+    "tags": [
+      "Archaeology",
+      "Megalithic",
+      "British"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "wildcard-quirigua",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "Quiriguá Stela E (AD 756)",
+    "teaser": "A Mayan ruler named K'ahk' Tiliw Chan Yopaat erected a 10-ton carved stela in AD 756 that weighed as much as four elephants and still stands. The site had no source that large; the stone was quarried 6 miles away.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Quiriguá archaeological site, Guatemala (enter UNESCO park)",
+      "durationMinutes": 60,
+      "instruction": "Touch Stela E. The glyphs are sharp 1250 years later. Then read the museum sign — the carving was done in 5 days. The stone was dressed in place. No one remembers how, but the capstone of the central monument weighs 60 tons."
+    },
+    "tags": [
+      "Archaeology",
+      "Mayan",
+      "Pre-Columbian"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-antikythera-mechanism",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "Antikythera Mechanism",
+    "teaser": "Greek divers in 1902 found a bronze box covered in coral, dated to 60BC. It turned out to be a mechanical computer that modeled the solar system, eclipse cycles and the Olympic calendar. Nothing similar was built again for 1500 years.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "National Archaeological Museum of Athens, Antikythera Mechanism gallery",
+      "durationMinutes": 60,
+      "instruction": "Start with the three main gear fragments under glass. The smallest preserved gear has 23 teeth. Twenty-three. That's the Saros cycle for predicting eclipses, which the Greeks used. The number isn't obvious from outside."
+    },
+    "tags": [
+      "Ancient",
+      "Greek",
+      "Mechanical"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-bio-luminescent-bays",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Bioluminescent Bays",
+    "teaser": "Five bays in the world glow blue when you stir the water, because of single-celled plankton (dinoflagellates) that flash when mechanically disturbed. Mosquito Bay on Vieques is the brightest.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Visit",
+      "targetName": "Mosquito Bay, Vieques, Puerto Rico (clear-water night kayak trip)",
+      "durationMinutes": 90,
+      "instruction": "Book with a kayak outfitter. Don't use mosquito repellent — the petroleum repels the plankton too. Paddle at the edges of the group. Throw a handful of water at a friend and watch the arc light up blue behind the splash."
+    },
+    "tags": [
+      "Ecology",
+      "Caribbean",
+      "Natural"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-murmuration",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Starling Murmurations",
+    "teaser": "Half a million starlings form a single fluid in the sky at dusk, each bird tracking seven neighbors, the whole flock behaving like a single slime mold. No leader. No choreography. Pure math of local rules.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Watch",
+      "targetName": "Ham Wall (Somerset) or Brighton Pier murmuration (Nov–Feb)",
+      "durationMinutes": 30,
+      "instruction": "Find a recorded local watch group on Facebook — most have a 6pm meet time 30 min before dusk. Bring binoculars. The wave patterns only become visible at distance; standing among them is like standing in a snowstorm made of feathers."
+    },
+    "tags": [
+      "Ecology",
+      "British",
+      "Winter"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-mole-rico",
+    "categoryId": "WILDCARD",
+    "subtype": "Tradition",
+    "name": "Mole Negro",
+    "teaser": "Oaxacan sauce with 32 ingredients including three types of dried chile, chocolate, and burnt banana leaf. The dish has its own festival (the Festival of the Mole) every July in Oaxaca.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Casa Sierra Norte, Oaxaca — mole tasting menu",
+      "durationMinutes": 60,
+      "instruction": "Order the mole negro with chicken. Then ask the chef for the green and yellow mole sides for the table. The three flavors are layered: smoky, herbal, and citrus-sweet. Mix them on the same bite for the right Oaxaca effect."
+    },
+    "tags": [
+      "Food",
+      "Mexican",
+      "Oaxacan"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-capoeira",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Capoeira",
+    "teaser": "Brazilian art form that looks like dance and is a fight and was disguised as dance so enslaved Africans could train it in plain sight of Portuguese overseers in 16th-century Bahia.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Any capoeira regional academy — beginners welcome (use the berimbau)",
+      "durationMinutes": 60,
+      "instruction": "Don't try to fight on day one. The roda (circle) is a music event first. Learn the ginga stance — that's the dance. By session two, you'll be moving partner-to-partner without thinking about it. By month two, you'll start catching kicks."
+    },
+    "tags": [
+      "Movement",
+      "Brazilian",
+      "Ritual"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-parkour",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Parkour / Freerunning",
+    "teaser": "French military obstacle-training exercise French kids turned into an art form in the 1990s. Traceurs treat cities as obstacle courses — the goal is 'to be' rather than 'to arrive.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Parkour Generations or local parkour gym — 60-min intro class",
+      "durationMinutes": 60,
+      "instruction": "Wear long pants and indoor shoes. The first 20 minutes is conditioning; the last 40 is actual movement. Start with a 'precision' – a standing jump from one ledge to another of the same height. Build the habit of measuring before you jump."
+    },
+    "tags": [
+      "Movement",
+      "French",
+      "Urban"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-origami",
+    "categoryId": "WILDCARD",
+    "subtype": "Craft",
+    "name": "Origami",
+    "teaser": "Japanese paper-folding tradition that codified 18 traditional folds (Hiden Senbazuru Orikata) in 1797. Akira Yoshizawa turned it into a 20th-century art form. Modern origami designs use a single sheet and no cuts.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Make",
+      "targetName": "Yoshizawa-Randlett System — start with a crane (1 hr)",
+      "durationMinutes": 60,
+      "instruction": "Buy a 15 cm square of washi or origami paper (don't fold with printer paper — your first folds will tear). Follow a YouTube crane tutorial exactly. The 14 steps map to 14 creases. After the crane, fold it 100 times — that's the legend, and your hands will start to feel..."
+    },
+    "tags": [
+      "Craft",
+      "Japanese",
+      "Paper"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-bonsai",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Bonsai",
+    "teaser": "Japanese miniature-tree cultivation that became culturally significant after the 1921 Tokyo exhibition. Trees can be over 1,000 years old and are kept alive across generations like a family document.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Omiya Bonsai Village, Saitama, Japan (museum + gardens)",
+      "durationMinutes": 90,
+      "instruction": "Don't be put off by the prices of mature trees — the museum explains the styles formally. Look for the famous 'shari' (bleached wood veins) that signal age. The trees can outlive you; the gardens outlive empires."
+    },
+    "tags": [
+      "Plant",
+      "Japanese",
+      "Aesthetic"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-origami-crane-1000",
+    "categoryId": "WILDCARD",
+    "subtype": "Ritual",
+    "name": "Senbazuru (1000 Cranes)",
+    "teaser": "Japanese tradition, 'sembazuru,' of folding 1000 paper cranes. The legend says a wish is granted when all 1000 are made. Sadako Sasaki, a Hiroshima survivor, folded 1,300 before dying of leukemia at 12.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Make",
+      "targetName": "Fold 100 cranes (string them at 100, 250, 500, 1000)",
+      "durationMinutes": 600,
+      "instruction": "Make 5 first. Then 25. By 50, you'll have a rhythm. Don't shred your fingers; if your paper is right, you should use just your fingertips. String your 1000s at the 1000 mark. Send yourself a 1-line note the day you start. The discipline is the meaning."
+    },
+    "tags": [
+      "Craft",
+      "Japanese",
+      "Memorial"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-aquascaping-iwagumi",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Iwagumi Aquascape",
+    "teaser": "Japanese planted-aquarium style where the design is built around one hero stone and two supporting stones. Takashi Amano built entire schools of aquascapers in the 1990s.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Aqua Forest Aquarium (Tokyo) — Amano exhibit (online gallery as fallback)",
+      "durationMinutes": 60,
+      "instruction": "Look at any chart of an Amano layout. There will be one larger stone in the back left, and two thirds the size in front of it, and the rest is gravel. The rule is that an odd number of stones — never 2, never 4 — anchors the eye."
+    },
+    "tags": [
+      "Aesthetic",
+      "Japanese",
+      "Aquatic"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-day-of-the-dead",
+    "categoryId": "WILDCARD",
+    "subtype": "Ritual",
+    "name": "Día de los Muertos",
+    "teaser": "Mexican multi-day ritual in late October/early November where families build ofrendas (altars) for the dead, paint faces like Catrinas, and celebrate direct contact with ancestors as if they were still alive.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Mixquic, Mexico City — Tzintzuntzan Cemetery Day of the Dead procession",
+      "durationMinutes": 240,
+      "instruction": "If you can't go in person, watch any documentary on the Michoacán island villages' night-long cemetery watch. The Mexican tradition treats death as a continuing relation, not a disappearance. Don't bring a somber mood; bring a basket of marigolds and a tamale."
+    },
+    "tags": [
+      "Ritual",
+      "Mexican",
+      "Indigenous-Christian"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-burning-man",
+    "categoryId": "WILDCARD",
+    "subtype": "Ritual",
+    "name": "Burning Man",
+    "teaser": "Annual week-long gathering on a Nevada desert playa begun in 1986 by two bakers in San Francisco. Principle: 'radical self-expression' + 'leave no trace.' Population: 80,000+ by late 2010s. Self-funded by ticket sales, no sponsors.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Black Rock Desert, NV (last week of August; bring 1.5 gal of water per person per day)",
+      "durationMinutes": 480,
+      "instruction": "If you've never been, watch the documentary 'Burning Man' or read the Wikipedia 'Rites of passage' section. The event is one part art show, one part rehearsal of post-scarcity logistics. Don't bring anything you can't carry home."
+    },
+    "tags": [
+      "Ritual",
+      "American",
+      "Art"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-tea-ceremony",
+    "categoryId": "WILDCARD",
+    "subtype": "Ritual",
+    "name": "Japanese Tea Ceremony",
+    "teaser": "Sen no Rikyū codified chadō (the way of tea) in the 1500s. The ceremony can take up to four hours, every gesture is choreographed, and matcha is the excuse for a meditation on impermanence.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Urasenke Tankōkai or any chashitsu tea-ceremony experience in Kyoto",
+      "durationMinutes": 90,
+      "instruction": "Wear light-colored socks. Sit seiza-style (kneeling) the whole time — your legs will hurt for 15 minutes, then stop as you settle in. Watch the hostess. Notice when she turns the bowl — 90 degrees away from the front design, for the guest. Then drink in two sips."
+    },
+    "tags": [
+      "Ritual",
+      "Japanese",
+      "Zen"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-zen-rocks",
+    "categoryId": "WILDCARD",
+    "subtype": "Aesthetic",
+    "name": "Zen Garden (Karesansui)",
+    "teaser": "Ryoan-ji's 15-rock garden has 15 stones visible from any angle along the veranda, but never 15 at once. The design may be 550 years old and never explained by its makers.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Visit",
+      "targetName": "Ryōan-ji, Kyoto, Japan",
+      "durationMinutes": 60,
+      "instruction": "Sit on the veranda for 30 minutes looking at the rocks. The white gravel is raked daily. Don't look for the meaning in the rocks; look for the way you stop looking for the meaning. The 14-rock abstraction is one of the deepest puzzles of designed space."
+    },
+    "tags": [
+      "Aesthetic",
+      "Japanese",
+      "Zen"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-bossa-nova",
+    "categoryId": "WILDCARD",
+    "subtype": "Genre",
+    "name": "Bossa Nova",
+    "teaser": "Brazilian samba-jazz hybrid invented in late-1950s Rio, married samba rhythm to American cool jazz, sold like wildfire after Stan Getz + João Gilberto recorded 'The Girl from Ipanema' in 1964.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Listen",
+      "targetName": "Getz/Gilberto (1964) — \"Desafinado\"",
+      "durationMinutes": 5,
+      "instruction": "Listen to Gilberto's thumb. That's it. His thumb on the bass string of a classical guitar, plucking on beats 2 and 3, is the entire bossa nova beat. Once you hear it, you'll hear it in every Brazilian song ever recorded."
+    },
+    "tags": [
+      "Music",
+      "Brazilian",
+      "Jazz"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-gamelan",
+    "categoryId": "WILDCARD",
+    "subtype": "Genre",
+    "name": "Gamelan",
+    "teaser": "Indonesian percussion orchestra led by bronze gongs + metallophones, used in temple rituals for a thousand years. Each gamelan set is tuned to a local dialect — no two are tuned alike.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Listen",
+      "targetName": "Gamelan of the Kraton (Yogyakarta Palace), Pelog pathet bem",
+      "durationMinutes": 60,
+      "instruction": "Each gamelan has its own micro-tuning — your ears will notice what feels wrong, even if you can't articulate why. The pelog scale is a non-equal-tempered 7-note scale; the slendro is a near-equal 5-note. Both are older than Western equal temperament by centuries."
+    },
+    "tags": [
+      "Music",
+      "Indonesian",
+      "Percussion"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-qawwali",
+    "categoryId": "WILDCARD",
+    "subtype": "Music",
+    "name": "Qawwali",
+    "teaser": "Sufi devotional music from the 13th-century shrines of South Asia; long improvisatory songs designed to put the listener into a trance. Nusrat Fateh Ali Khan made it the most-listened world music of the 1990s.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Listen",
+      "targetName": "Nusrat Fateh Ali Khan — \"Tumhe Dillagi\" (1997, the last concert recording)",
+      "durationMinutes": 12,
+      "instruction": "He stretches the song past 8 minutes by alternating solo vocals and choral responses. The rhythm section (dholak + tabla + claps) stays on the same beat throughout. That hand-clap never moves — that's the spiritual anchor."
+    },
+    "tags": [
+      "Music",
+      "Sufi",
+      "Pakistani-Indian"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-tuvan-throat",
+    "categoryId": "WILDCARD",
+    "subtype": "Music",
+    "name": "Tuvan Throat Singing",
+    "teaser": "Siberian Tuvan technique where one voice sings two notes at once — a fundamental pitch in the throat plus a controlled overtone above it. Huun-Huu-Tuur brought the genre to global stages in the 1990s.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Listen",
+      "targetName": "Huun-Huur-Tu — \"Borbangnadyr\" (any album, 1990s recordings)",
+      "durationMinutes": 5,
+      "instruction": "Listen with headphones. He's simultaneously humming two pitches in the same breath cycle. Try to whistle along with the overtone — your overtone will be wrong by half a step. This is one of the world's most counter-intuitive vocal techniques."
+    },
+    "tags": [
+      "Music",
+      "Tuvan",
+      "Vocal"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-icelandic-eleanor",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Northern Lights (Aurora Borealis)",
+    "teaser": "Solar wind charged particles hit Earth's atmosphere 80–300 km up; collisions with O and N atoms emit green, red, and violet light. Visible roughly between September and March above 60° latitude.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Watch",
+      "targetName": "Reykjavík, Iceland — winter 21:00–02:00, dim-light phases",
+      "durationMinutes": 120,
+      "instruction": "Check the Icelandic Met Office's aurora forecast. Aim for a Kp index above 3. Drive to Grótta lighthouse — west of the city, dark. Don't look at your phone for 10 minutes and let your eyes dark-adapt. Then turn around."
+    },
+    "tags": [
+      "Astronomy",
+      "Nordic",
+      "Winter"
+    ],
+    "tier": 1
+  },
+  {
+    "id": "wildcard-icelandic-hot-springs",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Iceland Hot Springs",
+    "teaser": "Iceland sits on the Mid-Atlantic Ridge; 1/4 of its energy comes from geothermal. Locals' outdoor pools are 38–44°C year-round, free of charge, and the most relaxed social scenes.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Soak",
+      "targetName": "Reykjavík — Sundhöllin or Vesturbæjarlaug (locals-only)",
+      "durationMinutes": 60,
+      "instruction": "Take the local etiquette seriously: shower naked before entering. Don't take your phone into the pool. The hot pots are 38, 40, and 44°C — start at 38. Leave the 44°C for after 8 minutes. Stay for 60 minutes — Icelanders stay for hours."
+    },
+    "tags": [
+      "Practice",
+      "Icelandic",
+      "Health"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-yoga-ashtanga",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Ashtanga Yoga",
+    "teaser": "Indian yoga system codified by T. Krishnamacharya in the 1930s. The primary series is 75 postures linked by vinyasa (breath-movement synchronization). Sri K. Pattabhi Jois popularized it in Mysore.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Local Mysore-style ashtanga shala — 90-min led class",
+      "durationMinutes": 90,
+      "instruction": "First time? Arrive 15 min early. No yoga experience required. The teacher will give you either a modified version or the full primary series — that's the shala's judgment. The breathing is the practice; the postures are the consequence."
+    },
+    "tags": [
+      "Practice",
+      "Indian",
+      "Body"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-vipassana-10-day",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Vipassana 10-day Retreat",
+    "teaser": "S.N. Goenka codified a 10-day course of silent meditation in Burma in 1969. Free of charge, run by volunteers, no teachers — only recorded audio. Over 100M people have completed at least one 10-day course.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Dhamma Giri (India) or any Vipassana center worldwide — apply months ahead",
+      "durationMinutes": 600,
+      "instruction": "Days 1-3 are silence and breath. Day 4 introduces body-scanning. Days 5-9 are full scans across the body in 1-hour sitting cycles. Day 10 returns to the world and you understand your reactions are not your self."
+    },
+    "tags": [
+      "Practice",
+      "Vipassana",
+      "Meditation"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-icelandic-bjorn-isleif",
+    "categoryId": "WILDCARD",
+    "subtype": "Ritual",
+    "name": "Icelandic Þorrablót",
+    "teaser": "Midwinter Viking feast that survives in Iceland as a multi-week ritual of fermented shark, ram testicles, boiled sheep head, and brennivín (caraway schnapps). The whale is technically illegal but eaten anyway.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Þorrablót at any Reykjavík restaurant in January/February",
+      "durationMinutes": 120,
+      "instruction": "Order svið (singed sheep head). Eat it the way locals do: with the brain. Take your first bite before judgment. If you can't, slátur (blood sausage) is the entry option. Bring a small notebook — Icelanders are unusually talkative after three brennivín."
+    },
+    "tags": [
+      "Ritual",
+      "Icelandic",
+      "Viking-tradition"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-ultramarathon",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Ultramarathon",
+    "teaser": "Footrace longer than the marathon's 42.195 km — usually 50 km, 100 km, or 100 miles. Comrades run, sleep deprivation runs, hallucination runs. The Western States 100 is the most mythic.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Try",
+      "targetName": "Local 50K race — apply months ahead, train 16 weeks",
+      "durationMinutes": 540,
+      "instruction": "Don't enter one without a coach. Multi-day ultras need specifically trained systems — heart rate, calorie intake strategy, hydration plan. The 50K is the right entry length; you'll learn both how hard you can push and how little you really knew your own body."
+    },
+    "tags": [
+      "Sport",
+      "American",
+      "Endurance"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-volcanic-iceland-iceland-erupt",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Iceland Eruptions",
+    "teaser": "Reykjanes Peninsula erupts roughly every 800–1000 years; we've been in an active phase since 2021. The 2023–24 Litlihrútur eruption drew live-streamed sightseers from around the world.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Reykjanes Peninsula — public view sites around active vents (if open)",
+      "durationMinutes": 360,
+      "instruction": "Check safety.is and the IMO active eruption updates. Walk the marked paths only. Don't under-ventures — the lava is 1100°C. If no eruption is active, the new lava fields from previous years are still warm enough to melt snow on a winter afternoon."
+    },
+    "tags": [
+      "Geology",
+      "Icelandic",
+      "Active"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-y2k-panic",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Y2K / Millennium Bug",
+    "teaser": "In 1999 the world spent $300B updating computer systems that represented years as two digits, fearing simultaneous failure at midnight on Jan 1, 2000. Most countries reported no major incidents; the panic became its own cultural moment.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Computer History Museum, Mountain View — Y2K exhibit",
+      "durationMinutes": 60,
+      "instruction": "Read the signage, then read the datebooks from 1998. Notice how the airline and banking industries spent $50B of the $300B. Then notice: the only major Y2K incident was in a single nuclear power plant in Ishikawa, Japan, where the safety system miscounted because both..."
+    },
+    "tags": [
+      "History",
+      "Tech",
+      "1990s"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-voyager-golden-record",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "Voyager Golden Record",
+    "teaser": "Carl Sagan chaired a committee in 1977 to select 116 images, 27 songs, and greetings in 55 languages for a copper LP attached to two spacecraft now beyond the Sun's wind. There's now no longer light from our star reaching them.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Listen",
+      "targetName": "Voyager Golden Record — full stream (NASA hosts it online)",
+      "durationMinutes": 90,
+      "instruction": "Listen to the greetings in 55 languages in order. Notice they didn't include Russian. Then listen to Chuck Berry's \"Johnny B. Goode\" — the committee debated including it for months because it's 'lowbrow' — Sagan insisted."
+    },
+    "tags": [
+      "Artifact",
+      "American",
+      "Space"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-johannes-kepler-mysterium",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Kepler's Mysterium Cosmographicum (1596)",
+    "teaser": "Young Kepler proposed the five Platonic solids explained the spacing of the six known planets. He was wrong, but the model was so mathematically beautiful that he bet his career on it — and the work led to his actual laws of planetary motion.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Kepler's 1596 \"Mysterium Cosmographicum\" — introduction and figures",
+      "durationMinutes": 45,
+      "instruction": "Pick out the diagrams. Each planet is nested inside a Platonic solid, which is nested inside the next planet's sphere. The five solids AND precisely describe the orbital radii. It's wrong, but so beautiful that Kepler spent his whole life trying to make it the..."
+    },
+    "tags": [
+      "History",
+      "Science",
+      "1590s"
+    ],
+    "tier": 3
+  },
+  {
+    "id": "wildcard-hidden-figures",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Hidden Figures at NASA",
+    "teaser": "Four African-American women — Johnson, Vaughan, Jackson, Hoover — did the orbital mechanics for early US spaceflight from segregated offices at Langley. The title of the 2016 film refers to their bodies of work, too.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Margot Lee Shetterly, \"Hidden Figures\" — chapter on Katherine Johnson",
+      "durationMinutes": 45,
+      "instruction": "Johnson hand-computed the trajectory for John Glenn's 1962 orbit. Glenn refused to fly until she'd verified the IBM computer's work. Read the chapters on her colleagues. By 1960, all four women had titles but none were allowed to attend management meetings in the same..."
+    },
+    "tags": [
+      "History",
+      "Space",
+      "American"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wildcard-vinland",
+    "categoryId": "WILDCARD",
+    "subtype": "History",
+    "name": "Vinland — Norse in North America (1000 CE)",
+    "teaser": "Leif Erikson's expedition landed at L'Anse aux Meadows in Newfoundland 471 years before Columbus. The site has been confirmed and is now a UNESCO World Heritage Site you can stand on.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Visit",
+      "targetName": "L'Anse aux Meadows National Historic Site (Newfoundland, Canada)",
+      "durationMinutes": 120,
+      "instruction": "Walk the marked paths and read all the interpretation signs. The site is the only confirmed Norse settlement in the Americas. The smithy was found complete with bronze rivets. The site was occupied for only a few years before being abandoned due to conflict with the..."
+    },
+    "tags": [
+      "History",
+      "Norse",
+      "Indigenous"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-ikebana-190",
+    "categoryId": "WILDCARD",
+    "subtype": "Curiosity",
+    "name": "Ikebana",
+    "teaser": "Ikebana — the Japanese art of arranging flowers — is closer to sculpture than decoration: the rules dictate the angles of stems (heaven, earth, and man), and a single branch can be a complete composition. The oldest school, Ikenobō, traces itself back 550 years to a Kyoto temple priest.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Try arranging 3 stems at 0°/40°/75° — heaven, earth, man",
+      "durationMinutes": 21,
+      "instruction": "The key difference from Western bouquets: ikebana is about empty space as much as flowers — the stems create lines that the eye travels, and the arrangement is meant to be viewed from the front, like a painting. Try a simple exercise: take three stems and arrange them at 0°, 40°, and 75° from vertical, then photograph the result. The art's philosophy comes from Zen: arranging flowers is a meditation where the goal is restraint, not abundance."
+    },
+    "tags": [
+      "Practice",
+      "Japanese",
+      "Art"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-wabi-sabi-191",
+    "categoryId": "WILDCARD",
+    "subtype": "Curiosity",
+    "name": "Wabi-Sabi",
+    "teaser": "Wabi-sabi is the Japanese aesthetic of imperfection — the cracked tea bowl repaired with gold, the faded leaf, the weathered wall — and it's the opposite of the Western ideal of flawless symmetry. The concept is deliberately hard to define: it's a feeling about time, wear, and the beauty of things that have lived.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Find 3 worn objects around you and look at them as wabi-sabi",
+      "durationMinutes": 21,
+      "instruction": "The best way to understand wabi-sabi is to find it: look for the chipped cup you still use, the weathered wooden table, the crack in the wall you've stopped noticing. Japanese tea masters prized bowls with flaws and even named their favorite cracks; the repair technique kintsugi uses gold to make the break part of the object's history rather than hide it."
+    },
+    "tags": [
+      "Philosophy",
+      "Japanese",
+      "Aesthetic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-lagom-192",
+    "categoryId": "WILDCARD",
+    "subtype": "Curiosity",
+    "name": "Lagom",
+    "teaser": "Lagom is the Swedish word for 'just the right amount' — not too much, not too little — and it's the cultural operating system of a country that prizes moderation. The word may come from the old Norse phrase 'laget om,' meaning 'according to the law,' and Swedes use it for everything from coffee to furniture to work-life balance.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Spend a day asking 'what is the lagom amount?' of everything",
+      "durationMinutes": 19,
+      "instruction": "Lagom is less a rule than a reflex: the Swedes' famous fika (coffee break with something sweet) is lagom applied to work — a pause that's neither stingy nor excessive. Notice how the concept shows up in design (IKEA's clean functionalism), in law (Sweden's strong workers' rights), and in the national allergy to bragging. The interesting question: does 'just right' become a pressure of its own?"
+    },
+    "tags": [
+      "Philosophy",
+      "Swedish",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-sisu-193",
+    "categoryId": "WILDCARD",
+    "subtype": "Curiosity",
+    "name": "Sisu",
+    "teaser": "Sisu is the Finnish concept of extraordinary perseverance — the ability to keep going when all rational reasons to continue are gone. Finland's national identity is built on it: it's the word used for the winter war against the Soviet Union, for the sauna-then-ice-bath tradition, and for the athlete who collapses at the finish line.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Winter War (1939-40) — Finland's national test of sisu",
+      "durationMinutes": 6,
+      "instruction": "The key distinction: sisu is not stubbornness — it's a calm determination that kicks in when resources run out. Finns use it for extreme endurance feats (the 100 km ski, the ice swim) but also for everyday life: it's the quiet national answer to Nordic lagom's moderation. There's even a word for the extra reserve, 'sisukas,' meaning someone with a deep well of it."
+    },
+    "tags": [
+      "Philosophy",
+      "Finnish",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-konmari-method-115",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "The KonMari Method",
+    "teaser": "Marie Kondo's 2011 decluttering method — keep only what 'sparks joy' — turned her into a global brand, and she's also a Shinto priestess. Her system works category by category (clothes first, mementos last), never room by room, because she argues order should be built from the least sentimental things up.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "'The Life-Changing Magic of Tidying Up' by Marie Kondo (Part 1, the KonMari method)",
+      "durationMinutes": 29,
+      "instruction": "Open 'The Life-Changing Magic of Tidying Up' at the opening chapters and note the order: clothes, books, papers, komono, then mementos. Kondo's core claim is that tidying is a one-time event, not a habit — you do it fully once, then maintain. Test her 'spark joy' test on one drawer and notice how the decision gets easier as you go."
+    },
+    "tags": [
+      "Lifestyle",
+      "Practice",
+      "2010s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-bullet-journal-116",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "The Bullet Journal",
+    "teaser": "The Bullet Journal was invented by Brooklyn designer Ryder Carroll as a coping system for his own ADHD. Its whole grammar fits in one page: rapid logging with bullets (• task, ◦ event, − note), signifiers for priority and migration, and an index that turns a notebook into a searchable database.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Ryder Carroll's 'The Bullet Journal Method' — the system's origin page",
+      "durationMinutes": 13,
+      "instruction": "Skim Carroll's official guide (bulletjournal.com or the book 'The Bullet Journal Method'). The invention is the migration step: every month you review unfinished tasks and consciously re-copy the ones that still matter — the act of rewriting is the filter. Try a one-week rapid log."
+    },
+    "tags": [
+      "Lifestyle",
+      "Productivity",
+      "Practice"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-slow-movement-117",
+    "categoryId": "WILDCARD",
+    "subtype": "Movement",
+    "name": "The Slow Movement",
+    "teaser": "The Slow Movement began as a protest: in 1986, McDonald's opening near Rome's Spanish Steps triggered the slow food movement. Journalist Carl Honoré then broadened it into a philosophy in 2004 — not doing everything slower, but doing everything at the right speed, which he argues is the opposite of laziness.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "'In Praise of Slowness' by Carl Honoré (the opening manifesto)",
+      "durationMinutes": 21,
+      "instruction": "Read Honoré's 'In Praise of Slowness' chapter on the origin story, then watch how the idea spread from food to cities (Cittaslow), travel, and even sex. The key reframe is that 'slow' isn't a pace — it's a ratio of speed to attention."
+    },
+    "tags": [
+      "Lifestyle",
+      "Philosophy",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-tiny-house-movement-118",
+    "categoryId": "WILDCARD",
+    "subtype": "Movement",
+    "name": "The Tiny House Movement",
+    "teaser": "Tiny houses are usually under 400 square feet — one-sixth the size of the average American home — and many are built on trailers specifically to dodge building-code minimums. The movement's modern figurehead is Jay Shafer, who built his first 89-square-foot house on wheels in 1999.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "A tour video of a Jay Shafer-style tiny house on wheels",
+      "durationMinutes": 28,
+      "instruction": "Watch a build walkthrough of a trailer-based tiny house and note the legal workaround: wheels make it a 'vehicle,' not a dwelling, so it escapes minimum-square-footage rules. Then compare that against one city that legalized tiny houses on foundations — the zoning fight is the real story."
+    },
+    "tags": [
+      "Lifestyle",
+      "Housing",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-voynich-manuscript-119",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Voynich Manuscript",
+    "teaser": "Carbon-dated to 1404–1438, the Voynich Manuscript is written in a script nobody has ever deciphered, filled with plants that match no known species. It sat in a Jesuit library for centuries before dealer Wilfrid Voynich bought it in 1912 — and it has defied cryptographers, codebreakers, and AI ever since.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Voynich Manuscript (MS 408), digitized at Yale's Beinecke Library",
+      "durationMinutes": 6,
+      "instruction": "Page through the full digitized scans at Yale's Beinecke Library (MS 408). Look at the 'balneological' section of naked women in green baths — the illustrations are as indecipherable as the text. Then read why the leading theory is that it's an elaborate hoax or a lost cipher, and notice what evidence each camp leans on."
+    },
+    "tags": [
+      "Mystery",
+      "Cryptography",
+      "Medieval"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-nazca-lines-120",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Nazca Lines",
+    "teaser": "Etched into Peru's desert between 200 BC and AD 500, the Nazca Lines include figures up to 370 meters long — a hummingbird, a spider, a monkey — that only make sense from the air. The people who made them never flew, which is exactly the mystery: they were laid out with surveying precision using stakes and cord.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Nazca Lines on satellite view (hummingbird + spider glyphs)",
+      "durationMinutes": 30,
+      "instruction": "Pull up the Nazca Lines on a satellite map and zoom to the hummingbird figure. The shapes were made by scraping away dark surface stones to expose lighter soil — the desert's dryness preserved them for 1,500 years. Compare the line figures with the trapezoids, which some archaeologists read as water-ritual spaces tied to the region's aquifers."
+    },
+    "tags": [
+      "Archaeology",
+      "Peru",
+      "Ancient"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-terracotta-army-121",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Terracotta Army",
+    "teaser": "China's first emperor, Qin Shi Huang, built an underground army of over 8,000 life-size terracotta soldiers — every face unique, no two alike — to guard his tomb for eternity. Farmers digging a well stumbled on it in 1974; the emperor's actual burial chamber remains unopened.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Terracotta Army (Pit 1) — Xi'an, high-resolution museum imagery",
+      "durationMinutes": 3,
+      "instruction": "Begin with the warriors' faces in a high-resolution gallery and count how many distinct facial types you can spot — each soldier was individually modeled, not cast from a mold. Then find the bronze chariots, which were assembled from hundreds of parts, and reflect on what mass production 2,200 years ago must have taken."
+    },
+    "tags": [
+      "Archaeology",
+      "China",
+      "Ancient"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-angkor-wat-122",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Angkor Wat",
+    "teaser": "Angkor Wat is the largest religious monument ever built — a 12th-century temple-mountain in Cambodia covering 400 acres, ringed by a moat 190 meters wide. It was built as a Hindu shrine to Vishnu, then slowly became Buddhist, and its name literally means 'city of temples.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Angkor Wat's Churning of the Sea of Milk bas-relief, eastern gallery",
+      "durationMinutes": 23,
+      "instruction": "Trace the bas-relief on the outer gallery — nearly 800 meters of carved storytelling, including the Churning of the Sea of Milk, where gods and demons pull a serpent to stir up the elixir of immortality. The temple faces west, unusual for Khmer temples, because it was designed as Vishnu's home."
+    },
+    "tags": [
+      "Archaeology",
+      "Cambodia",
+      "Khmer"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-easter-island-moai-123",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Easter Island Moai",
+    "teaser": "Nearly 900 moai statues — some 20 tons, the largest 270 tons and never finished — were carved from volcanic tuff on Easter Island between the 13th and 16th centuries. Recent experiments showed they could have 'walked' upright, rocking from side to side, which would explain the islanders' oral tradition that the statues walked.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Rano Raraku quarry, where half-carved moai remain in the rock",
+      "durationMinutes": 5,
+      "instruction": "Watch the 2013 experiment where a replica moai was walked upright by three teams of ropes, then look at the quarry at Rano Raraku where dozens of half-carved statues still sit in the rock. The unfinished ones are the best evidence for how they were made."
+    },
+    "tags": [
+      "Archaeology",
+      "Rapa Nui",
+      "Megalithic"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-chichén-itzá-124",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Chichén Itzá",
+    "teaser": "The Maya pyramid El Castillo at Chichén Itzá has 91 steps on each side plus the platform — 365 total, one for every day of the year. Twice a year, at the equinoxes, the late-afternoon sun makes a serpent of shadow crawl down the balustrade to join a carved snake head at the base.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "El Castillo's equinox serpent shadow — Chichén Itzá, Yucatán",
+      "durationMinutes": 14,
+      "instruction": "Watch the equinox shadow-serpent on the northern staircase — the effect is engineered to within days of perfect alignment. Then look at the great ball court, the largest in Mesoamerica, and notice the carved scene showing a player being decapitated: the game's stakes were real."
+    },
+    "tags": [
+      "Archaeology",
+      "Maya",
+      "Mesoamerica"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-great-wall-of-125",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Great Wall of China",
+    "teaser": "The Great Wall isn't one wall — it's a 2,000-year patchwork of walls, trenches, and natural barriers stretching over 21,000 km when all dynasties are counted. The myth that it's visible from the moon is false; from low Earth orbit it's visible but barely, and only in the right conditions.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "A Ming-dynasty watchtower section — Badaling vs. the rammed-earth frontier walls",
+      "durationMinutes": 23,
+      "instruction": "Compare a Ming-dynasty brick section (like Badaling) with the earlier rammed-earth walls on a map — the 'wall' is really a network. Then find the story of the beacon towers: smoke by day, fire by night, signals relayed from tower to tower at up to 700 km/h in ideal conditions."
+    },
+    "tags": [
+      "History",
+      "China",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-forbidden-city-126",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Forbidden City",
+    "teaser": "Beijing's Forbidden City is a 72-hectare walled palace with 980 surviving buildings, built in 15 years starting 1406 — construction used a million laborers and logs floated from forests 1,000 km away. Legend says it has 9,999 rooms: one short of heaven's 10,000, because only the Jade Emperor could have 10,000.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Hall of Supreme Harmony, Forbidden City central axis (virtual tour)",
+      "durationMinutes": 23,
+      "instruction": "Walk the central axis from the Meridian Gate to the Hall of Supreme Harmony in a virtual tour and count the courtyards — the design deliberately hides the throne from the entrance. Then look at the roof ridge animals on the Hall of Supreme Harmony: ten beasts, the maximum, reserved for the emperor alone."
+    },
+    "tags": [
+      "History",
+      "China",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-sagrada-família-127",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "Sagrada Família",
+    "teaser": "Antoni Gaudí's Sagrada Família has been under construction since 1882 — longer than the pyramids took to build — with completion now targeted for 2026, the centenary of his death. It's financed entirely by ticket sales and private donations, and Gaudí is buried in the crypt he designed.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Passion vs. Nativity façades of the Sagrada Família, Barcelona",
+      "durationMinutes": 9,
+      "instruction": "Single out the Passion façade — designed by Gaudí but carved in the 1980s from his drawings, in sharp angular contrast to the organic Nativity façade he completed himself. The difference between the two facades is a masterclass in how much of the building is the original architect's versus his successors'."
+    },
+    "tags": [
+      "Architecture",
+      "Spain",
+      "Art Nouveau"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-golden-gate-bridge-128",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "The Golden Gate Bridge",
+    "teaser": "When the Golden Gate Bridge opened in 1937 it was the longest suspension span in the world, and its 'International Orange' color was chosen because it's the most visible shade in San Francisco's fog. A safety net beneath the deck saved 19 workers — who formed the 'Halfway to Hell Club.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "1930s construction photos of the Golden Gate Bridge towers",
+      "durationMinutes": 21,
+      "instruction": "Look at archival photos of the 1930s construction: workers riveted the towers without harnesses above the net, and the towers rose from the water with no crane tall enough — they were built as a self-climbing rig. Then find the wind-tunnel test footage that reshaped the deck in 1951, an engineering first."
+    },
+    "tags": [
+      "Engineering",
+      "USA",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-northern-lights-129",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "The Northern Lights",
+    "teaser": "The northern lights happen when charged particles from the sun are funneled by Earth's magnetic field into the polar atmosphere — the green glow is oxygen atoms 100 km up re-emitting absorbed energy. Solar activity runs on an 11-year cycle, so aurora years come in waves; the next peak is around 2025.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Live aurora webcams from Tromsø, Norway + the Kp-index forecast",
+      "durationMinutes": 3,
+      "instruction": "Find the live aurora forecast and compare the Kp index with a webcam from Tromsø or Iceland — the lights are frequently captured on camera when barely visible to the eye. Then look at a satellite aurora image from above: from space you see the full oval ring, not an arc."
+    },
+    "tags": [
+      "Astronomy",
+      "Geophysics",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-victoria-falls-130",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Victoria Falls",
+    "teaser": "Victoria Falls is neither the tallest nor the widest waterfall, but it's the largest single curtain of falling water on Earth — 1.7 km wide and 108 m tall. The local name, Mosi-oa-Tunya, means 'the smoke that thunders,' from the plume of spray visible 50 km away.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Mosi-oa-Tunya — Victoria Falls from the Zambian rim at low water",
+      "durationMinutes": 30,
+      "instruction": "Watch a drone video from the Zambian side at low water, when the falls split into separate chasms and you can see the basalt shelf that shapes them. The gorge below has carved seven successive zig-zag gorges over millions of years — the falls are marching upstream."
+    },
+    "tags": [
+      "Nature",
+      "Africa",
+      "Geology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-great-barrier-reef-131",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Great Barrier Reef",
+    "teaser": "The Great Barrier Reef is the largest living structure on Earth — 2,300 km of coral visible from orbit, built by billions of tiny coral animals over thousands of years. It's home to 400+ coral species and 1,500 fish species, and it has lost roughly half its coral cover since 1995.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Before/after coral bleaching imagery, Great Barrier Reef Marine Park",
+      "durationMinutes": 5,
+      "instruction": "Look at before-and-after bleaching imagery from the 2016 and 2017 heatwaves: the white 'bleached' corals are alive but starving, having expelled their algae partners. Then find the coral-spawning timelapse — one synchronized night a year, the reef reproduces en masse."
+    },
+    "tags": [
+      "Nature",
+      "Australia",
+      "Marine"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-sahara-desert-132",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "The Sahara Desert",
+    "teaser": "The Sahara, the largest hot desert on Earth, was green grassland with lakes and crocodiles as recently as 5,000–10,000 years ago — the 'African Humid Period.' Rock art in the desert's caves depicts people swimming, cattle, and giraffes, not camels.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Tassili n'Ajjer rock art (swimming + cattle scenes), Sahara",
+      "durationMinutes": 26,
+      "instruction": "Consider the Tassili n'Ajjer rock art, which shows a lush savanna world — swimming figures and herds — then check a paleoclimate map of northern Africa 8,000 years ago. The desertification that followed is one of the fastest climate shifts in the human record."
+    },
+    "tags": [
+      "Geology",
+      "Africa",
+      "Climate"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-yosemite-national-park-133",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Yosemite National Park",
+    "teaser": "Yosemite's El Capitan is the largest exposed granite monolith on Earth — a single 3,000-foot rock face, so sheer that the first climb to its top took 47 days in 1958 and the modern speed record is under 2 hours. The valley's cliffs were carved by glaciers, not rivers.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "El Capitan's Nose route — first ascent (1958) vs. modern speed record",
+      "durationMinutes": 14,
+      "instruction": "Watch the classic rope-solo film 'Valley Uprising' clip of the first ascent of the Nose, or find the modern speedrun of the same route. Then look at Half Dome's cut face — the missing half was carried away by a glacier, which is why the summit is a sheer cliff on one side."
+    },
+    "tags": [
+      "Nature",
+      "USA",
+      "Geology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-galápagos-islands-134",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Galápagos Islands",
+    "teaser": "The Galápagos finches Darwin studied in 1835 gave him his first clear evidence of evolution: 13 species with beaks adapted to different foods, all descended from a single mainland ancestor. The islands' giant tortoises live past 100 — Lonesome George, the last of his subspecies, died in 2012 after decades as the world's most famous bachelor.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 13 Galápagos finch species — beak comparison gallery",
+      "durationMinutes": 27,
+      "instruction": "Compare the beaks of the ground finches and the woodpecker finch — which famously uses a cactus spine as a tool — in a species gallery. Then read the story of Lonesome George: his subspecies was hunted to extinction by whalers and sailors, and conservationists now breed tortoises from surviving relatives."
+    },
+    "tags": [
+      "Nature",
+      "Ecuador",
+      "Evolution"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-svalbard-global-seed-135",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Svalbard Global Seed Vault",
+    "teaser": "Buried in a mountain 1,300 km from the North Pole, the Svalbard Global Seed Vault holds over 1.2 million seed samples in permafrost kept at −18°C — a backup for the world's crop diversity. Its nickname, the 'Doomsday Vault,' undersells it: seeds have already been withdrawn once, by Syria's gene bank during its civil war.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Svalbard Global Seed Vault virtual tour (entrance tunnel + seed chambers)",
+      "durationMinutes": 19,
+      "instruction": "Take the virtual tour of the vault's concrete tunnel — it's dug 120 meters into the mountain, designed to stay frozen even without power for 200 years. The Syrian withdrawal in 2015 was the first in its history: seeds of drought-resistant crops were returned to rebuild the Aleppo gene bank."
+    },
+    "tags": [
+      "Science",
+      "Norway",
+      "Conservation"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-large-hadron-collider-136",
+    "categoryId": "WILDCARD",
+    "subtype": "Facility",
+    "name": "The Large Hadron Collider",
+    "teaser": "The Large Hadron Collider is a 27-kilometer ring of superconducting magnets 100 meters under the Swiss-French border, firing protons at 99.9999991% of light speed. In 2012 it produced the Higgs boson — the particle that gives other particles mass — confirming a 48-year-old prediction.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 2012 Higgs boson announcement — CMS/ATLAS data plots",
+      "durationMinutes": 23,
+      "instruction": "Watch the 2012 announcement footage: the Higgs signal appears as a small bump in the data plots. Then find the accelerator's 'beam dump' explanation — full-power beams carry enough energy to melt a tonne of copper, which is why the machine stops particles into graphite blocks."
+    },
+    "tags": [
+      "Physics",
+      "CERN",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-james-webb-space-137",
+    "categoryId": "WILDCARD",
+    "subtype": "Spacecraft",
+    "name": "The James Webb Space Telescope",
+    "teaser": "The James Webb Space Telescope observes in infrared from a million and a half kilometers beyond Earth, parked at the L2 point. Its 6.5-meter mirror — 18 gold-coated segments — unfolds like origami, and its tennis-court-sized sunshield keeps it at −233°C so its own heat doesn't blind it.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The JWST Deep Field vs. Hubble Ultra-Deep Field comparison",
+      "durationMinutes": 26,
+      "instruction": "Turn to the 'Deep Field' image released July 2022 and compare it with Hubble's — the red smudges are galaxies more than 13 billion light-years away, seen as they were shortly after the Big Bang. Then watch the deployment animation of the mirror segments: each one must align to nanometers, automatically."
+    },
+    "tags": [
+      "Astronomy",
+      "Space",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-voyager-1-spacecraft-138",
+    "categoryId": "WILDCARD",
+    "subtype": "Spacecraft",
+    "name": "Voyager 1 Spacecraft",
+    "teaser": "Voyager 1, launched in 1977, is the most distant human-made object — over 24 billion km away and still transmitting on 23 watts, roughly the power of a fridge lightbulb. In 1990 it turned back and photographed Earth as the 'pale blue dot' from 6 billion km, at Carl Sagan's urging.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Pale Blue Dot photograph + the Golden Record cover instructions",
+      "durationMinutes": 22,
+      "instruction": "Read Sagan's 'Pale Blue Dot' passage about that photograph — the whole of human history on a pixel. Then look at the Golden Record's cover: engraved instructions (and a pulsar map) for any alien who finds it, including the position of Earth relative to 14 pulsars."
+    },
+    "tags": [
+      "Space",
+      "Exploration",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-dead-sea-scrolls-139",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Dead Sea Scrolls",
+    "teaser": "Found in 1947 by a Bedouin shepherd in caves above the Dead Sea, the scrolls pushed the oldest surviving biblical manuscripts back by a thousand years — to 250 BC–AD 68. The Great Isaiah Scroll is 7.3 meters of intact text, and its wording is startlingly close to the Hebrew Bible used today.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Great Isaiah Scroll — digitized in full at the Israel Museum",
+      "durationMinutes": 6,
+      "instruction": "Zoom into the Great Isaiah Scroll on the Israel Museum's digital site — you can read the ancient Hebrew letters directly. Then find the Community Rule scroll, which describes a sect's strict communal life; whether those people were the Essenes is still one of archaeology's open arguments."
+    },
+    "tags": [
+      "Archaeology",
+      "Ancient",
+      "Religion"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-bayeux-tapestry-140",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Bayeux Tapestry",
+    "teaser": "Despite its name, the Bayeux Tapestry is embroidery, not tapestry — 70 meters of linen with 58 scenes and 626 figures narrating the Norman conquest of England, stitched within a generation of 1066. Its Latin text even records Halley's comet, which appeared that year and was read as an omen of Harold's doom.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The full Bayeux Tapestry digitized — the Halley's comet panel",
+      "durationMinutes": 26,
+      "instruction": "Scroll the full digitized tapestry scene by scene and track the comet panel — stitched 'they marvel at the star' as courtiers point at Halley's comet, which indeed passed in April 1066. Then look at the final, damaged scene: the tapestry ends mid-story, and its last panel is lost."
+    },
+    "tags": [
+      "Medieval",
+      "Art",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-magna-carta-141",
+    "categoryId": "WILDCARD",
+    "subtype": "Document",
+    "name": "The Magna Carta",
+    "teaser": "In 1215 a group of English barons forced King John to seal a charter limiting royal power — of its 63 clauses, only three remain law in England today, and the rest were mostly about feudal grievances. Four original 1215 copies survive, and it took centuries, not decades, for it to become the 'cornerstone of liberty.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Clauses 1, 39, and 40 of the 1215 Magna Carta",
+      "durationMinutes": 13,
+      "instruction": "Read the three clauses still in force: the Church's freedom, the 'lawful judgment of peers' clause, and the one promising no one will be sold or delayed justice. Then trace how the Magna Carta was cited by 17th-century parliamentarians and American colonists — its fame as liberty's cornerstone is largely a later story."
+    },
+    "tags": [
+      "History",
+      "Law",
+      "Medieval"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-constitution-142",
+    "categoryId": "WILDCARD",
+    "subtype": "Document",
+    "name": "The Constitution",
+    "teaser": "The US Constitution is the world's oldest national constitution still in force, and at about 4,500 words it's shorter than this batch script. It was written in 116 days by 39 men in secret — windows nailed shut — and has been amended only 27 times, the first ten of which were added before it was even two years old.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The original US Constitution text (Article I, Section 8)",
+      "durationMinutes": 23,
+      "instruction": "Read the original text and count how many words it takes before the first substantive rule — the Preamble's 52 words are all mission statement. Then look at Article I, Section 8, the enumerated powers: every federal power the government exercises has to trace back to a clause there or to an amendment."
+    },
+    "tags": [
+      "History",
+      "Law",
+      "USA"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-turing-test-143",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "The Turing Test",
+    "teaser": "Alan Turing proposed his test in 1950 not as a definition of machine intelligence but as a way to sidestep the unanswerable question 'can machines think?' — a human judge chats with a machine and a human, and the machine wins by being indistinguishable. He predicted that by 2000, machines would fool a judge 30% of the time.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Turing's 1950 paper 'Computing Machinery and Intelligence' — the imitation game",
+      "durationMinutes": 22,
+      "instruction": "Chat with a modern LLM or read transcripts of past Loebner Prize conversations, then judge honestly whether Turing's bar — sustained, unfocused conversation — is easier or harder than passing. The trick of the test is that it measures behavior, not mind: a perfect imitation passes by definition."
+    },
+    "tags": [
+      "AI",
+      "Philosophy",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-butterfly-effect-144",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "The Butterfly Effect",
+    "teaser": "The butterfly effect was born from a rounding error: in 1961 meteorologist Edward Lorenz re-ran a weather simulation with 0.506 instead of 0.506127 and got a completely different forecast. His 1972 talk title asked whether a butterfly flapping in Brazil could set off a tornado in Texas — and chaos theory was named.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Lorenz attractor simulation (butterfly-shaped chaos plot)",
+      "durationMinutes": 27,
+      "instruction": "Watch the famous double-pendulum or Lorenz attractor simulation — two systems starting a hair apart diverge into entirely different paths. Lorenz's real discovery is in the shapes: the 'attractor' plots show order inside the chaos, which is why weather can be predicted days, not weeks, ahead."
+    },
+    "tags": [
+      "Science",
+      "Chaos",
+      "Mathematics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-placebo-effect-145",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "The Placebo Effect",
+    "teaser": "The placebo effect is a genuine biological response, not just 'mind over matter': sham operations — like the knee arthroscopy trials where patients received fake surgery — produced real improvement. The word comes from Latin 'I shall please,' and a negative twin, the nocebo effect, can make inert pills produce real side effects.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The sham knee-surgery trial — NEJM 2002 results",
+      "durationMinutes": 19,
+      "instruction": "Read the sham-surgery trials of the 2000s, where patients who got an incision but no actual procedure reported as much knee-pain relief as those who got the real operation. Then find the color-and-price studies: red placebos work better for pain, and expensive 'placebo' pills outperform cheap ones."
+    },
+    "tags": [
+      "Science",
+      "Medicine",
+      "Psychology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-lucid-dreaming-146",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Lucid Dreaming",
+    "teaser": "In a lucid dream you know you're dreaming while it's happening — roughly half of people have experienced at least one, and a few practice it nightly. In the 1980s Stanford psychologist Stephen LaBerge proved they were real by having dreamers signal from inside the dream with agreed eye movements, visible on an EEG.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "LaBerge's eye-signaling experiment footage (Stanford, 1980s)",
+      "durationMinutes": 26,
+      "instruction": "Watch LaBerge's original eye-signal footage from the lab — the dreamer 'looks' left-right-left-right on cue while asleep in REM. Then try the simplest induction: reality checks (counting fingers, testing light switches) done during the day, which carry over into dreams as the cue to go lucid."
+    },
+    "tags": [
+      "Psychology",
+      "Sleep",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-uncanny-valley-147",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "The Uncanny Valley",
+    "teaser": "Japanese roboticist Masahiro Mori coined 'uncanny valley' in 1970: as robots and animations become more humanlike, our affinity rises — then plunges into revulsion at near-perfect imitation, before recovering at full human fidelity. Mori's original graph plots it with prosthetic hands and corpses as the valley's bottom.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Mori's 1970 'Bukimi no Tani' paper — the original uncanny valley graph",
+      "durationMinutes": 28,
+      "instruction": "Watch a modern 'uncanny' CGI or android clip, then read Mori's original 1970 paper, translated in IEEE Spectrum — his graph was drawn for robots, but animation studios now design character faces specifically to avoid the valley. The paper ends with a strange twist: Mori suggests the valley's depth depends on whether the thing moves."
+    },
+    "tags": [
+      "Robotics",
+      "Psychology",
+      "Design"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-fibonacci-sequence-148",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "Fibonacci Sequence",
+    "teaser": "The Fibonacci sequence — 0, 1, 1, 2, 3, 5, 8… where each number is the sum of the two before — was introduced to Europe by Fibonacci's 1202 book Liber Abaci as a puzzle about breeding rabbits. Indian mathematicians had described the same sequence centuries earlier, and pinecones, sunflowers, and nautilus shells all show its spirals.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Sunflower head spiral counts + Liber Abaci's rabbit problem",
+      "durationMinutes": 6,
+      "instruction": "Count the spirals on a sunflower or pinecone photo — you'll get two consecutive Fibonacci numbers (like 34 and 55), which is the most efficient packing for seeds. Then read the rabbit problem in Liber Abaci: Fibonacci's rabbits are a fantasy, but the sequence he used to solve it shows up all over nature."
+    },
+    "tags": [
+      "Mathematics",
+      "Nature",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-library-of-alexandria-149",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Library of Alexandria",
+    "teaser": "The Library of Alexandria was antiquity's attempt to collect every book in the world — Ptolemy's agents searched incoming ships and confiscated scrolls, returning only copies. The story of a single catastrophic fire is mostly myth; the library declined over centuries through neglect, war, and politics.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Ptolemy III's ship-search decree + the history of Alexandria's libraries",
+      "durationMinutes": 5,
+      "instruction": "Read how the library actually worked: Ptolemy III's decree that every ship docking in Alexandria surrender its scrolls for copying, and the famous loan of the Athenian state copies of the great tragedians — the originals were never returned. Then separate the three different 'destructions' (Caesar's fire, Aurelian's war, the Serapeum's demolition) from the myth of one great burning."
+    },
+    "tags": [
+      "History",
+      "Ancient",
+      "Books"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-atlantis-150",
+    "categoryId": "WILDCARD",
+    "subtype": "Legend",
+    "name": "Atlantis",
+    "teaser": "Atlantis appears in exactly two texts — Plato's Timaeus and Critias, written around 360 BC — as a cautionary tale of an island empire that sank in a day and night for growing corrupt. Most scholars read it as a philosophical invention: Plato invented a state to contrast with his ideal one.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Plato's Timaeus 24e–25d — the Atlantis passage itself",
+      "durationMinutes": 13,
+      "instruction": "Read the Atlantis passage in the Timaeus and notice the frame: Plato says the story came from Egyptian priests via Solon — a claim made, conveniently, 9,000 years too far back to verify. Then trace the modern mythology: Atlantis mania began in the 19th century with Ignatius Donnelly, not with Plato."
+    },
+    "tags": [
+      "Myth",
+      "Philosophy",
+      "Ancient"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-bermuda-triangle-151",
+    "categoryId": "WILDCARD",
+    "subtype": "Legend",
+    "name": "The Bermuda Triangle",
+    "teaser": "The Bermuda Triangle entered pop culture in 1950s magazine stories built on a handful of unrelated disappearances — the 1945 loss of Flight 19, five torpedo bombers that vanished on a training flight, is the anchor. The US Coast Guard's position: given how many ships and planes cross that stretch of ocean, the record shows no statistical anomaly.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Flight 19 radio transcripts, 5 December 1945",
+      "durationMinutes": 16,
+      "instruction": "Read the Flight 19 transcript: the pilots were heard getting lost over radio, the flight leader heard saying 'we can't make out anything' — a training accident, not a mystery. Then check the Lloyds of London and Coast Guard statements, which both say loss rates in the Triangle are unremarkable for the traffic volume."
+    },
+    "tags": [
+      "Myth",
+      "Aviation",
+      "Ocean"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-tunguska-event-152",
+    "categoryId": "WILDCARD",
+    "subtype": "Event",
+    "name": "The Tunguska Event",
+    "teaser": "On 30 June 1908, something exploded 5–10 km above the Siberian forest with the force of 12+ megatons — flattening 2,150 square kilometers of trees in a radial pattern, with no crater and no meteorite found. The leading explanation is a stony asteroid or comet fragment that airburst before reaching the ground.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1927 Kulik expedition photos of the Tunguska blast zone",
+      "durationMinutes": 27,
+      "instruction": "Scan the aerial photos of the blast zone: the trees lie in a perfect radial pattern away from the epicenter, like spokes. Then read the witness accounts — even 60 km away, people were knocked off their feet and reported the sky glowing for nights afterward. The 2013 Chelyabinsk meteor, also an airburst, is the modern echo."
+    },
+    "tags": [
+      "Science",
+      "Astronomy",
+      "Mystery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-taos-hum-153",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "The Taos Hum",
+    "teaser": "Since the early 1990s, some residents of Taos, New Mexico, have heard a persistent low-frequency hum — 30 to 80 Hz — that others in the same room cannot hear at all. Scientific studies measuring the sound could not identify a source, and similar 'hum' reports exist around the world (Windsor, Kokomo, Bristol).",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1993 Los Alamos Taos Hum study report",
+      "durationMinutes": 21,
+      "instruction": "Read the 1993–95 Los Alamos study: sensors recorded a background hum at 50 Hz, but the listeners' reports didn't correlate with it — the instruments found nothing matching what they heard. Then consider the strongest theory: that some people are unusually sensitive to low-frequency infrastructure noise or their own physiological rhythms."
+    },
+    "tags": [
+      "Mystery",
+      "Science",
+      "Sound"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-lost-colony-of-154",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Lost Colony of Roanoke",
+    "teaser": "In 1587, 116 English colonists landed on Roanoke Island; when their governor returned three years later, everyone was gone — the only clue was 'CROATOAN' carved on a post. No remains have ever been conclusively found, though DNA work and archaeology now point to the colonists integrating with nearby tribes.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "John White's 1590 account of the 'CROATOAN' carving",
+      "durationMinutes": 9,
+      "instruction": "Read John White's 1590 account of finding the carved word — he intended to sail to Croatoan Island, but a storm forced the ship home and he never returned. Then look at the 21st-century evidence trail: pottery at a site called Site X, and 2019 excavations suggesting a fort may have stood there all along."
+    },
+    "tags": [
+      "Mystery",
+      "History",
+      "Colonial"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-oak-island-money-155",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Oak Island Money Pit",
+    "teaser": "Treasure hunters have dug on Nova Scotia's Oak Island since 1795, when three teenagers found a depression over a 30-meter shaft layered with oak platforms — the 'Money Pit.' Centuries of attempts have recovered only fragments (a stone with symbols, a slate, a coin), and the 'curse' holds that seven must die before the treasure is found.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Oak Island Money Pit excavation timeline (1795–present)",
+      "durationMinutes": 19,
+      "instruction": "Watch a timeline of the pit's excavation attempts and note the pattern: every dig collapses or floods, and each 'treasure' — from the stone inscriptions to the 2014 discoveries — remains undated and unexplained. The 90-foot stone carved with mysterious symbols was taken away in the 1900s and has never been located."
+    },
+    "tags": [
+      "Mystery",
+      "Treasure",
+      "Canada"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-zodiac-killer-156",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Zodiac Killer",
+    "teaser": "Between 1968 and 1969 the Zodiac Killer murdered at least five people in the San Francisco Bay Area and taunted police with cryptogram letters signed with a crossed-circle symbol. One cipher, Z408, was cracked within a week by a couple; the harder Z340 took until December 2020 — and still named no suspect.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Zodiac's Z408 cipher letter and its 1969 solution",
+      "durationMinutes": 16,
+      "instruction": "Decode the famous Z408 letter's key insight yourself: the killer wrote 'I like killing people because it is so much fun' and signed with the zodiac symbol. Then read the 2020 solution of Z340, where codebreakers found the plaintext reading diagonally — the message was an unrepentant boast, and the identity question remains open."
+    },
+    "tags": [
+      "Mystery",
+      "Crime",
+      "USA"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-somerton-man-157",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Somerton Man",
+    "teaser": "In December 1948 a well-dressed man was found dead on Somerton Park beach in Adelaide with every label cut from his clothes and no identification. In his pocket: a scrap of paper reading 'Tamám Shud' — Persian for 'It is ended' — torn from a rare copy of the Rubaiyat, inside which was a cipher never fully decoded.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Tamám Shud case file — the Rubaiyat cipher and the 2021 DNA lead",
+      "durationMinutes": 20,
+      "instruction": "Read the details of the find: the man's dental work was expensive, his fingerprints matched no record, and the Rubaiyat's final cipher remains unsolved. In 2021 genealogists proposed an identity — an Australian electrical engineer — using DNA from his hair, the closest the case has come to closure."
+    },
+    "tags": [
+      "Mystery",
+      "Australia",
+      "Forensics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-lead-masks-case-158",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Lead Masks Case",
+    "teaser": "In 1966 two Brazilian electricians were found dead on a hill near Rio wearing lead eye-masks — flat gray discs with wire — with a notebook beside them full of instructions about meeting times and 'the agreed place.' Autopsies found no cause of death, and the masks have never been explained.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1966 lead masks case — scene photos and the notebook instructions",
+      "durationMinutes": 5,
+      "instruction": "Check the scene photographs: the men lay as if sleeping, the masks over their faces, with a bottle of water and a notebook between them. The notebook's final instruction — '16:30 be at the agreed place, 18:30 consume the capsules' — was followed to the letter. Read the theories, from a UFO experiment to an industrial accident, and weigh which evidence each camp ignores."
+    },
+    "tags": [
+      "Mystery",
+      "Brazil",
+      "Unsolved"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-polyglots-159",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Polyglots",
+    "teaser": "Hyperpolyglots — people fluent in six or more languages — are so rare that researchers have studied fewer than a few dozen in depth. Emil Krebs, a German diplomat, reportedly worked in 68; Lomb Kató, a Hungarian interpreter, learned languages as a hobby and claimed 10 by immersion, arguing that language learning is a habit, not a gift.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Lomb Kató's 'How I Learn Languages' — the immersion method",
+      "durationMinutes": 9,
+      "instruction": "Read Kató's 'Polyglot: How I Learn Languages' — her core technique is the 'deep dive': pick one text, read it repeatedly, and let grammar emerge from context. Then test her method on a short article in a language you don't know, and notice how much structure you can infer from a single paragraph with a dictionary."
+    },
+    "tags": [
+      "Language",
+      "Psychology",
+      "Practice"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-prodigies-160",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Prodigies",
+    "teaser": "Mozart composed his first symphonies around age 8; Gauss corrected his father's arithmetic at 3; chess prodigy Judit Polgár beat a grandmaster at 15 — but systematic research finds prodigies are extremely rare, and the deeper puzzle is that most prodigies don't become revolutionaries. The ones who change their field are those who eventually break the rules they mastered as children.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Ellen Winner's research on giftedness and creative transformation",
+      "durationMinutes": 15,
+      "instruction": "Read the psychology literature on 'precocious mastery vs. creative transformation' — the standard finding is that prodigies master existing conventions extraordinarily early, but transformative work usually requires an adult willingness to violate them. Compare Mozart's childhood concertos (technically perfect imitations) with his later operas."
+    },
+    "tags": [
+      "Psychology",
+      "Talent",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-paris-catacombs-161",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Paris Catacombs",
+    "teaser": "Beneath Paris lie 300 km of tunnels, and a 1.5 km stretch is an ossuary holding the bones of 6–7 million Parisians, relocated in the late 1700s when the city's cemeteries were literally overflowing — Les Halles' cemetery walls had burst. The entrance warns: 'Stop! This is the empire of death.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Paris Catacombs ossuary — the femur-and-skull walls",
+      "durationMinutes": 25,
+      "instruction": "Walk the ossuary's arrangement virtually — the bones were stacked into decorative walls of femurs and skulls in the 1780s, and the arrangement is deliberate design, not chaos. Then read why the transfer took decades: churchyards were closed by royal decree after health crises, and the tunnels beneath Paris were already quarry galleries."
+    },
+    "tags": [
+      "History",
+      "France",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-island-of-the-162",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Island of the Dolls",
+    "teaser": "On a canal island near Mexico City, doll maker Julián Santana Barrera began hanging dolls from trees in the 1950s to appease the spirit of a girl he said drowned in the canal — or so the story goes. He died in 2001, and the island is now a tourist stop where the weather-beaten dolls, some headless, hang among the reeds.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Island of the Dolls — Xochimilco, Mexico City",
+      "durationMinutes": 10,
+      "instruction": "Watch a documentary on the island and separate the legend from the record: Santana's motivations were documented only after his death, and the island was a quiet chinampa farm before the dolls became famous. The eeriness is real, though — decades of sun and rain have decayed the dolls into forms that look more alive than the originals."
+    },
+    "tags": [
+      "Mexico",
+      "Urban Legend",
+      "Art"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-winchester-mystery-house-163",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "The Winchester Mystery House",
+    "teaser": "Sarah Winchester, heiress to the rifle fortune, believed the ghosts of people killed by Winchester rifles demanded she keep building forever to confuse them. From 1884 until her death in 1922, construction ran around the clock — 160 rooms, stairways that lead to ceilings, and doors that open onto walls, all without a single architectural plan.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The switchback staircase and the door-to-nowhere — Winchester Mystery House",
+      "durationMinutes": 17,
+      "instruction": "Tour the house's strangest features: the 'switchback staircase' with 44 steps and 7 flights for a 2.4-meter climb, and the door that opens onto a 3-story drop. Then read the counter-history: some modern researchers argue Sarah was simply a wealthy eccentric who enjoyed hiring carpenters — the ghost story is unverifiable and convenient."
+    },
+    "tags": [
+      "Architecture",
+      "USA",
+      "Urban Legend"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-centralia-pennsylvania-164",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Centralia Pennsylvania",
+    "teaser": "In 1962, workers clearing a Centralia, Pennsylvania landfill lit the garbage — and the fire spread down into a coal seam that has been burning ever since. The town's 2,800 residents were bought out by the state; a few holdouts remain, the ground steams, and the abandoned highway's cracked, sinking pavement inspired the Silent Hill games.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Route 61, Centralia — the cracked, steaming abandoned highway",
+      "durationMinutes": 12,
+      "instruction": "Look at photos of Route 61 south of Centralia: the asphalt has heaved and split, with steam curling from the cracks, and warning signs that the road is closed forever. The fire is still spreading underground — estimates range from decades to centuries of remaining burn time."
+    },
+    "tags": [
+      "Pennsylvania",
+      "Fire",
+      "Geology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-hashima-island-165",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Hashima Island",
+    "teaser": "Hashima Island, 19 km off Nagasaki, was built around an undersea coal mine and by 1959 had 5,259 residents on a rock 480 m long — the highest population density ever recorded on Earth. The mine closed in 1974 and the island emptied in months, leaving concrete apartments and schools that now look like a ghost of the future.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Hashima Island's sea-wall apartments — 1959 population records",
+      "durationMinutes": 25,
+      "instruction": "Study the island's concrete walls rising directly from the sea — the 'Battleship Island' silhouette. Then read the numbers that made it possible: the reinforced apartment blocks were so dense that the whole island functioned like a single building, with baths, school, and shops stacked inside the seawall. A section of the island appeared in the James Bond film Skyfall."
+    },
+    "tags": [
+      "Japan",
+      "History",
+      "Industrial"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-svalbard-166",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Svalbard",
+    "teaser": "Svalbard, the Norwegian archipelago 1,300 km from the North Pole, is home to about 2,600 people — and more than 3,000 polar bears. Its main town, Longyearbyen, is so far from anywhere that it's illegal to be born or die there: pregnant women fly to the mainland, and the dead are repatriated because the permafrost won't let graves decompose.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Longyearbyen's no-birth/no-death rule + polar bear safety protocols",
+      "durationMinutes": 18,
+      "instruction": "Read Longyearbyen's practical rules: doors aren't locked (polar bears), and everyone carries a rifle outside town. Then look at the Global Seed Vault's home mountain — the archipelago's coal-mining past funded the town, and the permafrost is what keeps the vault's seeds cold even without power."
+    },
+    "tags": [
+      "Arctic",
+      "Norway",
+      "Geography"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-door-to-hell-167",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Door to Hell Turkmenistan",
+    "teaser": "In 1971 Soviet geologists drilling for gas in Turkmenistan hit a cavern and the rig collapsed, opening a crater that released methane. To stop the gas, they set it alight — expecting it to burn out in weeks. More than fifty years later, the 'Door to Hell' at Darvaza still blazes day and night, a 70-meter crater of fire in the desert.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Darvaza gas crater ('Door to Hell') — night footage",
+      "durationMinutes": 28,
+      "instruction": "Watch night footage of the crater: the flames rise from a pit that has become a tourist landmark, its heat visible on satellite imagery. Read the 2010s debate over whether to extinguish it (Turkmenistan's president ordered it closed, then reversed course) — the fire that was an accident is now a national symbol."
+    },
+    "tags": [
+      "Turkmenistan",
+      "Geology",
+      "Energy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-lake-natron-tanzania-168",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Lake Natron Tanzania",
+    "teaser": "Tanzania's Lake Natron is one of the most caustic bodies of water on Earth: pH around 10.5 and up to 60°C, from volcanic soda and salt washing in from the rift valley. Birds and bats that die in it are sometimes calcified by the minerals — but the lake is also the flamingos' most important breeding site, which is the paradox worth sitting with.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Lake Natron's calcified birds + the flamingo breeding colonies",
+      "durationMinutes": 7,
+      "instruction": "Consider the 2013 photographs of animals 'petrified' on the lake's shore — the calcium carbonate encrusts bodies quickly. Then find the flamingo colonies that nest on the salt islands in the middle, where the caustic water keeps predators away. The lake is simultaneously a killer and a nursery."
+    },
+    "tags": [
+      "Tanzania",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-waitomo-glowworm-caves-169",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Waitomo Glowworm Caves",
+    "teaser": "New Zealand's Waitomo caves are lit by thousands of glowworms — the larvae of a fungus gnat that dangle glowing threads to lure flying insects into sticky snares. The blue-green light is a chemical reaction, and the deeper caves are quiet enough that visitors float through in near-darkness, the ceiling like a starfield.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Long-exposure glowworm ceiling — Waitomo, New Zealand",
+      "durationMinutes": 13,
+      "instruction": "Dwell on a long-exposure photo of the glowworm ceiling: each worm is a point of light, but the 'curtains' are the sticky threads below them, invisible until insects hit them. Then read why the glow is brightest when the worm is hungry — the bioluminescence is a hunting advertisement, not decoration."
+    },
+    "tags": [
+      "New Zealand",
+      "Biology",
+      "Caves"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-pamukkale-turkey-170",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Pamukkale Turkey",
+    "teaser": "Pamukkale — Turkish for 'cotton castle' — is a staircase of white travertine terraces in western Turkey, built by hot springs that deposit calcium carbonate as they cascade. The Romans built the spa city of Hierapolis on the cliff above it, and people have bathed in the terraces' pools for two thousand years.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Pamukkale travertine terraces + Hierapolis above them",
+      "durationMinutes": 5,
+      "instruction": "Scan the terraces from above and note the geometry: each pool is a self-built basin that overflows into the next, the water temperature around 35°C at the source. Then find the Roman theater and the Plutonium — a cave shrine where priests survived the volcanic CO2 that killed animals, using it as proof of divine protection."
+    },
+    "tags": [
+      "Turkey",
+      "Geology",
+      "Ancient"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-wave-arizona-171",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Wave Arizona",
+    "teaser": "The Wave in Arizona's Coyote Buttes is a 190-million-year-old Jurassic sand dune, compressed into swirling bands of red and white rock that look painted. Only 20 people per day get permits — allocated by lottery — making it one of the hardest places on Earth to legally visit.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Wave (Coyote Buttes North) — permit lottery + cross-bedding geology",
+      "durationMinutes": 18,
+      "instruction": "Watch a hiker's video of the 4.8 km approach: there is no trail — navigation is by GPS waypoints across bare rock — which is why the lottery system exists. Then look at the rock's layers up close: the striping records ancient dune migrations, and the cross-bedding shows which way the Jurassic winds blew."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Hiking"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-bryce-canyon-172",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Bryce Canyon",
+    "teaser": "Bryce Canyon is not a canyon — it's a series of amphitheaters filled with the world's largest concentration of hoodoos, rock spires up to 50 meters tall carved by frost wedging. The Paiute people called them the Legend People, who they say were turned to stone by a trickster god for their pride.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Sunrise Point hoodoo field, Bryce Canyon — frost-wedging explanation",
+      "durationMinutes": 4,
+      "instruction": "Examine the hoodoo field from Sunrise Point at sunrise — the 'fairy chimneys' change color as the light moves. The mechanism is counterintuitive: it's not wind but ice — water seeps into joints, freezes, expands, and pries the rock apart, erosion working from the top down at about a centimeter per century."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-tea-ceremony-173",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "The Tea Ceremony",
+    "teaser": "The Japanese tea ceremony (chanoyu) was perfected by Sen no Rikyū in the 16th century, who stripped it down to a tiny room, one bowl, and four principles: harmony, respect, purity, and tranquility. The whole ceremony is designed to be imperfect — wabi-sabi — with a deliberately rough bowl and a doorway so low every guest must bow to enter.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "A full chanoyu demonstration — Sen no Rikyū's four principles",
+      "durationMinutes": 14,
+      "instruction": "Watch a full ceremony and track the choreography: the host cleans each utensil in a specific order, the guests admire the scroll and flowers before drinking, and the bowl is turned before sipping so the front isn't touched. Rikyū's radical move was abolishing decoration — his teahouse had almost nothing in it."
+    },
+    "tags": [
+      "Japan",
+      "Ritual",
+      "Philosophy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-kintsugi-174",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "Kintsugi",
+    "teaser": "Kintsugi — 'golden joinery' — repairs broken pottery by filling the cracks with lacquer dusted with gold, making the break the most decorated part of the object. The technique is said to date to the 15th-century shogun Ashikaga Yoshimasa, who sent a cracked tea bowl to China for repair and, disliking the metal staples, asked Japanese craftsmen for something better.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Kintsugi-repaired ceramics — the Ashikaga tea bowl story",
+      "durationMinutes": 21,
+      "instruction": "Compare a kintsugi-repaired bowl with a conventionally repaired one and notice the philosophy: the repair doesn't hide the damage, it commemorates it — wabi-sabi treats the crack as history rather than flaw. The gold-filled lines become the object's most valuable feature, both literally and aesthetically."
+    },
+    "tags": [
+      "Japan",
+      "Craft",
+      "Philosophy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-hygge-175",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "Hygge",
+    "teaser": "Hygge (pronounced 'hoo-guh') is the Danish concept of cozy togetherness — candles, blankets, hot drinks, and low light — and it's a serious piece of national identity for a country with 17-hour winter nights. Danes report among the highest life-satisfaction scores in the world, and hygge is the cultural ritual most cited for it.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Hygge Manifesto — Danish candle culture in winter",
+      "durationMinutes": 3,
+      "instruction": "Read about hygge's material culture: the Danes burn more candles per capita than anywhere else in Europe, and the word itself descends from a Norwegian word for 'well-being' that predates the modern cozy-brand. The point is scarcity of light and cold — hygge is a winter survival technology that became an aesthetic."
+    },
+    "tags": [
+      "Denmark",
+      "Lifestyle",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-friluftsliv-176",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "Friluftsliv",
+    "teaser": "Friluftsliv — 'open-air living' — is the Norwegian conviction that outdoor life is a right and a need, not a leisure activity. The word was coined by Henrik Ibsen in 1859, and it's backed by the allemannsretten, the right to roam: anyone may camp, hike, and forage on uncultivated land, public or private.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The allemannsretten (right to roam) — Norway's outdoor-access law",
+      "durationMinutes": 4,
+      "instruction": "Read the allemannsretten's actual limits: you may camp one or two nights on any uncultivated land, but not within 150 meters of a house, and you must leave no trace. Then find Nansen's polar expeditions, which made friluftsliv a national ideal — Norwegians treat the wilderness as a public commons with duties attached."
+    },
+    "tags": [
+      "Norway",
+      "Outdoors",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-pomodoro-technique-177",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "The Pomodoro Technique",
+    "teaser": "The Pomodoro Technique was invented by Francesco Cirillo in the 1980s with a kitchen timer shaped like a tomato (pomodoro in Italian): work 25 minutes, break 5, and repeat. The timer isn't a gimmick — it externalizes time, so your brain stops watching the clock and the work becomes the only task.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Francesco Cirillo's original Pomodoro Technique — 25/5 protocol",
+      "durationMinutes": 7,
+      "instruction": "Run one real pomodoro today and notice what breaks: the 25-minute block is short enough to start, long enough to enter flow, and the enforced 5-minute break is when your mind consolidates. Cirillo's deeper claim is that the technique works by making the 'next action' visible — a broken task list is the actual problem."
+    },
+    "tags": [
+      "Productivity",
+      "Practice",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-getting-things-done-178",
+    "categoryId": "WILDCARD",
+    "subtype": "Practice",
+    "name": "The Getting Things Done Method",
+    "teaser": "David Allen's Getting Things Done (2001) is built on one observation: your stress doesn't come from having too much to do — it comes from remembering that you have things to do. The system's answer is to capture everything into a trusted external system, then process it into next actions, so your mind is free to work.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "David Allen's 'Getting Things Done' — the capture + next-action method",
+      "durationMinutes": 28,
+      "instruction": "Do the full capture step: write down every open loop in your life — including the small ones you've been carrying for weeks — then apply the 2-minute rule: anything doable in under two minutes gets done now. The 'next action' discipline (what, specifically, is the very next physical step?) is the part most people skip, and it's the part that works."
+    },
+    "tags": [
+      "Productivity",
+      "Practice",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-minimalism-movement-179",
+    "categoryId": "WILDCARD",
+    "subtype": "Movement",
+    "name": "The Minimalism Movement",
+    "teaser": "The modern minimalism movement was popularized by Joshua Fields Millburn and Ryan Nicodemus, two Ohio executives who sold their possessions after their careers collapsed and made 'The Minimalists' into a brand — documentaries, podcasts, and tours. Their core claim is not that owning less is virtuous, but that owning less is a tool for making room for what matters.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "'Minimalism' (2016) — the documentary's consumer-critique argument",
+      "durationMinutes": 10,
+      "instruction": "Watch their documentary 'Minimalism' and separate the two threads: the consumer-critique argument (we fill emotional gaps with purchases) and the aesthetic one (empty rooms look clean). The movement's own critics point out that minimalism is a choice available mostly to the affluent — weigh whether that critique weakens the practice or just narrows it."
+    },
+    "tags": [
+      "Lifestyle",
+      "Philosophy",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-van-life-movement-180",
+    "categoryId": "WILDCARD",
+    "subtype": "Movement",
+    "name": "The Van Life Movement",
+    "teaser": "'Van life' became a cultural movement through the #vanlife hashtag, popularized in 2011 by photographer Foster Huntington's Instagram of friends living in vans. What began as a small counterculture of surfers and skiers exploded during the pandemic — by 2020 there were over 10 million hashtagged posts, and the trend reshaped RV sales, remote work, and the National Parks visitation surge.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The original #vanlife posts (2011) vs. the modern commercial version",
+      "durationMinutes": 29,
+      "instruction": "Read Foster Huntington's original 'A Home Among the Trees' and the early #vanlife posts, then compare them with the 2020s commercial version: the aesthetic is nearly identical, but the economics flipped from freedom to influencer sponsorship. The movement's own mythology — freedom, minimalism, the open road — is now a product category."
+    },
+    "tags": [
+      "Lifestyle",
+      "Travel",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-antikythera-mechanism-181",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Antikythera Mechanism",
+    "teaser": "In 1900, sponge divers off the Greek island of Antikythera found a shipwreck 45 meters down — and among the statues and coins, a corroded lump that proved to be a bronze gearbox from around 60 BC. It predicted eclipses, tracked the planets, and timed the Olympic games: a device of that complexity would not appear again in Europe for over a thousand years.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 2005 X-ray tomography of the Antikythera Mechanism's gears",
+      "durationMinutes": 6,
+      "instruction": "Read the discovery story, then the 2005 X-ray breakthrough that revealed 30+ interlocking gears inside the corrosion. The device's front dial showed the Sun and Moon against the zodiac; the back dial predicted eclipses using the Saros cycle. No other object like it survives from antiquity — which is its own question: was it unique, or the tip of a lost tradition?"
+    },
+    "tags": [
+      "Ancient",
+      "Greek",
+      "Mechanical"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-machu-picchu-182",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Machu Picchu",
+    "teaser": "Machu Picchu was built by the Inca emperor Pachacuti around 1450 at 2,430 meters, and abandoned a century later — yet the Spanish never found it. Its 200-plus buildings were fitted without mortar, the stones cut so precisely that a knife blade can't pass between them, and the whole citadel sits on a mountain ridge above a river bend.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Intihuatana stone and the mortarless ashlar walls of Machu Picchu",
+      "durationMinutes": 10,
+      "instruction": "Peer at the dry-stone ashlar walls — no mortar, no gaps, with stones locked by their angles rather than cement. Then find the Intihuatana stone, whose name means 'hitching post of the sun,' carved so that on the equinoxes the sun sits directly above it at noon — the Inca used the site as a solar observatory as much as a city."
+    },
+    "tags": [
+      "Peru",
+      "Inca",
+      "Archaeology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-petra-183",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Petra",
+    "teaser": "Petra, the Nabataean capital carved into rose-red sandstone cliffs in Jordan, was a wealthy trading city by 100 BC — yet it had no natural water source. The Nabataeans solved this with an invisible engineering system: channels, cisterns, and clay pipes that captured every drop of the region's rare rain, letting 30,000 people live in a desert.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Siq's water channel and the Treasury — Petra, Jordan",
+      "durationMinutes": 5,
+      "instruction": "Follow the water: enter through the Siq, the 1.2 km canyon whose entrance is barely visible — that hiding made the city practically unassailable. Then find the channel carved along the Siq's wall that carried water from springs kilometers away, and the cisterns under the Treasury. The city was 'rediscovered' by Europeans in 1812, but the Bedouin had always known it was there."
+    },
+    "tags": [
+      "Jordan",
+      "Nabataean",
+      "Archaeology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-great-pyramid-of-184",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Great Pyramid of Giza",
+    "teaser": "The Great Pyramid of Giza, built for Pharaoh Khufu around 2560 BC, is made of roughly 2.3 million blocks averaging 2.5 tons — about 6 million tonnes of stone, the only one of the Seven Wonders of the ancient world still standing. Its original casing of polished limestone would have made it shine like a mirror, and it was the tallest building on Earth for 3,800 years.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Great Pyramid's base alignment + surviving casing stones",
+      "durationMinutes": 13,
+      "instruction": "Follow the pyramid's core blocks near the base, then compare with a surviving casing stone at the base or in the British Museum — the casing was stripped in the Middle Ages for Cairo's buildings. The precision is the wonder: the base is square to within 5.5 cm over 230 meters, and the four sides align to the cardinal points within a fraction of a degree."
+    },
+    "tags": [
+      "Egypt",
+      "Ancient",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-colosseum-185",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Colosseum",
+    "teaser": "Rome's Colosseum, completed in AD 80, held 50,000 to 80,000 spectators who entered through 80 numbered arches and were out of the building in minutes — crowd engineering that stadiums still copy. Under the arena floor was a five-story hypogeum of cages, ramps, and elevators that raised gladiators and animals into the light as if from nowhere.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Colosseum hypogeum cross-section — the arena's underground machinery",
+      "durationMinutes": 3,
+      "instruction": "Notice a cross-section of the hypogeum — the trapdoors and lifts below the sand floor, operated by a system of pulleys and counterweights. Then count the arches and imagine the ticketing: 80 entrances, each with a number, letting a crowd the size of a modern soccer stadium enter and exit without a crush."
+    },
+    "tags": [
+      "Rome",
+      "Ancient",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-taj-mahal-186",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "The Taj Mahal",
+    "teaser": "The Taj Mahal was built by Mughal emperor Shah Jahan for his wife Mumtaz Mahal, who died in childbirth in 1631 — the mausoleum took 22 years and some 20,000 artisans. Its white marble appears to change color through the day, and the four minarets lean slightly outward: if they fell, they'd fall away from the tomb.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Taj Mahal's minaret tilt + graded calligraphy on the great gate",
+      "durationMinutes": 21,
+      "instruction": "Read the design logic: the minarets' outward tilt is structural insurance, and the marble's color shift comes from inlaid semi-precious stone catching different light. Then find the calligraphy bands on the gate — the letters are graded in size so the whole inscription appears uniform from ground level, an optical illusion built into the stone."
+    },
+    "tags": [
+      "India",
+      "Mughal",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-mont-saint-michel-187",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Mont Saint-Michel",
+    "teaser": "Mont Saint-Michel is a granite island off Normandy that becomes inaccessible twice a day when the tide — among the fastest in Europe — rushes in faster than a horse can gallop, rising up to 15 meters. The abbey on top was begun in the 8th century after the archangel Michael appeared to a bishop in a vision.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The bay tide race + the stacked abbey of Mont Saint-Michel",
+      "durationMinutes": 17,
+      "instruction": "Read the tide tables and watch a time-lapse of the flood: the bay's tide range is one of the largest in the world, and pilgrims historically crossed the causeway with only the retreating tide as a schedule. The abbey itself is a vertical stack of three churches built one on top of another as the rock got crowded — 'the Wonder of the West.'"
+    },
+    "tags": [
+      "France",
+      "Medieval",
+      "Architecture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-sydney-opera-house-188",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "The Sydney Opera House",
+    "teaser": "Danish architect Jørn Utzon won the Sydney Opera House competition in 1957 with a sketch of overlapping shells — which engineers initially said couldn't be built. The project ran 10 years late and 14 times over budget, and Utzon resigned in 1966, never returning to see it finished or to collect the Pritzker Prize awarded for it in 2003.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The sphere-based geometry of the Opera House shells + Swedish tiles",
+      "durationMinutes": 27,
+      "instruction": "Watch the construction documentary footage: the shells were solved by treating them as sections of the same sphere — every shell rib is part of one imaginary ball, which is why the roof looks organic but was buildable. Then notice the tiles: over a million white and cream ceramic tiles, self-cleaning by rain, made in Sweden."
+    },
+    "tags": [
+      "Australia",
+      "Architecture",
+      "Modern"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-eiffel-tower-189",
+    "categoryId": "WILDCARD",
+    "subtype": "Structure",
+    "name": "The Eiffel Tower",
+    "teaser": "The Eiffel Tower was built for the 1889 World's Fair as a temporary structure meant to stand 20 years — and Parisian artists signed a public protest against it, calling it a 'gigantic black smokestack.' It survives today because Gustave Eiffel added a radio antenna, making the tower too useful to demolish.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1889 artists' protest letter + Eiffel's radio-antenna rescue",
+      "durationMinutes": 7,
+      "instruction": "Read the 1889 protest letter — the signatories included Guy de Maupassant, who reportedly ate lunch in the tower's restaurant because it was the one place in Paris he couldn't see it. Then find the wind-tunnel connection: Eiffel's later aerodynamic experiments on the tower's shape helped pioneer the wind tunnel itself."
+    },
+    "tags": [
+      "France",
+      "Engineering",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-grand-canyon-190",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Grand Canyon",
+    "teaser": "The Grand Canyon exposes nearly two billion years of Earth's history in its walls — the oldest rocks at the bottom are Precambrian, more than half the planet's age — carved by the Colorado River over the past five to six million years. In one famous gap, the 'Great Unconformity,' 1.2 billion years of rock are simply missing.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Great Unconformity — the billion-year gap in the canyon walls",
+      "durationMinutes": 10,
+      "instruction": "Examine the canyon wall layers on the Bright Angel Trail route: the Tapeats Sandstone at the bottom sits directly on granite, with over a billion years of missing record between them — the Great Unconformity, visible as a clean horizontal line. Then find the Nankoweap Granaries, where ancient Pueblo people stored corn in cliff caves."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-mount-everest-191",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Mount Everest",
+    "teaser": "Mount Everest stands 8,849 meters high and grows about 4 millimeters a year as the Indian plate keeps pushing into Asia. The first summit was in 1953 — Edmund Hillary and Tenzing Norgay — and more than 300 people have died on the mountain since, many of them frozen where they fell.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1953 Hillary–Tenzing summit account vs. modern summit-day traffic",
+      "durationMinutes": 13,
+      "instruction": "Read the 1953 expedition account: the route up the South Col, the oxygen strategy, and the final ridge where Hillary and Tenzing chose to climb together rather than race. Then look at the modern climbing statistics — the 2019 'traffic jam' photos show queues above 8,000 meters in the 'death zone,' where the body can't recover from exertion."
+    },
+    "tags": [
+      "Nepal",
+      "Mountains",
+      "Exploration"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-amazon-rainforest-192",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "The Amazon Rainforest",
+    "teaser": "The Amazon spans 5.5 million square kilometers across nine countries and holds roughly one-tenth of all known species — an estimated 390 billion trees. The 'lungs of the Earth' slogan is only half right: the forest breathes in about as much CO2 as it releases, which is exactly why it matters — it's a vast, fragile carbon store, not a net oxygen factory.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Amazon carbon-cycle myth-bust — 390 billion trees in context",
+      "durationMinutes": 6,
+      "instruction": "Read the numbers carefully: mature rainforest produces oxygen but consumes almost all of it through respiration — the '20% of Earth's oxygen' claim is a myth. What is real is the carbon: the Amazon holds decades of human emissions, and deforestation releases it. Then find the 2019 fires and the 'arc of deforestation' that tracks roads built since the 1970s."
+    },
+    "tags": [
+      "South America",
+      "Rainforest",
+      "Ecology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-dead-sea-193",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "The Dead Sea",
+    "teaser": "The Dead Sea is the lowest place on land — its surface sits about 430 meters below sea level and is still dropping. At roughly 34% salinity, nearly ten times the ocean, nothing but microbes can live in it, which is why it's called dead — and why you float without trying, since the salt makes your body denser than the water.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Dead Sea's falling level + the receding-shoreline sinkholes",
+      "durationMinutes": 16,
+      "instruction": "Read why the level is falling about a meter a year: the Jordan River, its main source, is diverted for agriculture and cities, and mineral-extraction ponds accelerate the loss. The consequence is visible from the road — thousands of sinkholes have opened along the shore as the shoreline recedes, swallowing the resorts that once lined it."
+    },
+    "tags": [
+      "Middle East",
+      "Geography",
+      "Geology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-yellowstone-194",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Yellowstone",
+    "teaser": "Yellowstone, established in 1872, is the world's first national park — and it sits on top of a supervolcano whose caldera is 70 by 45 kilometers. The park holds more than half of all the geysers on Earth, and Old Faithful has erupted roughly every 60–90 minutes for as long as records exist.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Yellowstone caldera map + the continuous prehistoric bison herd",
+      "durationMinutes": 25,
+      "instruction": "Check the caldera map and notice that most of the park's features — the geysers, the hot springs, the mud pots — trace its rim, where the volcanic heat is closest to the surface. Then find the bison: Yellowstone's herd is the only one in the US to have lived continuously on the same land since prehistoric times, surviving the species' near-extinction."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-icelands-geothermal-springs-195",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Iceland's Geothermal Springs",
+    "teaser": "Iceland sits on the Mid-Atlantic Ridge, where two tectonic plates pull apart at about 2 cm a year — which is why the island has 600 hot springs and geysers, and why the word 'geyser' itself comes from Icelandic Geysir. Roughly 90% of Icelandic homes are heated by geothermal water.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Strokkur's regular eruptions + the Mid-Atlantic Ridge rift through Iceland",
+      "durationMinutes": 10,
+      "instruction": "Pause on a map of the Mid-Atlantic Ridge running through Iceland and note the rift valleys, then find the Strokkur geyser — it erupts every 6–10 minutes, unlike its older sibling Geysir which now erupts only after earthquakes. The same heat that powers the geysers runs the country's district heating, an infrastructure choice made since the 1930s."
+    },
+    "tags": [
+      "Iceland",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-international-space-station-196",
+    "categoryId": "WILDCARD",
+    "subtype": "Facility",
+    "name": "The International Space Station",
+    "teaser": "The International Space Station is the largest structure ever put in orbit — about the size of a football field, built by 15 nations and continuously crewed since November 2000. It circles Earth every 90 minutes at 28,000 km/h, and its 8 km of wiring carry enough power (from solar arrays) to run about 40 homes.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The ISS Cupola + a station solar-transit time-lapse",
+      "durationMinutes": 17,
+      "instruction": "Watch a time-lapse of the station transiting the Sun or Moon, then find the Cupola — the seven-window observatory where crews photograph Earth. The station's orbit is the key constraint: it flies at 51.6° inclination to reach Russian launch sites, which is why you can predict exactly when it will pass over your town."
+    },
+    "tags": [
+      "Space",
+      "Science",
+      "Engineering"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-hubble-telescope-197",
+    "categoryId": "WILDCARD",
+    "subtype": "Spacecraft",
+    "name": "The Hubble Telescope",
+    "teaser": "The Hubble Space Telescope launched in 1990 with a mirror ground to perfection — and then sent back blurry images, because the mirror had been ground to the wrong shape by 2.2 microns. Astronauts fixed it in 1993 with corrective optics, and Hubble has since imaged galaxies 13 billion light-years away from its orbit 540 km up.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Hubble's pre/post-COSTAR images + the Pillars of Creation",
+      "durationMinutes": 19,
+      "instruction": "Zero in on the 1990 vs. 1994 images of the same star — the COSTAR fix turned a $1.5 billion paperweight into the most productive observatory in history. Then find the 1995 'Pillars of Creation' image: the pillars are gas columns being eroded by starlight, and the box Hubble pointed at for 34 hours was nearly empty sky."
+    },
+    "tags": [
+      "Space",
+      "Astronomy",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-curiosity-mars-rover-198",
+    "categoryId": "WILDCARD",
+    "subtype": "Spacecraft",
+    "name": "The Curiosity Mars Rover",
+    "teaser": "NASA's Curiosity rover has been driving on Mars since August 2012 — a one-ton, car-sized laboratory that has covered over 30 km of Gale Crater. Its 2013 discovery that ancient Mars had drinkable lakes and rivers rewrote the search for life: the crater it explores is a dried lakebed at the base of a 5.5 km mountain.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Curiosity's Gale Crater traverse map + the lakebed discovery layers",
+      "durationMinutes": 21,
+      "instruction": "Trace Curiosity's path on the NASA map and notice the stops are chosen by what's visible in the crater walls — each rock layer is a chapter of Martian climate history. Then find the 'selfie' technique: the rover photographs itself by aiming its camera arm and stitching dozens of shots, since no one is there to take the picture."
+    },
+    "tags": [
+      "Mars",
+      "Space",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-apollo-11-moon-landing-199",
+    "categoryId": "WILDCARD",
+    "subtype": "Event",
+    "name": "Apollo 11 Moon Landing",
+    "teaser": "On 20 July 1969, Apollo 11 landed humans on the Moon — with roughly 30 seconds of fuel left, after the computer flagged multiple alarms during descent. Neil Armstrong's 'one small step' was broadcast live to an estimated 600 million people, and the astronauts left a plaque: 'We came in peace for all mankind.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Apollo 11 landing audio loop (1202 alarms + manual landing)",
+      "durationMinutes": 24,
+      "instruction": "Listen to the actual landing loop: the 1202 and 1201 program alarms that almost caused an abort, and Armstrong taking manual control to steer past a boulder field. Then read the checklist margin note — the 'small step' line was Armstrong's own wording, added on the spot, not a prepared speech."
+    },
+    "tags": [
+      "Space",
+      "History",
+      "Exploration"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-rosetta-stone-200",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Rosetta Stone",
+    "teaser": "The Rosetta Stone, carved in 196 BC, carries the same decree in three scripts — hieroglyphs, demotic, and Greek — which let scholars crack hieroglyphs for the first time. The French found it in 1799 during Napoleon's Egypt campaign, and the British took it in 1801 under the Treaty of Alexandria; Egypt's government has asked for it back repeatedly.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Rosetta Stone's three scripts + Champollion's cartouche method",
+      "durationMinutes": 11,
+      "instruction": "Read the stone's three registers and start with the Greek, which scholars could read — it's a priestly decree praising Ptolemy V. Then find Jean-François Champollion's 1822 breakthrough: he used the cartouche of Ptolemy to identify phonetic hieroglyphs, proving the script wasn't purely symbolic."
+    },
+    "tags": [
+      "Egypt",
+      "Ancient",
+      "Language"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-gutenberg-bible-201",
+    "categoryId": "WILDCARD",
+    "subtype": "Artifact",
+    "name": "The Gutenberg Bible",
+    "teaser": "Johannes Gutenberg's Bible, printed around 1455 in Mainz, was the first major book made with movable type — about 180 copies, of which 49 survive. Each copy is a two-volume work of 1,282 pages, and the type was cast from a metal alloy, which is the actual invention: metal type could be reused, rearranged, and printed by machine.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "A digitized Gutenberg Bible page — printed text + hand-rubricated initials",
+      "durationMinutes": 13,
+      "instruction": "Study a digitized page and notice the two innovations at once: the black text is machine-printed, but the red headings and decorations were added by hand afterward, which is why each copy is unique. Then read why the press mattered: a scribe took a year per Bible; Gutenberg's press could produce the same work in weeks, collapsing the price of a book."
+    },
+    "tags": [
+      "History",
+      "Printing",
+      "Books"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-declaration-of-independence-202",
+    "categoryId": "WILDCARD",
+    "subtype": "Document",
+    "name": "The Declaration of Independence",
+    "teaser": "The Declaration of Independence was signed on 4 July 1776 — but the famous large parchment copy wasn't signed until 2 August, and most signatures came later still. Thomas Jefferson's draft originally condemned the slave trade, a passage struck out at the insistence of South Carolina and Georgia delegates.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Jefferson's deleted anti-slavery passage + the 2 August signing",
+      "durationMinutes": 5,
+      "instruction": "Read the deleted passage in Jefferson's draft — it calls the slave trade an 'execrable commerce' and blames the king for it — and note who removed it. Then look at the engrossed parchment's signatures: John Hancock's is famously large, 'so King George can read it without his spectacles,' and the print run was ordered by Congress the same day."
+    },
+    "tags": [
+      "History",
+      "USA",
+      "Politics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-universal-declaration-of-203",
+    "categoryId": "WILDCARD",
+    "subtype": "Document",
+    "name": "The Universal Declaration of Human Rights",
+    "teaser": "Drafted in the shadow of World War II, the Universal Declaration of Human Rights was adopted in 1948 with eight abstentions — Saudi Arabia, South Africa, and the Soviet bloc — and no votes against. Its 30 articles fit in about 1,800 words, and Eleanor Roosevelt, who led the drafting, called it 'a Magna Carta for all mankind.'",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The UDHR Articles 1 and 29 — the drafting's secular compromise",
+      "durationMinutes": 6,
+      "instruction": "Read Article 1 and notice the deliberate omission: the drafters avoided grounding rights in God or nature, choosing 'all human beings are born free and equal in dignity and rights' so that every legal system could sign on. Then read Article 29, the least-cited article, which sets limits: rights carry duties to the community."
+    },
+    "tags": [
+      "History",
+      "Human Rights",
+      "Politics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-schrödingers-cat-204",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "Schrödinger's Cat",
+    "teaser": "Schrödinger's cat was invented in 1935 as a mockery, not a real thought experiment — Erwin Schrödinger meant to show how absurd quantum superposition becomes at the scale of everyday objects. A cat in a box with a poison flask triggered by a radioactive atom is, per quantum rules, neither alive nor dead until someone opens the box.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Schrödinger's 1935 'Die gegenwärtige Situation' — the original cat passage",
+      "durationMinutes": 17,
+      "instruction": "Read Schrödinger's original 1935 paper passage and notice his tone: he calls the superposition 'quite ridiculous' when applied to a cat. The experiment isn't about cats — it's about when the wavefunction collapses, the deepest open question in quantum mechanics. Compare it with the many-worlds answer, which says the box opens in both outcomes at once."
+    },
+    "tags": [
+      "Physics",
+      "Quantum",
+      "Philosophy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-mandela-effect-205",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "The Mandela Effect",
+    "teaser": "The Mandela Effect is named after a false memory so widespread that millions of people 'remember' Nelson Mandela dying in prison in the 1980s — he actually died in 2013. Other famous examples: the Berenstain Bears (most recall 'Berenstein'), and the nonexistent monocle on the Monopoly man. Research suggests these are confabulated collective memories, not parallel universes.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Berenstain Bears + Monopoly monocle memory studies",
+      "durationMinutes": 6,
+      "instruction": "Test yourself on the classic list — the Fruit of the Loom cornucopia, 'Life is like a box of chocolates,' the location of New Zealand on a world map — then read the psychology: our brains reconstruct memories from gist, and popular culture (like the misheard line in Forrest Gump) supplies the details. The effect feels supernatural precisely because the reconstruction is invisible."
+    },
+    "tags": [
+      "Psychology",
+      "Memory",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-synesthesia-206",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Synesthesia",
+    "teaser": "Synesthesia is a real neurological condition where senses cross: some people see colors when they hear music, others taste shapes or feel numbers in space. Roughly 4% of people have some form, it runs in families, and brain scans show the 'wrong' sensory areas genuinely light up — it's not metaphor or memory.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The fMRI cross-activation images + the consistency test",
+      "durationMinutes": 17,
+      "instruction": "Look at fMRI comparisons of a synesthete's brain: when they hear a tone, visual cortex regions activate that stay dark in a typical brain. Then try the diagnostic: grapheme-color synesthetes are consistent — ask the same person the color of '5' months apart and they'll give the identical answer, while a non-synesthete guessing won't match even 30% of the time."
+    },
+    "tags": [
+      "Neuroscience",
+      "Perception",
+      "Psychology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-overview-effect-207",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "The Overview Effect",
+    "teaser": "Astronauts who see Earth from orbit report the 'overview effect': a shift in perspective where national borders vanish, the planet looks like one fragile system, and everyday conflicts shrink. The term was coined in 1987 by space writer Frank White, and some astronauts describe it as the most profound experience of their lives.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "'Overview' (2012) — the astronaut interviews on seeing Earth whole",
+      "durationMinutes": 30,
+      "instruction": "Watch the 2012 short film 'Overview' — astronauts describe the same experience in their own words: no lines on the planet, an atmosphere 'thin as a layer of varnish.' Then read Frank White's original interviews and notice the pattern: the effect is strongest in first-time viewers and is not predicted by their politics or faith."
+    },
+    "tags": [
+      "Space",
+      "Psychology",
+      "Philosophy"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-golden-ratio-208",
+    "categoryId": "WILDCARD",
+    "subtype": "Concept",
+    "name": "The Golden Ratio",
+    "teaser": "The golden ratio — 1.618… — is the number where a line divides so that the whole is to the larger part as the larger is to the smaller. Found in Greek geometry (not Greek temples, which don't actually use it), it became a Renaissance aesthetic doctrine, and its association with beauty is largely a 19th-century marketing story — nature's famous 'golden spirals' are approximations at best.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Fibonacci-to-golden-ratio convergence vs. the Parthenon myth",
+      "durationMinutes": 28,
+      "instruction": "Measure a sunflower or pinecone spiral count and check the ratio of consecutive Fibonacci numbers — they converge on 1.618, which is real. Then read the debunking of 'golden ratio in the Parthenon and the Mona Lisa': the measurements were fitted after the fact. The ratio is genuinely elegant in geometry and genuinely oversold in aesthetics."
+    },
+    "tags": [
+      "Mathematics",
+      "Art",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-pi-day-209",
+    "categoryId": "WILDCARD",
+    "subtype": "Event",
+    "name": "Pi Day",
+    "teaser": "Pi Day — 14 March — became an unofficial holiday in 1988 at San Francisco's Exploratorium, chosen because 3/14 is the first digits of π. It took off after 2009, when the US House passed a resolution encouraging schools to observe it, and 3.14 is also Albert Einstein's birthday. Pi itself has been computed to over 100 trillion digits.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Exploratorium's first Pi Day (1988) + the 100-trillion-digit record",
+      "durationMinutes": 9,
+      "instruction": "Read the Exploratorium's founding story — physicist Larry Shaw started it with fruit pies on 14 March 1988 — then look at pi's oddest record: the 2022 computation to 100 trillion digits took 157 days of computing. The digits show no pattern anyone has found, which is why the search for a pattern is itself a research field."
+    },
+    "tags": [
+      "Mathematics",
+      "Culture",
+      "Science"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-hanging-gardens-of-210",
+    "categoryId": "WILDCARD",
+    "subtype": "Legend",
+    "name": "The Hanging Gardens of Babylon",
+    "teaser": "The Hanging Gardens of Babylon — the only one of the Seven Wonders whose location has never been found — may never have existed in Babylon at all. No Babylonian text mentions them; the only accounts come from Greek writers centuries later, and some historians argue the gardens were actually in Nineveh, where the Assyrian king Sennacherib built a documented 'wonder for all peoples' with water-lifting screws.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Babylon-vs-Nineveh evidence for the Hanging Gardens",
+      "durationMinutes": 25,
+      "instruction": "Read the two candidate locations and the evidence for each: Babylon has no archaeological trace of gardens or the water machinery described, while Nineveh has both inscriptions and visible aqueducts. Then look at the water problem the Greeks described — lifting enough water for a mountain of gardens — and the Assyrian screw technology that could have done it."
+    },
+    "tags": [
+      "Ancient",
+      "Archaeology",
+      "Legend"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-el-dorado-211",
+    "categoryId": "WILDCARD",
+    "subtype": "Legend",
+    "name": "El Dorado",
+    "teaser": "El Dorado began as a real ritual, not a place: the Muisca people of Colombia covered a new chief in gold dust and offered gold into Lake Guatavita during his investiture. Spanish conquistadors turned that ceremony into a rumor of a city of gold, and three centuries of expeditions — including a 1540s attempt to drain Lake Guatavita — searched for a place that never existed.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Muisca gold ceremony + the Lake Guatavita drainage attempts",
+      "durationMinutes": 19,
+      "instruction": "Read the original chronicle of the Muisca ceremony, then look at the drainage attempts: in the 1580s, workers cut a notch in the lake's rim and found gold objects in the mud — real artifacts, which is what kept the myth alive. The lesson of El Dorado is that the legend is a translation error: a man became a city became a continent."
+    },
+    "tags": [
+      "Colombia",
+      "Legend",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-crop-circles-212",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Crop Circles",
+    "teaser": "Crop circles became a global phenomenon in the 1980s, and the mystery collapsed in 1991 when two Englishmen, Doug Bower and Dave Chorley, demonstrated how they'd made hundreds of circles with a plank and rope. A minority remain unexplained, but none has ever been shown to require anything beyond human construction.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Bower–Chorley 1991 demonstration of circle-making",
+      "durationMinutes": 29,
+      "instruction": "Read the 1991 confession and watch the demonstration video — Bower and Chorley show a simple wooden board and a rope make perfect circles in minutes. Then notice the dates: circle reports surged in the 1980s after media coverage, not before, which is the signature of a manufactured phenomenon."
+    },
+    "tags": [
+      "Mystery",
+      "Hoax",
+      "Culture"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-wow-signal-213",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "The Wow Signal",
+    "teaser": "On 15 August 1977, radio astronomer Jerry Ehman recorded a 72-second signal from the direction of Sagittarius so strong it matched the expected signature of an extraterrestrial transmission — he circled it on the printout and wrote 'Wow!' The signal has never been detected again, and its origin remains the most famous SETI puzzle.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1977 Wow! signal printout — the 1420 MHz 'hydrogen line'",
+      "durationMinutes": 30,
+      "instruction": "Read the technical details of the Wow! signal: it was at 1420 MHz, the exact frequency hydrogen emits — the frequency SETI researchers argued aliens would use, since it's the universe's most basic beacon. It has been searched for again over 200 times with no repeat, and the leading mundane explanations (a comet, a satellite glitch) each have holes."
+    },
+    "tags": [
+      "Space",
+      "SETI",
+      "Mystery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-dancing-plague-of-214",
+    "categoryId": "WILDCARD",
+    "subtype": "Event",
+    "name": "The Dancing Plague of 1518",
+    "teaser": "In July 1518, in Strasbourg, a woman began dancing in the street and within days dozens joined her — within a month, hundreds danced until they collapsed, and some reportedly danced themselves to death. Authorities responded by building a stage and hiring musicians, which made it worse; the official response of 'dance it out' extended the mania.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1518 Strasbourg chronicles + the mass-psychogenic-illness theory",
+      "durationMinutes": 10,
+      "instruction": "Read the contemporary chronicles of the 1518 event — the dancers couldn't stop, and the town council's advice (more dancing) shows how little medical understanding existed. The leading modern explanation is mass psychogenic illness, a contagious stress response, but why the dancing was the symptom — and why it recurs in other eras — is still debated."
+    },
+    "tags": [
+      "History",
+      "Medicine",
+      "Mystery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-mary-celeste-215",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Mary Celeste",
+    "teaser": "The Mary Celeste was found in 1872 drifting in the Atlantic with its sails set, cargo intact, and lifeboat missing — its ten crew and the captain's family gone without a trace. The famous 'telltale' details — the unfinished meal, the untouched gold — grew with retelling; the actual evidence is thinner but no less strange.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Mary Celeste salvage hearing records (1873)",
+      "durationMinutes": 28,
+      "instruction": "Read the salvage hearing records and separate fact from the myth: the ship was seaworthy, the cargo was largely intact, and the captain was an experienced sailor with his wife and child aboard. The most credible theories — a faulty alcohol cargo producing fumes, or a misread barometer — explain an evacuation that then went wrong."
+    },
+    "tags": [
+      "Mystery",
+      "Sea",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-dyatlov-pass-incident-216",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Dyatlov Pass Incident",
+    "teaser": "In February 1959, nine experienced Soviet hikers died on a slope of the Ural Mountains, their tent cut open from inside, some found barefoot and in underwear in −25°C cold, with injuries including a crushed skull and a missing tongue. The official investigation closed with a verdict of 'a compelling natural force,' and half a century of theories followed.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 2019 forensic re-analysis of the Dyatlov Pass deaths",
+      "durationMinutes": 4,
+      "instruction": "Read the 2019 forensic re-analysis, which found the hikers died of hypothermia and blunt trauma consistent with an avalanche — the tent was pitched on a lee slope, and a delayed slab avalanche could have swept the site. The strangeness (missing tongue, radiation traces) has mundane explanations that the original secret-era report suppressed."
+    },
+    "tags": [
+      "Mystery",
+      "Russia",
+      "Forensics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-db-cooper-217",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "D.B. Cooper",
+    "teaser": "On 24 November 1971, a man calling himself Dan Cooper bought a one-way ticket from Portland to Seattle, claimed a bomb, collected $200,000, and parachuted from the plane's rear stairs into the night — never to be found. It remains the only unsolved skyjacking in US history, and in 1980 a child found a bundle of the cash, rotting, on a Columbia River sandbar.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The FBI's D.B. Cooper file — the 1980 money find and case closure",
+      "durationMinutes": 29,
+      "instruction": "Read the FBI file's key details: Cooper jumped over southwest Washington in a rainstorm wearing a business suit, and the $5,800 in recovered bills (out of $200,000) is the only physical trace ever found. The 2016 FBI decision to close the case after 45 years says the bureau used its best evidence and found no usable suspect — the file is now public."
+    },
+    "tags": [
+      "Mystery",
+      "Crime",
+      "USA"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-tamam-shud-case-218",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Tamam Shud Case",
+    "teaser": "The Somerton Man's case (1948) is named for the scrap of paper in his pocket reading 'Tamám Shud' — 'It is ended' — torn from a rare edition of Omar Khayyám's Rubaiyat. Matching the scrap led police to a copy of the book left in a parked car, with a telephone number and a cipher in its back cover that remains unsolved.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Rubaiyat's 'Tamám Shud' page + the back-cover cipher",
+      "durationMinutes": 21,
+      "instruction": "Read how the book was traced: the phrase appears at the very end of the Rubaiyat's 11th-century Persian original, and finding the exact edition let police identify the owner's circle. Then look at the cipher — 11 lines of letters and symbols — which has resisted cryptographers for 70 years, and the 2021 genealogical identification of the man himself."
+    },
+    "tags": [
+      "Mystery",
+      "Australia",
+      "Cipher"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-isdal-woman-219",
+    "categoryId": "WILDCARD",
+    "subtype": "Mystery",
+    "name": "The Isdal Woman",
+    "teaser": "In 1970, a woman's body was found in a gully near Bergen, Norway, with all labels removed from her clothes, burns on her fingertips, and a stash of cash in a case. Her identity remained unknown for 47 years — she was finally identified in 2016 as a Czech woman who had traveled Europe as a tourist, and her death is still unexplained.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Isdal Woman case file — the 2016 DNA identification",
+      "durationMinutes": 3,
+      "instruction": "Read the case's forensic details: the labels were cut from every garment, her dental work was expensive but untraceable, and the police released an e-fit that drew thousands of tips — none correct. The 2016 identification came from a genealogist's hunch and a DNA match, but the reason she was in that gully was never established."
+    },
+    "tags": [
+      "Mystery",
+      "Norway",
+      "Forensics"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-savants-220",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Savants",
+    "teaser": "Savant syndrome — remarkable ability in a narrow domain, often memory, music, or calendar calculation, alongside significant disability — was described by physician Darold Treffert, who studied Kim Peek, the man who inspired 'Rain Man.' Peek could read two book pages at once and memorize thousands of books, yet couldn't button his own shirt.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Kim Peek's dual-page reading + Treffert's savant studies",
+      "durationMinutes": 28,
+      "instruction": "Read about Peek's abilities and limits together: he read with both eyes on facing pages and retained essentially everything, but his cognitive profile was uneven enough that he needed help with everyday tasks. Then compare with 'acquired savant' cases — people who developed abilities after brain injury, which is why savantism is a window into how the brain reorganizes."
+    },
+    "tags": [
+      "Psychology",
+      "Memory",
+      "Neuroscience"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-synesthetes-221",
+    "categoryId": "WILDCARD",
+    "subtype": "Phenomenon",
+    "name": "Synesthetes",
+    "teaser": "Synesthetes — people with synesthesia — often report the condition runs in families, and it appears roughly 4% of people have some form. Famous synesthetes include composers who saw color in keys: Rimsky-Korsakov described C major as white, E major as 'blue, sapphire.' The condition is consistent, involuntary, and usually pleasant.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "Rimsky-Korsakov's key-colors + the heritability studies",
+      "durationMinutes": 6,
+      "instruction": "Read Rimsky-Korsakov's own description of key colors and compare it with other musicians' reported palettes — the associations differ from person to person, which is evidence they're not cultural. Then look at the heritability research: synesthesia clusters in families, and genetic studies have linked it to regions involved in cross-modal wiring."
+    },
+    "tags": [
+      "Neuroscience",
+      "Perception",
+      "Psychology"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-sedlec-ossuary-222",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "The Sedlec Ossuary",
+    "teaser": "The Sedlec Ossuary in the Czech Republic is a chapel decorated with the bones of an estimated 40,000 to 70,000 people, arranged in the 1870s by a woodcarver named František Rint — including a chandelier made of every bone in the human body. The bones came from the 14th-century Black Death and the Hussite Wars, which filled the church's small cemetery.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The bone chandelier + Rint's bone signature, Sedlec Ossuary",
+      "durationMinutes": 8,
+      "instruction": "Look at Rint's signature, itself built from bones, in the chapel's corner — the woodcarver was commissioned to arrange the disinterred skeletons after the cemetery was dug up for a new church. Then read how the chapel got its bone supply: after the 14th-century plague, the cemetery was famous for its soil, which supposedly made the dead vanish within days."
+    },
+    "tags": [
+      "Czechia",
+      "Art",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-aokigahara-forest-223",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Aokigahara Forest",
+    "teaser": "Aokigahara, the 'Sea of Trees' at the base of Mount Fuji, is a 35-square-kilometer forest on volcanic ground where the magnetic basalt disorients compasses — which contributed to its reputation as a place to get lost. Its dark fame as a suicide site began with a 1961 novel and grew through media coverage, and Japanese authorities now patrol and post crisis helplines.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The lava-field geography of Aokigahara + the compass anomaly",
+      "durationMinutes": 18,
+      "instruction": "Read the forest's geography first: the trees grow from a lava field with caves and uneven ground, and compasses drift on the basalt — a hiker without a map can walk in circles. Then read the history of its reputation: the 1961 novel 'Nami no Tō' and 1993 film coverage created the association, which is why the government's response has been signage and patrols, not secrecy."
+    },
+    "tags": [
+      "Japan",
+      "Forest",
+      "Mystery"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-pripyat-chernobyl-224",
+    "categoryId": "WILDCARD",
+    "subtype": "Site",
+    "name": "Pripyat Chernobyl",
+    "teaser": "Pripyat, built in 1970 to house Chernobyl's power plant workers, was evacuated in a single day on 27 April 1986 — the day after the reactor explosion — and its 49,000 residents left with what they could carry, expecting to return in three days. The city has stood empty ever since, its Ferris wheel (never opened) a symbol of a future that stopped.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 27 April 1986 evacuation of Pripyat + the fallout map",
+      "durationMinutes": 8,
+      "instruction": "Scan the evacuation order's wording: residents were told to leave for 'two or three days' — the buses collected people in under three hours, and the ferris wheel that was scheduled to open for May Day never turned. Then read the dose map of the 1986 fallout and note how far the contamination spread before anyone outside knew."
+    },
+    "tags": [
+      "Ukraine",
+      "History",
+      "Disaster"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-socotra-island-225",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Socotra Island",
+    "teaser": "Socotra, an island in the Arabian Sea off Yemen, is often called the most alien-looking place on Earth: a third of its plant species exist nowhere else, including the dragon's blood tree, whose red resin was traded as medicine and dye for millennia. The island separated from mainland Africa so long ago that it evolved its own miniature ecosystem.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The dragon's blood tree canopies of Socotra",
+      "durationMinutes": 11,
+      "instruction": "Start with the dragon's blood trees' umbrella canopies — the shape catches fog, channeling moisture to the roots in an almost rainless climate. Then read why the resin was valuable: 'dragon's blood' was used as a varnish, a dye, and a medicine across the ancient world, and the island was a stop on the incense trade routes."
+    },
+    "tags": [
+      "Yemen",
+      "Island",
+      "Botany"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-tristan-da-cunha-226",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Tristan da Cunha",
+    "teaser": "Tristan da Cunha is the most remote inhabited place on Earth: a volcanic island in the South Atlantic, 2,400 km from the nearest continent and with fewer than 250 residents, all descended from a handful of 19th-century settlers. There is no airport — the only way in or out is a six-day ship voyage from South Africa, and the island has one 'town,' Edinburgh of the Seven Seas.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The 1961 volcano evacuation of Tristan da Cunha",
+      "durationMinutes": 4,
+      "instruction": "Read how the island's mail works: a ship from Cape Town calls roughly nine times a year, and everything — people, mail, medicine — arrives and leaves on it. Then look at the 1961 volcano evacuation: the entire population was moved to England for two years, then chose to return and rebuild on the island they'd left."
+    },
+    "tags": [
+      "Island",
+      "Geography",
+      "History"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-eye-of-the-227",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "The Eye of the Sahara",
+    "teaser": "The Eye of the Sahara — the Richat Structure in Mauritania — is a 40-km-wide ring of rock that looks like a giant eye from space, so striking that early astronauts used it as a landmark. It was long assumed to be a meteorite impact, but geologists now agree it's an eroded geological dome, exposed in concentric rings like the layers of an onion.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Richat Structure from orbit vs. ground-level geology",
+      "durationMinutes": 10,
+      "instruction": "Compare the satellite view with the ground photos: the 'eye' is a series of concentric ridges of quartzite and other hard rock, the remnant of a dome pushed up and then eroded flat over millions of years. Then read the earlier impact theory and why the evidence (no shocked quartz, no crater rim) ruled it out."
+    },
+    "tags": [
+      "Mauritania",
+      "Geology",
+      "Space"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-the-great-blue-hole-228",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "The Great Blue Hole Belize",
+    "teaser": "The Great Blue Hole off Belize is a 300-meter-wide, 124-meter-deep perfect circle of dark blue in the turquoise reef — a collapsed limestone cave that flooded when sea levels rose. It was made famous by Jacques Cousteau, who dived it in 1971 and declared it one of the top ten dive sites in the world.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Great Blue Hole's stalactite evidence + the hydrogen-sulfide layer",
+      "durationMinutes": 20,
+      "instruction": "Focus on the satellite image and read why it's circular: it was a dry cave system whose roof collapsed, and stalactites found at depth prove it was above water during the last ice age, when the sea was about 120 meters lower. The deep layers below 90 meters hold hydrogen sulfide, so dense that divers report a 'milky river' at the boundary — no diving below that line."
+    },
+    "tags": [
+      "Belize",
+      "Geology",
+      "Diving"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-salar-de-uyuni-229",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Salar de Uyuni",
+    "teaser": "Salar de Uyuni in Bolivia is the world's largest salt flat — 10,582 square kilometers of salt crust, the dried bed of an ancient lake, so flat that it's used to calibrate satellite altimeters. After rain it becomes a mirror, and it holds roughly 10 billion tonnes of salt and the world's largest lithium reserve.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The mirror season of Salar de Uyuni + the lithium brine",
+      "durationMinutes": 11,
+      "instruction": "Watch the mirror-season footage: after a few millimeters of rain, the flat becomes a perfect reflective surface, and horizon and sky merge — photographers exploit the effect for the famous 'vanishing' shots. Then read the lithium story: the brine beneath the crust is the richest known lithium deposit, and Bolivia's politics of extracting it have shaped the global battery trade."
+    },
+    "tags": [
+      "Bolivia",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-zhangjiajie-national-forest-230",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Zhangjiajie National Forest",
+    "teaser": "Zhangjiajie National Forest Park in China is a forest of hundreds of sandstone pillars up to 200 meters tall, formed by erosion along vertical joints — and it inspired the floating 'Hallelujah Mountains' in the film Avatar. The park also has the world's tallest outdoor elevator, a glass elevator built up the cliff face.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The sandstone pillars of Zhangjiajie (the Avatar inspiration)",
+      "durationMinutes": 9,
+      "instruction": "Check the pillar geometry: the quartz-sandstone columns formed because the rock's vertical fractures channeled rainwater erosion, leaving towers behind — the 'stone forest' is a landscape in slow collapse. Then find the glass elevator and the 430-meter glass bridge: the park's engineering is as vertical as its geology."
+    },
+    "tags": [
+      "China",
+      "Geology",
+      "Nature"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-antelope-canyon-231",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Antelope Canyon",
+    "teaser": "Antelope Canyon in Arizona is a slot canyon so narrow that in places you can touch both walls at once — carved by flash floods over hundreds of thousands of years from Navajo sandstone. Its walls glow orange and pink when sunlight angles in, and the famous 'light beams' appear only at midday, when the sun is nearly overhead and dust hangs in the air.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The midday light beams of Antelope Canyon + the 1997 flood",
+      "durationMinutes": 28,
+      "instruction": "Pause on the canyon from inside, where the light shafts are most visible around noon — the beams are dust and air, not the rock, which is why guides kick up sand to 'create' them for photos. Then read the 1997 flash-flood disaster: eleven hikers died when a storm miles away sent a wall of water through the narrow canyon with no warning."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Photography"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "wild-monument-valley-232",
+    "categoryId": "WILDCARD",
+    "subtype": "Place",
+    "name": "Monument Valley",
+    "teaser": "Monument Valley's red buttes — some 300 meters tall — are the eroded remnants of sandstone mesas on the Navajo Nation, and the landscape has appeared in more films than any actor: John Ford's westerns, Back to the Future III, and Forrest Gump's cross-country run. The valley is actually a basin, not a valley — the monuments are what's left after the softer rock around them washed away.",
+    "imageUrl": "",
+    "exploreAction": {
+      "verb": "Explore",
+      "targetName": "The Mittens buttes of Monument Valley — geology + Navajo names",
+      "durationMinutes": 18,
+      "instruction": "Read the Navajo interpretation of the monuments: each butte has a name and a story (the Mittens, for example) in the Diné tradition, and the land is a working ranch, not a park. Then look at a geological cross-section: the monuments are the tips of a former plateau, and the 'valley' floor was once the plateau's surface — you're seeing erosion in place."
+    },
+    "tags": [
+      "USA",
+      "Geology",
+      "Cinema"
+    ],
+    "tier": 2
+  }
+]

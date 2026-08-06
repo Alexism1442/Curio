@@ -1,0 +1,66 @@
+name: Curio Android CI
+
+on:
+  push:
+    branches: [revamp]
+  pull_request:
+    branches: [revamp]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curio-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Validate, lint, and build debug and release APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out Curio
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Validate topic catalogs without Gradle
+        run: python3 scripts/validate_topics.py
+
+      - name: Run Android checks and build debug and release APKs
+        run: ./gradlew lintDebug validateTopics assembleDebug assembleRelease --stacktrace
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: curio-lint-reports-${{ github.run_number }}
+          path: |
+            app/build/reports/lint-results*.*
+            app/build/reports/lint/**/*.html
+            app/build/reports/lint/**/*.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload debug and release APKs
+        if: success()
+        uses: actions/upload-artifact@v5
+        with:
+          name: curio-pr-apks-${{ github.run_number }}
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
