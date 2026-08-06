@@ -2,7 +2,7 @@
 <resources>
     <!-- App identity -->
     <string name="app_name">Curio</string>
-    <string name="app_tagline">Delighted curiosity, one spin at a time.</string>
+    <string name="app_tagline">Discover something new, explore it your way.</string>
 
     <!-- Common UI strings (placeholder phase — fills in with real copy later) -->
     <string name="action_back">Back</string>
