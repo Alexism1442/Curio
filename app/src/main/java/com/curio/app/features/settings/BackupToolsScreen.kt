@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,15 +28,18 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioBackupManager
+import com.curio.app.data.CurioCategories
 import com.curio.app.data.FieldMindArchivePreview
 import com.curio.app.data.FieldMindLegacyImport
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioTornCard
+import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -203,12 +207,18 @@ fun BackupToolsScreen(navController: NavController) {
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-        SettingsHeader(
-            title = "Backup & restore",
-            subtitle = "Keep your captures safe",
-            onBack = { navController.popBackStack() }
+    Box(modifier = Modifier.fillMaxSize()) {
+        // ── Watermark backdrop — the tear family's muted glyph collage
+        // (wildcard sparkle leads; the data workspace is category-neutral).
+        CurioWatermarkBackdrop(
+            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
+        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+            SettingsHeader(
+                title = "Backup & restore",
+                subtitle = "Keep your captures safe",
+                onBack = { navController.popBackStack() }
+            )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
@@ -216,7 +226,7 @@ fun BackupToolsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Your data") }
             item {
-                CurioSettingsCard {
+                CurioTornCard(seed = 0x41) {
                     CurioCardHeader(CurioIcons.Backup, "Backup & restore", "A complete, portable copy of Curio")
                     CurioSettingsRow(CurioIcons.Backup, "Back up now", "Save captures, settings + recordings") {
                         backupLauncher.launch(CurioBackupManager.suggestedFileName())
@@ -234,7 +244,7 @@ fun BackupToolsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Legacy import") }
             item {
-                CurioSettingsCard {
+                CurioTornCard(seed = 0x42) {
                     CurioCardHeader(CurioIcons.History, "FieldMind archive", "Add older observations to your Cabinet")
                     CurioSettingsRow(
                         CurioIcons.History,
@@ -254,6 +264,7 @@ fun BackupToolsScreen(navController: NavController) {
                     CurioSettingsInfoRow(CurioIcons.Info, "Additive import", "Existing Curio captures are never replaced")
                 }
             }
+        }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.curio.app.features.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,13 +23,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.curio.app.data.AppPreferences
+import com.curio.app.data.CategoryId
+import com.curio.app.data.CurioCategories
 import com.curio.app.data.SmartDensityMode
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioTornCard
+import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
 
 /**
@@ -38,12 +42,18 @@ import com.curio.app.ui.theme.CurioIcons
 @Composable
 fun ExperimentsScreen(navController: NavController) {
     val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-        SettingsHeader(
-            title = "Experiments",
-            subtitle = "Try ideas before they ship",
-            onBack = { navController.popBackStack() }
+    Box(modifier = Modifier.fillMaxSize()) {
+        // ── Watermark backdrop — the tear family's muted glyph collage
+        // (wildcard sparkle leads; experiments are category-neutral).
+        CurioWatermarkBackdrop(
+            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
+        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+            SettingsHeader(
+                title = "Experiments",
+                subtitle = "Try ideas before they ship",
+                onBack = { navController.popBackStack() }
+            )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
@@ -51,7 +61,7 @@ fun ExperimentsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Card surfaces") }
             item {
-                CurioSettingsCard {
+                CurioTornCard(seed = 0x31) {
                     CurioCardHeader(CurioIcons.Layers, "Card & deck look", "Independent visual tests for Spin")
                     ExperimentSwitchRow("Top-lit deck cards", "Peek cards catch light at the top edge", AppPreferences.peekGradientState) {
                         AppPreferences.setPeekGradientEnabled(context, it)
@@ -96,7 +106,7 @@ fun ExperimentsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Layout & input") }
             item {
-                CurioSettingsCard {
+                CurioTornCard(seed = 0x32) {
                     CurioCardHeader(CurioIcons.ScienceGlyph, "Behavior tests", "Temporary options for tuning")
                     ExperimentSwitchRow("Smart Spin layout", "Fits the deck on short screens", AppPreferences.smartSpinLayoutState) {
                         AppPreferences.setSmartSpinLayoutEnabled(context, it)
@@ -138,6 +148,7 @@ fun ExperimentsScreen(navController: NavController) {
                 }
             }
             item { CurioSettingsInfoRow(CurioIcons.Info, "About experiments", "These controls are temporary and may change") }
+        }
         }
     }
 }

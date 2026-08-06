@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -45,14 +46,17 @@ import androidx.navigation.NavController
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.AudioQuality
 import com.curio.app.data.AudioQualitySettings
+import com.curio.app.data.CategoryId
+import com.curio.app.data.CurioCategories
 import com.curio.app.features.onboarding.CurioOnboardingState
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
 import com.curio.app.ui.components.CurioSettingsRow
+import com.curio.app.ui.components.CurioTornCard
+import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.formatHour
 import com.curio.app.ui.theme.CurioIcons
 
@@ -67,8 +71,14 @@ enum class SettingsPage(val title: String, val subtitle: String) {
 
 @Composable
 fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-        SettingsHeader(title = page.title, subtitle = page.subtitle, onBack = { navController.popBackStack() })
+    Box(modifier = Modifier.fillMaxSize()) {
+        // ── Watermark backdrop — the tear family's muted glyph collage
+        // (wildcard sparkle leads; settings is category-neutral).
+        CurioWatermarkBackdrop(
+            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
+        )
+        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+            SettingsHeader(title = page.title, subtitle = page.subtitle, onBack = { navController.popBackStack() })
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
@@ -85,6 +95,7 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
                 }
             }
         }
+        }
     }
 }
 
@@ -97,7 +108,7 @@ private fun AppearanceSection() {
     val themeMode = AppPreferences.themeModeState
     val styleIndex = themeStyles.indexOf(themeStyle).coerceAtLeast(0)
     val themeIndex = themes.indexOf(themeMode).coerceAtLeast(0)
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x21) {
         CurioCardHeader(CurioIcons.AutoAwesome, "Visual language", "Small choices shape every page")
         CompactSegmentedRow("Theme style", listOf("Curio", "AMOLED", "Material"), styleIndex) { index ->
             AppPreferences.setThemeStyle(context, themeStyles[index])
@@ -162,7 +173,7 @@ private fun NotificationsSection() {
             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x22) {
         CurioCardHeader(CurioIcons.Notifications, "Notifications", "Quiet nudges, when you want them")
         CompactSwitchRow("Daily shuffle reminder", if (AppPreferences.reminderEnabledState) "Every day at ${formatHour(AppPreferences.getReminderHour(context))}" else "Off", AppPreferences.reminderEnabledState) { enabled ->
             if (enabled) enableNotifications { AppPreferences.setReminderEnabled(context, true) } else AppPreferences.setReminderEnabled(context, false)
@@ -229,7 +240,7 @@ private fun RecordingSection() {
     val context = LocalContext.current
     var quality by remember { mutableStateOf(AudioQualitySettings.get(context)) }
     var showQualityDialog by remember { mutableStateOf(false) }
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x23) {
         CurioCardHeader(CurioIcons.Mic, "Recording", "Voice notes that sound like you")
         CurioSettingsRow(CurioIcons.Mic, "Audio quality", quality.label) {
             showQualityDialog = true
@@ -254,7 +265,7 @@ private fun RecordingSection() {
 
 @Composable
 private fun DataSection(navController: NavController) {
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x24) {
         CurioCardHeader(CurioIcons.Backup, "Backup & restore", "Your captures stay yours")
         CurioSettingsRow(CurioIcons.Backup, "Open backup tools", "Export, restore, or import FieldMind data") {
             navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
@@ -267,7 +278,7 @@ private fun DataSection(navController: NavController) {
 @Composable
 private fun AboutSection(navController: NavController) {
     val context = LocalContext.current
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x25) {
         CurioCardHeader(CurioIcons.Info, "About Curio", "Help and app details")
         CurioSettingsRow(CurioIcons.Replay, "Replay intro", "See the welcome screens again") {
             CurioOnboardingState.reset(context)

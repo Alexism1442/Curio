@@ -140,3 +140,11 @@ Brace checks are BALANCED for all changed/new Kotlin files and `git diff --check
 - Quote cards now show up to TWO lines with ellipsis on the board — editor and saved/read-only views alike (the full text stays editable in the edit sheet, where the RichTextEditor still enforces the real 280-char / five-line input limit). The editor's `heightIn(min = slot)` now only ever exceeds the slot by one extra line, so drag bounds stay sane.
 - All four render paths (editor via GalleryWallFormat, saved entry detail ×2, PNG export) go through the single fixed component; the RichTextEditor's typing field was verified to be the edit surface, not the board preview, so it was left untouched.
 - Validation: MoodBoardZoom.kt brace check BALANCED and `git diff --check` clean. No Gradle command run per repository rules.
+
+## v7.69 — tear family: torn cards + full watermark on Profile and Settings
+
+- Added a shared `CurioTornCard` component (PaperCard.kt): a small cream paper slip with rounded top corners, a soft torn bottom seam, hairline edge, no rules, and a required STABLE seed per card (so tears never re-roll across opens or LazyColumn recycling).
+- Profile (ProfileScreen.kt): the watermark backdrop now renders the FULL-PAGE collage like Home (removed the `topClearance` lower-band mode, which left the glyphs hidden behind the hero and cards — the reported "background didn't get the watermark"); the four content cards (Level, Settings nav, Lanes, Support) are now torn paper cards instead of the generic settings card.
+- Settings expanded to the same family: SettingsHubScreen (rewritten), SettingsSectionScreen, ExperimentsScreen, and BackupToolsScreen each sit on the wildcard-led `CurioWatermarkBackdrop`, and every section card is a `CurioTornCard` with a distinct fixed seed.
+- The shared `SettingsHeader` is now a SMALL TORN CARD (fixed seed 0x5EED) — back button, title, and subtitle on a cream torn slip — so all four settings screens automatically wear the torn-card header.
+- Validation: brace checks BALANCED for all six touched files, `git diff --check` clean, no leftover CurioSettingsCard references in the touched screens. No Gradle command run per repository rules.

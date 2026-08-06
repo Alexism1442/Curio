@@ -69,8 +69,8 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
-import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
+import com.curio.app.ui.components.CurioTornCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
@@ -107,8 +107,7 @@ import kotlinx.coroutines.launch
 private val ProfileHeroHeight = 372.dp
 /** Extra layout space reserved for the under-sheet below the torn banner. */
 private val ProfileHeroSheetExtent = 24.dp
-/** Total hero footprint — keeps the watermark backdrop's glyphs below the
- *  banner (lower-band mode). */
+/** Total hero footprint — the torn banner plus its under-sheet extent. */
 private val ProfileHeroTotalHeight = ProfileHeroHeight + ProfileHeroSheetExtent
 /** Fixed tear seed — Profile tears in the SAME bold pattern as Home's quest
  *  hero (same seed + personality), so both banners read as one family. */
@@ -201,12 +200,13 @@ fun ProfileScreen(navController: NavController) {
             .background(MaterialTheme.colorScheme.background)
     ) {
         // ── Watermark backdrop — muted category glyphs behind the content
-        // (the Home/Spin language). The active glyph is your most-explored
-        // lane (wildcard sparkles before the first save); the glyphs keep
-        // below the hero banner.
+        // (the Home/Spin language). Full-page collage like Home: the glyphs
+        // scatter across the WHOLE background, hiding behind the opaque hero
+        // banner and the torn paper cards, showing through the gutters and
+        // the tears. The active glyph is your most-explored lane (wildcard
+        // sparkles before the first save).
         CurioWatermarkBackdrop(
-            activeCat = backdropActiveCat,
-            topClearance = ProfileHeroTotalHeight
+            activeCat = backdropActiveCat
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -669,7 +669,7 @@ private fun profileReadableInk(fill: Color): Color = if (
 
 @Composable
 private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x1EAF) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(
                 modifier = Modifier
@@ -705,7 +705,7 @@ private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: In
 /** Single Settings entry — Profile owns identity/stats, Settings owns every preference. */
 @Composable
 private fun SettingsNavCard(onOpenSettings: () -> Unit) {
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x2EAF) {
         Surface(
             onClick = onOpenSettings,
             color = Color.Transparent,
@@ -742,7 +742,7 @@ private fun SettingsNavCard(onOpenSettings: () -> Unit) {
 
 @Composable
 private fun LanesCard(counts: Map<CategoryId, Int>, onCabinet: () -> Unit) {
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x3EAF) {
         CurioCardHeader(CurioIcons.Palette, "Your lanes", "Where you've been exploring")
         Spacer(Modifier.height(6.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -786,7 +786,7 @@ private fun SupportCard(
     onCrashLogs: () -> Unit,
     onReportBug: () -> Unit
 ) {
-    CurioSettingsCard {
+    CurioTornCard(seed = 0x4EAF) {
         CurioCardHeader(CurioIcons.Info, "Support & diagnostics", "Help, reports, and developer tools")
         CurioSettingsRow(CurioIcons.BugReport, "Report a bug", "Send feedback or an issue", onReportBug)
         if (crashCount > 0) {

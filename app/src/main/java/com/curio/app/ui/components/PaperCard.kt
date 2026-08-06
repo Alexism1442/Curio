@@ -282,6 +282,33 @@ fun PaperCard(
 }
 
 /**
+ * A small torn paper card — the "torn slip" every surface wears in the tear
+ * family (Profile content cards, the shared Settings header, settings
+ * cards): warm cream paper with a soft torn bottom seam, rounded top
+ * corners and a hairline edge, no ruled lines. A thin wrapper around
+ * [PaperCard] with the torn-language defaults, so callers pass only a
+ * STABLE [seed] (fixed per card → the tear never re-rolls between opens or
+ * LazyColumn recycling) and their content.
+ */
+@Composable
+fun CurioTornCard(
+    seed: Int,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    PaperCard(
+        modifier = modifier,
+        ruled = false,
+        roundedTop = true,
+        paperColor = NotePaperColor.CREAM,
+        contentPadding = contentPadding,
+        seed = seed,
+        content = content
+    )
+}
+
+/**
  * The rigid-card sheen every paper style wears — a whisper of top light
  * fading through transparent to a faint bottom depth, so the slip reads as
  * stiff paper stock rather than a flat fill. Strong enough to read on the
