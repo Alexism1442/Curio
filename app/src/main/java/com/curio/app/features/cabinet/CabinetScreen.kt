@@ -1,5 +1,8 @@
 package com.curio.app.features.cabinet
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -30,9 +34,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +57,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
@@ -78,6 +86,8 @@ import com.curio.app.ui.components.SoftTornBottomShape
 import com.curio.app.ui.components.SoftTornSheetShape
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
+import com.curio.app.ui.theme.CurioMotion
+import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.categoryBackgroundWash
 import com.curio.app.ui.theme.categoryBorder
 import com.curio.app.ui.theme.categoryChipSurface
@@ -254,201 +264,17 @@ fun CabinetScreen(navController: NavController) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-        // ── Torn rose hero banner — the Profile/Settings hero-card language,
-        // with the Cabinet's own fixed tear seed. The title + subtitle sit
-        // pinned just above the tear and the search/sort/select pills ride
-        // the banner's top row as ink-glass pills so they read on the rose.
-        val cabinetTitle = when {
-            selectionMode -> "${selectedEntryIds.size} selected"
-            showLegacyOnly -> "Legacy Cabinet"
-            else -> "The Cabinet"
-        }
-        val cabinetSubtitle = when {
-            selectionMode -> "Long-press cards to select · ${if (showLegacyOnly) "legacy" else "current filter"}"
-            showLegacyOnly -> "Restored FieldMind records"
-            else -> selectedFilter?.let { "Showing ${CurioCategories.byId(it).displayName}" } ?: "Your saved captures"
-        }
-        CabinetHeroHeader(
-            title = cabinetTitle,
-            subtitle = cabinetSubtitle,
-            sheetColor = filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background,
-            backVisible = selectedFilter != null || showLegacyOnly,
-            onBack = { selectedFilter = null; showLegacyOnly = false }
-        ) { ink ->
-            if (selectionMode) {
-                CabinetHeroActionPill(
-                    onClick = {
-                        selectedEntryIds = if (allVisibleSelected) {
-                            selectedEntryIds - categorySelectionIds
-                        } else {
-                            selectedEntryIds + categorySelectionIds
-                        }
-                    },
-                    label = if (allVisibleSelected) "Clear" else "Select all",
-                    ink = ink,
-                    emphasized = true
-                )
-                CabinetHeroActionPill(
-                    onClick = {
-                        if (selectedEntryIds.isNotEmpty()) showBulkDeleteConfirm = true
-                    },
-                    label = "Delete (${selectedEntryIds.size})",
-                    ink = ink,
-                    emphasized = true,
-                    destructive = true
-                )
-                CabinetHeroActionPill(
-                    onClick = { selectionMode = false; selectedEntryIds = emptySet() },
-                    glyph = CurioIcons.Close,
-                    contentDescription = "Cancel selection",
-                    ink = ink
-                )
-            } else if (!searchActive) {
-                CabinetHeroActionPill(
-                    onClick = {
-                        selectionMode = true
-                        selectedEntryIds = emptySet()
-                    },
-                    label = "Select",
-                    ink = ink
-                )
-                CabinetHeroActionPill(
-                    onClick = { sortNewestFirst = !sortNewestFirst },
-                    glyph = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
-                    contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
-                    ink = ink,
-                    emphasized = sortNewestFirst
-                )
-                CabinetHeroActionPill(
-                    onClick = { searchActive = true },
-                    glyph = CurioIcons.Search,
-                    contentDescription = "Search captures",
-                    ink = ink
-                )
-            }
-        }
-        if (searchActive) {
-            // Search mode — a real filter bar below the hero narrows the grid
-            // by topic name / custom title. Auto-focus pulls the keyboard up
-            // the moment it expands.
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search captures…") },
-                    leadingIcon = {
-                        CurioIcon(CurioIcons.Search, null, size = 20.dp)
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { searchQuery = "" }) {
-                                CurioIcon(CurioIcons.Close, "Clear search", size = 20.dp)
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(50),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = {}),
-                    modifier = Modifier
-                        .weight(1f)
-                        .focusRequester(searchFocus)
-                )
-                Surface(
-                    onClick = {
-                        searchActive = false
-                        searchQuery = ""
-                    },
-                    shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    CurioIcon(
-                        name = CurioIcons.Close,
-                        contentDescription = "Close search",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        size = 24.dp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
-        }
-
-        // ── Filter chip row ─────────────────────────────────────────────────
-        // Each category chip wears its OWN category tint in the background
-        // (soft idle surface, brighter when active) — never the selected
-        // filter's color, so tapping one chip can't re-tint the others.
-        // The label text stays neutral in every state; only the background
-        // carries the color. In dark mode the idle fill is desaturated
-        // (less muddy) and the hairline picks up the light twin for
-        // contrast. "All" keeps its plain neutral treatment.
-        // The Legacy chip is a synthetic filter (restored FieldMind records)
-        // — it always sits LAST in the row and only appears when there's
-        // actually something to show (or the legacy view is currently open).
-        val hasLegacyEntries = entries.any { it.isLegacy }
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            item("all") {
-                FilterChipLite(
-                    label = "All",
-                    accent = MaterialTheme.colorScheme.primary,
-                    tint = MaterialTheme.colorScheme.primaryContainer,
-                    ink = MaterialTheme.colorScheme.onPrimaryContainer,
-                    chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-                    chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    selected = selectedFilter == null && !showLegacyOnly,
-                    onClick = { selectedFilter = null; showLegacyOnly = false }
-                )
-            }
-            items(CurioCategories.visible) { cat ->
-                FilterChipLite(
-                    label = cat.displayName,
-                    accent = cat.themedAccent(),
-                    tint = cat.tint,
-                    // The button (label text) never adapts to the category —
-                    // it stays on the neutral theme ink in every state, so
-                    // only the background carries the tint.
-                    ink = MaterialTheme.colorScheme.onSurfaceVariant,
-                    chipSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
-                    chipBorder = cat.categoryBorder(
-                        fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                    ),
-                    selected = selectedFilter == cat.id && !showLegacyOnly,
-                    onClick = { selectedFilter = cat.id; showLegacyOnly = false }
-                )
-            }
-            // Legacy sits LAST, after every native category — and only when
-            // there's something to show (or the legacy view is currently
-            // open, so the active chip stays visible/deselectable).
-            if (hasLegacyEntries || showLegacyOnly) {
-                item("legacy") {
-                    FilterChipLite(
-                        label = "Legacy",
-                        accent = MaterialTheme.colorScheme.tertiary,
-                        tint = MaterialTheme.colorScheme.tertiaryContainer,
-                        ink = MaterialTheme.colorScheme.onTertiaryContainer,
-                        chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-                        chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        selected = showLegacyOnly,
-                        onClick = { selectedFilter = null; showLegacyOnly = !showLegacyOnly }
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        // ── Grid or empty state ────────────────────────────────────────────
+        // ── Grid or empty state — the scroll content fills the screen and
+        // runs UNDER the torn hero banner and the sticky chip bar (both are
+        // drawn on top in this root Box), so cards disappear under the
+        // ragged tear and the pinned chips as they scroll — the settings
+        // overlay pattern.
         if (visibleEntries.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = CabinetContentTop)
+            ) {
             MorphEntrance {
                 if (searchActive && searchQuery.isNotBlank()) {
                     // Live search came up empty — tell the user what didn't
@@ -510,11 +336,17 @@ fun CabinetScreen(navController: NavController) {
                     )
                 }
             }
+            }
         } else {
             LazyVerticalGrid(
                 state = gridState,
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = CabinetContentTop,
+                    bottom = 24.dp
+                ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
@@ -545,6 +377,100 @@ fun CabinetScreen(navController: NavController) {
             }
         }
         }
+
+        // ── Sticky filter chip bar — drawn ON TOP of the scroll content.
+        // As the grid scrolls the bar lifts, pops (0.97 → 1.0) and frosts in
+        // (Profile's pill mechanism), pinning just below the ragged tear
+        // while the entry cards pass underneath it.
+        CabinetStickyChipBar(
+            gridState = gridState,
+            entries = entries,
+            selectedFilter = selectedFilter,
+            showLegacyOnly = showLegacyOnly,
+            onSelectAll = { selectedFilter = null; showLegacyOnly = false },
+            onSelectCategory = { selectedFilter = it; showLegacyOnly = false },
+            onToggleLegacy = { selectedFilter = null; showLegacyOnly = !showLegacyOnly }
+        )
+
+        // ── Torn rose hero banner — drawn ON TOP of the scroll content; the
+        // search field expands INSIDE the banner when search is active. The
+        // title + subtitle sit pinned just above the tear and the
+        // search/sort/select pills ride the banner's top row as ink-glass
+        // pills (replaced by a Cancel pill while searching).
+        val cabinetTitle = when {
+            selectionMode -> "${selectedEntryIds.size} selected"
+            showLegacyOnly -> "Legacy Cabinet"
+            else -> "The Cabinet"
+        }
+        val cabinetSubtitle = when {
+            selectionMode -> "Long-press cards to select · ${if (showLegacyOnly) "legacy" else "current filter"}"
+            showLegacyOnly -> "Restored FieldMind records"
+            else -> selectedFilter?.let { "Showing ${CurioCategories.byId(it).displayName}" } ?: "Your saved captures"
+        }
+        CabinetHeroHeader(
+            title = cabinetTitle,
+            subtitle = cabinetSubtitle,
+            sheetColor = filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background,
+            backVisible = selectedFilter != null || showLegacyOnly,
+            onBack = { selectedFilter = null; showLegacyOnly = false },
+            searchActive = searchActive,
+            searchQuery = searchQuery,
+            onSearchQueryChange = { searchQuery = it },
+            onCloseSearch = { searchActive = false; searchQuery = "" },
+            searchFocus = searchFocus
+        ) { ink ->
+            if (selectionMode) {
+                CabinetHeroActionPill(
+                    onClick = {
+                        selectedEntryIds = if (allVisibleSelected) {
+                            selectedEntryIds - categorySelectionIds
+                        } else {
+                            selectedEntryIds + categorySelectionIds
+                        }
+                    },
+                    label = if (allVisibleSelected) "Clear" else "Select all",
+                    ink = ink,
+                    emphasized = true
+                )
+                CabinetHeroActionPill(
+                    onClick = {
+                        if (selectedEntryIds.isNotEmpty()) showBulkDeleteConfirm = true
+                    },
+                    label = "Delete (${selectedEntryIds.size})",
+                    ink = ink,
+                    emphasized = true,
+                    destructive = true
+                )
+                CabinetHeroActionPill(
+                    onClick = { selectionMode = false; selectedEntryIds = emptySet() },
+                    glyph = CurioIcons.Close,
+                    contentDescription = "Cancel selection",
+                    ink = ink
+                )
+            } else {
+                CabinetHeroActionPill(
+                    onClick = {
+                        selectionMode = true
+                        selectedEntryIds = emptySet()
+                    },
+                    label = "Select",
+                    ink = ink
+                )
+                CabinetHeroActionPill(
+                    onClick = { sortNewestFirst = !sortNewestFirst },
+                    glyph = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
+                    contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
+                    ink = ink,
+                    emphasized = sortNewestFirst
+                )
+                CabinetHeroActionPill(
+                    onClick = { searchActive = true },
+                    glyph = CurioIcons.Search,
+                    contentDescription = "Search captures",
+                    ink = ink
+                )
+            }
+        }
     }
 }
 
@@ -563,6 +489,22 @@ private val CabinetHeroSheetExtent = 24.dp
 private val CabinetHeroTotalHeight = CabinetHeroBannerHeight + CabinetHeroSheetExtent
 /** Fixed tear seed — the Cabinet tears in its own bold pattern, never re-rolls. */
 private const val CABINET_TEAR_SEED = 0xCAB1E
+
+// ── Sticky filter chip bar ──────────────────────────────────────────────
+// The chip row is a scroll-reactive overlay (like Profile's pinned pills):
+// it rests below the hero, then lifts, pops (0.97 → 1.0) and frosts in as
+// the grid scrolls, pinning just below the ragged tear while the entry
+// cards pass underneath it.
+/** Where the chip bar rests below the hero (its unpinned spot). */
+private val CabinetChipBarRestTop = CabinetHeroTotalHeight + 10.dp
+/** Where the chip bar pins when scrolled — just below the ragged tear. */
+private val CabinetChipBarPinnedTop = CabinetHeroTotalHeight + 2.dp
+/** Scroll distance (dp) before the chip bar fully pins (Profile pill style). */
+private val CabinetChipStickyThreshold = 56.dp
+/** The chip bar's layout height — scroll content starts below it. */
+private val CabinetChipBarHeight = 52.dp
+/** Top content padding — hero + chip bar + breathing room. */
+private val CabinetContentTop = CabinetHeroTotalHeight + CabinetChipBarHeight + 18.dp
 
 /** One mirrored hero watermark pair (the settings/profile collage). */
 private data class CabinetHeroPair(
@@ -589,6 +531,11 @@ private fun CabinetHeroHeader(
     sheetColor: Color,
     backVisible: Boolean,
     onBack: () -> Unit,
+    searchActive: Boolean,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    onCloseSearch: () -> Unit,
+    searchFocus: FocusRequester,
     trailing: @Composable (ink: Color) -> Unit
 ) {
     val heroTornShape = remember(CABINET_TEAR_SEED) { SoftTornBottomShape(CABINET_TEAR_SEED, bold = true) }
@@ -669,30 +616,219 @@ private fun CabinetHeroHeader(
                             // Balance the row when there's no back pill.
                             Spacer(Modifier.size(42.dp))
                         }
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            trailing(ink)
+                        if (searchActive) {
+                            // Search is open — the top row holds just the
+                            // Cancel pill (the action pills are hidden).
+                            CabinetHeroActionPill(
+                                onClick = onCloseSearch,
+                                label = "Cancel",
+                                glyph = CurioIcons.Close,
+                                contentDescription = "Close search",
+                                ink = ink
+                            )
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                trailing(ink)
+                            }
                         }
                     }
                     // Flex spacer — pins the title block just above the tear.
                     Spacer(Modifier.weight(1f))
-                    // ── Title + subtitle — the Cabinet's identity ──
-                    Column {
-                        Text(
-                            title,
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                            color = ink,
-                            maxLines = 1
+                    // ── Search field (open inside the hero) or the Cabinet's
+                    // title + subtitle, pinned just above the tear ──
+                    if (searchActive) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = onSearchQueryChange,
+                            placeholder = { Text("Search captures…") },
+                            leadingIcon = {
+                                CurioIcon(CurioIcons.Search, null, tint = ink, size = 20.dp)
+                            },
+                            trailingIcon = {
+                                if (searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = { onSearchQueryChange("") }) {
+                                        CurioIcon(
+                                            CurioIcons.Close,
+                                            "Clear search",
+                                            tint = ink.copy(alpha = 0.85f),
+                                            size = 20.dp
+                                        )
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            shape = RoundedCornerShape(50),
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = ink),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(onSearch = {}),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = ink.copy(alpha = 0.16f),
+                                unfocusedContainerColor = ink.copy(alpha = 0.16f),
+                                focusedBorderColor = ink.copy(alpha = 0.55f),
+                                unfocusedBorderColor = ink.copy(alpha = 0.30f),
+                                cursorColor = ink,
+                                focusedTextColor = ink,
+                                unfocusedTextColor = ink,
+                                focusedPlaceholderColor = ink.copy(alpha = 0.72f),
+                                unfocusedPlaceholderColor = ink.copy(alpha = 0.72f),
+                                focusedLeadingIconColor = ink,
+                                unfocusedLeadingIconColor = ink,
+                                focusedTrailingIconColor = ink.copy(alpha = 0.85f),
+                                unfocusedTrailingIconColor = ink.copy(alpha = 0.85f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(searchFocus)
                         )
-                        Text(
-                            subtitle,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = ink.copy(alpha = 0.82f),
-                            maxLines = 1
-                        )
+                    } else {
+                        Column {
+                            Text(
+                                title,
+                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                                color = ink,
+                                maxLines = 1
+                            )
+                            Text(
+                                subtitle,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = ink.copy(alpha = 0.82f),
+                                maxLines = 1
+                            )
+                        }
                     }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * The Cabinet's filter chip row, drawn ON TOP of the scroll content.
+ *
+ * Scroll-reactive, like Profile's pinned pills: as the grid scrolls, the
+ * row pops (scale 0.97 → 1.0, eased), lifts a few dp, and a frosted pill
+ * surface morphs in behind the chips (transparent → frosted with a hairline
+ * rim + shadow). It pins just below the hero's ragged tear, and the entry
+ * cards scroll underneath it.
+ */
+@Composable
+private fun BoxScope.CabinetStickyChipBar(
+    gridState: LazyGridState,
+    entries: List<CurioEntry>,
+    selectedFilter: CategoryId?,
+    showLegacyOnly: Boolean,
+    onSelectAll: () -> Unit,
+    onSelectCategory: (CategoryId) -> Unit,
+    onToggleLegacy: () -> Unit
+) {
+    // Scroll-reactive lift — the chips pop + frost as the first card row
+    // approaches them and pin once it reaches the bar, so the lift is tied
+    // to the cards actually arriving (not raw scroll offset, which would
+    // include the grid's large top content padding). Progress reads the
+    // first visible card row's top edge inside the viewport: it starts at
+    // the content top (~274dp) and falls as the user scrolls.
+    val thresholdPx = with(LocalDensity.current) { CabinetChipStickyThreshold.toPx() }
+    val barBottomPx = with(LocalDensity.current) { (CabinetChipBarRestTop + CabinetChipBarHeight).toPx() }
+    val progress by remember {
+        derivedStateOf {
+            val first = gridState.layoutInfo.visibleItemsInfo.firstOrNull()
+            if (first == null) 0f
+            else ((barBottomPx - first.offset) / thresholdPx).coerceIn(0f, 1f)
+        }
+    }
+    val frostShift = FastOutSlowInEasing.transform(progress)
+    val popScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
+    val stickyDark = isCurioDarkTheme()
+    // Resting state = no bar (the chips float on the page wash); scrolled
+    // state = a solid frosted pill bar — the Profile pill morph.
+    val restBg = Color.Transparent
+    val frostBg = if (stickyDark) Color(0xFF23242C).copy(alpha = 0.94f) else Color.White.copy(alpha = 0.94f)
+    val restRim = Color.Transparent
+    val frostRim = if (stickyDark) Color.White.copy(alpha = 0.16f) else Color(0xFFD9DEE6)
+    // Resolve solid target colors from scroll, then animate the paint.
+    val targetBarBg = lerp(restBg, frostBg, frostShift)
+    val targetBarRim = lerp(restRim, frostRim, frostShift)
+    val barBg by animateColorAsState(
+        targetValue = targetBarBg,
+        animationSpec = tween(CurioMotion.Durations.Quick),
+        label = "cabinetChipBarBackground"
+    )
+    val barRim by animateColorAsState(
+        targetValue = targetBarRim,
+        animationSpec = tween(CurioMotion.Durations.Quick),
+        label = "cabinetChipBarRim"
+    )
+    val liftPx = with(LocalDensity.current) { (CabinetChipBarRestTop - CabinetChipBarPinnedTop).toPx() }
+
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = barBg,
+        border = if (frostShift > 0.02f) BorderStroke(1.dp, barRim) else null,
+        shadowElevation = 8.dp * frostShift,
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .offset(y = CabinetChipBarRestTop)
+            .graphicsLayer {
+                translationY = -liftPx * frostShift
+                scaleX = popScale
+                scaleY = popScale
+            }
+    ) {
+        val hasLegacyEntries = entries.any { it.isLegacy }
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 6.dp)
+        ) {
+            item("all") {
+                FilterChipLite(
+                    label = "All",
+                    accent = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primaryContainer,
+                    ink = MaterialTheme.colorScheme.onPrimaryContainer,
+                    chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                    chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    selected = selectedFilter == null && !showLegacyOnly,
+                    onClick = onSelectAll
+                )
+            }
+            items(CurioCategories.visible) { cat ->
+                FilterChipLite(
+                    label = cat.displayName,
+                    accent = cat.themedAccent(),
+                    tint = cat.tint,
+                    // The button (label text) never adapts to the category —
+                    // it stays on the neutral theme ink in every state, so
+                    // only the background carries the tint.
+                    ink = MaterialTheme.colorScheme.onSurfaceVariant,
+                    chipSurface = cat.categoryChipSurface(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                    chipBorder = cat.categoryBorder(
+                        fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ),
+                    selected = selectedFilter == cat.id && !showLegacyOnly,
+                    onClick = { onSelectCategory(cat.id) }
+                )
+            }
+            // Legacy sits LAST, after every native category — and only when
+            // there's something to show (or the legacy view is currently
+            // open, so the active chip stays visible/deselectable).
+            if (hasLegacyEntries || showLegacyOnly) {
+                item("legacy") {
+                    FilterChipLite(
+                        label = "Legacy",
+                        accent = MaterialTheme.colorScheme.tertiary,
+                        tint = MaterialTheme.colorScheme.tertiaryContainer,
+                        ink = MaterialTheme.colorScheme.onTertiaryContainer,
+                        chipSurface = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        chipBorder = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        selected = showLegacyOnly,
+                        onClick = onToggleLegacy
+                    )
                 }
             }
         }
