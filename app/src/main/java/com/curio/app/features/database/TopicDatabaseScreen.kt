@@ -121,7 +121,7 @@ fun TopicDatabaseScreen(navController: NavController) {
                         t.tags.any { it.lowercase().contains(needle) }
                 }
                 if (shown.isEmpty()) return@forEach
-                if (selectedCat == null) {
+                if (effectiveCat == null) {
                     add(DatabaseRow(key = "sec-${cat.id.name}", section = cat, sectionCount = shown.size))
                 }
                 shown.forEach { t ->
