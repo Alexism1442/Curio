@@ -2,6 +2,7 @@ package com.curio.app.features.settings
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.background
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +38,8 @@ import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
+import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
-import com.curio.app.ui.components.CurioTornCard
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
 import kotlinx.coroutines.launch
@@ -207,14 +208,18 @@ fun BackupToolsScreen(navController: NavController) {
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // ── Watermark backdrop — the tear family's muted glyph collage
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // ── Watermark backdrop — muted category glyphs behind the content
         // (wildcard sparkle leads; the data workspace is category-neutral).
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
         Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-            SettingsHeader(
+            SettingsHeroHeader(
                 title = "Backup & restore",
                 subtitle = "Keep your captures safe",
                 onBack = { navController.popBackStack() }
@@ -226,7 +231,7 @@ fun BackupToolsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Your data") }
             item {
-                CurioTornCard(seed = 0x41) {
+                CurioSettingsCard {
                     CurioCardHeader(CurioIcons.Backup, "Backup & restore", "A complete, portable copy of Curio")
                     CurioSettingsRow(CurioIcons.Backup, "Back up now", "Save captures, settings + recordings") {
                         backupLauncher.launch(CurioBackupManager.suggestedFileName())
@@ -244,7 +249,7 @@ fun BackupToolsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Legacy import") }
             item {
-                CurioTornCard(seed = 0x42) {
+                CurioSettingsCard {
                     CurioCardHeader(CurioIcons.History, "FieldMind archive", "Add older observations to your Cabinet")
                     CurioSettingsRow(
                         CurioIcons.History,

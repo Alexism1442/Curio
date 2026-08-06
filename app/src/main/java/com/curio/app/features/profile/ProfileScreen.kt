@@ -1,7 +1,12 @@
 package com.curio.app.features.profile
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -21,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -32,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -69,8 +77,8 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
+import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
-import com.curio.app.ui.components.CurioTornCard
 import com.curio.app.ui.components.CurioSettingsRow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
@@ -79,6 +87,7 @@ import com.curio.app.ui.theme.CurioColors
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
+import com.curio.app.ui.theme.CurioMotion
 import com.curio.app.ui.theme.fromHsl
 import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.pastelFillInk
@@ -112,6 +121,10 @@ private val ProfileHeroTotalHeight = ProfileHeroHeight + ProfileHeroSheetExtent
 /** Fixed tear seed — Profile tears in the SAME bold pattern as Home's quest
  *  hero (same seed + personality), so both banners read as one family. */
 private const val PROFILE_TEAR_SEED = 0xC0FEE
+/** Scroll distance (dp) before the Back + Settings pills fully pin as
+ *  frosted floating pills (Home's StickyBarThreshold, so the pop + color
+ *  morph feel identical). */
+private val ProfilePillThreshold = 90.dp
 
 /** One mirrored hero watermark pair — the left glyph mirrors the right
  *  (the Home quest hero's construction, adapted for Profile). */
@@ -134,6 +147,10 @@ fun ProfileScreen(navController: NavController) {
     var totalSaved by remember { mutableIntStateOf(0) }
     var categoryCounts by remember { mutableStateOf<Map<CategoryId, Int>>(emptyMap()) }
     val scope = rememberCoroutineScope()
+    // Hoisted LazyList state — the pinned Back/Settings pills read it to
+    // pop out of the hero and color-morph into frosted pills on scroll
+    // (the Home sticky-bar construction).
+    val listState = rememberLazyListState()
 
     // Reloads stats on composition entry (nav return) AND on ON_RESUME
     // (returning from the app switcher), so the hero, pills, and lanes
@@ -209,6 +226,7 @@ fun ProfileScreen(navController: NavController) {
             activeCat = backdropActiveCat
         )
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -222,8 +240,6 @@ fun ProfileScreen(navController: NavController) {
                     family = heroFamily,
                     fill = heroFill,
                     ink = heroInk,
-                    onBack = { navController.popBackStack() },
-                    onSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } },
                     onEditName = {
                         nameInput = displayName
                         showNameDialog = true
@@ -272,6 +288,120 @@ fun ProfileScreen(navController: NavController) {
             }
             item { Spacer(Modifier.navigationBarsPadding().height(4.dp)) }
         }
+
+        // ── Pinned Back + Settings pills — Home's scroll-reactive sticky
+        // bar, adapted for Profile: resting on the hero they wear the
+        // hero-ink glass; as the hero scrolls away they POP (scale up from
+        // 0.97) and continuously color-morph into solid frosted floating
+        // pills. The scale is tied directly to the same eased scroll
+        // progress (no post-pop bounce), and the colors are animated paint
+        // values (no ripple flash) — the exact Home mechanism.
+        val stickyThresholdPx = with(LocalDensity.current) { ProfilePillThreshold.toPx() }
+        val stickyProgress by remember {
+            derivedStateOf {
+                if (listState.firstVisibleItemIndex >= 1) 1f
+                else (listState.firstVisibleItemScrollOffset / stickyThresholdPx).coerceIn(0f, 1f)
+            }
+        }
+        val frostShift = FastOutSlowInEasing.transform(stickyProgress)
+        val pillScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
+        val stickyDark = isCurioDarkTheme()
+        // Resting state = the current hero-ink glass pills (unchanged look
+        // over the banner); scrolled state = solid frosted pills.
+        val restPillBg = heroInk.copy(alpha = 0.18f)
+        val restPillRim = heroInk.copy(alpha = 0.32f)
+        val frostPillBg = if (stickyDark) Color(0xFF23242C) else Color.White
+        val frostPillRim = if (stickyDark) Color.White else Color(0xFFD9DEE6)
+        val frostPillIcon = if (stickyDark) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+        // Resolve solid target colors from scroll, then animate the paint.
+        val targetPillBg = lerp(restPillBg, frostPillBg, frostShift)
+        val targetPillRim = lerp(restPillRim, frostPillRim, frostShift)
+        val targetPillIcon = lerp(heroInk, frostPillIcon, frostShift)
+        val pillBg by animateColorAsState(
+            targetValue = targetPillBg,
+            animationSpec = tween(CurioMotion.Durations.Quick),
+            label = "profilePillBackground"
+        )
+        val pillRim by animateColorAsState(
+            targetValue = targetPillRim,
+            animationSpec = tween(CurioMotion.Durations.Quick),
+            label = "profilePillRim"
+        )
+        val pillIcon by animateColorAsState(
+            targetValue = targetPillIcon,
+            animationSpec = tween(CurioMotion.Durations.Quick),
+            label = "profilePillIcon"
+        )
+        // The hairline rim only appears once the pills start popping out of
+        // the hero — at rest they stay exactly as before (borderless glass).
+        val pillBorder = if (frostShift > 0.01f) BorderStroke(1.dp, pillRim) else null
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 12.dp)
+                .graphicsLayer {
+                    scaleX = pillScale
+                    scaleY = pillScale
+                    // Lifts off the hero as the frost deepens (eased).
+                    translationY = -2.dp.toPx() * frostShift
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CurioBackButton(
+                onClick = { navController.popBackStack() },
+                containerColor = pillBg,
+                contentColor = pillIcon,
+                border = pillBorder,
+                shadowElevation = 6.dp * frostShift,
+                disableRipple = true
+            )
+            ProfileSettingsPill(
+                onClick = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } },
+                bg = pillBg,
+                iconTint = pillIcon,
+                elevation = 6.dp * frostShift,
+                border = pillBorder
+            )
+        }
+    }
+}
+
+/** The Settings pill on Profile's sticky bar — a rippleless circle that
+ *  wears the same animated background/rim/icon as the back pill (Home's
+ *  TopBarPill construction). */
+@Composable
+private fun ProfileSettingsPill(
+    onClick: () -> Unit,
+    bg: Color,
+    iconTint: Color,
+    elevation: Dp,
+    border: BorderStroke?
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Surface(
+        shape = CircleShape,
+        color = bg,
+        border = border,
+        shadowElevation = elevation,
+        modifier = Modifier
+            .size(42.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CurioIcon(
+                name = CurioIcons.Settings,
+                contentDescription = "Settings",
+                tint = iconTint,
+                size = 22.dp
+            )
+        }
     }
 }
 
@@ -311,11 +441,12 @@ private fun ProfileDialogs(
  * banner tears at the bottom with the SAME bold soft tear + theme under-
  * sheet as Home (so the tear reads as a real paper edge), wears the
  * mirrored watermark collage of your most-explored lane's symbols, and
- * carries the identity row (avatar, name, tagline) plus the Edit pill. The
- * Streak · Saved · Lanes stats now live INSIDE the banner, pinned just
- * above the torn seam on a soft rose gradient pane — the exact Home stat
- * bar. Back + Settings ride as glass pills over the banner (Home's
- * top-bar treatment).
+ *  carries the identity row (avatar, name, tagline) plus the Edit pill. The
+ *  Streak · Saved · Lanes stats now live INSIDE the banner, pinned just
+ *  above the torn seam on a soft rose gradient pane — the exact Home stat
+ *  bar. Back + Settings are NOT rendered here anymore: they moved to the
+ *  scroll-reactive sticky bar in [ProfileScreen] (Home's pop + color-morph
+ *  pills); the hero keeps a spacer so its content clears the pinned pills.
  */
 @Composable
 private fun ProfileHero(
@@ -326,8 +457,6 @@ private fun ProfileHero(
     family: CategoryFamily,
     fill: Color,
     ink: Color,
-    onBack: () -> Unit,
-    onSettings: () -> Unit,
     onEditName: () -> Unit
 ) {
     val initial = name.firstOrNull()?.uppercase().orEmpty()
@@ -394,33 +523,11 @@ private fun ProfileHero(
                         .statusBarsPadding()
                         .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp)
                 ) {
-                    // ── Back + Settings — glass pills over the banner ──
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        CurioBackButton(
-                            onClick = onBack,
-                            containerColor = ink.copy(alpha = 0.18f),
-                            contentColor = ink,
-                            disableRipple = true
-                        )
-                        Surface(
-                            onClick = onSettings,
-                            shape = CircleShape,
-                            color = ink.copy(alpha = 0.18f)
-                        ) {
-                            CurioIcon(
-                                name = CurioIcons.Settings,
-                                contentDescription = "Settings",
-                                tint = ink,
-                                size = 24.dp,
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
-                    }
-                    Spacer(Modifier.height(10.dp))
+                    // ── Back + Settings moved to the pinned sticky bar in
+                    // ProfileScreen — this spacer keeps the hero content
+                    // clear of the overlaid pills (same footprint as the
+                    // 42dp pills + top padding).
+                    Spacer(Modifier.height(52.dp))
                     // ── Kicker — mirrors the quest card's "TODAY'S QUEST" ──
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -669,7 +776,7 @@ private fun profileReadableInk(fill: Color): Color = if (
 
 @Composable
 private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
-    CurioTornCard(seed = 0x1EAF) {
+    CurioSettingsCard {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(
                 modifier = Modifier
@@ -705,7 +812,7 @@ private fun LevelCard(level: Int, saved: Int, progress: Float, nextThreshold: In
 /** Single Settings entry — Profile owns identity/stats, Settings owns every preference. */
 @Composable
 private fun SettingsNavCard(onOpenSettings: () -> Unit) {
-    CurioTornCard(seed = 0x2EAF) {
+    CurioSettingsCard {
         Surface(
             onClick = onOpenSettings,
             color = Color.Transparent,
@@ -742,7 +849,7 @@ private fun SettingsNavCard(onOpenSettings: () -> Unit) {
 
 @Composable
 private fun LanesCard(counts: Map<CategoryId, Int>, onCabinet: () -> Unit) {
-    CurioTornCard(seed = 0x3EAF) {
+    CurioSettingsCard {
         CurioCardHeader(CurioIcons.Palette, "Your lanes", "Where you've been exploring")
         Spacer(Modifier.height(6.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -786,7 +893,7 @@ private fun SupportCard(
     onCrashLogs: () -> Unit,
     onReportBug: () -> Unit
 ) {
-    CurioTornCard(seed = 0x4EAF) {
+    CurioSettingsCard {
         CurioCardHeader(CurioIcons.Info, "Support & diagnostics", "Help, reports, and developer tools")
         CurioSettingsRow(CurioIcons.BugReport, "Report a bug", "Send feedback or an issue", onReportBug)
         if (crashCount > 0) {

@@ -1,5 +1,6 @@
 package com.curio.app.features.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,8 +31,8 @@ import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioSettingsInfoRow
+import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsRow
-import com.curio.app.ui.components.CurioTornCard
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioIcons
 
@@ -42,14 +43,18 @@ import com.curio.app.ui.theme.CurioIcons
 @Composable
 fun ExperimentsScreen(navController: NavController) {
     val context = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize()) {
-        // ── Watermark backdrop — the tear family's muted glyph collage
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // ── Watermark backdrop — muted category glyphs behind the content
         // (wildcard sparkle leads; experiments are category-neutral).
         CurioWatermarkBackdrop(
             activeCat = CurioCategories.byId(CategoryId.WILDCARD)
         )
         Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-            SettingsHeader(
+            SettingsHeroHeader(
                 title = "Experiments",
                 subtitle = "Try ideas before they ship",
                 onBack = { navController.popBackStack() }
@@ -61,7 +66,7 @@ fun ExperimentsScreen(navController: NavController) {
         ) {
             item { CurioSectionLabel("Card surfaces") }
             item {
-                CurioTornCard(seed = 0x31) {
+                CurioSettingsCard {
                     CurioCardHeader(CurioIcons.Layers, "Card & deck look", "Independent visual tests for Spin")
                     ExperimentSwitchRow("Top-lit deck cards", "Peek cards catch light at the top edge", AppPreferences.peekGradientState) {
                         AppPreferences.setPeekGradientEnabled(context, it)
@@ -106,7 +111,7 @@ fun ExperimentsScreen(navController: NavController) {
             }
             item { CurioSectionLabel("Layout & input") }
             item {
-                CurioTornCard(seed = 0x32) {
+                CurioSettingsCard {
                     CurioCardHeader(CurioIcons.ScienceGlyph, "Behavior tests", "Temporary options for tuning")
                     ExperimentSwitchRow("Smart Spin layout", "Fits the deck on short screens", AppPreferences.smartSpinLayoutState) {
                         AppPreferences.setSmartSpinLayoutEnabled(context, it)
