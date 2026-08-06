@@ -9,6 +9,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -102,10 +103,12 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun OnboardingScreen(navController: NavController) {
-    val pagerState = rememberPagerState(pageCount = { OnboardingSlides.size + 1 })
+    // Intro slides + theme step + permission setup (v7.100 adds the theme
+    // picker between the intros and the permissions).
+    val pagerState = rememberPagerState(pageCount = { OnboardingSlides.size + 2 })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val isLastSlide = pagerState.currentPage == OnboardingSlides.size
+    val isLastSlide = pagerState.currentPage == OnboardingSlides.size + 1
 
     // ── Setup-step permission state ───────────────────────────────────
     var notificationGranted by remember { mutableStateOf(hasNotificationPermission(context)) }
@@ -197,28 +200,37 @@ fun OnboardingScreen(navController: NavController) {
                     state = pagerState,
                     modifier = Modifier.fillMaxSize()
                 ) { pageIndex ->
-                    if (pageIndex == OnboardingSlides.size) {
-                        // Final step: permission setup, not an intro slide.
-                        SetupSlide(
-                            notificationGranted = notificationGranted,
-                            micGranted = micGranted,
-                            overlayGranted = overlayGranted,
-                            reminderWanted = reminderWanted,
-                            onReminderChange = { wanted ->
-                                reminderWanted = wanted
-                                AppPreferences.setReminderEnabled(context, wanted)
-                            },
-                            onRequestNotifications = {
-                                requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            },
-                            onRequestMic = {
-                                requestMic.launch(Manifest.permission.RECORD_AUDIO)
-                            },
-                            onRequestOverlay = { openOverlaySettings() }
-                        )
-                    } else {
-                        MorphEntrance {
-                            OnboardingSlide(slide = OnboardingSlides[pageIndex])
+                    when (pageIndex) {
+                        OnboardingSlides.size -> {
+                            // Theme step: light / dark / system + pastel toggle.
+                            MorphEntrance {
+                                ThemeSlide()
+                            }
+                        }
+                        OnboardingSlides.size + 1 -> {
+                            // Final step: permission setup, not an intro slide.
+                            SetupSlide(
+                                notificationGranted = notificationGranted,
+                                micGranted = micGranted,
+                                overlayGranted = overlayGranted,
+                                reminderWanted = reminderWanted,
+                                onReminderChange = { wanted ->
+                                    reminderWanted = wanted
+                                    AppPreferences.setReminderEnabled(context, wanted)
+                                },
+                                onRequestNotifications = {
+                                    requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                },
+                                onRequestMic = {
+                                    requestMic.launch(Manifest.permission.RECORD_AUDIO)
+                                },
+                                onRequestOverlay = { openOverlaySettings() }
+                            )
+                        }
+                        else -> {
+                            MorphEntrance {
+                                OnboardingSlide(slide = OnboardingSlides[pageIndex])
+                            }
                         }
                     }
                 }
@@ -232,7 +244,8 @@ fun OnboardingScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 if (!isLastSlide) {
-                    OnboardingSlides.forEachIndexed { index, _ ->
+                    // One dot per intro slide + one for the theme step.
+                    (0..OnboardingSlides.size).forEach { index ->
                         val selected = pagerState.currentPage == index
                         PageDot(
                             selected = selected,
@@ -854,26 +867,178 @@ private data class OnboardingSlideData(
     val seed: Int
 )
 
+// v7.100 — intro copy rewritten around the three beats of the loop:
+// shuffle → explore → keep.
 private val OnboardingSlides = listOf(
     OnboardingSlideData(
         glyph = CurioIcons.Casino,
-        headline = "Shuffle into something new",
-        subtext = "Curio hands you a topic you didn't know you wanted opened.",
+        headline = "Something new, every shuffle",
+        subtext = "Spin the deck and Curio deals a topic you didn't know you'd love — a film, an album, a book, a discovery.",
         seed = 0xBEEF
     ),
     OnboardingSlideData(
         glyph = CurioIcons.AutoAwesome,
-        headline = "Go explore it, your way",
-        subtext = "Listen, read, watch, scroll — wherever your curiosity wants to roam.",
+        headline = "Explore it your way",
+        subtext = "Listen, read, watch, or scroll. Your explore is timed, never rushed — wander wherever curiosity leads.",
         seed = 0xF00D
     ),
     OnboardingSlideData(
         glyph = CurioIcons.Inventory2,
-        headline = "Save it your way too",
-        subtext = "Voice notes, written reviews, moodboards, journal entries — pick the format that fits.",
+        headline = "Keep what moves you",
+        subtext = "Voice notes, reviews, moodboards, journal pages — save what stays with you in the format that fits.",
         seed = 0xCAFE
     )
 )
+
+/** Fixed tear seed for the theme step's paper tile (stable, never re-rolls). */
+private const val ONBOARDING_THEME_TEAR_SEED = 0x7E57E
+
+/** The theme step — a simple Light / Dark / System picker and one pastel
+ *  toggle, nothing else (v7.100). Applies instantly via the reactive
+ *  [AppPreferences] theme state, so picking Dark flips the whole app while
+ *  you look. */
+@Composable
+private fun ThemeSlide() {
+    val context = LocalContext.current
+    val mode = AppPreferences.themeModeState
+    val pastel = AppPreferences.pastelColorsState
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp, vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        val compact = maxHeight < 520.dp
+        val tileSize = if (compact) 100.dp else 120.dp
+        Column(
+            // Scrollable like the setup step — the theme row is taller than
+            // the intro slides, so short screens must never clip the pastel
+            // card (the Box centers the scrollable column as a whole).
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // ── Illustration — the torn-paper tile with a palette glyph ──
+            OnboardingTile(glyph = CurioIcons.Palette, seed = ONBOARDING_THEME_TEAR_SEED, size = tileSize)
+
+            Spacer(Modifier.height(if (compact) 14.dp else 20.dp))
+
+            Text(
+                text = "Pick your look",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(if (compact) 6.dp else 10.dp))
+
+            Text(
+                text = "Light, dark, or follow your phone — and keep Curio's soft pastel colors?",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(if (compact) 18.dp else 24.dp))
+
+            // ── Mode chips — Light / Dark / System (and nothing else) ──
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ThemeModeChip(
+                    label = "Light",
+                    glyph = CurioIcons.LightMode,
+                    selected = mode == AppPreferences.THEME_LIGHT,
+                    onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_LIGHT) }
+                )
+                ThemeModeChip(
+                    label = "Dark",
+                    glyph = CurioIcons.DarkMode,
+                    selected = mode == AppPreferences.THEME_DARK,
+                    onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_DARK) }
+                )
+                ThemeModeChip(
+                    label = "System",
+                    glyph = CurioIcons.Contrast,
+                    selected = mode == AppPreferences.THEME_SYSTEM,
+                    onClick = { AppPreferences.setThemeMode(context, AppPreferences.THEME_SYSTEM) }
+                )
+            }
+
+            Spacer(Modifier.height(if (compact) 14.dp else 18.dp))
+
+            // ── Pastel toggle — borderless box, the setup-card language ──
+            CurioSettingsCard(border = null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CurioIcon(
+                        name = CurioIcons.Palette,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        size = 20.dp
+                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Pastel colors",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            "Soft pastel accents instead of deep tones",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = pastel,
+                        onCheckedChange = { AppPreferences.setPastelColorsEnabled(context, it) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** One mode chip in the theme picker — filled with the primary color when
+ *  selected, a soft surface with a hairline rim otherwise. */
+@Composable
+private fun ThemeModeChip(
+    label: String,
+    glyph: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            CurioIcon(
+                name = glyph,
+                contentDescription = null,
+                tint = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                size = 16.dp
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
 
 object CurioOnboardingState {
     private const val PREFS = "curio_onboarding"

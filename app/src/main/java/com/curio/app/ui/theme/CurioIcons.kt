@@ -127,6 +127,8 @@ object CurioIcons {
     const val Schedule      = "schedule"
     const val LocalFire     = "local_fire_department"
     const val DarkMode      = "dark_mode"
+    const val LightMode     = "light_mode"      // sun — onboarding theme picker
+    const val Contrast      = "contrast"        // half-filled circle — system theme
 
     // ── Journal mood glyphs (Marginalia editor + saved-entry meta card)
     const val MoodCalm       = "self_improvement"    // meditating figure

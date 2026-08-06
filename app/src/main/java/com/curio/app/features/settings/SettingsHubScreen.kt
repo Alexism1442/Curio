@@ -1,6 +1,8 @@
 package com.curio.app.features.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -13,22 +15,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -247,12 +259,16 @@ fun settingsReadableInk(fill: Color): Color = if (
 }
 
 /** Compact hub for the redesigned settings experience — the Profile-style
- *  hero header on a watermark backdrop, with clean settings cards. */
+ *  hero header on a watermark backdrop, with clean settings cards and a
+ *  search box that filters every section live (v7.100). */
 @Composable
 fun SettingsHubScreen(navController: NavController) {
     val context = LocalContext.current
     // Feed the quests system — opening Settings completes the journey quest.
     LaunchedEffect(Unit) { CurioQuests.onSettingsVisited(context) }
+    var query by rememberSaveable { mutableStateOf("") }
+    val needle = query.trim()
+    val sections = remember(needle) { filterSettingsSections(SettingsSections, needle) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -280,65 +296,240 @@ fun SettingsHubScreen(navController: NavController) {
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                    item { CurioSectionLabel("Personalize") }
-                    item {
-                        // v7.93 — each Settings section sits in a BORDERLESS
-                        // box (CurioSettingsCard with border = null): the soft
-                        // surface container groups the rows without the
-                        // hairline outline the Quests/Support cards wear.
-                        CurioSettingsCard(border = null) {
-                            CurioCardHeader(CurioIcons.AutoAwesome, "How Curio feels", "Appearance and color")
-                            CurioSettingsRow(CurioIcons.DarkMode, "Appearance", "Theme, tint, and pastel color") {
-                                navController.navigate(CurioRoutes.SETTINGS_APPEARANCE) { launchSingleTop = true }
-                            }
-                            CurioSettingsDivider()
-                            CurioSettingsRow(CurioIcons.Notifications, "Notifications", "Reminders and explore controls") {
-                                navController.navigate(CurioRoutes.SETTINGS_NOTIFICATIONS) { launchSingleTop = true }
-                            }
-                            CurioSettingsDivider()
-                            CurioSettingsRow(CurioIcons.Mic, "Recording", "Voice-note quality and dictation") {
-                                navController.navigate(CurioRoutes.SETTINGS_RECORDING) { launchSingleTop = true }
-                            }
-                        }
-                    }
-                    item { CurioSectionLabel("Explore") }
-                    item {
-                        CurioSettingsCard(border = null) {
-                            CurioCardHeader(CurioIcons.ScienceGlyph, "Experiments", "Try visual ideas before they ship")
-                            CurioSettingsRow(CurioIcons.Layers, "Card & deck experiments", "Main card, peek deck, and Spin tests") {
-                                navController.navigate(CurioRoutes.EXPERIMENTS) { launchSingleTop = true }
-                            }
-                            CurioSettingsDivider()
-                            CurioSettingsRow(CurioIcons.DragHandle, "Manage categories", "Show, hide, or reorder lanes") {
-                                navController.navigate(CurioRoutes.MANAGE_CATEGORIES) { launchSingleTop = true }
-                            }
-                            CurioSettingsDivider()
-                            CurioSettingsRow(CurioIcons.History, "Topic history", "Revisit what you explored") {
-                                navController.navigate(CurioRoutes.TOPIC_HISTORY) { launchSingleTop = true }
-                            }
-                        }
-                    }
-                    item { CurioSectionLabel("Safety & support") }
-                    item {
-                        CurioSettingsCard(border = null) {
-                            CurioCardHeader(CurioIcons.Backup, "Your data", "Backups and restore")
-                            CurioSettingsRow(CurioIcons.Backup, "Backup & restore", "Keep captures and settings safe") {
-                                navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
-                            }
-                            CurioSettingsDivider()
-                            CurioSettingsRow(CurioIcons.Info, "About Curio", "Replay intro and app details") {
-                                navController.navigate(CurioRoutes.SETTINGS_ABOUT) { launchSingleTop = true }
+                // ── Search — filters every section below as you type ──
+                item {
+                    SettingsSearchField(
+                        query = query,
+                        onQueryChange = { query = it }
+                    )
+                }
+                sections.forEach { section ->
+                    item { CurioSectionLabel(section.label) }
+                    section.cards.forEach { card ->
+                        item {
+                            // v7.93 — each Settings section sits in a
+                            // BORDERLESS box (CurioSettingsCard with border
+                            // = null): the soft surface container groups the
+                            // rows without the hairline outline the
+                            // Quests/Support cards wear.
+                            CurioSettingsCard(border = null) {
+                                if (card.headerIcon != null && card.headerTitle != null && card.headerSubtitle != null) {
+                                    CurioCardHeader(card.headerIcon, card.headerTitle, card.headerSubtitle)
+                                }
+                                card.rows.forEachIndexed { index, row ->
+                                    if (index > 0) CurioSettingsDivider()
+                                    CurioSettingsRow(row.icon, row.title, row.subtitle) {
+                                        navController.navigate(row.route) { launchSingleTop = true }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+                // ── Empty search state ────────────────────────────────
+                if (needle.isNotEmpty() && sections.isEmpty()) {
+                    item { SettingsNoResults(needle) }
+                }
             }
+        }
         // Drawn on top of the scroll content — rows slide under the ragged
         // tear as they scroll up.
         SettingsHeroHeader(
             title = "Settings",
             subtitle = "Tune Curio your way",
             onBack = { navController.popBackStack() }
+        )
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Settings search — the hub's rows are declared once as data (v7.100) so the
+// search box can filter them live: sections keep any card that matches, cards
+// keep any row that matches (a card whose header or section matches keeps ALL
+// its rows), and the whole list collapses to a friendly empty state.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** One tappable settings row. */
+private data class SettingsRowEntry(
+    val icon: String,
+    val title: String,
+    val subtitle: String,
+    val route: String
+)
+
+/** One grouped card of rows inside a settings section. */
+private data class SettingsCardEntry(
+    val headerIcon: String?,
+    val headerTitle: String?,
+    val headerSubtitle: String?,
+    val rows: List<SettingsRowEntry>
+)
+
+/** One labelled settings section (Personalize / Explore / Safety & support). */
+private data class SettingsSectionEntry(
+    val label: String,
+    val cards: List<SettingsCardEntry>
+)
+
+/** The full hub, declared once — the single source for both the rendered
+ *  list and the search filter. */
+private val SettingsSections = listOf(
+    SettingsSectionEntry(
+        label = "Personalize",
+        cards = listOf(
+            SettingsCardEntry(
+                headerIcon = CurioIcons.AutoAwesome,
+                headerTitle = "How Curio feels",
+                headerSubtitle = "Appearance and color",
+                rows = listOf(
+                    SettingsRowEntry(CurioIcons.DarkMode, "Appearance", "Theme, tint, and pastel color", CurioRoutes.SETTINGS_APPEARANCE),
+                    SettingsRowEntry(CurioIcons.Notifications, "Notifications", "Reminders and explore controls", CurioRoutes.SETTINGS_NOTIFICATIONS),
+                    SettingsRowEntry(CurioIcons.Mic, "Recording", "Voice-note quality and dictation", CurioRoutes.SETTINGS_RECORDING)
+                )
+            )
+        )
+    ),
+    SettingsSectionEntry(
+        label = "Explore",
+        cards = listOf(
+            SettingsCardEntry(
+                headerIcon = CurioIcons.ScienceGlyph,
+                headerTitle = "Experiments",
+                headerSubtitle = "Try visual ideas before they ship",
+                rows = listOf(
+                    SettingsRowEntry(CurioIcons.Layers, "Card & deck experiments", "Main card, peek deck, and Spin tests", CurioRoutes.EXPERIMENTS),
+                    SettingsRowEntry(CurioIcons.DragHandle, "Manage categories", "Show, hide, or reorder lanes", CurioRoutes.MANAGE_CATEGORIES),
+                    SettingsRowEntry(CurioIcons.History, "Topic history", "Revisit what you explored", CurioRoutes.TOPIC_HISTORY)
+                )
+            )
+        )
+    ),
+    SettingsSectionEntry(
+        label = "Safety & support",
+        cards = listOf(
+            SettingsCardEntry(
+                headerIcon = CurioIcons.Backup,
+                headerTitle = "Your data",
+                headerSubtitle = "Backups and restore",
+                rows = listOf(
+                    SettingsRowEntry(CurioIcons.Backup, "Backup & restore", "Keep captures and settings safe", CurioRoutes.SETTINGS_DATA),
+                    SettingsRowEntry(CurioIcons.Info, "About Curio", "Replay intro and app details", CurioRoutes.SETTINGS_ABOUT)
+                )
+            )
+        )
+    )
+)
+
+/** Keeps only sections/cards/rows matching [needle] (case-insensitive). A
+ *  card whose header or section matches keeps ALL of its rows. */
+private fun filterSettingsSections(
+    sections: List<SettingsSectionEntry>,
+    needle: String
+): List<SettingsSectionEntry> {
+    if (needle.isBlank()) return sections
+    return sections.mapNotNull { section ->
+        val sectionMatches = section.label.contains(needle, ignoreCase = true)
+        val cards = section.cards.mapNotNull { card ->
+            val headerMatches = card.headerTitle?.contains(needle, ignoreCase = true) == true
+            val rows = card.rows.filter { row ->
+                row.title.contains(needle, ignoreCase = true) ||
+                    row.subtitle.contains(needle, ignoreCase = true)
+            }
+            if (!headerMatches && !sectionMatches && rows.isEmpty()) null
+            else card.copy(rows = if (headerMatches || sectionMatches) card.rows else rows)
+        }
+        if (cards.isEmpty()) null else section.copy(cards = cards)
+    }
+}
+
+/** Compact search box — magnifier + live query + one-tap clear. */
+@Composable
+private fun SettingsSearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CurioIcon(
+                name = CurioIcons.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                size = 20.dp
+            )
+            Box(modifier = Modifier.weight(1f)) {
+                if (query.isEmpty()) {
+                    Text(
+                        "Search settings",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                }
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            if (query.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .clickable { onQueryChange("") },
+                    contentAlignment = Alignment.Center
+                ) {
+                    CurioIcon(
+                        name = CurioIcons.Close,
+                        contentDescription = "Clear search",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        size = 18.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Friendly empty state when the search matches nothing. */
+@Composable
+private fun SettingsNoResults(query: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CurioIcon(
+            name = CurioIcons.SearchOff,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            size = 30.dp
+        )
+        Text(
+            text = "No settings found for \"$query\"",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "Try a different word — like \"theme\", \"reminder\", or \"backup\".",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
         )
     }
 }

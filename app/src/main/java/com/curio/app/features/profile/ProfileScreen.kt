@@ -394,7 +394,7 @@ fun ProfileScreen(navController: NavController) {
                 shadowElevation = 6.dp * frostShift,
                 disableRipple = true
             )
-            ProfileSettingsPill(
+            ProfileSearchPill(
                 onClick = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } },
                 bg = pillBg,
                 iconTint = pillIcon,
@@ -405,11 +405,12 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-/** The Settings pill on Profile's sticky bar — a rippleless circle that
+/** The search pill on Profile's sticky bar — a rippleless circle that
  *  wears the same animated background/rim/icon as the back pill (Home's
- *  TopBarPill construction). */
+ *  TopBarPill construction). Opens Settings, whose hub now carries a
+ *  search box that filters every settings section as you type (v7.100). */
 @Composable
-private fun ProfileSettingsPill(
+private fun ProfileSearchPill(
     onClick: () -> Unit,
     bg: Color,
     iconTint: Color,
@@ -432,8 +433,8 @@ private fun ProfileSettingsPill(
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CurioIcon(
-                name = CurioIcons.Settings,
-                contentDescription = "Settings",
+                name = CurioIcons.Search,
+                contentDescription = "Search settings",
                 tint = iconTint,
                 size = 22.dp
             )

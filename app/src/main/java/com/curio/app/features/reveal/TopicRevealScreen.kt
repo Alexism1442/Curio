@@ -632,25 +632,31 @@ fun TopicRevealScreen(
                     }
                 }
 
-                // ── 8. "Already …" — marks the topic DONE (it never shows
-                //    in the NEXT shuffle again) and asks if the user wants to
-                //    write about it now. No explore session is started and
-                //    the topic is never recorded as unexplored. The button
-                //    reflects the done state live: ghost when open, filled
-                //    with a check when marked done (v7.92).
+                // ── 8. "Already …" — ONE button that toggles the done mark
+                //    in place (no separate undo row): ghost when open, filled
+                //    with a check when marked done. Tapping when NOT done
+                //    marks the topic DONE (it never shows in the NEXT shuffle
+                //    again) and asks whether to write about it now. Tapping
+                //    when DONE unmarks it — straight back to the deck. No
+                //    explore session is started and the topic is never
+                //    recorded as unexplored. (v7.92 → v7.100 single-toggle)
                 Surface(
                     onClick = {
                         val topic = resolved ?: return@Surface
-                        // Marking done IS engaging — backing out must not
-                        // record the topic as unexplored afterwards.
+                        // Marking OR unmarking is engaging — backing out must
+                        // not record the topic as unexplored afterwards.
                         engaged = true
-                        if (!isDone) {
+                        if (isDone) {
+                            // Tap again to undo — the topic returns to the
+                            // shuffle deck (the exact inverse of markDone).
+                            ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
+                        } else {
                             // Records explored (Home recents + quests) AND
                             // marks it done so the next shuffle never deals
                             // it again.
                             ExploreSessionStore.markDone(context, cat.id, topic.name)
+                            showAlreadyDoneDialog = true
                         }
-                        showAlreadyDoneDialog = true
                     },
                     enabled = resolved != null,
                     shape = RoundedCornerShape(50),
@@ -680,30 +686,11 @@ fun TopicRevealScreen(
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (isDone) "${alreadyDoneLabel(cat)} ✓" else alreadyDoneLabel(cat),
+                            // One tick, not two — the Check icon carries it;
+                            // the label adds the undo affordance instead.
+                            text = if (isDone) "${alreadyDoneLabel(cat)} — undo" else alreadyDoneLabel(cat),
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                             color = if (isDone) cat.onAccent() else MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-
-                // ── 8b. Unwatch — only when the topic is already marked
-                //    done: returns it to the shuffle deck (v7.92).
-                if (isDone) {
-                    TextButton(
-                        onClick = {
-                            val topic = resolved ?: return@TextButton
-                            ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
-                            showAlreadyDoneDialog = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                    ) {
-                        Text(
-                            text = unwatchLabel(cat),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -791,11 +778,11 @@ fun TopicRevealScreen(
         )
     }
 
-    // v7.80/v7.92 — "Already …" confirmation: the topic is already marked
-    // done; the dialog only asks whether to write about it now. Dismissing
+    // v7.80/v7.92 — "Already …" confirmation: shown right after marking the
+    // topic done; it only asks whether to write about it now. Dismissing
     // closes the dialog and STAYS on the reveal screen — the button has
-    // already flipped to the marked-done state (and the unwatch row sits
-    // under it), so there's no reason to pop back anymore.
+    // already flipped to the marked-done state (tapping it again undoes),
+    // so there's no reason to pop back anymore.
     if (showAlreadyDoneDialog && resolved != null) {
         val topic = resolved
         AlertDialog(
@@ -1230,15 +1217,6 @@ private fun alreadyDoneLabel(cat: com.curio.app.data.CurioCategory): String = wh
     CategoryId.ARTWORKS -> "Already seen"
     CategoryId.PAINTERS -> "Already explored"
     else -> "Already explored"
-}
-
-/** The unwatch label — the category's "not … after all" verb (v7.92). */
-private fun unwatchLabel(cat: com.curio.app.data.CurioCategory): String = when (cat.id) {
-    CategoryId.FILMS, CategoryId.DIRECTORS -> "Not watched after all — back to the deck"
-    CategoryId.ALBUMS, CategoryId.ARTISTS -> "Not listened after all — back to the deck"
-    CategoryId.BOOKS, CategoryId.AUTHORS -> "Not read after all — back to the deck"
-    CategoryId.ARTWORKS -> "Not seen after all — back to the deck"
-    else -> "Not explored after all — back to the deck"
 }
 
 /** Circular like/dislike toggle — active state fills with the category accent. */
