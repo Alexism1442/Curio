@@ -1685,7 +1685,10 @@ private fun Carousel(
                         landed = landedTopic != null,
                         shuffling = shuffling,
                         opening = opening,
-                        enabled = enabled && landedTopic != null,
+                        // The front card can show an idle-deck topic before the
+                        // first shuffle, so its tap target must follow the
+                        // rendered card instead of requiring a landed topic.
+                        enabled = enabled && topic != null,
                         onTap = onCardTap
                     )
                 } else {
