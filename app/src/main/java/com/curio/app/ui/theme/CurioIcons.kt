@@ -140,10 +140,12 @@ object CurioIcons {
     const val CalendarToday  = "calendar_today"
 
     // ── Quests / levels / achievements (v7.40)
-    const val EmojiEvents     = "emoji_events"          // trophy — achievements shelf
+    const val EmojiEvents     = "workspace_premium"     // trophy — achievements shelf (v7.89: glyph verified in font subset; "emoji_events" was tofu)
     const val Flag            = "flag"                  // journey marker
     const val WorkspacePremium = "workspace_premium"    // badge — level milestones
     const val TaskAlt         = "task_alt"              // current quest
+    const val Database        = "database"              // v7.89 — Browse Topics drawer entry (verified in font subset)
+    const val SupportAgent    = "support_agent"          // v7.89 — Support & diagnostics drawer entry (verified in font subset)
 
     /**
      * Per-family symbol sets for the saved-entry hero's decorative watermark

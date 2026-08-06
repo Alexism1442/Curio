@@ -2,7 +2,6 @@ package com.curio.app.features.cabinet
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +56,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -709,10 +707,9 @@ private fun CabinetHeroHeader(
  * The Cabinet's filter chip row, drawn ON TOP of the scroll content.
  *
  * Scroll-reactive, like Profile's pinned pills: as the grid scrolls, the
- * row pops (scale 0.97 → 1.0, eased), lifts a few dp, and a frosted pill
- * surface morphs in behind the chips (transparent → frosted with a hairline
- * rim + shadow). It pins just below the hero's ragged tear, and the entry
- * cards scroll underneath it.
+ * row lifts a few dp to pin just below the hero's ragged tear, and every
+ * pill pops on its own (scale 0.97 → 1.0, eased) — no card background
+ * behind the chips (v7.89). The entry cards scroll underneath the row.
  */
 @Composable
 private fun BoxScope.CabinetStickyChipBar(
@@ -741,51 +738,27 @@ private fun BoxScope.CabinetStickyChipBar(
     }
     val frostShift = FastOutSlowInEasing.transform(progress)
     val popScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
-    val stickyDark = isCurioDarkTheme()
-    // Resting state = no bar (the chips float on the page wash); scrolled
-    // state = a solid frosted pill bar — the Profile pill morph.
-    val restBg = Color.Transparent
-    val frostBg = if (stickyDark) Color(0xFF23242C).copy(alpha = 0.94f) else Color.White.copy(alpha = 0.94f)
-    val restRim = Color.Transparent
-    val frostRim = if (stickyDark) Color.White.copy(alpha = 0.16f) else Color(0xFFD9DEE6)
-    // Resolve solid target colors from scroll, then animate the paint.
-    val targetBarBg = lerp(restBg, frostBg, frostShift)
-    val targetBarRim = lerp(restRim, frostRim, frostShift)
-    val barBg by animateColorAsState(
-        targetValue = targetBarBg,
-        animationSpec = tween(CurioMotion.Durations.Quick),
-        label = "cabinetChipBarBackground"
-    )
-    val barRim by animateColorAsState(
-        targetValue = targetBarRim,
-        animationSpec = tween(CurioMotion.Durations.Quick),
-        label = "cabinetChipBarRim"
-    )
     val liftPx = with(LocalDensity.current) { (CabinetChipBarRestTop - CabinetChipBarPinnedTop).toPx() }
 
-    Surface(
-        shape = RoundedCornerShape(50),
-        color = barBg,
-        border = if (frostShift > 0.02f) BorderStroke(1.dp, barRim) else null,
-        shadowElevation = 8.dp * frostShift,
+    // No frosted card behind the chips — each pill pops on its own (v7.89:
+    // per-pill pop-up animation as the bar lifts to pin just below the tear).
+    val hasLegacyEntries = entries.any { it.isLegacy }
+    // Vertical padding keeps the row at the tuned bar height (the old
+    // frosted container supplied it) so the pin/progress constants hold.
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .align(Alignment.TopStart)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(vertical = 6.dp)
             .offset(y = CabinetChipBarRestTop)
             .graphicsLayer {
                 translationY = -liftPx * frostShift
-                scaleX = popScale
-                scaleY = popScale
             }
     ) {
-        val hasLegacyEntries = entries.any { it.isLegacy }
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 6.dp)
-        ) {
-            item("all") {
+        item("all") {
+            CabinetChipPop(popScale) {
                 FilterChipLite(
                     label = "All",
                     accent = MaterialTheme.colorScheme.primary,
@@ -797,7 +770,9 @@ private fun BoxScope.CabinetStickyChipBar(
                     onClick = onSelectAll
                 )
             }
-            items(CurioCategories.visible) { cat ->
+        }
+        items(CurioCategories.visible) { cat ->
+            CabinetChipPop(popScale) {
                 FilterChipLite(
                     label = cat.displayName,
                     accent = cat.themedAccent(),
@@ -814,11 +789,13 @@ private fun BoxScope.CabinetStickyChipBar(
                     onClick = { onSelectCategory(cat.id) }
                 )
             }
-            // Legacy sits LAST, after every native category — and only when
-            // there's something to show (or the legacy view is currently
-            // open, so the active chip stays visible/deselectable).
-            if (hasLegacyEntries || showLegacyOnly) {
-                item("legacy") {
+        }
+        // Legacy sits LAST, after every native category — and only when
+        // there's something to show (or the legacy view is currently
+        // open, so the active chip stays visible/deselectable).
+        if (hasLegacyEntries || showLegacyOnly) {
+            item("legacy") {
+                CabinetChipPop(popScale) {
                     FilterChipLite(
                         label = "Legacy",
                         accent = MaterialTheme.colorScheme.tertiary,
@@ -833,6 +810,21 @@ private fun BoxScope.CabinetStickyChipBar(
             }
         }
     }
+}
+
+/** Per-pill pop — each chip scales 0.97 → 1.0 as the bar lifts, with no
+ *  frosted card behind the row (v7.89). */
+@Composable
+private fun CabinetChipPop(
+    popScale: Float,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier.graphicsLayer {
+            scaleX = popScale
+            scaleY = popScale
+        }
+    ) { content() }
 }
 
 /** One mirrored watermark glyph on the Cabinet hero (settings/profile style). */

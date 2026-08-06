@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -33,7 +34,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -72,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.curio.app.BuildConfig
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryFamily
 import com.curio.app.data.CategoryId
@@ -144,7 +145,8 @@ import java.util.Calendar
  *      Settings.
  *
  *  The screen still hosts the `ModalNavigationDrawer` for secondary
- *  navigation (Profile, History, Manage Categories, Replay Intro).
+ *  navigation (Quests, History, Manage Categories, Browse Topics, Support)
+ *  — v7.89: the drawer wears the torn-rose hero family.
  */
 /** The quest hero's solid body height — the torn banner. Tall enough for
  *  the greeting + the Streak · Cabinet · Recent bar (pinned just above the
@@ -1383,135 +1385,194 @@ private fun ReminderNudgeCard(onTap: () -> Unit, surface: Color = MaterialTheme.
     }
 }
 
-// Drawer (kept; minor polish)
-// ═══════════════════════════════════════════════════════════════════════
+// Drawer - torn-banner family (v7.89): the rose hero wears the same seeded
+// ragged tear as Home/Profile/Settings, the menu rows scroll UNDER the seam,
+// and every row is flat (no card shell) with an icon chip + chevron.
+// ================================================================
+
+private val HomeDrawerHeroHeight = 168.dp
+private val HomeDrawerSheetExtent = 22.dp
+private const val HOME_DRAWER_TEAR_SEED = 0xD2A7E
 
 @Composable
 private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
     val context = LocalContext.current
     val displayName = AppPreferences.getDisplayName(context)
-    val roseAccent = homeRoseAccent()
+    val heroFill = homeRoseAccent()
+    val drawerInk = homeReadableInk(heroFill)
+    val heroTornShape = remember(HOME_DRAWER_TEAR_SEED) {
+        SoftTornBottomShape(HOME_DRAWER_TEAR_SEED, bold = true)
+    }
+    val sheetShape = remember(HOME_DRAWER_TEAR_SEED) {
+        SoftTornSheetShape(HOME_DRAWER_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
+    }
+    val heroSymbols = CurioIcons.heroWatermarkSymbols(CategoryFamily.WILDCARD)
+    val heroPairs = listOf(
+        HomeHeroPair(biasX = 0.93f, biasY = -0.85f, size = 44.dp, rotation = 12f, alpha = 0.11f),
+        HomeHeroPair(biasX = 0.55f, biasY = -0.64f, size = 48.dp, rotation = 8f, alpha = 0.13f),
+        HomeHeroPair(biasX = 0.94f, biasY = -0.12f, size = 56.dp, rotation = 14f, alpha = 0.14f),
+        HomeHeroPair(biasX = 0.56f, biasY = 0.34f, size = 50.dp, rotation = 10f, alpha = 0.13f),
+        HomeHeroPair(biasX = 0.94f, biasY = 0.62f, size = 44.dp, rotation = 6f, alpha = 0.11f)
+    )
+
     ModalDrawerSheet(
         modifier = Modifier.width(320.dp),
         drawerContainerColor = MaterialTheme.colorScheme.surface,
         drawerContentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        // ── Opaque paper header with a clear category edge ──────────────
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .padding(horizontal = 24.dp, vertical = 28.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Box(modifier = Modifier.fillMaxSize()) {
+            // -- Menu rows - drawn first so they scroll UNDER the tear ------
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = HomeDrawerHeroHeight + HomeDrawerSheetExtent + 14.dp,
+                    bottom = 64.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                item("quests") {
+                    DrawerNavItem(
+                        icon = CurioIcons.WorkspacePremium,
+                        label = "Quests & Levels",
+                        iconTint = CurioColors.ButterYellow
+                    ) { onNavigate(CurioRoutes.QUESTS) }
+                }
+                item("history") {
+                    DrawerNavItem(
+                        icon = CurioIcons.History,
+                        label = "Topic History",
+                        iconTint = CurioColors.DustyBlue
+                    ) { onNavigate(CurioRoutes.TOPIC_HISTORY) }
+                }
+                item("manage") {
+                    DrawerNavItem(
+                        icon = CurioIcons.DragHandle,
+                        label = "Manage Categories",
+                        iconTint = CurioColors.Sage
+                    ) { onNavigate(CurioRoutes.MANAGE_CATEGORIES) }
+                }
+                item("database") {
+                    DrawerNavItem(
+                        icon = CurioIcons.Database,
+                        label = "Browse Topics",
+                        iconTint = CurioColors.CategorySky
+                    ) { onNavigate(CurioRoutes.DATABASE) }
+                }
+                item("support") {
+                    DrawerNavItem(
+                        icon = CurioIcons.SupportAgent,
+                        label = "Support & diagnostics",
+                        iconTint = CurioColors.CoralBlush
+                    ) { onNavigate(CurioRoutes.SUPPORT) }
+                }
+            }
+
+            // -- Torn rose hero - drawn on top, rows vanish at the seam -----
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(HomeDrawerHeroHeight + HomeDrawerSheetExtent)
+            ) {
+                // Theme-matched under-sheet (same seed -> pixel-aligned seam).
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(42.dp)
+                        .offset(y = HomeDrawerHeroHeight - 18.dp)
+                        .clip(sheetShape)
+                        .background(MaterialTheme.colorScheme.background)
+                )
+                // Torn-edge shadow - hairline rim under the ragged seam.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(HomeDrawerHeroHeight)
+                        .offset(y = 1.dp)
+                        .clip(heroTornShape)
+                        .background(Color.Black.copy(alpha = 0.20f))
+                )
+                // Solid rose banner with the bold torn bottom edge.
+                Surface(
+                    shape = heroTornShape,
+                    color = heroFill,
+                    shadowElevation = 0.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(HomeDrawerHeroHeight)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = roseAccent.copy(alpha = 0.18f),
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        // Mirrored watermark collage - the Home hero's symbols.
+                        heroSymbols.forEachIndexed { i, glyph ->
+                            val pair = heroPairs[i % heroPairs.size]
                             CurioIcon(
-                                CurioIcons.AutoAwesome, null,
-                                tint = roseAccent,
-                                size = 28.dp
+                                name = glyph,
+                                contentDescription = null,
+                                tint = drawerInk.copy(alpha = pair.alpha),
+                                size = pair.size,
+                                modifier = Modifier
+                                    .align(BiasAlignment(pair.biasX, pair.biasY))
+                                    .padding(10.dp)
+                                    .graphicsLayer { rotationZ = pair.rotation }
+                            )
+                        }
+                        // Brand + greeting pinned just above the tear.
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(start = 24.dp, end = 24.dp, bottom = 28.dp)
+                        ) {
+                            Text(
+                                "CURIO",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 2.sp
+                                ),
+                                color = drawerInk.copy(alpha = 0.85f)
+                            )
+                            Text(
+                                "Hi $displayName",
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    fontWeight = FontWeight.ExtraBold
+                                ),
+                                color = drawerInk,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                "Spin it. Explore it. Capture it.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = drawerInk.copy(alpha = 0.78f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
-                    Column {
-                        Text(
-                            "Curio",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            "Hi $displayName",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
             }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .background(roseAccent)
-        )
-        
-        Spacer(Modifier.height(16.dp))
-        
-        // ── Redesigned nav items with better spacing and icons ──────────
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            item("profile") {
-                DrawerNavItem(
-                    icon = CurioIcons.Person,
-                    label = "Profile & Settings",
-                    iconTint = CurioColors.Lilac
-                ) { onNavigate(CurioRoutes.PROFILE) }
+
+            // -- Pinned footer - accurate build version + tagline -----------
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp)
+            ) {
+                Text(
+                    "v${BuildConfig.VERSION_NAME}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+                Text(
+                    "Made with curiosity",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                )
             }
-            item("quests") {
-                DrawerNavItem(
-                    icon = CurioIcons.EmojiEvents,
-                    label = "Quests & Levels",
-                    iconTint = CurioColors.ButterYellow
-                ) { onNavigate(CurioRoutes.QUESTS) }
-            }
-            item("history") {
-                DrawerNavItem(
-                    icon = CurioIcons.History,
-                    label = "Topic History",
-                    iconTint = CurioColors.DustyBlue
-                ) { onNavigate(CurioRoutes.TOPIC_HISTORY) }
-            }
-            item("manage") {
-                DrawerNavItem(
-                    icon = CurioIcons.DragHandle,
-                    label = "Manage Categories",
-                    iconTint = CurioColors.Sage
-                ) { onNavigate(CurioRoutes.MANAGE_CATEGORIES) }
-            }
-            item("replay") {
-                DrawerNavItem(
-                    icon = CurioIcons.Replay,
-                    label = "Replay Intro",
-                    iconTint = CurioColors.Peach
-                ) {
-                    com.curio.app.features.onboarding.CurioOnboardingState.reset(context)
-                    onNavigate(CurioRoutes.ONBOARDING)
-                }
-            }
-        }
-        
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        
-        // ── Footer with version info ────────────────────────────────────
-        Column(
-            Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                "v1.0.0",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
-            Text(
-                "Made with curiosity",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-            )
         }
     }
 }
@@ -1523,22 +1584,23 @@ private fun DrawerNavItem(
     iconTint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     onClick: () -> Unit
 ) {
+    // Flat row (no card shell) - icon chip + label + chevron on the page.
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        color = Color.Transparent,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(horizontal = 10.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = iconTint.copy(alpha = 0.24f),
+                color = iconTint.copy(alpha = 0.16f),
                 modifier = Modifier.size(40.dp)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -1552,295 +1614,13 @@ private fun DrawerNavItem(
             Text(
                 label,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Greeting helpers
-// ═══════════════════════════════════════════════════════════════════════
-
-private fun greetingWordForNow(): String {
-    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-    return when (hour) {
-        in 5..11 -> "Good morning"
-        in 12..16 -> "Good afternoon"
-        in 17..21 -> "Good evening"
-        else -> "Welcome back"
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Explore-session topic row (recently explored / recently unexplored)
-// ═══════════════════════════════════════════════════════════════════════
-
-@Composable
-private fun ExploreTopicRow(
-    category: CurioCategory,
-    topicName: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    tag: String? = null
-) {
-    val accent = category.themedAccent()
-    // Solid category-tinted card — the recents topics wear a solid
-    // background in their category's color family (matching the gradient
-    // identity), instead of a backgroundless row.
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        color = category.categorySurface(),
-        shadowElevation = 0.dp,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            CurioIcon(category.iconGlyph, null, tint = category.categoryInk(), size = 24.dp)
-            Column(modifier = Modifier.weight(1f)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        topicName,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                    if (tag != null) {
-                        // Small accent pill — signals a topic the user left
-                        // unexplored earlier and came back to (resumed).
-                        Surface(
-                            shape = RoundedCornerShape(50),
-                            color = accent.copy(alpha = 0.14f),
-                            // Same hairline rim as the detail page's #tag
-                            // chips — the deep ink text + pastel fill alone
-                            // read muddy on the tinted card (v7.32).
-                            border = BorderStroke(1.dp, accent.copy(alpha = 0.4f))
-                        ) {
-                            Text(
-                                text = tag,
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                                color = category.categoryInk(),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-                }
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            CurioForwardArrow(
-                contentDescription = subtitle,
-                tint = category.categoryInk(),
-                modifier = Modifier.padding(horizontal = 2.dp, vertical = 4.dp)
-            )
-        }
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Currently exploring — live session card
-// ═══════════════════════════════════════════════════════════════════════
-
-@Composable
-private fun CurrentlyExploringCard(
-    session: ExploreSession,
-    onDone: () -> Unit,
-    onKeepExploring: () -> Unit
-) {
-    val accent = CurioCategories.byId(session.categoryId).themedAccent()
-    val cat = CurioCategories.byId(session.categoryId)
-    // Use the category's resolved deep ink for the active-session controls.
-    // The pastel fill is intentionally soft; the label, timer glyph and
-    // secondary action should read with a firm, darker edge against it.
-    val exploreInk = cat.categoryInk()
-    // Live elapsed time — pause-aware (session.elapsedMillis banks paused
-    // time, so a paused session shows a frozen reading) and recomputed from
-    // the persisted session start so it survives process restarts; the tick
-    // cancels when the card leaves composition.
-    var elapsedMillis by remember(session.startMillis) {
-        mutableStateOf(session.elapsedMillis())
-    }
-    LaunchedEffect(session.startMillis, session.paused) {
-        if (session.paused) return@LaunchedEffect
-        while (true) {
-            elapsedMillis = session.elapsedMillis()
-            delay(1_000)
-        }
-    }
-
-    // Same design language as the rest of Home: a solid category-tinted
-    // card (matching the recents rows) with a faint category glyph
-    // watermark echoing the hero, and a quest-style eyebrow.
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = cat.categorySurface(),
-        shadowElevation = 0.dp,
-        border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        Box {
-            // Watermark glyph — the session's category, like the hero's.
-            CurioIcon(
-                name = cat.iconGlyph,
-                contentDescription = null,
-                tint = accent.copy(alpha = 0.10f),
-                size = 96.dp,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 10.dp)
-            )
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(13.dp))
-                            .background(accent.copy(alpha = 0.16f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CurioIcon(
-                            CurioIcons.Timer, null,
-                            tint = exploreInk,
-                            size = 22.dp
-                        )
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "CURRENTLY EXPLORING",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 1.4.sp
-                            ),
-                            color = exploreInk
-                        )
-                        Text(
-                            session.topicName,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
-                val overRecommended = elapsedMillis >= session.durationMinutes * 60_000L
-                Text(
-                    when {
-                        session.paused ->
-                            "Paused at ${formatElapsed(elapsedMillis)} — ${session.verb.lowercase()} ${session.targetName}"
-                        overRecommended ->
-                            "${session.verb.lowercase()} ${session.targetName} · ${formatElapsed(elapsedMillis)} so far — past the ~${session.durationMinutes} min mark"
-                        else ->
-                            "${session.verb.lowercase()} ${session.targetName} · ${formatElapsed(elapsedMillis)} so far · ~${session.durationMinutes} min recommended"
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (session.paused) exploreInk else MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Button(
-                        onClick = onDone,
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = accent,
-                            contentColor = pastelFillInk(accent)
-                        ),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Done — write about it", style = MaterialTheme.typography.labelLarge)
-                    }
-                    OutlinedButton(
-                        onClick = onKeepExploring,
-                        shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, exploreInk.copy(alpha = 0.55f)),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = exploreInk),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Keep exploring", style = MaterialTheme.typography.labelLarge)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// Queued explore row — a paused session saved for later (tap to resume)
-// ═══════════════════════════════════════════════════════════════════════
-
-@Composable
-private fun QueuedExploreRow(
-    session: ExploreSession,
-    onResume: () -> Unit,
-    onDiscard: () -> Unit
-) {
-    // Deep category ink for the icon — the pastel accent reads washed out
-    // on the plain page (v7.32).
-    val ink = CurioCategories.byId(session.categoryId).categoryInk()
-    // Plain backgroundless row, matching the Recents / Saved list style —
-    // the frozen elapsed readout comes from the session's banked pause.
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .clickable(onClick = onResume)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        CurioIcon(CurioIcons.Schedule, null, tint = ink, size = 22.dp)
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                session.topicName,
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                modifier = Modifier.weight(1f)
             )
-            Text(
-                "Paused at ${formatElapsed(session.elapsedMillis())} · tap to resume",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Surface(
-            onClick = onDiscard,
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerLow
-        ) {
             CurioIcon(
-                CurioIcons.Close, "Discard queued explore",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                size = 16.dp,
-                modifier = Modifier.padding(5.dp)
+                CurioIcons.ChevronRight, null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f),
+                size = 20.dp
             )
         }
     }
