@@ -18,7 +18,7 @@
 ### Part 4 — DONE, pushed as `24489d4`
 - Settings search deep-indexes sub-sections (SettingsDeepRow + SettingsHighlightTarget handoff), row pulse on open; Topic Database scroll restore via rememberSaveable + LaunchedEffect scrollToItem
 
-## Request (2026-08-07, 2nd): Editing toolbar redesign — DONE, pushed as `XXXXXXX`
+## Request (2026-08-07, 2nd): Editing toolbar redesign — DONE, pushed as `1756aa1`
 - **RichTextEditor.kt tool dock**: surface `surfaceContainerLow` → `surfaceContainer`, radius 14→12dp, border accent 0.40→0.32; header row padding top/bottom 4→3dp (end 8→6dp); expanded Paper/Format sections padding 10/8→8/6dp with stack spacing 6→4dp; gap under dock 5→4dp.
 - **Buttons → theme-aware tonal chips**: `ToolToggleButton`, `FormatToolButton`, `CompactPaperChip`, `NotePaperColorToggle` chip now use `surfaceContainerHighest` fill when inactive (was transparent) with `outlineVariant` rim; active = accent fill 0.16→0.18 alpha + rim 0.55→0.65.
 - **Color picker**: chip padding 10/6→9/4dp (matches style-chip family), spacing 6→5dp, `labelSmall`→`labelMedium`, swatch unselected border alpha 0.7→0.85.
