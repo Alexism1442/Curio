@@ -315,6 +315,13 @@ fun TopicRevealScreen(
                         // the normal flow move to the browser/Home. This is
                         // the reliable handoff after special-access settings.
                         ExploreSessionService.start(context, pending)
+                        // A fresh grant re-opens the door for future asks.
+                        AppPreferences.setOverlayAskDeclined(context, false)
+                    } else {
+                        // v8.1 — returned from system settings WITHOUT
+                        // granting: that's a "no" — record it so the prompt
+                        // never re-asks on every explore.
+                        AppPreferences.setOverlayAskDeclined(context, true)
                     }
                     continueExploreFlow(pending)
                 }
@@ -338,7 +345,11 @@ fun TopicRevealScreen(
             ExploreReminderScheduler.schedule(context, session.startMillis, session.durationMinutes)
         }
         val needsOverlay = AppPreferences.isOverlayBubbleEnabled(context) &&
-            !AppPreferences.overlayActuallyUsable(context)
+            !AppPreferences.overlayActuallyUsable(context) &&
+            // v8.1 — once the user says no, stop asking: the explore
+            // proceeds without the bubble and the Settings toggle is the
+            // only way back in.
+            !AppPreferences.isOverlayAskDeclined(context)
         // The floating bubble shows the same live timer over other apps and
         // needs ONLY the "Display over other apps" permission. When it's
         // going to show, skip the POST_NOTIFICATIONS prompt — a live shade
@@ -764,6 +775,9 @@ fun TopicRevealScreen(
         AlertDialog(
             onDismissRequest = {
                 showOverlayPermissionDialog = false
+                // v8.1 — dismissing without granting is a "no": record it so
+                // the prompt doesn't re-ask on every explore.
+                AppPreferences.setOverlayAskDeclined(context, true)
                 val s = pendingOverlaySession
                 pendingOverlaySession = null
                 if (s != null) continueExploreFlow(s)
@@ -777,7 +791,9 @@ fun TopicRevealScreen(
                         "the \"Display over other apps\" permission."
                     )
                     Text(
-                        "You can also manage it anytime in Settings → Notifications.",
+                        "You can also manage it anytime in Settings → Notifications. " +
+                        "Choose \"Not now\" and we won't ask again until you turn " +
+                        "it on there.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -820,6 +836,9 @@ fun TopicRevealScreen(
             dismissButton = {
                 TextButton(onClick = {
                     showOverlayPermissionDialog = false
+                    // v8.1 — "Not now" is a "no": stop re-asking (the
+                    // Settings toggle can still grant it anytime).
+                    AppPreferences.setOverlayAskDeclined(context, true)
                     val s = pendingOverlaySession
                     pendingOverlaySession = null
                     if (s != null) continueExploreFlow(s)

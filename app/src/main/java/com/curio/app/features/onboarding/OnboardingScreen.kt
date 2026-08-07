@@ -126,6 +126,10 @@ fun OnboardingScreen(navController: NavController) {
     // stays "Allow" until the AppOps state actually settles (toggle off/on
     // in the system page resolves it).
     var overlayGranted by remember { mutableStateOf(AppPreferences.overlayActuallyUsable(context)) }
+    // v8.1 — tracks a trip to the overlay settings page so the ON_RESUME
+    // observer can record a decline (return without granting) and stop the
+    // app from re-asking the permission on every explore.
+    var overlayAwaitingReturn by remember { mutableStateOf(false) }
     // "Want the daily shuffle reminder on?" — only reachable once
     // notifications are granted; applied to prefs the moment it flips.
     var reminderWanted by rememberSaveable { mutableStateOf(false) }
@@ -150,7 +154,8 @@ fun OnboardingScreen(navController: NavController) {
     ) { _ -> }
 
     fun openOverlaySettings() {
-        runCatching {
+        val launched = runCatching {
+            overlayAwaitingReturn = true
             requestOverlay.launch(
                 Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -158,6 +163,7 @@ fun OnboardingScreen(navController: NavController) {
                 )
             )
         }
+        if (launched.isFailure) overlayAwaitingReturn = false
     }
 
     // Re-read permission state when returning from the system Settings
@@ -170,6 +176,18 @@ fun OnboardingScreen(navController: NavController) {
                 notificationGranted = hasNotificationPermission(context)
                 micGranted = hasMicPermission(context)
                 overlayGranted = AppPreferences.overlayActuallyUsable(context)
+                // v8.1 — returning from the overlay settings page: a grant
+                // opens the door again; coming back without granting records
+                // the "no" so the app stops re-asking (the Settings toggle
+                // still grants it anytime).
+                if (overlayAwaitingReturn) {
+                    overlayAwaitingReturn = false
+                    if (AppPreferences.overlayActuallyUsable(context)) {
+                        AppPreferences.setOverlayAskDeclined(context, false)
+                    } else {
+                        AppPreferences.setOverlayAskDeclined(context, true)
+                    }
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

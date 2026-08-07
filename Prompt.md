@@ -1,18 +1,15 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 9th): Quest rebalance + guided tour — DONE (committed, NOT pushed)
+## Request (2026-08-07, 10th): Overlay permission — stop re-asking + Settings toggle — DONE (pushed)
 
-**User request:** (1) The 50-level XP curve is still too steep/slow at high ranks — rebalance the thresholds. (2) Rebalance quest tasks — some are too hard; add small easy tasks to make it rewarding. (3) The quest guide: when the user taps the FIRST quest, take them through everything so they know where things are — a proper auto-navigating system (auto-navigate on next tap) with a small TOAST-TYPE OVERLAY, NOT a full dialog. Clarified via follow-up: "by the toast i meant in app overlay system" — an in-app floating overlay, not a system Toast. "don't ask me, do it on your own."
+**User request:** "for the overlay permission dont ask it again when the user says no also add a toggle in settings to give the permission."
 
 ### Changes
-- **XP curve rebalance** (`data/CurioQuests.kt`) — first 12 thresholds unchanged (quick early levels); after that the per-level step now grows +8/level from 90 and caps at **240 XP** (was +12 from 110, cap 360). Total ~**8.6k XP** (was ~12.1k): Level 30 ≈ 3.8k, Level 40 ≈ 6.2k, Level 50 ≈ 8.6k. Existing XP is cumulative, so existing users instantly gain levels — no progress lost.
-- **Small easy quest stages added** (kept every existing stage id so awarded badges never reset / XP never double-pays): The Deck + Spin 3/10/50; Discovery + Explore 3/10 + "Lane Hopper" (3 lanes); Keepsakes + Save 3/10/50; The Shelf + 3 quotes; Pin Board + 3 pins; The Flame + 1-day & 14-day streaks; Taste + 3 likes.
-- **Quest guide → in-app overlay + full tour** (new `data/QuestGuide.kt` + new `ui/components/QuestGuideToast.kt`):
-  - The old full `AlertDialog` guide in the NavHost is replaced by a compact **in-app floating pill** overlay (flag marker, title, one-line message, footer, Next/Go button, close X).
-  - Tapping the **first quest** ("First Spin" — via the Quests page Start button, a chain's Go chip, or the guide overlay's Go) launches a **7-step guided tour** that **auto-navigates** through Home → Spin → Cabinet → Profile → Quests → Settings → done, advancing on every overlay tap; the Spin step **waits for the real spin** (`CurioQuests.onSpin` reports via `QuestGuide.onWait`, same wiring for explore/save/profile/settings) and auto-advances when it happens. Finishing lands the user back on a stable tab.
-  - `navigation/CurioRoutes.kt` — new shared `navigateToQuestRoute()` (tabs via navigateToTab, others pushed) used by both the Quests page and the tour runner.
-- Changelog bullets added to `20260810.txt`.
+- **`data/AppPreferences.kt`** — new persisted `overlay_ask_declined` flag (`isOverlayAskDeclined` / `setOverlayAskDeclined`, reactive `overlayAskDeclinedState`, seeded in `initThemeMode`). Once the user declines "Display over other apps", all AUTOMATIC prompts are suppressed until they explicitly use the Settings toggle (which always opens the system page and clears the flag).
+- **`features/reveal/TopicRevealScreen.kt`** — the explore-start bubble prompt no longer fires when the permission was declined (explore proceeds without the bubble). "Not now" / dialog-dismiss records the decline; returning from system settings WITHOUT granting records it too; a fresh grant clears it.
+- **`features/settings/SettingsSectionScreen.kt`** (Notifications) — new **"Display over other apps" permission toggle** showing the live grant state; toggling opens the system special-access page (grant OR revoke) and clears the declined flag; returning without granting records the decline. The existing "Floating explore bubble" toggle now clears the declined flag when it opens the system page (explicit intent) and relies on the ON_RESUME observer (not the premature result callback) for the grant/decline decision. Dialog text updated to tell the user it won't ask again until they enable it in Settings.
+- **`features/onboarding/OnboardingScreen.kt`** — returning from the overlay settings page without granting during setup records the decline; a grant clears it.
 
 ### Status
-- Statically validated (no Gradle in this env per AGENTS.md): no leftover `showGuideDialog`/`navigateToQuest` references, old dialog block fully removed (no duplicate `guideQuest` declarations), `git diff --check` clean, code review passed.
-- Committed locally. **Not pushed** — branch is ahead of origin/main by `cc26e15`, `e9f46de`, `a2d0198` + this commit, all awaiting the user's go-ahead to push.
+- Statically validated (no Gradle in this env): all references consistent, `git diff --check` clean, code review passed.
+- Committed and **pushed** (branch in sync with origin/main after the `bf932c0` CI-fix push).

@@ -93,6 +93,12 @@ object AppPreferences {
     private const val KEY_EXPLORE_SESSIONS_ENABLED = "explore_sessions_enabled"
     private const val KEY_LIVE_NOTIFICATIONS_ENABLED = "live_notifications_enabled"
     private const val KEY_OVERLAY_BUBBLE_ENABLED = "overlay_bubble_enabled"
+    // v8.1 — "don't nag" flag: once the user declines the "Display over
+    // other apps" permission (dismisses the prompt or returns from system
+    // settings without granting), all AUTOMATIC overlay prompts are
+    // suppressed until they explicitly try to enable the bubble from
+    // Settings (the Settings toggle clears it).
+    private const val KEY_OVERLAY_ASK_DECLINED = "overlay_ask_declined"
     // Experimental voice-to-text/dictation. Default OFF so microphone
     // transcription never appears or starts until the user opts in.
     private const val KEY_VOICE_TO_TEXT_ENABLED = "voice_to_text_enabled"
@@ -262,6 +268,13 @@ object AppPreferences {
     var overlayBubbleEnabledState by mutableStateOf(true)
         private set
 
+    // v8.1 — whether the user has declined the "Display over other apps"
+    // permission (see [isOverlayAskDeclined]). Suppresses the automatic
+    // explore-start prompt; explicit Settings toggles always work and
+    // clear it.
+    var overlayAskDeclinedState by mutableStateOf(false)
+        private set
+
     // Voice-to-text/dictation (experimental) — opt-in only. This controls
     // dictation in Sound Bite fields and saved voice-note details; ordinary
     // microphone recording remains available regardless of this toggle.
@@ -343,6 +356,7 @@ object AppPreferences {
         exploreSessionsEnabledState = isExploreSessionsEnabled(context)
         liveNotificationsEnabledState = isLiveNotificationsEnabled(context)
         overlayBubbleEnabledState = isOverlayBubbleEnabled(context)
+        overlayAskDeclinedState = isOverlayAskDeclined(context)
         voiceToTextEnabledState = isVoiceToTextEnabled(context)
         guideEnabledState = isGuideEnabled(context)
         pinnedTopicsState = getPinnedTopics(context)
@@ -624,6 +638,22 @@ object AppPreferences {
                 com.curio.app.infrastructure.ExploreSessionService.stop(context)
             }
         }
+    }
+
+    /**
+     * Whether AUTOMATIC "Display over other apps" prompts are suppressed
+     * (v8.1) — true once the user declines the permission (dismisses the
+     * explore-start prompt or returns from system settings without
+     * granting). The explore flow then proceeds without the bubble, and the
+     * only way back in is the explicit Settings toggle, which always opens
+     * the system page and clears this flag.
+     */
+    fun isOverlayAskDeclined(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_OVERLAY_ASK_DECLINED, false)
+
+    fun setOverlayAskDeclined(context: Context, declined: Boolean) {
+        prefs(context).edit().putBoolean(KEY_OVERLAY_ASK_DECLINED, declined).apply()
+        overlayAskDeclinedState = declined
     }
 
     /** Whether experimental voice-to-text is enabled (default OFF). */

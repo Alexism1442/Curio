@@ -196,6 +196,11 @@ private fun NotificationsSection(highlightKey: String? = null) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var reminderHour by remember { mutableStateOf(AppPreferences.getReminderHour(context)) }
     var overlayEnabled by remember { mutableStateOf(AppPreferences.overlayBubbleEnabledState) }
+    // v8.1 — live "Display over other apps" grant state + a flag that the
+    // system special-access page was opened (so ON_RESUME knows whether a
+    // grant — or a decline — just happened).
+    var overlayUsable by remember { mutableStateOf(AppPreferences.overlayActuallyUsable(context)) }
+    var overlaySettingsOpened by remember { mutableStateOf(false) }
     var liveNotificationsEnabled by remember { mutableStateOf(AppPreferences.liveNotificationsEnabledState) }
     var exploreSessionsEnabled by remember { mutableStateOf(AppPreferences.exploreSessionsEnabledState) }
     val permissionMissing = Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
@@ -205,22 +210,36 @@ private fun NotificationsSection(highlightKey: String? = null) {
             if (event == Lifecycle.Event.ON_RESUME) {
                 reminderHour = AppPreferences.getReminderHour(context)
                 overlayEnabled = AppPreferences.isOverlayBubbleEnabled(context)
+                overlayUsable = AppPreferences.overlayActuallyUsable(context)
                 liveNotificationsEnabled = AppPreferences.isLiveNotificationsEnabled(context)
                 exploreSessionsEnabled = AppPreferences.isExploreSessionsEnabled(context)
+                // v8.1 — returning from the system overlay-settings page: a
+                // grant re-enables the bubble and clears the declined flag;
+                // coming back without granting records the "no" so automatic
+                // prompts stop (Settings toggles still work anytime).
+                if (overlaySettingsOpened) {
+                    overlaySettingsOpened = false
+                    overlayUsable = AppPreferences.overlayActuallyUsable(context)
+                    if (overlayUsable) {
+                        AppPreferences.setOverlayAskDeclined(context, false)
+                        AppPreferences.setOverlayBubbleEnabled(context, true)
+                        overlayEnabled = true
+                    } else {
+                        AppPreferences.setOverlayAskDeclined(context, true)
+                    }
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
     var pendingEnable by remember { mutableStateOf<(() -> Unit)?>(null) }
+    // The result callback can fire while the system page is STILL open (the
+    // permission not yet granted), so the grant/decline decision lives in
+    // the ON_RESUME observer below, guarded by [overlaySettingsOpened].
     val overlaySettingsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (AppPreferences.overlayActuallyUsable(context)) {
-            AppPreferences.setOverlayBubbleEnabled(context, true)
-            overlayEnabled = true
-        }
-    }
+    ) { /* no-op — ON_RESUME is the source of truth */ }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) pendingEnable?.invoke()
         pendingEnable = null
@@ -284,7 +303,11 @@ private fun NotificationsSection(highlightKey: String? = null) {
         SettingsRowPulse(highlightKey == "notif-bubble") {
             CompactSwitchRow("Floating explore bubble", "Timer bubble over other apps", overlayEnabled) { enabled ->
                 if (enabled && !AppPreferences.overlayActuallyUsable(context)) {
-                    runCatching {
+                    // Explicit intent — stop suppressing the prompt and
+                    // remember the settings trip so the return decides.
+                    AppPreferences.setOverlayAskDeclined(context, false)
+                    val launched = runCatching {
+                        overlaySettingsOpened = true
                         overlaySettingsLauncher.launch(
                             Intent(
                                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -292,10 +315,38 @@ private fun NotificationsSection(highlightKey: String? = null) {
                             )
                         )
                     }
+                    if (launched.isFailure) overlaySettingsOpened = false
                 } else {
                     overlayEnabled = enabled
                     AppPreferences.setOverlayBubbleEnabled(context, enabled)
                 }
+            }
+        }
+        CurioSettingsDivider()
+        // v8.1 — the permission toggle itself: shows the live grant state
+        // and opens the system special-access page (on or off — the grant
+        // can't be flipped from the app). The switch re-reads reality on
+        // return, so granting here re-enables the bubble and future prompts.
+        SettingsRowPulse(highlightKey == "notif-overlay") {
+            CompactSwitchRow(
+                "Display over other apps",
+                if (overlayUsable) "Granted — the bubble can float over other apps"
+                else "System permission for the floating bubble",
+                overlayUsable
+            ) { enabled ->
+                // An explicit toggle is a fresh intent: it always opens the
+                // system page (grant OR revoke) and clears the declined flag.
+                AppPreferences.setOverlayAskDeclined(context, false)
+                val launched = runCatching {
+                    overlaySettingsOpened = true
+                    overlaySettingsLauncher.launch(
+                        Intent(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:${context.packageName}")
+                        )
+                    )
+                }
+                if (launched.isFailure) overlaySettingsOpened = false
             }
         }
     }

@@ -505,6 +505,7 @@ private val SettingsDeepIndex: List<SettingsDeepRow> = listOf(
     SettingsDeepRow(CurioIcons.Timer, "Explore sessions", "Timer, reminder, and done prompt", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-sessions"),
     SettingsDeepRow(CurioIcons.Notifications, "Live explore notification", "Ongoing timer with pause and stop", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-live"),
     SettingsDeepRow(CurioIcons.BubbleChart, "Floating explore bubble", "Timer bubble over other apps", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-bubble"),
+    SettingsDeepRow(CurioIcons.Layers, "Display over other apps", "System permission for the floating bubble", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-overlay"),
     // ── Recording ────────────────────────────────────────────────────
     SettingsDeepRow(CurioIcons.Mic, "Audio quality", "Voice-note recording quality", CurioRoutes.SETTINGS_RECORDING, SettingsPage.RECORDING, "recording-quality"),
     SettingsDeepRow(CurioIcons.Edit, "Voice-to-text", "Dictation buttons on voice-note fields", CurioRoutes.SETTINGS_RECORDING, SettingsPage.RECORDING, "recording-voice"),
