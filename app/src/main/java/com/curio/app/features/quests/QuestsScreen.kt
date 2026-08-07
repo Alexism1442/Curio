@@ -314,6 +314,7 @@ private fun ChainCard(
     chain: QuestChain,
     onNavigate: (String) -> Unit = {}
 ) {
+    val chainDone = CurioQuests.chainProgress(chain)
     CurioSettingsCard {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -348,7 +349,6 @@ private fun ChainCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            val chainDone = CurioQuests.chainProgress(chain)
             Text(
                 "$chainDone/${chain.stages.size}",
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.ExtraBold),
