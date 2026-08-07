@@ -1326,7 +1326,13 @@ private fun FirstTimeEmpty(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        CurioIcon(CurioIcons.Casino, null, tint = CurioColors.DeepPlum, size = 16.dp)
+                        CurioIcon(
+                            CurioIcons.Casino,
+                            null,
+                            tint = CurioColors.DeepPlum,
+                            size = 16.dp,
+                            modifier = Modifier.offset(y = (-1).dp)
+                        )
                         Text(
                             "Surprise me",
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),

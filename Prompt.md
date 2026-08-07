@@ -8,11 +8,13 @@ The icon layout boxes were already centered. The visible Material Symbols `casin
 
 ## Implementation
 - Added a small `-1.dp` optical lift to Home's circular `Shuffle the deck` casino icon.
+- Added the same `-1.dp` lift to Home's empty-state `Surprise me` casino icon.
 - Added a matching `-1.5.dp` lift to both Spin button dice states: the resting `CurioIcons.Casino` glyph and animated `ShuffleGlyph`.
 - Left the Home menu/profile pill geometry, button circles, and shared icon renderer unchanged.
 
 ## Validation
 - `git diff --check` passed.
 - Comment-aware Kotlin structural checks passed for HomeScreen.kt and SpinScreen.kt.
-- Confirmed the Spin `offset` import and all three dice offsets.
+- Confirmed both Home casino call sites and both Spin dice states have the intended optical offsets.
+- Code review found no blockers.
 - No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally; CI should validate the Android artifact.
