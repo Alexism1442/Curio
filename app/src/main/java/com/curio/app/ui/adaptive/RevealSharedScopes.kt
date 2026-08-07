@@ -23,6 +23,16 @@ import androidx.compose.runtime.staticCompositionLocalOf
 const val RevealSharedElementKey = "reveal-hero"
 
 /**
+ * The card's watermark glyph rides the morph through its OWN shared
+ * element ("reveal-glyph"). The glyph is the same 150dp on the Spin
+ * ticket and the Reveal hero, so its morph is a pure translation — it
+ * moves with the card as it expands without the non-uniform squash an
+ * element INSIDE the morphing card bounds would get (ticket 286×310 ⇄
+ * hero ~392×260). Text stays outside both shared elements.
+ */
+const val RevealGlyphSharedElementKey = "reveal-glyph"
+
+/**
  * Bounds animation for the reveal morph — a quick, even FastOutSlowIn
  * tween (320ms) so the card expands into the hero smoothly without the
  * default spring's wobble or the earlier laggy feel.

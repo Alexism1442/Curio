@@ -167,23 +167,25 @@ fun CurioNavHost(
         currentRoute?.substringBefore("/")
     }
     val showBottomBar = routePrefix in CurioRoutes.bottomNavRoutePrefixes
-    // Push destinations that host a shared-element morph TARGET (the Reveal
-    // hero grows out of the Spin ticket; the Entry Detail hero out of a
-    // Cabinet card). Their bottom chrome must still RESERVE the bottom bar's
-    // height (an invisible placeholder below) so innerPadding never changes
-    // the moment the bar hides — otherwise the exiting Spin/Cabinet screen
-    // re-lays-out mid-transition and the morph source card visibly dips down
-    // before expanding (the "moves down, then animates" artifact), and the
-    // reveal watermark shifts down into the vacated bar strip.
+    // Push destinations that host a shared-element morph TARGET whose
+    // source is a bottom-bar tab (the Reveal hero grows out of the Spin
+    // ticket). The bottom chrome must still RESERVE the bottom bar's height
+    // (an invisible placeholder below) so innerPadding never changes the
+    // moment the bar hides — otherwise the exiting Spin screen re-lays-out
+    // mid-transition and the morph source card visibly dips down before
+    // expanding (the "moves down, then animates" artifact), and the reveal
+    // watermark shifts down into the vacated bar strip.
     // v8.2 — bug fix: this compared the route PREFIX ("reveal"/"detail")
     // against the FULL route patterns ("reveal/{categorySlug}/{topicName}?
     // browse={browse}", "detail/{entryId}"), so it was ALWAYS false and the
     // placeholder never rendered — the bar hid mid-morph, innerPadding grew
     // by the bar's height, and the watermark visibly shifted down. Compare
     // the prefixes so the reserve actually engages.
+    // v8.4 — the Entry Detail route is dropped from the reserve: its morph
+    // source (Cabinet) reads fine without the bar reserved, so no
+    // placeholder is needed there.
     val reserveBarSpace = routePrefix != null && routePrefix in setOf(
-        CurioRoutes.REVEAL.substringBefore("/"),
-        CurioRoutes.ENTRY_DETAIL.substringBefore("/")
+        CurioRoutes.REVEAL.substringBefore("/")
     )
     // The bottom bar's exact measured height (px) — captured from the real
     // bar so the invisible morph-transition placeholder can reserve IDENTICAL

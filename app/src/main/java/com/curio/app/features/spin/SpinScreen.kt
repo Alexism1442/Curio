@@ -147,6 +147,7 @@ import androidx.compose.foundation.lazy.grid.items
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
+import com.curio.app.ui.adaptive.RevealGlyphSharedElementKey
 import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.components.MorphEntrance
 import kotlin.random.Random
@@ -1913,6 +1914,13 @@ private fun HeroTicketCard(
     val sharedTransitionScope = LocalRevealSharedScope.current ?: return
     val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
+    // v8.4 — the card's watermark glyph gets its OWN shared element
+    // ("reveal-glyph"): the glyph is the same 150dp on the ticket and the
+    // reveal hero, so its morph is a pure translation — it RIDES the card
+    // as it expands instead of squashing (an element inside the card bounds
+    // scales non-uniformly: ticket 286×310 ⇄ hero ~392×260). Text stays
+    // outside both shared elements.
+    val glyphSharedState = sharedTransitionScope.rememberSharedContentState(RevealGlyphSharedElementKey)
 
     // v6.3 — slightly bigger ticket (~6% up) so the hero card reads a
     // touch more prominent on the deck.
@@ -2214,18 +2222,18 @@ private fun HeroTicketCard(
                             } else Modifier
                         )
                 ) {
-                    // (The shared face is now a PURE gradient + rim-light —
-                    // the watermark glyph below is NOT shared: a glyph inside
-                    // the morphing bounds scales non-uniformly (ticket
-                    // 286×310 ⇄ hero ~392×260) and reads as a stretched oval
-                    // during the morph — on back the overlay would even draw
-                    // the ticket's glyph enlarged to hero size first.)
+                    // (The shared face is a gradient + rim-light only — the
+                    // watermark glyph below rides its OWN "reveal-glyph"
+                    // shared element: same 150dp on both sides, so it
+                    // translates with the card instead of scaling
+                    // non-uniformly inside the morphing bounds.)
                 } // shared card face — gradient + rim-light only
 
                 // ── Watermark glyph — the category icon at CenterEnd, the
-                //    same 150dp glyph the reveal hero shows. NOT shared
-                //    (v8.3): it fades in with the page on back instead of
-                //    squashing inside the reversing morph.
+                //    same 150dp glyph the reveal hero shows. v8.4 — shared
+                //    through its own "reveal-glyph" element (same 150dp on
+                //    both sides, so it rides the card as a clean translation
+                //    instead of squashing inside the reversing morph).
                 CurioIcon(
                     name = cat.iconGlyph,
                     contentDescription = null,
@@ -2233,6 +2241,21 @@ private fun HeroTicketCard(
                     size = 150.dp,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
+                        .then(
+                            if (topic != null) {
+                                // v8.4 — the glyph rides the card: matched to
+                                // the reveal hero's "reveal-glyph" element, so
+                                // it translates (never squashes — same 150dp
+                                // on both sides) while the card morphs.
+                                sharedTransitionScope.run {
+                                    Modifier.sharedElement(
+                                        glyphSharedState,
+                                        animatedVisibilityScope,
+                                        boundsTransform = RevealBoundsTransform
+                                    )
+                                }
+                            } else Modifier
+                        )
                         .padding(end = 6.dp)
                 )
 

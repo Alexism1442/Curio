@@ -96,6 +96,7 @@ import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
+import com.curio.app.ui.adaptive.RevealGlyphSharedElementKey
 import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioWatermarkBackdrop
@@ -1023,6 +1024,11 @@ private fun HeroCard(
     val sharedTransitionScope = LocalRevealSharedScope.current ?: return
     val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
+    // v8.4 — the watermark glyph has its own matched shared element
+    // ("reveal-glyph"): same 150dp on the ticket and the hero, so the glyph
+    // translates — never squashes — as the card expands, arriving WITH the
+    // card instead of blooming in as a separate layer.
+    val glyphSharedState = sharedTransitionScope.rememberSharedContentState(RevealGlyphSharedElementKey)
 
     val action = resolved?.exploreAction
     val accent = cat.themedAccent()
@@ -1121,31 +1127,39 @@ private fun HeroCard(
                         }
                     )
             ) {
-            // (The shared face is now a PURE gradient — the watermark glyph
-            // below is NOT part of the shared element: a glyph inside the
-            // morphing bounds scales non-uniformly (ticket 286×310 ⇄ hero
-            // ~392×260) and reads as a stretched oval mid-morph.)
+            // (The shared face is a pure gradient — the watermark glyph
+            // below rides its OWN "reveal-glyph" shared element: same 150dp
+            // on both sides, so it translates with the card instead of
+            // scaling non-uniformly inside the morphing bounds.)
             } // inner background Box — the shared element (pure gradient)
 
             // ── Watermark glyph (category icon) — matches the Spin ─────
             //    ticket's exact glyph: same size (150dp), same position
-            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha). NOT
-            //    shared (v8.3): it blooms in right after the morph settles
-            //    instead of squashing inside it — the same treatment as the
-            //    text pills, so the hero's focal mark appears once the card
-            //    is at rest.
-            HeroPillEntrance(
-                delayMillis = 250,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                CurioIcon(
-                    name = cat.iconGlyph,
-                    contentDescription = null,
-                    tint = ink.copy(alpha = 0.16f),
-                    size = 150.dp,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
-            }
+            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha).
+            //    v8.4 — back inside the morph via its own "reveal-glyph"
+            //    shared element: because it is the same 150dp on both
+            //    sides, it rides the card as a pure translation (no
+            //    non-uniform squash), so the hero's focal mark arrives WITH
+            //    the expanding card — the card reads as the same surface
+            //    throughout, not an empty gradient placeholder.
+            CurioIcon(
+                name = cat.iconGlyph,
+                contentDescription = null,
+                tint = ink.copy(alpha = 0.16f),
+                size = 150.dp,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .then(
+                        sharedTransitionScope.run {
+                            Modifier.sharedElement(
+                                glyphSharedState,
+                                animatedVisibilityScope,
+                                boundsTransform = RevealBoundsTransform
+                            )
+                        }
+                    )
+                    .padding(end = 6.dp)
+            )
 
             // ── Hero text pills (NOT shared) — bloom in AFTER the ~320ms
             //    bounds morph settles instead of squashing inside it; on
