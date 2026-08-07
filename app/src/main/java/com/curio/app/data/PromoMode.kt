@@ -22,13 +22,10 @@ object PromoMode {
     const val DEMO_SAVED = 128
 
     /**
-     * Demo XP — deliberately past the final threshold (940 XP = level 12,
-     * the top rank), so the level card reads "Grand Curator" with a full
-     * bar. Must be >= 940 (the last XP_THRESHOLDS entry in CurioQuests) or
-     * levelForXp lands one short; 960 reads as a plausible earned total.
+     * Demo XP — deliberately past the final threshold of the 50-rank curve
+     * (top rank ≈ 12.1k XP), so the promo level card reads "Curio Sovereign"
+     * with a full bar and never lands one rank short.
      */
-    // v8.0 — the level curve now reaches 50 ranks (threshold ~18.5k XP);
-    // the promo sample shows the top rank, Curio Sovereign.
     const val DEMO_XP = 20000
 
     /**

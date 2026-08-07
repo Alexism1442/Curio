@@ -31,5 +31,11 @@
 4. **Stop moved off the pill** — removed Stop from the bubble's expanded panel + `onStop` param from `ExploreBubbleContent`/service; `CurrentlyExploringCard` gains a top-end corner circular Stop button (quiet teardown, same as notification Cancel) with header-row end padding so the title never runs under it.
 - Changelog bullets added to `fastlane/metadata/android/en-US/changelogs/20260810.txt`.
 
+## Request (2026-08-07, 4th): Rebalance 50-level XP curve — DONE, pushed as `XXXXXXX`
+- `CurioQuests.XP_THRESHOLDS`: first 12 thresholds unchanged (0..940, v7.40 pacing — nobody loses rank); beyond that the per-level step now grows +12/level with a **360 XP cap** (old: +18/level unbounded → ~776 XP/level at the top).
+- Result: L50 ≈ 12,140 XP (was 18,458), L40 ≈ 8,540 (was 11,328) — high ranks climb ~34% faster with a flat, non-grindy tail. Verified: 50 unique monotonic thresholds; `levelForXp(940)=12`, `levelForXp(12140)=50`, `levelForXp(20000)=50` (promo still max).
+- Ladder chain targets derive from `XP_THRESHOLDS[i]` → auto-follow. `PromoMode.DEMO_XP` (20000) still above the new top; stale 940/18.5k comment cleaned.
+- Changelog bullet added to `20260810.txt`.
+
 ### Status
 - All requests complete. Working tree clean; all commits on `main` and pushed.

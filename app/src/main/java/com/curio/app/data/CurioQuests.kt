@@ -90,14 +90,17 @@ object CurioQuests {
 
     // ── Level curve — cumulative XP needed to REACH each level (50) ────
     // The first 12 thresholds keep the v7.40 pacing (a new user sees Level 2
-    // within a couple of actions); beyond that the steps widen steadily so
-    // the deep ranks stay a long-term goal. Total 50 levels.
+    // within a couple of actions); beyond that the per-level cost rises
+    // GENTLY (+12/level) until a 360 XP ceiling, so the deep ranks stay a
+    // long-term goal without turning into a grind — the old step kept
+    // widening to ~776 XP/level at the top, which made the high ranks feel
+    // frozen. Total 50 levels, top at ~12.1k XP.
     private val XP_THRESHOLDS: List<Int> = buildList {
         addAll(listOf(0, 15, 40, 80, 135, 205, 290, 390, 505, 635, 780, 940))
         var xp = 940
         var step = 110
         while (size < 50) {
-            step += 18
+            step = (step + 12).coerceAtMost(360)
             xp += step
             add(xp)
         }
