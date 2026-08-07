@@ -119,15 +119,15 @@ fun SettingsHeroHeader(
             .fillMaxWidth()
             .height(SettingsHeroTotalHeight)
     ) {
-        // ── Under-sheet — the theme's own background, so the tear sits on
-        // the page color in every theme (the Profile construction).
+        // ── Under-sheet — the shared white paper layer, so the tear stays
+        // bright beneath the rose hero in every theme.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(42.dp)
                 .offset(y = SettingsHeroBannerHeight - 18.dp)
                 .clip(sheetShape)
-                .background(MaterialTheme.colorScheme.background)
+                .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(

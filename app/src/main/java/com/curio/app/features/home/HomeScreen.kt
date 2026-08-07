@@ -1519,14 +1519,14 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
                     .fillMaxWidth()
                     .height(HomeDrawerHeroHeight + HomeDrawerSheetExtent)
             ) {
-                // Theme-matched under-sheet (same seed -> pixel-aligned seam).
+                // White paper under-sheet (same seed -> pixel-aligned seam).
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(42.dp)
                         .offset(y = HomeDrawerHeroHeight - 18.dp)
                         .clip(sheetShape)
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(CurioColors.CreamWhite)
                 )
                 // Torn-edge shadow - hairline rim under the ragged seam.
                 Box(

@@ -384,9 +384,9 @@ private fun OnboardingHeroBackdrop() {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // ── Under-sheet — the theme's own background, so the tear sits on
-        // the page color in every theme (the Profile construction). It
-        // pokes a couple of dp BELOW the hero so the ragged seam reads.
+        // ── Under-sheet — the shared white paper layer, so the tear stays
+        // bright beneath the rose hero in every theme. It pokes a couple of
+        // dp BELOW the hero so the ragged seam reads.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -394,7 +394,7 @@ private fun OnboardingHeroBackdrop() {
                 .offset(y = 12.dp)
                 .height(46.dp)
                 .clip(sheetShape)
-                .background(MaterialTheme.colorScheme.background)
+                .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(

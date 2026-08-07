@@ -517,9 +517,9 @@ private fun ProfileHero(
             .fillMaxWidth()
             .height(ProfileHeroTotalHeight)
     ) {
-        // ── Under-sheet — the theme's own background (Home hardcodes a
-        // creamy white; Profile matches the UI, so the tear sits on the
-        // page color in every theme). Same seeded torn top as the banner,
+        // ── Under-sheet — the shared white paper layer. The hero can stay
+        // dark in dark mode, but the paper beneath the tear remains bright.
+        // Same seeded torn top as the banner,
         // hidden behind it except through the up-bites.
         Box(
             modifier = Modifier
@@ -527,7 +527,7 @@ private fun ProfileHero(
                 .height(42.dp)
                 .offset(y = ProfileHeroHeight - 18.dp)
                 .clip(sheetShape)
-                .background(MaterialTheme.colorScheme.background)
+                .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam so the
         // tear reads as a real paper edge (the Home construction).

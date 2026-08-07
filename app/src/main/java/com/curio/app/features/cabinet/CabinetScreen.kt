@@ -90,6 +90,7 @@ import com.curio.app.ui.components.CurioEntryCard
 import com.curio.app.ui.components.MorphEntrance
 import com.curio.app.ui.components.SoftTornBottomShape
 import com.curio.app.ui.components.SoftTornSheetShape
+import com.curio.app.ui.theme.CurioColors
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
 import com.curio.app.ui.theme.CurioMotion
@@ -431,7 +432,6 @@ fun CabinetScreen(navController: NavController) {
         CabinetHeroHeader(
             title = cabinetTitle,
             subtitle = cabinetSubtitle,
-            sheetColor = filterCat?.categoryBackgroundWash() ?: MaterialTheme.colorScheme.background,
             activeCat = filterCat,
             legacyMode = showLegacyOnly,
             backVisible = selectedFilter != null || showLegacyOnly,
@@ -544,8 +544,8 @@ private data class CabinetHeroPair(
  * under-sheet, the mirrored watermark collage, the back pill (when a
  * filter/legacy view is active) and the caller-provided action pills riding
  * the top row, and the title + subtitle pinned just above the tear. Runs up
- * behind the status bar; [sheetColor] lets the under-sheet match the page
- * (the category tint wash when a filter is on).
+ * behind the status bar; the under-sheet is always the shared white paper
+ * layer so it stays legible in every theme and filter.
  *
  * v7.96 — the banner MATCHES the active category: a filtered view wears the
  * category's own accent (and its family's watermark scatter), the Legacy
@@ -556,7 +556,6 @@ private data class CabinetHeroPair(
 private fun CabinetHeroHeader(
     title: String,
     subtitle: String,
-    sheetColor: Color,
     activeCat: CurioCategory?,
     legacyMode: Boolean,
     backVisible: Boolean,
@@ -594,15 +593,15 @@ private fun CabinetHeroHeader(
             .fillMaxWidth()
             .height(CabinetHeroTotalHeight)
     ) {
-        // ── Under-sheet — the page's own color (tint wash when a filter is
-        // active), so the tear sits on the page in every state.
+        // ── Under-sheet — a shared white paper layer, so the tear remains
+        // visible instead of turning into a dark/black strip in dark mode.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(42.dp)
                 .offset(y = CabinetHeroBannerHeight - 18.dp)
                 .clip(sheetShape)
-                .background(sheetColor)
+                .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(
