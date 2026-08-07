@@ -325,8 +325,10 @@ fun CurioNavHost(
                     // shared "reveal-hero" element (Spin ticket → Reveal
                     // hero) owns the expansion, so the route stays a clean
                     // fade and the screen does not double-zoom around it.
+                    // Paced to the 320ms bounds morph so the content below
+                    // the hero (its staggered entrance) reads cleanly.
                     isRevealRoute(targetState) ->
-                        fadeIn(animationSpec = tween(CurioMotion.Durations.RevealHold))
+                        fadeIn(animationSpec = tween(CurioMotion.Durations.Morph))
                     // Splash → Home / Onboarding: special elastic morph
                     initialState.destination.route == CurioRoutes.SPLASH ->
                         fadeIn(
@@ -367,26 +369,39 @@ fun CurioNavHost(
                 }
             },
             popEnterTransition = {
-                // Tab switch back: crossfade too (no directional slide).
-                if (isTabSwitch(initialState, targetState)) {
-                    fadeIn(animationSpec = tween(CurioMotion.Durations.Standard))
-                } else {
-                    // Back navigation: slide right + fade
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth / 6 },
-                        animationSpec = tween(CurioMotion.Durations.Morph, easing = FastOutSlowInEasing)
-                    ) + fadeIn(animationSpec = tween(CurioMotion.Durations.Quick))
+                when {
+                    // Popping back from Topic Reveal: fade only — the shared
+                    // element morph reverses the hero into the card, and a
+                    // directional slide would fight it.
+                    initialState.destination.route == CurioRoutes.REVEAL ->
+                        fadeIn(animationSpec = tween(CurioMotion.Durations.Morph))
+                    // Tab switch back: crossfade too (no directional slide).
+                    isTabSwitch(initialState, targetState) ->
+                        fadeIn(animationSpec = tween(CurioMotion.Durations.Standard))
+                    else -> {
+                        // Back navigation: slide right + fade
+                        slideInHorizontally(
+                            initialOffsetX = { fullWidth -> -fullWidth / 6 },
+                            animationSpec = tween(CurioMotion.Durations.Morph, easing = FastOutSlowInEasing)
+                        ) + fadeIn(animationSpec = tween(CurioMotion.Durations.Quick))
+                    }
                 }
             },
             popExitTransition = {
-                if (isTabSwitch(initialState, targetState)) {
-                    fadeOut(animationSpec = tween(CurioMotion.Durations.Standard))
-                } else {
-                    // Pop exit: slide right + fade out
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth / 4 },
-                        animationSpec = tween(CurioMotion.Durations.Morph, easing = FastOutSlowInEasing)
-                    ) + fadeOut(animationSpec = tween(CurioMotion.Durations.Morph))
+                when {
+                    // Popping Topic Reveal: fade the page out under the
+                    // reversing morph instead of sliding it sideways.
+                    initialState.destination.route == CurioRoutes.REVEAL ->
+                        fadeOut(animationSpec = tween(CurioMotion.Durations.Morph))
+                    isTabSwitch(initialState, targetState) ->
+                        fadeOut(animationSpec = tween(CurioMotion.Durations.Standard))
+                    else -> {
+                        // Pop exit: slide right + fade out
+                        slideOutHorizontally(
+                            targetOffsetX = { fullWidth -> fullWidth / 4 },
+                            animationSpec = tween(CurioMotion.Durations.Morph, easing = FastOutSlowInEasing)
+                        ) + fadeOut(animationSpec = tween(CurioMotion.Durations.Morph))
+                    }
                 }
             }
         ) {
@@ -440,7 +455,8 @@ fun CurioNavHost(
                 route = CurioRoutes.REVEAL,
                 arguments = listOf(
                     navArgument("categorySlug") { type = NavType.StringType },
-                    navArgument("topicName")     { type = NavType.StringType }
+                    navArgument("topicName")     { type = NavType.StringType },
+                    navArgument("browse")        { type = NavType.StringType; defaultValue = "0" }
                 )
             ) { entry ->
                 val animatedVisibilityScope = this
@@ -451,7 +467,9 @@ fun CurioNavHost(
                     TopicRevealScreen(
                         categorySlug = entry.arguments?.getString("categorySlug").orEmpty(),
                         topicName    = safeDecode(entry.arguments?.getString("topicName")),
-                        navController = navController
+                        navController = navController,
+                        // Browse-Topics mode: read-only reveal (see CurioRoutes).
+                        browseMode = entry.arguments?.getString("browse") == "1"
                     )
                 }
             }

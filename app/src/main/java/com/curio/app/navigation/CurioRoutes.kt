@@ -126,7 +126,11 @@ object CurioRoutes {
     // ── Inside the Spin flow (no bottom nav)
     const val PICKER = "picker"
     const val SPIN_WITH_CATEGORY = "spin/{categorySlug}"
-    const val REVEAL = "reveal/{categorySlug}/{topicName}"
+    // Optional ?browse=1 marks a topic opened from the Browse Topics
+    // database: the reveal page renders read-only (no explore CTA, no
+    // like/dislike, no recents recording, and "Already watched" confirms
+    // without the write-about-it dialog).
+    const val REVEAL = "reveal/{categorySlug}/{topicName}?browse={browse}"
     const val CAPTURE = "capture/{categorySlug}/{topicName}"
 
     // ── Push destinations (no bottom nav)
@@ -159,6 +163,9 @@ object CurioRoutes {
     fun spinWithCategories(slugs: List<String>) = "spin/${slugs.joinToString(",")}"
     fun revealFor(categorySlug: String, topicName: String) =
         "reveal/$categorySlug/${Uri.encode(topicName)}"
+    /** Opens a topic in the read-only Browse-Topics mode (see [REVEAL]). */
+    fun revealForBrowse(categorySlug: String, topicName: String) =
+        "reveal/$categorySlug/${Uri.encode(topicName)}?browse=1"
     fun captureFor(categorySlug: String, topicName: String) =
         "capture/$categorySlug/${Uri.encode(topicName)}"
     fun entryDetail(entryId: String) = "detail/$entryId"

@@ -9,3 +9,8 @@
 • Fixed the Profile hero's Level · Saved · Lanes labels hugging the left edge — they're centered under their values again.
 • Detail-page scrolling is smoother: two per-frame frosted-glass blur passes over flat colors were GPU-expensive no-ops and are now static glows.
 • The adaptive layout now reaches deeper: Settings arranges its cards in a two-column grid on tablets, the six capture-format chips wrap instead of scrolling sideways, and the detail page gives its reading column wider tablet gutters.
+• Opening a topic from Browse Topics is now a pure read-only peek: no Start-exploring button, no like/dislike, nothing recorded in recents, and "Already watched" confirms instantly without a dialog. Back always returns to your exact scroll position.
+• The reveal morph is smoother and snappier both ways — the topic expands out of the card on a quick even ease (less pre-grow delay), the text below blooms in with a gentle stagger, and backing out fades cleanly instead of sliding.
+• The "Already watched" pill on the topic page is redesigned — it fills with the category accent and a check when marked done, color-animated.
+• The dots orbiting the Shuffle button are bigger, glow softly, and shimmer in phase as they spin, with a smooth fade/scale entrance.
+• Onboarding's Skip / Next controls are anchored to the bottom edge on every screen instead of floating high under the banner.

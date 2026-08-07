@@ -40,3 +40,10 @@ Redesign the whole app's placements for tablet and landscape mode. User decision
 - **Settings hub** → `LazyVerticalGrid`: `GridCells.Adaptive(300.dp)` on wide windows (2-up cards), `Fixed(1)` on compact (identical to the old list); search, section labels and no-results span full width via `GridItemSpan(maxLineSpan)`.
 - **Capture editor** → the six format chips render through a new `FormatChip` composable; wide windows use `FlowRow` (all six visible, wrapping) instead of the compact horizontal scroll.
 - **Detail page** → new `detailBodyGutter()` helper widens the reading column's three body gutters (quick-fact column, FormatBody box, category label row) from 20dp to 28dp on wide windows; hero badge and paper-card internals untouched.
+
+## Follow-up: morph refine + DB read-only + intro button + shuffle dots
+1. **Morph refine** — `RevealBoundsTransform` (tween 320ms FastOutSlowIn) on both shared elements; openingScale 1.08→1.04; tap delay 400→160ms, auto-open 600→450ms; reveal content (title/tags/teaser/action) blooms in via staggered `RevealContentEntrance`; pop from REVEAL is now fade-only (no slide) both ways.
+2. **Browse Topics read-only** — REVEAL route gained optional `?browse={browse}` query arg + `revealForBrowse()`; DB navigates with it; reveal hides the explore CTA + like/dislike, keeps pin + teaser + action info, "Already watched" confirms with no dialog (pill flip is the confirmation), and nothing is recorded in recents (recordUnexplored suppressed on close/back). Back always returns to the DB with scroll restored (rememberLazyListState is already saveable).
+3. **"Already watched" pill** — redesigned from TextButton to an animated Surface pill: idle = outlined surface, done = filled category accent + check (animateColorAsState); label kept constant.
+4. **Intro button** — onboarding Skip/Next controls bottom-anchored via `Spacer(weight(1f))` instead of a fixed 26dp spacer.
+5. **Shuffle dots** — OrbitRing: 8×3dp → 10×4.5dp dots with per-dot shimmer + soft glow + AnimatedVisibility fade/scale entrance/exit.

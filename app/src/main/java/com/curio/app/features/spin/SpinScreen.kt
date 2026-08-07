@@ -1,6 +1,7 @@
 package com.curio.app.features.spin
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -144,6 +145,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.components.MorphEntrance
 import kotlin.random.Random
@@ -768,7 +770,10 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
             // screen before the destination hero appears.
             landingAlreadyOpened = true
             isOpening = true
-            delay(600)
+            // v7.x — shortened from 600ms: the settle + confetti still get
+            // their beat, but the reveal arrives before the pause reads as
+            // a stall.
+            delay(450)
             // Guard against a category switch during the pause: the effect
             // captured `cat` at launch, so only navigate if it's still the
             // active category.
@@ -815,7 +820,10 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
                 // destination enters. This mirrors the automatic landing
                 // handoff instead of making a manual tap feel like a cut.
                 openingScope.launch {
-                    delay(CurioMotion.Durations.RevealHold.toLong())
+                    // v7.x — the morph is the expansion now, so the pre-nav
+                    // pause is a short beat (160ms) instead of the old
+                    // 400ms hold that read as lag on tap.
+                    delay(160)
                     if (isOpening) {
                         navController.navigate(
                             CurioRoutes.revealFor(resolved.categoryId.routeSlug, resolved.name)
@@ -1876,12 +1884,13 @@ private fun HeroTicketCard(
     // surprises on the card, and it matches every other pastel surface.
     val ink = if (AppPreferences.pastelColorsState) pastelFillInk(accent) else cat.onAccent()
 
-    // ── Opening handoff — the settled ticket grows a little toward the
-    //    reveal hero before navigation. This is deliberately separate from
-    //    the landing settle so the user can read it as one continuous card
-    //    becoming the next screen, not as another shuffle bounce.
+    // ── Opening handoff — the settled ticket lifts only a hair toward the
+    //    reveal hero before navigation. The shared-element morph (see
+    //    CurioNavHost) does the real expansion, so a big pre-grow here only
+    //    made the handoff read as a delay; 1.04 is a subtle lift that says
+    //    "this card is about to open" without fighting the morph.
     val openingScale by animateFloatAsState(
-        targetValue = if (opening) 1.08f else 1f,
+        targetValue = if (opening) 1.04f else 1f,
         animationSpec = tween(CurioMotion.Durations.RevealHold),
         label = "openingCardScale"
     )
@@ -1988,7 +1997,11 @@ private fun HeroTicketCard(
                         // the reveal's hero expands out of this card's
                         // position instead of the page sliding in.
                         sharedTransitionScope.run {
-                            Modifier.sharedElement(revealSharedState, animatedVisibilityScope)
+                            Modifier.sharedElement(
+                                revealSharedState,
+                                animatedVisibilityScope,
+                                boundsTransform = RevealBoundsTransform
+                            )
                         }
                     } else Modifier
                 )
@@ -2729,42 +2742,64 @@ private fun SpinButton(
 }
 
 /**
- * Rotating ring of 8 small dots around the spin button during shuffle.
+ * Rotating ring of dots around the spin button during shuffle — bigger,
+ * shimmering dots that fade/scatter in when a spin starts and out when it
+ * ends, so the band reads as living light around the button.
  */
 @Composable
 private fun OrbitRing(active: Boolean, color: Color, modifier: Modifier = Modifier) {
-    if (!active) return
     // v7.11 — in pastel mode the raw accent color blends into the pastel
     // background (invisible dots). pastelFillInk resolves to a deep hue ink
     // in pastel light mode and a light tint in pastel dark mode, so the
     // orbiting dots stay readable on every background. Non-pastel keeps
     // the classic accent-colored dots.
-    val dotColor = pastelFillInk(color).copy(alpha = 0.85f)
-    val infinite = rememberInfiniteTransition(label = "orbit")
-    val rot by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = LinearEasing)
-        ),
-        label = "orbitRot"
-    )
-    Canvas(modifier = modifier) {
-        val cx = size.width / 2f
-        val cy = size.height / 2f
-        val radius = (size.minDimension / 2f) - 8f.dp.toPx()
-        val dotR = 3f.dp.toPx()
-        val n = 8
-        rotate(degrees = rot, pivot = Offset(cx, cy)) {
-            for (i in 0 until n) {
-                val a = (i.toFloat() / n) * (2f * Math.PI.toFloat())
-                val dx = cos(a) * radius
-                val dy = sin(a) * radius
-                drawCircle(
-                    color = dotColor,
-                    radius = dotR,
-                    center = Offset(cx + dx, cy + dy)
-                )
+    val dotColor = pastelFillInk(color)
+    AnimatedVisibility(
+        visible = active,
+        modifier = modifier,
+        enter = fadeIn(animationSpec = tween(220)) +
+            scaleIn(initialScale = 0.55f, animationSpec = tween(240, easing = FastOutSlowInEasing)),
+        exit = fadeOut(animationSpec = tween(200))
+    ) {
+        val infinite = rememberInfiniteTransition(label = "orbit")
+        val rot by infinite.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1400, easing = LinearEasing)
+            ),
+            label = "orbitRot"
+        )
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cx = size.width / 2f
+            val cy = size.height / 2f
+            val radius = (size.minDimension / 2f) - 8f.dp.toPx()
+            // v7.x — dots grown from 3dp to 4.5dp so the orbit band reads
+            // clearly instead of a faint speckle.
+            val dotR = 4.5f.dp.toPx()
+            val n = 10
+            val rotRad = rot * (Math.PI.toFloat() / 180f)
+            rotate(degrees = rot, pivot = Offset(cx, cy)) {
+                for (i in 0 until n) {
+                    val a = (i.toFloat() / n) * (2f * Math.PI.toFloat())
+                    val center = Offset(cx + cos(a) * radius, cy + sin(a) * radius)
+                    // Shimmer: each dot breathes with a phase offset while
+                    // the ring orbits, so the band reads as living light
+                    // instead of a rigid necklace.
+                    val pulse = (sin(rotRad * 1.4f + i * 1.15f) + 1f) / 2f
+                    val r = dotR * (0.7f + 0.5f * pulse)
+                    // Soft glow behind the dot.
+                    drawCircle(
+                        color = dotColor.copy(alpha = 0.14f + 0.22f * pulse),
+                        radius = r * 1.9f,
+                        center = center
+                    )
+                    drawCircle(
+                        color = dotColor.copy(alpha = 0.4f + 0.6f * pulse),
+                        radius = r,
+                        center = center
+                    )
+                }
             }
         }
     }

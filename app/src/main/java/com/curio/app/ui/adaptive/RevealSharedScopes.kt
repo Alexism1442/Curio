@@ -1,7 +1,10 @@
 package com.curio.app.ui.adaptive
 
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
@@ -18,6 +21,15 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * NavHost subtree).
  */
 const val RevealSharedElementKey = "reveal-hero"
+
+/**
+ * Bounds animation for the reveal morph — a quick, even FastOutSlowIn
+ * tween (320ms) so the card expands into the hero smoothly without the
+ * default spring's wobble or the earlier laggy feel.
+ */
+val RevealBoundsTransform = BoundsTransform { _, _ ->
+    tween(320, easing = FastOutSlowInEasing)
+}
 
 /** The SharedTransitionScope instance wrapping the NavHost. */
 val LocalRevealSharedScope = staticCompositionLocalOf<SharedTransitionScope?> { null }

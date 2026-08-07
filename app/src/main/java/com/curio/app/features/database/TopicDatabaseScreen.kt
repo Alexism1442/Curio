@@ -292,8 +292,12 @@ fun TopicDatabaseScreen(navController: NavController) {
                                 topic = row.topic,
                                 done = row.done,
                                 onClick = {
+                                    // Browse-Topics mode: the reveal opens
+                                    // read-only (no explore, no recents
+                                    // recording) and Back always returns here
+                                    // with the scroll position restored.
                                     navController.navigate(
-                                        CurioRoutes.revealFor(
+                                        CurioRoutes.revealForBrowse(
                                             row.topic.categoryId.routeSlug,
                                             row.topic.name
                                         )

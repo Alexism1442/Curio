@@ -10,6 +10,12 @@ import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -79,6 +85,7 @@ import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioGradients
@@ -130,7 +137,11 @@ import com.curio.app.ui.theme.themedAccent
 fun TopicRevealScreen(
     categorySlug: String,
     topicName: String,
-    navController: NavController
+    navController: NavController,
+    // Browse-Topics read-only mode (see CurioRoutes.REVEAL): no explore
+    // CTA, no like/dislike, no recents recording, and "Already watched"
+    // confirms without the write-about-it dialog.
+    browseMode: Boolean = false
 ) {
     val cat = remember(categorySlug) {
         CurioCategories.byRouteSlug(categorySlug)
@@ -451,7 +462,8 @@ fun TopicRevealScreen(
             // user spins again or explores it (v5.6).
             Surface(
                 onClick = {
-                    if (!engaged) {
+                    // Browse mode is read-only: nothing is ever recorded.
+                    if (!browseMode && !engaged) {
                         resolved?.let { ExploreSessionStore.recordUnexplored(context, cat.id, it.name) }
                     }
                     navController.popBackStack()
@@ -493,70 +505,83 @@ fun TopicRevealScreen(
                 }
 
                 // ── 3. Topic name ───────────────────────────────────────────
-                Text(
-                    text = resolved?.name ?: cat.displayName,
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        lineHeight = 40.sp,
-                        letterSpacing = (-0.5).sp
-                    ),
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                )
-
-                // ── 4. Tags chip row (genre / era context) ─────────────────
-                if (!resolved?.tags.isNullOrEmpty()) {
-                    Row(
+                // Soft entrance under the morphing hero: the title, tags and
+                // cards fade + rise in a light stagger so the page blooms
+                // after the card expands instead of snapping in.
+                RevealContentEntrance(delayMillis = 60) {
+                    Text(
+                        text = resolved?.name ?: cat.displayName,
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            lineHeight = 40.sp,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        resolved.tags.take(4).forEach { tag ->
-                            Surface(
-                                shape = RoundedCornerShape(50),
-                                color = cat.themedAccent().copy(alpha = 0.18f),
-                                shadowElevation = 0.dp
-                            ) {
-                                Text(
-                                    text = tag,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    // Spacer so subsequent sections don't crowd up.
-                    Spacer(Modifier.height(10.dp))
-                }
-
-                // ── 5. Teaser card ──────────────────────────────────────────
-                TeaserCard(
-                    cat = cat,
-                    teaser = resolved?.teaser,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-
-                // ── 6. Action prompt card ──────────────────────────────────
-                if (resolved != null) {
-                    ActionPromptCard(
-                        cat = cat,
-                        action = resolved.exploreAction,
-                        subtype = resolved.subtype,
-                        modifier = Modifier.padding(top = 14.dp)
+                            .padding(top = 20.dp)
                     )
                 }
 
-                // ── 6.5 Like / dislike — feeds the shuffle weighting ──
+                // ── 4. Tags chip row (genre / era context) ─────────────────
+                RevealContentEntrance(delayMillis = 110) {
+                    if (!resolved?.tags.isNullOrEmpty()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            resolved.tags.take(4).forEach { tag ->
+                                Surface(
+                                    shape = RoundedCornerShape(50),
+                                    color = cat.themedAccent().copy(alpha = 0.18f),
+                                    shadowElevation = 0.dp
+                                ) {
+                                    Text(
+                                        text = tag,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        // Spacer so subsequent sections don't crowd up.
+                        Spacer(Modifier.height(10.dp))
+                    }
+                }
+
+                // ── 5. Teaser card ──────────────────────────────────────────
+                RevealContentEntrance(delayMillis = 160) {
+                    TeaserCard(
+                        cat = cat,
+                        teaser = resolved?.teaser,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                }
+
+                // ── 6. Action prompt card ──────────────────────────────────
                 if (resolved != null) {
+                    RevealContentEntrance(delayMillis = 210) {
+                        ActionPromptCard(
+                            cat = cat,
+                            action = resolved.exploreAction,
+                            subtype = resolved.subtype,
+                            modifier = Modifier.padding(top = 14.dp)
+                        )
+                    }
+                }
+
+                // ── 6.5 Like / dislike — feeds the shuffle weighting ──
+                // Hidden in Browse-Topics mode: reading from the database
+                // must not shape the shuffle (pure read-only).
+                if (!browseMode && resolved != null) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -597,7 +622,9 @@ fun TopicRevealScreen(
                     }
                 }
 
-                // ── 7. Primary CTA ─────────────────────────────────────────
+                // ── 7. Primary CTA — hidden in Browse-Topics mode (read-only:
+                //    no explore sessions, nothing recorded in recents). ──────
+                if (!browseMode) {
                 Button(
                     onClick = {
                         val topic = resolved ?: return@Button
@@ -634,14 +661,27 @@ fun TopicRevealScreen(
                         )
                     }
                 }
+                }
 
-                // ── 8. "Already …" — a quiet secondary action beneath
-                //    the primary CTA. It keeps the same toggle behavior, but
-                //    no longer competes with Start exploring as a second
-                //    full-width filled card.
-                TextButton(
+                // ── 8. "Already …" — a full-width pill toggle. Idle: a quiet
+                //    outlined surface; done: filled with the category accent
+                //    and a check, color-animated so the state flip reads.
+                //    In Browse-Topics mode tapping just confirms (the pill
+                //    flip IS the confirmation); elsewhere it still asks
+                //    whether to write about it now.
+                val donePillColor by animateColorAsState(
+                    targetValue = if (isDone) cat.themedAccent()
+                                  else MaterialTheme.colorScheme.surfaceVariant,
+                    label = "alreadyDonePill"
+                )
+                val donePillInk by animateColorAsState(
+                    targetValue = if (isDone) cat.onAccent()
+                                  else MaterialTheme.colorScheme.onSurfaceVariant,
+                    label = "alreadyDoneInk"
+                )
+                Surface(
                     onClick = {
-                        val topic = resolved ?: return@TextButton
+                        val topic = resolved ?: return@Surface
                         // Marking OR unmarking is engaging — backing out must
                         // not record the topic as unexplored afterwards.
                         engaged = true
@@ -649,34 +689,35 @@ fun TopicRevealScreen(
                             ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
                         } else {
                             ExploreSessionStore.markDone(context, cat.id, topic.name)
-                            showAlreadyDoneDialog = true
+                            // Browse mode: the pill flip IS the confirmation.
+                            if (!browseMode) showAlreadyDoneDialog = true
                         }
                     },
                     enabled = resolved != null,
                     shape = RoundedCornerShape(18.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = if (isDone) cat.themedAccent() else MaterialTheme.colorScheme.onSurfaceVariant,
-                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
-                    ),
+                    color = donePillColor,
+                    border = if (isDone) null
+                             else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                     ) {
                         CurioIcon(
                             name = if (isDone) CurioIcons.Check else CurioIcons.History,
                             contentDescription = null,
-                            tint = if (isDone) cat.themedAccent() else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = donePillInk,
                             size = 18.dp
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (isDone) "${alreadyDoneLabel(cat)} — undo" else alreadyDoneLabel(cat),
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                            text = alreadyDoneLabel(cat),
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                            color = donePillInk
                         )
                     }
                 }
@@ -688,9 +729,10 @@ fun TopicRevealScreen(
         }
     }
 
-    // Leaving via the system back gesture without engaging → recently-unexplored.
+    // Leaving via the system back gesture without engaging → recently-unexplored
+    // (never in Browse-Topics mode — reading from the database is silent).
     BackHandler {
-        if (!engaged) {
+        if (!browseMode && !engaged) {
             resolved?.let { ExploreSessionStore.recordUnexplored(context, cat.id, it.name) }
         }
         navController.popBackStack()
@@ -953,7 +995,11 @@ private fun HeroCard(
                 // Shared-element target: bounds animate from the Spin
                 // ticket's position/size to this hero when the topic opens.
                 sharedTransitionScope.run {
-                    Modifier.sharedElement(revealSharedState, animatedVisibilityScope)
+                    Modifier.sharedElement(
+                        revealSharedState,
+                        animatedVisibilityScope,
+                        boundsTransform = RevealBoundsTransform
+                    )
                 }
             ),
         shape = RoundedCornerShape(32.dp),
@@ -1182,6 +1228,26 @@ private fun ActionPromptCard(
             )
         }
     }
+}
+
+/** One-shot soft entrance for the reveal content below the morphing hero —
+ *  fades + rises gently so the page blooms in after the card expands, with
+ *  a light stagger (later sections delay a touch more). */
+@Composable
+private fun RevealContentEntrance(
+    delayMillis: Int = 0,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    AnimatedVisibility(
+        visible = true,
+        modifier = modifier,
+        enter = fadeIn(
+            animationSpec = tween(320, delayMillis = delayMillis, easing = FastOutSlowInEasing)
+        ) + slideInVertically(
+            animationSpec = tween(320, delayMillis = delayMillis, easing = FastOutSlowInEasing)
+        ) { height -> height / 28 }
+    ) { content() }
 }
 
 /** Map exploreAction verb to a Material Symbols glyph (no emoji). */

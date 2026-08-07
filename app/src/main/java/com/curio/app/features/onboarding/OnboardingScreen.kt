@@ -295,14 +295,16 @@ fun OnboardingScreen(navController: NavController) {
                 }
             }
 
-            // ── Bottom controls — v7.112: dropped a little farther toward
-            //    the bottom edge and given roomier touch targets ──
-            Spacer(Modifier.height(26.dp))
+            // ── Bottom controls — anchored to the bottom edge: a flexible
+            //    spacer absorbs the space between the tear and the controls,
+            //    so the Skip / Next row sits on the navigation inset on every
+            //    screen height instead of floating high under the banner ──
+            Spacer(Modifier.weight(1f))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 26.dp),
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
