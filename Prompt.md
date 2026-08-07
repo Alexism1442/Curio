@@ -23,4 +23,4 @@ static checks only — grep confirms imports + call sites, `git diff --check` cl
 CI re-run on push is the source of truth.
 
 ### Status
-- Fix committed and pushed; pending CI result.
+- Fix committed and pushed as `ecfd3c4`; pending CI result.
