@@ -145,6 +145,9 @@ private val CategoryIdSaver = Saver<CategoryId?, String>(
 fun CabinetScreen(navController: NavController) {
     // Wide windows (tablet / landscape) spread the grid into more columns.
     val wide = windowWidthSizeClass().isWide
+    // Compact hero on tablets/landscape — 140dp instead of 180dp.
+    val compactBannerHeight = if (wide) 140.dp else CabinetHeroBannerHeight
+    val contentTop = compactBannerHeight + CabinetHeroSheetExtent + CabinetChipBarHeight + 18.dp
     var selectedFilter by rememberSaveable(CabinetSessionToken, stateSaver = CategoryIdSaver) {
         mutableStateOf<CategoryId?>(null)
     }
@@ -304,7 +307,7 @@ fun CabinetScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = CabinetContentTop)
+                    .padding(top = contentTop)
             ) {
             MorphEntrance {
                 if (searchActive && searchQuery.isNotBlank()) {
@@ -377,7 +380,7 @@ fun CabinetScreen(navController: NavController) {
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    top = CabinetContentTop,
+                    top = contentTop,
                     bottom = 24.dp
                 ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -469,7 +472,8 @@ fun CabinetScreen(navController: NavController) {
             searchQuery = searchQuery,
             onSearchQueryChange = { searchQuery = it },
             onCloseSearch = { searchActive = false; searchQuery = "" },
-            searchFocus = searchFocus
+            searchFocus = searchFocus,
+            compact = wide
         ) { ink ->
             if (selectionMode) {
                 CabinetHeroActionPill(
@@ -594,8 +598,13 @@ private fun CabinetHeroHeader(
     onSearchQueryChange: (String) -> Unit,
     onCloseSearch: () -> Unit,
     searchFocus: FocusRequester,
-    trailing: @Composable (ink: Color) -> Unit
+    trailing: @Composable (ink: Color) -> Unit,
+    // Narrow the torn banner on landscape/tablet so it doesn't cover
+    // most of the already-short vertical space.
+    compact: Boolean = false
 ) {
+    val bannerHeight = if (compact) 140.dp else CabinetHeroBannerHeight
+    val totalHeight = bannerHeight + CabinetHeroSheetExtent
     val heroTornShape = remember(CABINET_TEAR_SEED) { SoftTornBottomShape(CABINET_TEAR_SEED, bold = true) }
     val sheetShape = remember(CABINET_TEAR_SEED) {
         SoftTornSheetShape(CABINET_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
@@ -620,7 +629,7 @@ private fun CabinetHeroHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(CabinetHeroTotalHeight)
+            .height(totalHeight)
     ) {
         // ── Under-sheet — a shared white paper layer, so the tear remains
         // visible instead of turning into a dark/black strip in dark mode.
@@ -628,20 +637,19 @@ private fun CabinetHeroHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(42.dp)
-                .offset(y = CabinetHeroBannerHeight - 18.dp)
+                .offset(y = bannerHeight - 18.dp)
                 .clip(sheetShape)
                 .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(CabinetHeroBannerHeight)
+                .fillMaxWidth()                .height(bannerHeight)
                 .offset(y = 1.dp)
                 .clip(heroTornShape)
                 .background(Color.Black.copy(alpha = 0.20f))
-        )
-        // ── Solid rose banner, torn bottom edge — shares the exact rose
+            )
+            // ── Solid rose banner, torn bottom edge — shares the exact rose
         // family as Profile/Settings (settingsRoseAccent).
         Surface(
             shape = heroTornShape,
@@ -649,7 +657,7 @@ private fun CabinetHeroHeader(
             shadowElevation = 0.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(CabinetHeroBannerHeight)
+                .height(bannerHeight)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 // Mirrored watermark collage — the ACTIVE category's family

@@ -110,8 +110,13 @@ private data class SettingsHeroPair(
 fun SettingsHeroHeader(
     title: String,
     subtitle: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    // Narrow the torn banner on landscape/tablet so it doesn't cover
+    // most of the already-short vertical space.
+    compact: Boolean = false
 ) {
+    val bannerHeight = if (compact) 140.dp else SettingsHeroBannerHeight
+    val totalHeight = bannerHeight + SettingsHeroSheetExtent
     val heroTornShape = remember(SETTINGS_HERO_TEAR_SEED) { SoftTornBottomShape(SETTINGS_HERO_TEAR_SEED, bold = true) }
     val sheetShape = remember(SETTINGS_HERO_TEAR_SEED) {
         SoftTornSheetShape(SETTINGS_HERO_TEAR_SEED, lip = 10.dp, baseline = 14.dp, bold = true)
@@ -120,36 +125,34 @@ fun SettingsHeroHeader(
     val ink = settingsReadableInk(fill)
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(SettingsHeroTotalHeight)
-    ) {
-        // ── Under-sheet — the shared white paper layer, so the tear stays
-        // bright beneath the rose hero in every theme.
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(42.dp)
-                .offset(y = SettingsHeroBannerHeight - 18.dp)
+            .fillMaxWidth()            .height(totalHeight)
+        ) {
+            // ── Under-sheet — the shared white paper layer, so the tear stays
+            // bright beneath the rose hero in every theme.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp)
+                    .offset(y = bannerHeight - 18.dp)
                 .clip(sheetShape)
                 .background(CurioColors.CreamWhite)
         )
         // ── Torn-edge shadow — hairline dark rim under the seam.
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(SettingsHeroBannerHeight)
+                .fillMaxWidth()                .height(bannerHeight)
                 .offset(y = 1.dp)
                 .clip(heroTornShape)
                 .background(Color.Black.copy(alpha = 0.20f))
-        )
-        // ── Solid rose banner, torn bottom edge ────────────────────────
-        Surface(
-            shape = heroTornShape,
-            color = fill,
-            shadowElevation = 0.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(SettingsHeroBannerHeight)
+            )
+            // ── Solid rose banner, torn bottom edge ────────────────────────
+            Surface(
+                shape = heroTornShape,
+                color = fill,
+                shadowElevation = 0.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(bannerHeight)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 // Mirrored watermark collage — the wildcard family's symbols
@@ -300,11 +303,14 @@ fun SettingsHubScreen(navController: NavController) {
         // the familiar single column. Search, section labels and the empty
         // state always span the full width.
         val wide = windowWidthSizeClass().isWide
+        // Compact hero on tablets/landscape — 140dp instead of 180dp so
+        // the torn banner doesn't dominate the short vertical space.
+        val heroTotal = if (wide) 140.dp + SettingsHeroSheetExtent else SettingsHeroTotalHeight
         ScreenEntrance {
             LazyVerticalGrid(
                 columns = if (wide) GridCells.Adaptive(minSize = 300.dp) else GridCells.Fixed(1),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = heroTotal + 10.dp, bottom = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -361,7 +367,8 @@ fun SettingsHubScreen(navController: NavController) {
         SettingsHeroHeader(
             title = "Settings",
             subtitle = "Tune Curio your way",
-            onBack = { navController.popBackStack() }
+            onBack = { navController.popBackStack() },
+            compact = wide
         )
     }
 }
