@@ -48,6 +48,33 @@ data class ExploreSession(
 }
 
 /**
+ * A category-flavored reflection question for an active/ended explore
+ * session — "Finished listening? What track or lyric landed hardest?" etc.
+ * Shown in the live timer notification and the wrap-up reminder so the
+ * user leaves with something to write down. Categories map to the verb
+ * their topics use (albums → listening, films → watching, books →
+ * reading…); wildcard falls back to the topic's own verb.
+ */
+fun ExploreSession.reflectionQuestion(): String = when (categoryId) {
+    CategoryId.ARTISTS, CategoryId.ALBUMS ->
+        "Finished listening? What track or lyric landed hardest?"
+    CategoryId.DIRECTORS, CategoryId.FILMS ->
+        "Finished watching? What scene or shot stayed with you?"
+    CategoryId.AUTHORS, CategoryId.BOOKS ->
+        "Finished reading? What idea do you want to keep?"
+    CategoryId.PAINTERS, CategoryId.ARTWORKS ->
+        "Finished looking? What detail caught your eye first?"
+    CategoryId.SCIENTISTS, CategoryId.DISCOVERIES ->
+        "Finished exploring? What fact surprised you most?"
+    CategoryId.WILDCARD -> when (verb.lowercase()) {
+        "listen" -> "Finished listening? What caught your ear?"
+        "watch" -> "Finished watching? What caught your eye?"
+        "read" -> "Finished reading? What will you remember?"
+        else -> "Done exploring? What's one thing you'd keep?"
+    }
+}
+
+/**
  * A topic the user engaged with (tapped Explore) — recently-explored list.
  *
  * [wasUnexplored] marks a topic that previously sat in the recently-

@@ -97,6 +97,17 @@ class ExploreReminderReceiver : BroadcastReceiver() {
             .setContentIntent(openAppIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // The category-flavored reflection question — "Finished listening?
+            // What track or lyric landed hardest?" — rides under the nudge
+            // when the reminder is expanded, so the wrap-up prompt leaves the
+            // user with something concrete to write about.
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(
+                        "If you're finished, come back and write it down — ${session.verb} ${session.targetName}.\n" +
+                            session.reflectionQuestion()
+                    )
+            )
             .build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)

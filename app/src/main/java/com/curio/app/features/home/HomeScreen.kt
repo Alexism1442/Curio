@@ -546,6 +546,14 @@ fun HomeScreen(navController: NavController) {
                         runCatching {
                             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(activeSession.searchUrl)))
                         }
+                    },
+                    onStop = {
+                        // Top-corner stop — quiet teardown, same as the
+                        // notification's Cancel action (no write-it-down
+                        // page, no done prompt on the next return).
+                        ExploreSessionStore.clearSession(context)
+                        ExploreReminderScheduler.cancel(context)
+                        ExploreSessionService.stop(context)
                     }
                 )
                 Spacer(Modifier.height(20.dp))
@@ -1807,7 +1815,8 @@ private fun ExploreTopicRow(
 private fun CurrentlyExploringCard(
     session: ExploreSession,
     onDone: () -> Unit,
-    onKeepExploring: () -> Unit
+    onKeepExploring: () -> Unit,
+    onStop: () -> Unit
 ) {
     val accent = CurioCategories.byId(session.categoryId).themedAccent()
     val cat = CurioCategories.byId(session.categoryId)
@@ -1853,8 +1862,32 @@ private fun CurrentlyExploringCard(
                     .align(Alignment.CenterEnd)
                     .padding(end = 10.dp)
             )
+            // ── End session — the card's top corner ─────────────────
+            // The floating bubble no longer carries a Stop button; the end
+            // control lives here, at the session card's top-end corner,
+            // where it's reachable the moment a session starts.
+            Surface(
+                onClick = onStop,
+                shape = CircleShape,
+                color = accent.copy(alpha = 0.14f),
+                border = BorderStroke(1.dp, exploreInk.copy(alpha = 0.35f)),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(10.dp)
+            ) {
+                CurioIcon(
+                    name = CurioIcons.Stop,
+                    contentDescription = "End explore session",
+                    tint = exploreInk,
+                    size = 15.dp,
+                    modifier = Modifier.padding(7.dp)
+                )
+            }
             Column(modifier = Modifier.padding(16.dp)) {
+                // End padding keeps the header text clear of the corner Stop
+                // button (which floats at the card's TopEnd).
                 Row(
+                    modifier = Modifier.padding(end = 40.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {

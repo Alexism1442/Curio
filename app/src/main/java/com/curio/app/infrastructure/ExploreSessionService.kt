@@ -71,7 +71,8 @@ import com.curio.app.ui.theme.pastelAccent
  *    the "Display over other apps" permission is granted): a Messenger-style
  *    bubble rendered in a `TYPE_APPLICATION_OVERLAY` window that floats over
  *    OTHER apps — including the browser — while the session runs. It shows
- *    the same topic + live timer with Pause/Resume, Stop, Minimize and Hide,
+ *    the same topic + live timer with Pause/Resume and Hide (ending a
+ *    session lives in the app's session card, not on the floating pill),
  *    starts minimized (compact chip + timer), and can be dragged anywhere
  *    (snaps to the nearest horizontal edge on release). Long topic names
  *    slow-scroll across the pill so the full name is always readable.
@@ -349,6 +350,11 @@ class ExploreSessionService : Service() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setProgress(totalMins, progressMins, false)
 
+        // One shared readout used by BOTH the collapsed content text (the
+        // live timer above the progress bar) and the expanded big text, so
+        // the two can never drift.
+        val body = if (paused) "Paused · ${formatElapsed(elapsed)}"
+                   else "${formatElapsed(elapsed)} in"
         if (paused) {
             // Frozen readout — the chronometer would keep counting, so drop
             // it and print the banked elapsed time as text instead. The
@@ -357,7 +363,7 @@ class ExploreSessionService : Service() {
             builder
                 .setUsesChronometer(false)
                 .setShowWhen(false)
-                .setContentText("Paused · ${formatElapsed(elapsed)}")
+                .setContentText(body)
                 .addAction(0, "Resume", togglePauseIntent())
         } else {
             // Live chronometer anchored at start + banked pauses, so it shows
@@ -368,7 +374,7 @@ class ExploreSessionService : Service() {
                 .setUsesChronometer(true)
                 .setShowWhen(true)
                 .setWhen(session.startMillis + session.accumulatedPausedMillis)
-                .setContentText("${formatElapsed(elapsed)} in")
+                .setContentText(body)
                 .addAction(0, "Pause", togglePauseIntent())
         }
         builder
@@ -376,6 +382,15 @@ class ExploreSessionService : Service() {
             // Plain cancel — end the session without jumping to the
             // write-it-down page (Done exploring opens it).
             .addAction(0, "Cancel", cancelSessionIntent())
+        // Category-flavored reflection question — shown under the live timer
+        // when the notification is expanded ("Finished listening? What track
+        // or lyric landed hardest?" etc.), so the wrap-up nudge leaves the
+        // user with something to write down. The collapsed content text stays
+        // the short live timer above the progress bar.
+        builder.setStyle(
+            NotificationCompat.BigTextStyle()
+                .bigText("$body\n${session.reflectionQuestion()}")
+        )
         return builder.build()
     }
 
@@ -508,11 +523,6 @@ class ExploreSessionService : Service() {
                                 } else {
                                     ExploreSessionStore.pauseSession(this@ExploreSessionService)
                                 }
-                                render()
-                            },
-                            onStop = {
-                                ExploreSessionStore.clearSession(this@ExploreSessionService)
-                                ExploreReminderScheduler.cancel(this@ExploreSessionService)
                                 render()
                             },
                             onHide = {
@@ -773,7 +783,10 @@ class ExploreSessionService : Service() {
         const val CHANNEL_ID = "explore_session_timer"
         const val NOTIFICATION_ID = 4211
         // How often the live notification re-renders (progress bar + text).
-        const val NOTIFICATION_REFRESH_MS = 60_000L
+        // 15s keeps the elapsed text above the progress bar visibly ticking
+        // (the shade chronometer ticks on its own; the re-render refreshes
+        // the text + progress against it).
+        const val NOTIFICATION_REFRESH_MS = 15_000L
         // Self-heal tuning: how long to wait before retrying a transient
         // overlay failure, and how long to wait before verifying the attached
         // bubble window actually has content.

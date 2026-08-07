@@ -79,7 +79,9 @@ import kotlinx.coroutines.delay
  *  - **Expanded**: a rounded card panel (NOT a full capsule — a capsule
  *    with that much content reads as a circle). A header row with the glyph
  *    chip + topic + elapsed + a Minimize chevron, then a row of labeled
- *    controls: **Pause / Resume**, **Stop**, **Hide**.
+ *    controls: **Pause / Resume** and **Hide**. (Ending the session moved
+ *    to the app's session-card corner — the floating pill only pauses and
+ *    hides.)
  *
  * While the transition runs, [onSizeChanged] reports the growing/shrinking
  * pixel size so the service can keep the window centered and clamped —
@@ -107,7 +109,6 @@ import kotlinx.coroutines.delay
 fun ExploreBubbleContent(
     session: ExploreSession,
     onTogglePause: () -> Unit,
-    onStop: () -> Unit,
     onHide: () -> Unit,
     onDragBy: (dx: Float, dy: Float) -> Unit,
     onDragEnd: () -> Unit,
@@ -229,12 +230,18 @@ fun ExploreBubbleContent(
         // same FastOutSlowIn tween as the corner and the [sizeAnimating]
         // gate above, so the overlay window follows the content in lock-step
         // for the whole animation and everything lands together.
+        // v7.99 — clip the crossfade to the ANIMATING bounds (clip = true):
+        // the unclipped swap let the expanded panel's content render at full
+        // size while the window was still pill-sized, so the controls stuck
+        // out past the rounded bubble mid-animation and the unfurl read as
+        // glitchy. Clipping reveals the panel as the window grows — a clean
+        // unfold instead of an overlapping flash.
         AnimatedContent(
             targetState = minimized,
             transitionSpec = {
                 (fadeIn(tween(EXPAND_FADE_IN_MS, easing = FastOutSlowInEasing)) togetherWith
                     fadeOut(tween(EXPAND_FADE_OUT_MS, easing = LinearEasing)))
-                    .using(SizeTransform(clip = false) { _, _ ->
+                    .using(SizeTransform(clip = true) { _, _ ->
                         tween(EXPAND_ANIM_MS, easing = FastOutSlowInEasing)
                     })
             },
@@ -257,7 +264,6 @@ fun ExploreBubbleContent(
                     ink = ink,
                     elapsed = elapsed,
                     onTogglePause = onTogglePause,
-                    onStop = onStop,
                     onHide = onHide,
                     onMinimize = { minimized = true }
                 )
@@ -324,9 +330,8 @@ private fun MinimizedPill(
 
 /**
  * The expanded card panel — header (glyph chip + topic + elapsed + Minimize
- * chevron) over a row of labeled controls (Pause/Resume, Stop, Hide).
- * Deliberately a rounded rectangle, not a capsule, so it never reads as a
- * circle.
+ * chevron) over a row of labeled controls (Pause/Resume, Hide). Deliberately
+ * a rounded rectangle, not a capsule, so it never reads as a circle.
  */
 @Composable
 private fun ExpandedPanel(
@@ -336,7 +341,6 @@ private fun ExpandedPanel(
     ink: Color,
     elapsed: Long,
     onTogglePause: () -> Unit,
-    onStop: () -> Unit,
     onHide: () -> Unit,
     onMinimize: () -> Unit
 ) {
@@ -387,12 +391,6 @@ private fun ExpandedPanel(
                 label = if (session.paused) "Resume" else "Pause",
                 tint = if (AppPreferences.pastelColorsState) ink else accent,
                 onClick = onTogglePause
-            )
-            LabeledBubbleButton(
-                icon = CurioIcons.Stop,
-                label = "Stop",
-                tint = MaterialTheme.colorScheme.error,
-                onClick = onStop
             )
             LabeledBubbleButton(
                 icon = CurioIcons.Close,
@@ -619,5 +617,5 @@ private const val MARQUEE_END_HOLD_MS = 1_100L
 // forwarding gate), which read as lag. 300ms FastOutSlowIn is fast enough
 // to feel snappy, long enough to read as a deliberate unfurl.
 private const val EXPAND_ANIM_MS = 300
-private const val EXPAND_FADE_IN_MS = 240
-private const val EXPAND_FADE_OUT_MS = 120
+private const val EXPAND_FADE_IN_MS = 220
+private const val EXPAND_FADE_OUT_MS = 100
