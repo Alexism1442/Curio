@@ -1,17 +1,16 @@
-# Prompt — promo palette, dark hero cards, and Detail tear refinement
+# Prompt — onboarding intro spacing and scale refinement
 
 ## Request
-Improve promo colors and dark non-pastel hero cards, then refine the Detail screen so its white torn-paper lip is not too wide and seeded heroes never read as a straight line.
+Move the intro Skip/Next controls farther down, make the buttons slightly larger, and increase the Curio wordmark size.
 
-## Completed
-- Promo artwork uses a richer rose-plum palette with unified phone mockups and lower-white overlays.
-- Shared non-pastel dark category fills deepen toward black; Entry Detail frost and selected category surfaces use restrained midnight treatment.
-- Detail's white tear lip is narrower without changing the metadata layout reservation.
-- Detail hero and under-sheet use the same deterministic Detail-only tear personality, with a salted seed and secondary oscillation to prevent unlucky seeds from producing a visually flat seam.
-- Other screens retain their existing tear behavior.
+## Implementation
+- Use the existing `displaySmall` typography for the Curio wordmark, increasing it from the prior 32sp headline treatment to the established 36sp display treatment.
+- Increase the gap before the controls from 20dp to 26dp.
+- Increase bottom-row vertical padding from 24dp to 26dp.
+- Give Skip and Next roomier content padding while preserving their existing click behavior and navigation flow.
+- Keep the 70%-height torn hero, tagline, pager, dots, and permission/theme steps unchanged.
 
-## Validation
-- `git diff --check` passed.
-- Comment-aware static Kotlin brace/string checks passed for all changed Kotlin files.
-- Code review found no blockers; hero/sheet tear parameters are aligned and the Detail layout reservation is preserved.
-- No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally; CI should validate the Android artifact.
+## Validation plan
+- Run non-Gradle static Kotlin structure and whitespace checks.
+- Review the visual/layout diff for fit and accessibility touch-target sizing.
+- Do not run Gradle build, compile, lint, or test commands locally per repository policy.

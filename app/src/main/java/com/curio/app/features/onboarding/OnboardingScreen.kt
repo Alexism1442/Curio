@@ -208,13 +208,12 @@ fun OnboardingScreen(navController: NavController) {
                         .fillMaxSize()
                         .statusBarsPadding()
                 ) {
-                    // ── Brand wordmark + tagline — v7.111: bumped up again
-                    //    (headlineLarge + 4sp letterspacing) so the name
-                    //    leads the banner; still pushed off the status bar ──
+                    // ── Brand wordmark + tagline — v7.112: enlarged again
+                    //    so Curio leads the intro without crowding the tagline ──
                     Spacer(Modifier.height(26.dp))
                     Text(
                         text = "Curio",
-                        style = MaterialTheme.typography.headlineLarge.copy(
+                        style = MaterialTheme.typography.displaySmall.copy(
                             fontWeight = FontWeight.ExtraBold,
                             letterSpacing = 4.sp
                         ),
@@ -296,19 +295,21 @@ fun OnboardingScreen(navController: NavController) {
                 }
             }
 
-            // ── Bottom controls — v7.111: dropped further toward the bottom
-            //    edge (bigger gap below the dots + taller vertical padding)
-            //    so they sit clear of the deeper tear ──
-            Spacer(Modifier.height(20.dp))
+            // ── Bottom controls — v7.112: dropped a little farther toward
+            //    the bottom edge and given roomier touch targets ──
+            Spacer(Modifier.height(26.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 24.dp),
+                    .padding(horizontal = 24.dp, vertical = 26.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = { finishOnboarding(context, navController) }) {
+                TextButton(
+                    onClick = { finishOnboarding(context, navController) },
+                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp)
+                ) {
                     Text(
                         text = "Skip",
                         style = MaterialTheme.typography.labelLarge,
@@ -325,7 +326,8 @@ fun OnboardingScreen(navController: NavController) {
                             }
                         }
                     },
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(26.dp),
+                    contentPadding = PaddingValues(horizontal = 26.dp, vertical = 14.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
