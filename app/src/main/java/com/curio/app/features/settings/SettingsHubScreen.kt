@@ -272,6 +272,8 @@ fun SettingsHubScreen(navController: NavController) {
     var query by rememberSaveable { mutableStateOf("") }
     val needle = query.trim()
     val sections = remember(needle) { filterSettingsSections(SettingsSections, needle) }
+    val searchResults = remember(needle) { collectSearchResults(SettingsSections, needle) }
+    val searching = needle.isNotEmpty()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -313,15 +315,30 @@ fun SettingsHubScreen(navController: NavController) {
                         onQueryChange = { query = it }
                     )
                 }
+                if (searching) {
+                    if (searchResults.isEmpty()) {
+                        item(span = { GridItemSpan(maxLineSpan) }) { SettingsNoResults(needle) }
+                    } else {
+                        val grouped = searchResults.groupBy { it.sectionLabel }
+                        grouped.forEach { (sectionLabel, results) ->
+                            item(span = { GridItemSpan(maxLineSpan) }) { CurioSectionLabel(sectionLabel) }
+                            item {
+                                CurioSettingsCard(border = null) {
+                                    results.forEachIndexed { index, result ->
+                                        if (index > 0) CurioSettingsDivider()
+                                        CurioSettingsRow(result.row.icon, result.row.title, result.row.subtitle) {
+                                            navController.navigate(result.row.route) { launchSingleTop = true }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
                 sections.forEach { section ->
                     item(span = { GridItemSpan(maxLineSpan) }) { CurioSectionLabel(section.label) }
                     section.cards.forEach { card ->
                         item {
-                            // v7.93 — each Settings section sits in a
-                            // BORDERLESS box (CurioSettingsCard with border
-                            // = null): the soft surface container groups the
-                            // rows without the hairline outline the
-                            // Quests/Support cards wear.
                             CurioSettingsCard(border = null) {
                                 if (card.headerIcon != null && card.headerTitle != null && card.headerSubtitle != null) {
                                     CurioCardHeader(card.headerIcon, card.headerTitle, card.headerSubtitle)
@@ -336,9 +353,6 @@ fun SettingsHubScreen(navController: NavController) {
                         }
                     }
                 }
-                // ── Empty search state ────────────────────────────────
-                if (needle.isNotEmpty() && sections.isEmpty()) {
-                    item(span = { GridItemSpan(maxLineSpan) }) { SettingsNoResults(needle) }
                 }
             }
         }
@@ -429,6 +443,31 @@ private val SettingsSections = listOf(
         )
     )
 )
+
+/** One flat search result — the matching row plus its section context so
+ *  the result list can show where each hit lives and navigate directly. */
+private data class SettingsSearchResult(
+    val sectionLabel: String,
+    val row: SettingsRowEntry
+)
+
+/** Collects every row whose title or subtitle matches [needle] (case-
+ *  insensitive, live-filtered), grouped by section so results read as
+ *  "Personalize → Appearance" instead of floating in a nameless list. */
+private fun collectSearchResults(
+    sections: List<SettingsSectionEntry>,
+    needle: String
+): List<SettingsSearchResult> {
+    if (needle.isBlank()) return emptyList()
+    return sections.flatMap { section ->
+        section.cards.flatMap { card ->
+            card.rows.filter { row ->
+                row.title.contains(needle, ignoreCase = true) ||
+                    row.subtitle.contains(needle, ignoreCase = true)
+            }.map { row -> SettingsSearchResult(section.label, row) }
+        }
+    }
+}
 
 /** Keeps only sections/cards/rows matching [needle] (case-insensitive). A
  *  card whose header or section matches keeps ALL of its rows. */
