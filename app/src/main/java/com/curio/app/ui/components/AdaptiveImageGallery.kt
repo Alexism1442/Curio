@@ -22,7 +22,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -30,8 +29,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.request.filterQuality
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -141,17 +138,13 @@ fun AdaptiveImageGallery(
                                 // ratio, so Fit fills the rounded box edge to
                                 // edge — no bars, no cropping.
                                 Image(
-                                    // v8.2 — FilterQuality.High set on the
-                                    // request (foundation 1.4+ removed the
-                                    // painter-overload parameter), so the grid
-                                    // tile upscales smoothly when the zoom
-                                    // overlay glides it larger than its decode.
-                                    painter = rememberAsyncImagePainter(
-                                        ImageRequest.Builder(LocalContext.current)
-                                            .data(tile.uri)
-                                            .filterQuality(FilterQuality.High)
-                                            .build()
-                                    ),
+                                    // v8.2 — the zoom overlay's hi-res layer
+                                    // (moodBoardPainter, 4096px cap) is what
+                                    // keeps the magnified tile sharp; Coil 2 has
+                                    // no request-level filter quality, and
+                                    // foundation 1.4+ removed the painter
+                                    // overload's filterQuality parameter.
+                                    painter = rememberAsyncImagePainter(tile.uri),
                                     contentDescription = "Attached image",
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier

@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -55,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import coil.request.filterQuality
 import com.curio.app.data.CaptureData
 import com.curio.app.data.NotePaperColor
 import com.curio.app.data.NotePaperStyle
@@ -211,11 +209,6 @@ fun moodBoardPainter(uri: String, zoomed: Boolean = false): Painter {
         model = ImageRequest.Builder(context)
             .data(uri)
             .size(cap, cap)
-            // v8.2 — filtering lives on the REQUEST, not the Image(painter=…)
-            // call: foundation 1.4+ removed the filterQuality parameter from
-            // that overload. High keeps the decoded bitmap smooth whenever it
-            // upscales (big tiles, the zoom glide) instead of blocky pixels.
-            .filterQuality(FilterQuality.High)
             .build()
     )
 }
@@ -285,9 +278,10 @@ fun MoodBoardTiles(
                     .rotate(tile.rotationDeg)
             ) {
             Image(
-                // v8.2 — FilterQuality.High is set on the Coil REQUEST inside
-                // moodBoardPainter (the painter overload of Image lost its
-                // filterQuality parameter in foundation 1.4+).
+                // v8.2 — sharpness comes from the DECODE CAP (moodBoardPainter
+                // decodes zoomed tiles at 4096px); Coil 2 has no request-level
+                // filter quality, and foundation 1.4+ removed the painter
+                // overload's filterQuality parameter.
                 painter = moodBoardPainter(tile.uri, zoomed),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
@@ -613,9 +607,11 @@ fun MoodBoardZoomOverlay(
             // Frameless, like the editor tiles. The board-size painter renders
             // instantly (already cached from the collage) while the hi-res
             // decode for the magnifier streams in — no blank flash mid-glide.
-            // v8.2 — both layers decode with FilterQuality.High on the REQUEST
-            // (moodBoardPainter), so the glide's upscale of the base bitmap
-            // stays smooth instead of pixel-cracked.
+            // v8.2 — both layers decode with a 4096px cap (moodBoardPainter),
+            // so the zoomed image reads sharp even at the full 8x pinch;
+            // Coil 2 has no request-level filter quality (foundation 1.4+
+            // removed the painter overload's parameter), so upscale smoothing
+            // during the glide is handled by the high-res layer arriving.
             Image(
                 painter = moodBoardPainter(tileUri),
                 contentDescription = null,
