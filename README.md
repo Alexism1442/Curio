@@ -2,7 +2,7 @@
 
 > **Explore something. Notice more. Keep the discovery.**
 
-A curated discovery app for curious people. Spin a roulette deck of 2,500+ topics across 11 lanes (more coming) , then capture what you notice in a beautiful, personal offline library. No accounts. No feed. No ads. Just you, a topic, and the world.
+A curated discovery app for curious people. Spin a roulette deck of 3,133 topics across 11 lanes (more coming), then capture what you notice in a beautiful, personal offline library. No accounts. No feed. No ads. Just you, a topic, and the world.
 
 ---
 
@@ -29,7 +29,7 @@ Start a timed session and a persistent floating bubble follows you over other ap
 Browse by category, search your collection, zoom images in a lightbox, and explore rich entry pages. Streaks, levels, and lane stats make the habit rewarding.
 
 ### 🎨 Design Identity
-Material 3 with Curio's warm-cream paper world: torn-paper heroes, category colors, custom typography, and motion throughout. Three theme styles (Curio, AMOLED, Material You).
+A **Material-inspired custom design language** — not a hand-invented look, but one assembled from the established design language of the modern web. Material 3's open design system is the foundation; on top sits a warm-cream paper world drawn from the editorial, tactile aesthetic of today's best apps: torn-paper heroes, category colors, custom typography, and motion throughout. Three theme styles (Curio, AMOLED, Material You).
 
 ### 🔒 Privacy First
 Everything lives on your device. No accounts. No analytics. No tracking. Open source.
@@ -55,9 +55,9 @@ cd Curio
 ```
 
 **Requirements:**
-- Android Studio (latest stable or Canary)
-- Kotlin 1.9+
-- Gradle 8.0+
+- Android Studio (latest stable)
+- Kotlin 2.3+
+- Gradle 9.4+
 - Android SDK 26+ (API level)
 
 For a signed release build:
@@ -84,7 +84,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 |---|---|
 | **Platform** | Android (v1.0) |
 | **Minimum OS** | Android 8.0 (API 26) and up |
-| **Target OS** | Android 15+ (API 37) |
+| **Target OS** | Android 17 (API 37) |
 | **Permissions** | Microphone (voice notes + dictation) · Notifications (reminders) · "Display over other apps" (optional floating explore bubble) · Background service (explore timer) |
 | **Language** | English |
 | **Accounts** | None — Curio works completely offline |
@@ -96,7 +96,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 
 ### Discovery — The Spin
 - **11 curated lanes**: Artists · Albums · Directors · Films · Authors · Books · Painters · Artworks · Scientists · Discoveries · Wildcard
-- **2,312+  topics** — each with teaser, imagery, and structured explore action (verb, target, suggested duration, step-by-step guide)
+- **3,133 topics** — each with teaser, imagery, and structured explore action (verb, target, suggested duration, step-by-step guide)
 - Roulette deck with stacked cards, category-tinted edges, shadows, and satisfying shuffle
 - Single-lane or mixed decks (2–4 categories blended into one)
 - Anti-repeat history — never see the same topic twice in a row
@@ -131,7 +131,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 
 ### Profile & Stats
 - Display name + curiosity tagline
-- **Level system (1–9)** with titles and progress tracking
+- **50-level quest system** — XP ranks with titles, quest chains, and progress tracking
 - Streak, Saved, and Lanes stats
 - Your most-explored categories at a glance
 
@@ -153,7 +153,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 - CI-validated release builds
 
 ### Design & Privacy
-- Material 3 with Curio's warm-cream identity
+- Material-inspired custom design language — Material 3 foundation extended with a web-drawn editorial aesthetic
 - Torn-paper heroes, watermark backdrops, custom typography
 - Custom Material Symbols and motion
 - **100% local data** — Room database, offline-first
@@ -165,7 +165,7 @@ Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random dis
 ## ⚙️ Configuration & Customization
 
 ### Themes
-- **Curio** — warm cream + category tints (default)
+- **Curio** — the warm-cream material-inspired look (default)
 - **AMOLED** — pure black for dark screens
 - **Material You** — your device's Material palette
 - **Light / Dark / System** mode selection
@@ -203,7 +203,7 @@ We'd love contributions! Here's how:
 - Link to any related issues
 
 ### Topic Contributions
-The 2,312 curated topics are hand-picked. If you have topics to suggest for any lane (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries), open a **Feature Request** with specifics.
+The 3,133 curated topics are hand-picked. If you have topics to suggest for any lane (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries), open a **Feature Request** with specifics.
 
 ---
 
