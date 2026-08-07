@@ -35,3 +35,8 @@ Redesign the whole app's placements for tablet and landscape mode. User decision
 2. **Shuffle double-open** — tab taps compared the FULL route, so a category-launched deck (`spin/artists`) re-navigated when tapping the already-selected Shuffle tab. Both bottom bar and rail now guard on the route PREFIX.
 3. **Profile stat alignment** — Level · Saved · Lanes labels had `fillMaxWidth` without `textAlign` (left-hugging under centered values); added `TextAlign.Center`.
 4. **Detail scroll lag** — two per-frame `blur(18.dp)` RenderEffect passes over flat/gradient colors (visual no-ops, GPU-costly each scroll frame) replaced with static glows; removed the now-unused `androidx.compose.ui.draw.blur` import.
+
+## Follow-up: adaptive reach into detail / settings / capture (same commit wave)
+- **Settings hub** → `LazyVerticalGrid`: `GridCells.Adaptive(300.dp)` on wide windows (2-up cards), `Fixed(1)` on compact (identical to the old list); search, section labels and no-results span full width via `GridItemSpan(maxLineSpan)`.
+- **Capture editor** → the six format chips render through a new `FormatChip` composable; wide windows use `FlowRow` (all six visible, wrapping) instead of the compact horizontal scroll.
+- **Detail page** → new `detailBodyGutter()` helper widens the reading column's three body gutters (quick-fact column, FormatBody box, category label row) from 20dp to 28dp on wide windows; hero badge and paper-card internals untouched.

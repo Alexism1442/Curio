@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -50,6 +52,8 @@ import com.curio.app.data.CurioQuests
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSettingsCard
@@ -289,21 +293,28 @@ fun SettingsHubScreen(navController: NavController) {
         // is drawn LAST (on top of the scroll content): the rows scroll UP
         // and disappear behind the ragged tear instead of clipping at a
         // straight line.
+        // Wide windows (tablets, landscape): the settings cards arrange in a
+        // two-column grid so the hub reads at a glance; compact phones keep
+        // the familiar single column. Search, section labels and the empty
+        // state always span the full width.
+        val wide = windowWidthSizeClass().isWide
         ScreenEntrance {
-            LazyColumn(
+            LazyVerticalGrid(
+                columns = if (wide) GridCells.Adaptive(minSize = 300.dp) else GridCells.Fixed(1),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 // ── Search — filters every section below as you type ──
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     SettingsSearchField(
                         query = query,
                         onQueryChange = { query = it }
                     )
                 }
                 sections.forEach { section ->
-                    item { CurioSectionLabel(section.label) }
+                    item(span = { GridItemSpan(maxLineSpan) }) { CurioSectionLabel(section.label) }
                     section.cards.forEach { card ->
                         item {
                             // v7.93 — each Settings section sits in a
@@ -327,7 +338,7 @@ fun SettingsHubScreen(navController: NavController) {
                 }
                 // ── Empty search state ────────────────────────────────
                 if (needle.isNotEmpty() && sections.isEmpty()) {
-                    item { SettingsNoResults(needle) }
+                    item(span = { GridItemSpan(maxLineSpan) }) { SettingsNoResults(needle) }
                 }
             }
         }

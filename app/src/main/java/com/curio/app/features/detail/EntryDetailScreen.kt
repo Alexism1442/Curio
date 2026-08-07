@@ -104,6 +104,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.AdaptiveImageGallery
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioWatermarkBackdrop
@@ -610,7 +612,7 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         // ── Topic meta — quick fact and tags follow the category row.
         Column(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
+                .padding(start = detailBodyGutter(), end = detailBodyGutter(), top = 8.dp, bottom = 4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // ── Quick fact (v7.38) — the topic's teaser directly under the
@@ -654,7 +656,7 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
 
         // ── Format body ────────────────────────────────────────────────            // The category row is part of the scrolling content; horizontal
             // stays 20dp to match the metadata column gutter.
-        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
+        Box(modifier = Modifier.padding(horizontal = detailBodyGutter(), vertical = 8.dp)) {
             FormatBody(entry = resolvedEntry, category = cat, navController = navController)
         }
 
@@ -715,6 +717,12 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
  * call passes [EntryDetailHeroClearance]), so the two are defined together
  * here and a hero-height change can't silently put glyphs back behind it.
  */
+/** Page-level reading gutter for the detail body — wider on tablets so the
+ *  reading column breathes inside the centered max-width content column
+ *  (the hero and paper cards keep their own internal paddings). */
+@Composable
+private fun detailBodyGutter(): Dp = if (windowWidthSizeClass().isWide) 28.dp else 20.dp
+
 private val EntryDetailHeroHeight = 360.dp
 /** Extra layout space reserved for the white sheet below the clipped hero. */
 private val EntryDetailSheetExtent = 16.dp
@@ -749,7 +757,7 @@ private fun EntryDetailCategoryLabel(
         modifier = modifier
             .fillMaxWidth()
             .background(category.categoryBackgroundWash())
-            .padding(horizontal = 20.dp, vertical = 8.dp),
+            .padding(horizontal = detailBodyGutter(), vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {

@@ -8,3 +8,4 @@
 • Tapping the Shuffle tab while already on the shuffle page no longer re-opens it — a deck launched from a category ("spin/artists") counts as the Shuffle tab too.
 • Fixed the Profile hero's Level · Saved · Lanes labels hugging the left edge — they're centered under their values again.
 • Detail-page scrolling is smoother: two per-frame frosted-glass blur passes over flat colors were GPU-expensive no-ops and are now static glows.
+• The adaptive layout now reaches deeper: Settings arranges its cards in a two-column grid on tablets, the six capture-format chips wrap instead of scrolling sideways, and the detail page gives its reading column wider tablet gutters.

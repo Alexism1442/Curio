@@ -74,6 +74,8 @@ import com.curio.app.data.StreakTracker
 import com.curio.app.data.TopicCatalog
 import com.curio.app.data.TopicJsonLoader
 import com.curio.app.data.shortName
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import android.util.Log
 import com.curio.app.features.capture.formats.FieldNotesFormat
 import com.curio.app.features.capture.formats.GalleryWallFormat
@@ -442,10 +444,10 @@ fun SaveCaptureScreen(
             // v7.98 — the format body fills the page: 16dp side margins
             // (the app-standard edge) instead of the old 24dp, so the paper
             // fields and tool docks breathe edge-to-edge.
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                     if (editEntryId != null && editingEntry == null) {
@@ -949,6 +951,10 @@ private fun FormatBodyForCategory(
         onDraftDataChanged(draftData)
     }
 
+    // Wide windows wrap the six format chips (see below); compact phones
+    // keep the horizontal scroll.
+    val wide = windowWidthSizeClass().isWide
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -982,75 +988,40 @@ private fun FormatBodyForCategory(
         )
 
         // ── Compact format chips — control the ACTIVE section ────────────
+        // Wide windows wrap the six chips so the whole format set is visible
+        // at a glance; compact phones keep the horizontal scroll.
         if (active != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                CAPTURE_FORMATS.forEach { fmt ->
-                    Surface(
-                        onClick = {
-                            if (active.format != fmt) {
-                                // Confirm when this take holds ANY content —
-                                // text, quotes, a rating, images, a voice note,
-                                // tiles or a live recording. canSave's rule
-                                // (primary text only) let optional-only drafts
-                                // switch silently and vanish; hasAnyDraft keeps
-                                // every draft protected. An empty take switches
-                                // freely.
-                                if (active.data != null || active.busy) {
-                                    pendingFormatSwitch = fmt
-                                } else {
-                                    applyFormat(active, fmt)
-                                }
-                            }
-                        },
-                        shape = RoundedCornerShape(50),
-                        color = if (AppPreferences.tintWashEffective() && active.format == fmt) category.tint
-                                else if (active.format == fmt) category.themedAccent()
-                                else category.categorySurface(MaterialTheme.colorScheme.surface),
-                        border = if (active.format == fmt) BorderStroke(
-                            1.dp,
-                            category.themedAccent().copy(alpha = 0.5f)
-                        ) else category.categoryBorder(
-                            fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                        ),
-                        modifier = Modifier.padding(vertical = 2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            CurioIcon(
-                                name = formatGlyph(fmt),
-                                contentDescription = null,
-                                // Active chip: readable in EVERY theme — on the
-                                // light tint wash the ink is the category's
-                                // theme-aware ink (deep in light, pastel twin in
-                                // dark); with the wash off (AMOLED/Material) the
-                                // chip is a solid accent so the content must
-                                // flip to onAccent() (white normally, deep ink
-                                // on pastel fills in pastel mode) — deep-accent
-                                // text on a deep-accent chip was invisible in
-                                // AMOLED.
-                                tint = if (active.format == fmt)
-                                       (if (AppPreferences.tintWashEffective()) category.categoryInk() else category.onAccent())
-                                       else MaterialTheme.colorScheme.onSurfaceVariant,
-                                size = 16.dp
-                            )
-                            Text(
-                                text = fmt.shortName,
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = if (active.format == fmt) FontWeight.SemiBold else FontWeight.Normal
-                                ),
-                                color = if (active.format == fmt)
-                                        (if (AppPreferences.tintWashEffective()) category.categoryInk() else category.onAccent())
-                                        else MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+            val onSwitch = { target: CaptureFormat ->
+                // Confirm when this take holds ANY content — text, quotes, a
+                // rating, images, a voice note, tiles or a live recording.
+                // canSave's rule (primary text only) let optional-only drafts
+                // switch silently and vanish; hasAnyDraft keeps every draft
+                // protected. An empty take switches freely.
+                if (active.data != null || active.busy) {
+                    pendingFormatSwitch = target
+                } else {
+                    applyFormat(active, target)
+                }
+            }
+            if (wide) {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CAPTURE_FORMATS.forEach { fmt ->
+                        FormatChip(fmt = fmt, active = active, category = category, onSwitch = onSwitch)
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CAPTURE_FORMATS.forEach { fmt ->
+                        FormatChip(fmt = fmt, active = active, category = category, onSwitch = onSwitch)
                     }
                 }
             }
@@ -1284,6 +1255,65 @@ private fun FormatBodyForCategory(
 }
 
 /** One take (section) inside the universal multi-section picker. */
+/** One format chip in the capture editor's switcher — the active chip wears
+ *  the category accent; content ink flips for readable contrast in every
+ *  theme (light tint wash, solid accent, pastel fills, AMOLED). Shared by
+ *  the wide FlowRow and the compact horizontal-scroll row. */
+@Composable
+private fun FormatChip(
+    fmt: CaptureFormat,
+    active: CaptureSectionState,
+    category: CurioCategory,
+    onSwitch: (CaptureFormat) -> Unit
+) {
+    Surface(
+        onClick = {
+            if (active.format != fmt) onSwitch(fmt)
+        },
+        shape = RoundedCornerShape(50),
+        color = if (AppPreferences.tintWashEffective() && active.format == fmt) category.tint
+                else if (active.format == fmt) category.themedAccent()
+                else category.categorySurface(MaterialTheme.colorScheme.surface),
+        border = if (active.format == fmt) BorderStroke(
+            1.dp,
+            category.themedAccent().copy(alpha = 0.5f)
+        ) else category.categoryBorder(
+            fallback = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        ),
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            CurioIcon(
+                name = formatGlyph(fmt),
+                contentDescription = null,
+                // Active chip: readable in EVERY theme — on the light tint
+                // wash the ink is the category's theme-aware ink (deep in
+                // light, pastel twin in dark); with the wash off
+                // (AMOLED/Material) the chip is a solid accent so the
+                // content flips to onAccent() — deep-accent text on a
+                // deep-accent chip was invisible in AMOLED.
+                tint = if (active.format == fmt)
+                       (if (AppPreferences.tintWashEffective()) category.categoryInk() else category.onAccent())
+                       else MaterialTheme.colorScheme.onSurfaceVariant,
+                size = 16.dp
+            )
+            Text(
+                text = fmt.shortName,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = if (active.format == fmt) FontWeight.SemiBold else FontWeight.Normal
+                ),
+                color = if (active.format == fmt)
+                        (if (AppPreferences.tintWashEffective()) category.categoryInk() else category.onAccent())
+                        else MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
 private class CaptureSectionState(val id: Int, initialFormat: CaptureFormat) {
     var format by mutableStateOf(initialFormat)
     var canSave by mutableStateOf(false)
