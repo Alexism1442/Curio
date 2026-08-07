@@ -292,17 +292,19 @@ private const val PROMO_TEAR_SEED = 0x50AC0
 
 /** The poster's rose banner gradient — soft pink melting into a deeper
  *  rose at the tear. */
-private val PromoRoseTop = Color(0xFFF9CDD8)
-private val PromoRoseDeep = Color(0xFFE493A8)
-/** Readable deep plum-rose ink for text on the banner. */
-private val PromoBannerInk = Color(0xFF54242F)
-/** Warm paper cream — the under-sheet and the poster's lower half. */
-private val PromoPaper = Color(0xFFFDFCF9)
-/** Deep warm body ink for the promise rows. */
-private val PromoBodyInk = Color(0xFF3A262B)
-private val PromoBodyMuted = Color(0xFF8A6870)
+/** Deep rose-plum banner top: richer and less washed-out in promo previews. */
+private val PromoRoseTop = Color(0xFFE7A0B5)
+/** Berry-rose banner depth: keeps the promo identity warm without neon pink. */
+private val PromoRoseDeep = Color(0xFF9E4668)
+/** Creamy rose ink with strong contrast against the richer banner. */
+private val PromoBannerInk = Color(0xFF3B1728)
+/** Warm blush paper: softer than white while staying bright enough for export. */
+private val PromoPaper = Color(0xFFFFF7F2)
+/** Deep plum body ink for the promise rows. */
+private val PromoBodyInk = Color(0xFF321622)
+private val PromoBodyMuted = Color(0xFF795564)
 /** Warm gold for the 5-star social-proof row. */
-private val PromoGold = Color(0xFFE8A33D)
+private val PromoGold = Color(0xFFE3A33B)
 
 /**
  * The self-contained promo poster: a rose banner (editors'-choice chip,
@@ -359,7 +361,7 @@ fun PromoShareCard(topicsTotal: Int) {
                     CurioIcon(
                         name = glyph,
                         contentDescription = null,
-                        tint = Color.White.copy(alpha = 0.28f),
+                        tint = Color.White.copy(alpha = 0.20f),
                         size = glyphSize.dp,
                         modifier = Modifier
                             .align(bias)
@@ -378,8 +380,8 @@ fun PromoShareCard(topicsTotal: Int) {
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .background(Color.White.copy(alpha = 0.32f))
-                            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.60f)), RoundedCornerShape(50))
+                            .background(Color.White.copy(alpha = 0.22f))
+                            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.46f)), RoundedCornerShape(50))
                             .padding(horizontal = 10.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -489,8 +491,8 @@ private fun PromoChip(glyph: String, label: String, ink: Color) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(Color.White.copy(alpha = 0.28f))
-            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.55f)), RoundedCornerShape(50))
+            .background(Color.White.copy(alpha = 0.20f))
+            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.44f)), RoundedCornerShape(50))
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -550,8 +552,8 @@ private fun PromoShareButton(label: String, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        color = CurioColors.HomeRosewood,
-        contentColor = Color(0xFFFDFCF9),
+        color = PromoRoseDeep,
+        contentColor = PromoPaper,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -559,7 +561,7 @@ private fun PromoShareButton(label: String, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            CurioIcon(CurioIcons.Share, null, tint = Color(0xFFFDFCF9), size = 18.dp)
+            CurioIcon(CurioIcons.Share, null, tint = PromoPaper, size = 18.dp)
             Spacer(Modifier.width(8.dp))
             Text(label, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
         }
@@ -645,7 +647,7 @@ fun PromoFeatureGraphic(topicsTotal: Int) {
                 horizontalArrangement = Arrangement.spacedBy(-9.dp)
             ) {
                 PhoneMockup(
-                    accent = Color(0xFFE493A8),
+                    accent = PromoRoseDeep,
                     heroLight = PromoRoseTop,
                     ink = PromoBannerInk,
                     rotation = -7f
@@ -698,7 +700,7 @@ fun PromoAppScreenshot() {
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(22.dp))
-                        .background(Color(0xFFFDFCF9))
+                        .background(PromoPaper)
                 ) {
                     // Status strip
                     Box(
@@ -861,7 +863,7 @@ private fun ScreenshotStatPill(value: String, label: String, ink: Color) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(Color.White.copy(alpha = 0.32f))
+            .background(Color.White.copy(alpha = 0.20f))
             .padding(horizontal = 7.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -887,7 +889,7 @@ private fun ScreenshotRow(title: String, lane: String, accent: Color) {
             .fillMaxWidth()
             .height(24.dp)
             .clip(RoundedCornerShape(7.dp))
-            .background(Color(0xFFF4F1EE)),
+            .background(Color(0xFFF1E6E5)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
@@ -904,7 +906,7 @@ private fun ScreenshotRow(title: String, lane: String, accent: Color) {
                     .fillMaxWidth(0.72f)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFC9C2BE))
+                    .background(Color(0xFFBDAAB0))
             )
             Spacer(Modifier.height(3.dp))
             Box(
@@ -912,7 +914,7 @@ private fun ScreenshotRow(title: String, lane: String, accent: Color) {
                     .fillMaxWidth(0.42f)
                     .height(3.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color(0xFFDCD6D2))
+                    .background(Color(0xFFD6C5CA))
             )
         }
         Text(
@@ -949,7 +951,7 @@ private fun PhoneMockup(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFFDFCF9))
+                .background(PromoPaper)
         ) {
             // Status strip
             Box(
@@ -992,7 +994,7 @@ private fun PhoneMockup(
                             .fillMaxWidth()
                             .height(14.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .background(Color(0xFFF4F1EE)),
+                            .background(Color(0xFFF1E6E5)),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
@@ -1007,15 +1009,15 @@ private fun PhoneMockup(
                             modifier = Modifier
                                 .width(16.dp)
                                 .height(3.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(Color(0xFFC9C2BE))
+                                .clip(RoundedCornerShape(2.dp))                                    .background(Color(0xFFBDAAB0))
+
                         )
                         Box(
                             modifier = Modifier
                                 .width(10.dp)
                                 .height(3.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(Color(0xFFDCD6D2))
+                                .clip(RoundedCornerShape(2.dp))                                    .background(Color(0xFFD6C5CA))
+
                         )
                     }
                 }

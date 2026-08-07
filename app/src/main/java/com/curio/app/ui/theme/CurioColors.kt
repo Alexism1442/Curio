@@ -224,15 +224,24 @@ object CurioGradients {
      * The flat fill used on category cards/chips — the same color every card
      * gradient opens on, so tiles and big cards can never drift apart. A
      * shallow deepen toward black keeps the hue rich while softening
-     * brightness for the full-width tile treatment.
+     * brightness for the full-width tile treatment. Non-pastel dark mode uses
+     * a deeper 28% treatment so hero cards do not glow against midnight.
      *
      * v7.8.1 — pastel mode keeps the PURE pastel accent (no black deepen):
      * the 10% deepen on an already-airy pastel dulled the fill and made the
      * pastel deck read dimmer than it should (especially the shuffle main
      * card). The pastel accent is already soft enough for white-free ink.
      */
-    fun categoryCardFill(accent: Color): Color =
-        if (AppPreferences.pastelColorsState) accent else lerp(accent, Color.Black, 0.10f)
+    fun categoryCardFill(accent: Color, dark: Boolean = false): Color =
+        if (AppPreferences.pastelColorsState) {
+            accent
+        } else {
+            // Non-pastel dark heroes need a true jewel-tone depth; the old
+            // 10% deepen left coral/sky/amber fills too close to bright raw
+            // accents on the midnight surface. Light mode keeps its existing
+            // treatment; callers opt into the dark value explicitly.
+            lerp(accent, Color.Black, if (dark) 0.28f else 0.10f)
+        }
 
     /**
      * Lightness floor for material stops — see [floorForWhiteInk].
@@ -330,11 +339,20 @@ object CurioGradients {
             // pastel-pale and would wash out white text; light dynamic
             // primaries are already dark enough, so floorForWhiteInk is a
             // no-op there). Only lightness moves — the device hue stays.
-            val device = if (pastel) pastelAccent(deviceRaw, dark) else floorForWhiteInk(deviceRaw)
+            val device = if (pastel) {
+                pastelAccent(deviceRaw, dark)
+            } else {
+                val floored = floorForWhiteInk(deviceRaw)
+                if (dark) lerp(floored, Color.Black, 0.18f) else floored
+            }
             // The category "sprinkle" — the single accent presence on the
             // card, slightly deepened (or pastel twin in pastel mode) so it
             // reads as a solid whisper rather than a flat wash.
-            val catStop = if (pastel) pastelAccent(accent, dark) else lerp(accent, Color.Black, 0.08f)
+            val catStop = if (pastel) {
+                pastelAccent(accent, dark)
+            } else {
+                lerp(accent, Color.Black, if (dark) 0.22f else 0.08f)
+            }
             // TWO-color gradient: ~90-95% device color with a category
             // sprinkle easing down the card. Light mode (and pastel mode)
             // hold the pure 5% → 10% requested sprinkle — the device palette
@@ -358,9 +376,9 @@ object CurioGradients {
             // v7.12 — subtle 5% black deepen at the very top of pastel
             // gradients so every pastel card reads with a gentle darker
             // crown instead of a uniform pastel from edge to edge.
-            lerp(categoryCardFill(accent), Color.Black, 0.05f)
+            lerp(categoryCardFill(accent, isCurioDarkTheme()), Color.Black, 0.05f)
         } else {
-            categoryCardFill(accent)
+            categoryCardFill(accent, isCurioDarkTheme())
         }
         // v7.8 — on tint-washed Curio pages the card melts into the washed
         // background on the category's OWN hue (same recipe as the page

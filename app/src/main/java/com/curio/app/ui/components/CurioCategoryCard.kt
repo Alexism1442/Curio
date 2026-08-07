@@ -42,6 +42,7 @@ import com.curio.app.ui.theme.CurioMotion
 import com.curio.app.ui.theme.categoryBorder
 import com.curio.app.ui.theme.categoryInk
 import com.curio.app.ui.theme.categorySurface
+import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.onAccent
 import com.curio.app.ui.theme.themedAccent
 
@@ -97,7 +98,10 @@ fun CurioCategoryCard(
     // so tiles and hero tickets always share one shade language. Used ONLY
     // for the selected (proper bright) state.
     val gradient = CurioGradients.cardGradient(category.themedAccent())
-    val cardColor = CurioGradients.categoryCardFill(category.themedAccent())
+    val cardColor = CurioGradients.categoryCardFill(
+        category.themedAccent(),
+        isCurioDarkTheme()
+    )
     // Idle cards wear the category's tinted surface — the page wash, but a
     // touch stronger — so unselected tiles sit on the washed page as soft
     // tints of their own color instead of shouting in full brightness.

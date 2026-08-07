@@ -1001,7 +1001,8 @@ private fun buildTornPath(seed: Int, size: Size, density: Density): Path {
  */
 private class SoftTornEdgeShape(
     private val seed: Int,
-    private val bold: Boolean = false
+    private val bold: Boolean = false,
+    private val detail: Boolean = false
 ) : Shape {
     private var cachedSize: Size? = null
     private var cachedOutline: Outline? = null
@@ -1014,7 +1015,7 @@ private class SoftTornEdgeShape(
         cachedOutline?.let { cached ->
             if (cachedSize == size) return cached
         }
-        val outline = Outline.Generic(buildSoftTornPath(seed, size, density, bold))
+        val outline = Outline.Generic(buildSoftTornPath(seed, size, density, bold, detail))
         cachedSize = size
         cachedOutline = outline
         return outline
@@ -1027,8 +1028,12 @@ private class SoftTornEdgeShape(
  * seam) while staying deterministic; the matching under-sheet must receive
  * the SAME flag so the two edges stay pixel-aligned.
  */
-class SoftTornBottomShape(seed: Int, bold: Boolean = false) : Shape {
-    private val inner = SoftTornEdgeShape(seed, bold)
+class SoftTornBottomShape(
+    seed: Int,
+    bold: Boolean = false,
+    detail: Boolean = false
+) : Shape {
+    private val inner = SoftTornEdgeShape(seed, bold, detail)
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
         inner.createOutline(size, layoutDirection, density)
 }
@@ -1052,7 +1057,11 @@ class SoftTornSheetShape(
     private val baseline: Dp = 0.dp,
     // v7.37 — must match the hero's [SoftTornBottomShape.bold] flag so the
     // under-sheet's top edge reproduces the SAME bold tear curve.
-    private val bold: Boolean = false
+    private val bold: Boolean = false,
+    // Detail heroes use a slightly more expressive seeded pattern so an
+    // unlucky entry hash cannot make the seam read as a flat line. Other
+    // callers retain the established tear personality.
+    private val detail: Boolean = false
 ) : Shape {
     private var cachedSize: Size? = null
     private var cachedOutline: Outline? = null
@@ -1069,7 +1078,8 @@ class SoftTornSheetShape(
             seed, size, density,
             lipPx = with(density) { lip.toPx() },
             baselinePx = with(density) { baseline.toPx() },
-            bold = bold
+            bold = bold,
+            detail = detail
         ))
         cachedSize = size
         cachedOutline = outline
@@ -1099,23 +1109,33 @@ private class SoftTearParams(
     // toothier than the detail hero's (a visibly different pattern), while
     // its white under-sheet passes the SAME flag so the two edges stay
     // pixel-aligned.
-    private val bold: Boolean = false
+    private val bold: Boolean = false,
+    private val detail: Boolean = false
 ) {
-    private val rnd = Random(seed * 31 + 0x0BADC0DE)
+    // Detail uses a salted pattern stream: it remains stable per entry, but
+    // avoids the small subset of entry hashes whose phase made the edge look
+    // nearly straight. This branch is intentionally opt-in at the shape
+    // boundary so every other paper surface stays unchanged.
+    private val patternSeed = if (detail) seed xor 0x4D3C2B1A else seed
+    private val rnd = Random(patternSeed * 31 + 0x0BADC0DE)
     // 2–3 broad rounded undulations across the full width (a few more in
     // the bold pattern). A separate smaller ripple rhythm rides over them,
     // so the edge is visibly bumpy without becoming a string of oversized
     // waves.
-    val waves = (2.2f + rnd.nextFloat() * 0.8f) * (if (bold) 1.2f else 1f)
+    val waves = (if (detail) 2.8f else 2.2f) + rnd.nextFloat() * (if (detail) 1.0f else 0.8f)
+    val waveScale = (if (bold) 1.2f else 1f) * (if (detail) 1.08f else 1f)
     // v7.29 — amplitudes nudged up (~25%) so the tear reads a touch MORE
     // uneven and hand-torn without overwhelming the broad wave rhythm (the
     // worst-case bite still sits ~10dp, far inside the hero's content).
     // v7.37 — bold scales them ~35-50% further for Home's rougher seam.
-    val tooth = with(density) { (6.4f + rnd.nextFloat() * 2.2f).dp.toPx() } * (if (bold) 1.35f else 1f)
-    val deep = with(density) { (2.4f + rnd.nextFloat() * 1.5f).dp.toPx() } * (if (bold) 1.5f else 1f)
+    val tooth = with(density) { (6.4f + rnd.nextFloat() * 2.2f).dp.toPx() } *
+        (if (bold) 1.35f else 1f) * (if (detail) 1.08f else 1f)
+    val deep = with(density) { (2.4f + rnd.nextFloat() * 1.5f).dp.toPx() } *
+        (if (bold) 1.5f else 1f) * (if (detail) 1.10f else 1f)
     val micro = with(density) { (1.0f + rnd.nextFloat() * 0.8f).dp.toPx() }
-    val ripple = with(density) { (1.3f + rnd.nextFloat() * 0.9f).dp.toPx() }
-    val rippleWaves = 7f + rnd.nextFloat() * 4f
+    val ripple = with(density) { (1.3f + rnd.nextFloat() * 0.9f).dp.toPx() } *
+        (if (detail) 1.12f else 1f)
+    val rippleWaves = (if (detail) 8f else 7f) + rnd.nextFloat() * (if (detail) 4.5f else 4f)
     // Seeded tilt — the whole edge drifts from left to right so the torn
     // SEAM visibly cants while the card rectangle stays level (the tilt
     // lives inside the tear path, never a rotation of the card). It's a
@@ -1137,9 +1157,17 @@ private class SoftTearParams(
         // reading as a perfect mechanical sine.
         val waveAngle = normalizedX * waves * (Math.PI * 2.0).toFloat() + phase
         val rhythmic = sin(waveAngle) * tooth * 0.58f
-        val main = (valueNoise(seed, normalizedX * waves, phase) - 0.5f) * 2f * tooth * 0.58f
-        val deepWave = (valueNoise(seed + 101, normalizedX * (waves * 0.42f), phase + 17f) - 0.5f) * 2f * deep
-        val raw = slant + rhythmic + main + deepWave
+        val main = (valueNoise(patternSeed, normalizedX * waves, phase) - 0.5f) * 2f * tooth * 0.58f
+        val deepWave = (valueNoise(patternSeed + 101, normalizedX * (waves * 0.42f), phase + 17f) - 0.5f) * 2f * deep
+        // Detail seams always carry one deterministic secondary oscillation.
+        // It is small enough to stay natural, but guarantees visible movement
+        // even when the seeded noise and primary wave happen to cancel out.
+        val detailVariation = if (detail) {
+            sin(normalizedX * (Math.PI * 5.6).toFloat() + phase * 0.37f) * tooth * 0.22f
+        } else {
+            0f
+        }
+        val raw = slant + rhythmic * waveScale + main * waveScale + deepWave + detailVariation
         return if (raw > 0f) raw * 0.55f else raw
     }
 
@@ -1147,8 +1175,8 @@ private class SoftTearParams(
         val normalizedX = x / w
         val rippleAngle = normalizedX * rippleWaves * (Math.PI * 2.0).toFloat() + phase * 1.7f
         val smallRipple = sin(rippleAngle) * ripple * 0.45f +
-            (valueNoise(seed + 71, normalizedX * rippleWaves * 1.35f, phase + 29f) - 0.5f) * 2f * ripple * 0.55f
-        val fiber = (valueNoise(seed + 47, x * 0.14f, 3.5f) - 0.5f) * 2f * micro
+            (valueNoise(patternSeed + 71, normalizedX * rippleWaves * 1.35f, phase + 29f) - 0.5f) * 2f * ripple * 0.55f
+        val fiber = (valueNoise(patternSeed + 47, x * 0.14f, 3.5f) - 0.5f) * 2f * micro
         val raw = broadDisp(x, w) + smallRipple + fiber
         return if (raw > 0f) raw * 0.55f else raw
     }
@@ -1166,7 +1194,8 @@ private fun buildSoftTornPath(
     seed: Int,
     size: Size,
     density: Density,
-    bold: Boolean = false
+    bold: Boolean = false,
+    detail: Boolean = false
 ): Path {
     val w = size.width
     val h = size.height
@@ -1175,7 +1204,7 @@ private fun buildSoftTornPath(
         path.moveTo(0f, 0f); path.lineTo(w, 0f); path.lineTo(w, h); path.lineTo(0f, h); path.close()
         return path
     }
-    val p = SoftTearParams(seed, density, bold)
+    val p = SoftTearParams(seed, density, bold, detail)
     val step = with(density) { 4.dp.toPx() }
     // Clockwise: straight top, straight right, torn bottom (right→left),
     // straight left, close.
@@ -1207,7 +1236,8 @@ private fun buildSoftSheetPath(
     density: Density,
     lipPx: Float,
     baselinePx: Float,
-    bold: Boolean = false
+    bold: Boolean = false,
+    detail: Boolean = false
 ): Path {
     val w = size.width
     val h = size.height
@@ -1216,7 +1246,7 @@ private fun buildSoftSheetPath(
         path.moveTo(0f, 0f); path.lineTo(w, 0f); path.lineTo(w, h); path.lineTo(0f, h); path.close()
         return path
     }
-    val p = SoftTearParams(seed, density, bold)
+    val p = SoftTearParams(seed, density, bold, detail)
     val step = with(density) { 4.dp.toPx() }
     // Keep the hero and sheet on the SAME broad wave rhythm, but do not
     // duplicate the hero's fine tooth. The exposed white gets only a small,
@@ -1229,11 +1259,14 @@ private fun buildSoftSheetPath(
         // wobble. Reusing the full broad displacement here made the lower
         // edge dive into long straight-looking sections and could clip at
         // the sheet box boundary, exposing page-wash gaps.
-        val sharedShape = p.broadDisp(x, w) * 0.18f
+        val sharedShape = p.broadDisp(x, w) * if (detail) 0.28f else 0.18f
         val rippleAngle = normalizedX * (p.rippleWaves * 0.86f) * (Math.PI * 2.0).toFloat() + p.phase * 1.11f
-        val extraRipple = sin(rippleAngle) * with(density) { 0.45.dp.toPx() } +
-            (valueNoise(seed + 257, normalizedX * p.rippleWaves * 0.9f, p.phase + 53f) - 0.5f) *
-                2f * with(density) { 0.30.dp.toPx() }
+        val extraRipple = sin(rippleAngle) * with(density) { if (detail) 0.60.dp.toPx() else 0.45.dp.toPx() } +
+            (valueNoise(
+                if (detail) seed xor 0x4D3C2B1A else seed,
+                normalizedX * p.rippleWaves * 0.9f,
+                p.phase + 53f
+            ) - 0.5f) * 2f * with(density) { if (detail) 0.40.dp.toPx() else 0.30.dp.toPx() }
         return sharedShape + extraRipple
     }
     // Clockwise: a SOLID top (hidden behind the hero), down the right side,

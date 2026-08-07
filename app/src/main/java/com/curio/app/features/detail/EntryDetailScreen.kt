@@ -255,11 +255,23 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
     // theme-aware onAccent ink — deep accent in light, light twin in dark.
     // White when pastel mode is off, preserving the exact pre-pastel look.
     val heroInk = cat.onAccent()
-    // Frosted grid-card ink — the Date · Mood · Type card is frosted WHITE
-    // glass (see the pane below), so its content flips to a deep slate that
-    // reads on white in every theme — heroInk (white / accent) would vanish
-    // against the white pane.
-    val heroCardInk = Color(0xFF232A35)
+    val darkNonPastel = isCurioDarkTheme() && !AppPreferences.pastelColorsState
+    // Dark non-pastel hero cards use a quiet midnight frost instead of the
+    // former bright-white glass. Light and pastel modes retain the established
+    // readable slate-on-white treatment.
+    val heroCardInk = if (darkNonPastel) Color(0xFFE9E0EA) else Color(0xFF232A35)
+    val heroSheetColor = if (darkNonPastel) Color(0xFF17131D) else Color(0xFFFDFCF9)
+    val heroFrostBrush = if (darkNonPastel) {
+        Brush.verticalGradient(
+            listOf(Color(0xFF292231), Color(0xFF17131D))
+        )
+    } else {
+        Brush.verticalGradient(
+            0f to Color.White.copy(alpha = 0.95f),
+            0.55f to Color.White.copy(alpha = 0.84f),
+            1f to Color.White.copy(alpha = 0.68f)
+        )
+    }
     // v5.8 — saveable so rotation doesn't close the menu/dialog unexpectedly.
     var deleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var heroControlsVisible by remember(resolvedEntry.id) { mutableStateOf(false) }
@@ -325,14 +337,17 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
             // is too pale against [heroInk] (the white/onAccent content),
             // fall back to the deep category hold instead.
             if (contrastRatio(blendStart, heroInk) >= 3.0f) blendStart
-            else CurioGradients.categoryCardFill(cat.themedAccent())
+            else CurioGradients.categoryCardFill(cat.themedAccent(), isCurioDarkTheme())
         } else {
-            CurioGradients.categoryCardFill(cat.themedAccent())
+            CurioGradients.categoryCardFill(cat.themedAccent(), isCurioDarkTheme())
         }
         // v7.28 — the hero is a SOLID category color, no gradient. The depth
         // comes from the torn-paper seam: the solid banner is clipped by a
         // seeded soft tear, ONE white sheet sits just behind it, and the
         // page's wash starts right after the sheet's lip.
+        // Keep the entry seed deterministic. The Detail-only tear personality
+        // salts this seed inside the shared shape implementation, avoiding the
+        // small set of phases that can make a seam look visually flat.
         val tearSeed = remember(entryId) { entryId.hashCode() and 0x7fffffff }
         // v7.29 — the torn SEAM cants, not the card. The per-entry slant
         // lives INSIDE the seeded tear path itself (SoftTearParams.tilt —
@@ -360,21 +375,28 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
             // Remembered Shape instances so their internal outline caches
             // survive recompositions (built fresh in the modifier chain, the
             // caches would never hit).
-            val heroTornShape = remember(tearSeed) { SoftTornBottomShape(tearSeed) }
+            val heroTornShape = remember(tearSeed) {
+                SoftTornBottomShape(tearSeed, detail = true)
+            }
             val sheetShape = remember(tearSeed) {
-                SoftTornSheetShape(tearSeed, lip = 10.dp, baseline = 14.dp)
+                SoftTornSheetShape(
+                    tearSeed,
+                    lip = 6.dp,
+                    baseline = 12.dp,
+                    detail = true
+                )
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(42.dp)
-                    // Baseline lifts the sheet's torn top above this box's
-                    // own top edge (behind the hero), while the sheet extends
-                    // far enough below the hero that anti-aliased wave edges
-                    // cannot reveal a page-wash gap.
-                    .offset(y = EntryDetailHeroHeight - 18.dp)
+                    .height(24.dp)
+                    // Keep only a narrow paper overlap below the seam. The
+                    // sheet still starts behind the hero so every up-bite
+                    // reads white, but its lower lip no longer becomes a
+                    // broad second card.
+                    .offset(y = EntryDetailHeroHeight - 10.dp)
                     .clip(sheetShape)
-                    .background(Color(0xFFFDFCF9))
+                    .background(heroSheetColor)
             )
 
             // ── Torn-edge shadow — a hairline dark rim just below the
@@ -503,22 +525,13 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
                                     .blur(18.dp)
                                     .clip(RoundedCornerShape(18.dp))
                             )
-                            // Frosty white gradient — bright frosted glass at
-                            // the top that lets the banner's color bloom
-                            // through more and more toward the bottom edge,
-                            // so the card reads as lit, colored frost rather
-                            // than flat white (light passing through real
-                            // frosted glass), with deep-slate content on top.
+                            // Theme-aware frost: dark non-pastel gets a
+                            // restrained midnight surface; light and pastel
+                            // retain the bright paper-glass treatment.
                             Box(
                                 modifier = Modifier
                                     .matchParentSize()
-                                    .background(
-                                        Brush.verticalGradient(
-                                            0f to Color.White.copy(alpha = 0.95f),
-                                            0.55f to Color.White.copy(alpha = 0.84f),
-                                            1f to Color.White.copy(alpha = 0.68f)
-                                        )
-                                    )
+                                    .background(heroFrostBrush)
                             )
                             Row(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 9.dp),
@@ -794,13 +807,8 @@ private val DetailStickyBarPoppedTop = 12.dp
  * vertical white gradient + hairline rim alone, so the controls read as
  * solid frosted glass over ANY hero color.
  */
-private val heroFrostGradient = Brush.verticalGradient(
-    0f to Color.White,
-    1f to Color.White.copy(alpha = 0.97f)
-)
-
 /**
- * [heroFrostGradient] clipped to [shape] with a hairline rim in [ink].
+ * [frostBrush] clipped to [shape] with a hairline rim in [ink].
  *
  * v7.38 — the shadow moved IN HERE, drawn BEFORE the clip: the old Surface
  * shadowElevation was drawn inside the plate's clip, so as the pill
@@ -809,10 +817,15 @@ private val heroFrostGradient = Brush.verticalGradient(
  * first (clip = false) keeps it a clean soft drop shadow OUTSIDE the pill
  * with no inner ring — the float reads as a lift, not a glitch.
  */
-private fun Modifier.heroFrostPlate(ink: Color, shape: Shape, elevation: Dp = 0.dp): Modifier =
+private fun Modifier.heroFrostPlate(
+    ink: Color,
+    shape: Shape,
+    elevation: Dp = 0.dp,
+    frostBrush: Brush
+): Modifier =
     shadow(elevation, shape, clip = false)
         .clip(shape)
-        .background(heroFrostGradient)
+        .background(frostBrush)
         .border(1.dp, ink.copy(alpha = 0.32f), shape)
 
 /**
@@ -838,6 +851,11 @@ private fun BoxScope.DetailStickyBar(
     }
     val frostShift = FastOutSlowInEasing.transform(stickyProgress)
     val pillScale = androidx.compose.ui.util.lerp(0.97f, 1f, frostShift)
+    val stickyFrostBrush = if (isCurioDarkTheme() && !AppPreferences.pastelColorsState) {
+        Brush.verticalGradient(listOf(Color(0xFF292231), Color(0xFF17131D)))
+    } else {
+        Brush.verticalGradient(0f to Color.White, 1f to Color.White.copy(alpha = 0.97f))
+    }
     // The ride-up must be LAYOUT-space (Modifier.offset), not a draw-time
     // graphicsLayer translation — the more-menu's popup anchors to the
     // button's layout position, so a draw-time translate would leave the
@@ -867,7 +885,10 @@ private fun BoxScope.DetailStickyBar(
             shadowElevation = 0.dp,
             disableRipple = true,
             modifier = Modifier.heroFrostPlate(
-                heroCardInk, RoundedCornerShape(50), elevation = 6.dp * frostShift
+                heroCardInk,
+                RoundedCornerShape(50),
+                elevation = 6.dp * frostShift,
+                frostBrush = stickyFrostBrush
             )
         )
         Box {
@@ -878,7 +899,10 @@ private fun BoxScope.DetailStickyBar(
                 shadowElevation = 0.dp,
                 modifier = Modifier
                     .heroFrostPlate(
-                        heroCardInk, RoundedCornerShape(50), elevation = 6.dp * frostShift
+                        heroCardInk,
+                RoundedCornerShape(50),
+                elevation = 6.dp * frostShift,
+                frostBrush = stickyFrostBrush
                     )
                     .clickable(
                         interactionSource = moreInteraction,

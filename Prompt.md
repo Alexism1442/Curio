@@ -1,16 +1,17 @@
-# Prompt — GitHub Actions lint artifact warning
+# Prompt — promo palette, dark hero cards, and Detail tear refinement
 
 ## Request
-CI reports the Node 20 deprecation notice while running `actions/upload-artifact@v5`, followed by:
-
-`Warning: No files were found with the provided path: app/build/reports/lint-results*.*`
-
-## Findings
-- The Node message is an informational runtime transition from GitHub-hosted runners. The workflow must not set `ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true`, because that opts into the deprecated Node 20 runtime.
-- `actions/upload-artifact@v5` remains the configured modern artifact action; no runtime downgrade is needed.
-- Lint reports are optional diagnostics when the Gradle step fails before generating them. The Gradle command remains the authoritative CI failure signal.
+Improve promo colors and dark non-pastel hero cards, then refine the Detail screen so its white torn-paper lip is not too wide and seeded heroes never read as a straight line.
 
 ## Completed
-- Changed the lint-report artifact upload to `if-no-files-found: ignore`, removing the misleading warning when no report exists while preserving Gradle failure behavior.
-- Updated `.github/AGENTS.md` to document that lint reports are best-effort and may be absent after an early Gradle failure.
-- Ran workflow/static validation only; no local Gradle commands are allowed by repository policy.
+- Promo artwork uses a richer rose-plum palette with unified phone mockups and lower-white overlays.
+- Shared non-pastel dark category fills deepen toward black; Entry Detail frost and selected category surfaces use restrained midnight treatment.
+- Detail's white tear lip is narrower without changing the metadata layout reservation.
+- Detail hero and under-sheet use the same deterministic Detail-only tear personality, with a salted seed and secondary oscillation to prevent unlucky seeds from producing a visually flat seam.
+- Other screens retain their existing tear behavior.
+
+## Validation
+- `git diff --check` passed.
+- Comment-aware static Kotlin brace/string checks passed for all changed Kotlin files.
+- Code review found no blockers; hero/sheet tear parameters are aligned and the Detail layout reservation is preserved.
+- No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally; CI should validate the Android artifact.
