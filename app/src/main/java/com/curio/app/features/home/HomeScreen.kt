@@ -1059,11 +1059,10 @@ private fun QuestShuffleCard(
                         "Shuffle a random deck",
                         tint = ink,
                         size = 25.dp,
-                        // Material Symbols' casino glyph has a slightly
-                        // low visible ink box even when its layout box is
-                        // mathematically centered. Lift only this dice
-                        // affordance; the circle and text stay untouched.
-                        modifier = Modifier.offset(y = (-1).dp)
+                        // The shared icon renderer already applies the
+                        // standard 1dp optical lift; this extra half-dp is
+                        // only for the casino glyph's heavier visible base.
+                        modifier = Modifier.offset(y = (-0.5f).dp)
                     )
                 }
             }
@@ -1329,7 +1328,9 @@ private fun FirstTimeEmpty(
                             null,
                             tint = CurioColors.DeepPlum,
                             size = 16.dp,
-                            modifier = Modifier.offset(y = (-1).dp)
+                            // Match the shared icon lift plus the casino
+                            // glyph's half-dp extra correction.
+                            modifier = Modifier.offset(y = (-0.5f).dp)
                         )
                         Text(
                             "Surprise me",

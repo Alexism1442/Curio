@@ -2664,7 +2664,7 @@ private fun SpinButton(
                                 .size(72.dp)
                                 // Keep the animated die on the same optical
                                 // center as the resting casino glyph.
-                                .offset(y = (-1.5f).dp)
+                                .offset(y = (-1f).dp)
                         )
                     } else {
                         // Gentle idle breathe on the resting die — a slow,
@@ -2688,7 +2688,7 @@ private fun SpinButton(
                             // already centered; only the die's ink needs a
                             // tiny lift, including the idle Spin state.
                             modifier = Modifier
-                                .offset(y = (-1.5f).dp)
+                                .offset(y = (-1f).dp)
                                 .graphicsLayer {
                                     scaleX = 1f + breathe * 0.05f
                                     scaleY = 1f + breathe * 0.05f

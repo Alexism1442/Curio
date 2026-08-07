@@ -203,6 +203,9 @@ val JournalMood.glyph: String
         JournalMood.OVERWHELMED -> CurioIcons.MoodOverwhelmed
     }
 
+/** Shared painted-ink correction for the Material Symbols font's low visual baseline. */
+private val MaterialSymbolsOpticalLift = 1.dp
+
 /**
  * Renders a Material Symbols glyph via ligature.
  *
@@ -245,8 +248,10 @@ fun CurioIcon(
             modifier = Modifier.graphicsLayer {
                 // Material Symbols reserve a little more visual space below
                 // the glyph than above it. Nudge only the painted ink up by
-                // half a dp; the icon's layout box stays perfectly centered.
-                translationY = (-0.5f).dp.toPx()
+                // one dp; the icon's layout box stays perfectly centered.
+                // This keeps icons visually centered in compact pills without
+                // changing their touch target or measured box.
+                translationY = -MaterialSymbolsOpticalLift.toPx()
             },
             style = TextStyle(
                 lineHeight = size.value.sp,
