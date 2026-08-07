@@ -590,7 +590,7 @@ object CurioQuests {
         checkAll(context)
     }
 
-    // ── Daily quest completion (auto-awarded when a target is reached) ──
+    // ── Daily quest progress (XP is CLAIMED on the Quests page — v8.3) ──
     private fun bumpDaily(context: Context, kind: DailyKind) {
         val today = todayEpochDay().toInt()
         if (dailyDateState != today) {
@@ -601,17 +601,26 @@ object CurioQuests {
         val key = kind.name
         val current = dailyProgressState[key] ?: 0
         dailyProgressState = dailyProgressState + (key to (current + 1))
-        // Auto-award XP when a today quest hits its target for the first time.
-        dailyQuestsFor(todayEpochDay())
-            .filter { it.kind == kind && (dailyProgressState[it.kind.name] ?: 0) >= it.target }
-            .forEach { quest ->
-                if (quest.id !in dailyAwardedState) {
-                    dailyAwardedState = dailyAwardedState + quest.id
-                    lifetimeState = lifetimeState.copy(dailyCompleted = lifetimeState.dailyCompleted + 1)
-                    write(context)
-                    addXp(context, quest.xpReward)
-                }
-            }
+        // v8.3 — progress is tracked but XP is NOT granted here: each daily
+        // quest's reward is claimed explicitly on the Quests page
+        // ([claimDaily]), so the +XP is a deliberate tap, not a silent grant.
+        // (The event hooks persist via write(context) right after this.)
+    }
+
+    /**
+     * Claim a completed daily quest's XP (Quests page "Claim" button, v8.3).
+     * No-op when the quest isn't complete, was already claimed today, or
+     * doesn't belong to today's set.
+     */
+    fun claimDaily(context: Context, questId: String) {
+        ensureDaily(context)
+        val quest = dailyQuestsFor(todayEpochDay()).firstOrNull { it.id == questId } ?: return
+        if (quest.id in dailyAwardedState) return
+        if ((dailyProgressState[quest.kind.name] ?: 0) < quest.target) return
+        dailyAwardedState = dailyAwardedState + quest.id
+        lifetimeState = lifetimeState.copy(dailyCompleted = lifetimeState.dailyCompleted + 1)
+        write(context)
+        addXp(context, quest.xpReward)
     }
 
     // ── Chain checks — award each stage's XP once when its target hits ──

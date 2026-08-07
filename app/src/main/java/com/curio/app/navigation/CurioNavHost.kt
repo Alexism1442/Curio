@@ -84,6 +84,7 @@ import com.curio.app.features.settings.ExperimentsScreen
 import com.curio.app.features.settings.SettingsHubScreen
 import com.curio.app.features.settings.SettingsPage
 import com.curio.app.features.settings.SettingsSectionScreen
+import com.curio.app.features.settings.SettingsHeroTotalHeight
 import com.curio.app.features.topichistory.TopicHistoryScreen
 import com.curio.app.features.recent.RecentScreen
 import com.curio.app.features.cabinet.CabinetScreen
@@ -103,6 +104,7 @@ import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBottomBar
 import com.curio.app.ui.components.CurioNavigationRail
 import com.curio.app.ui.components.CurioWatermarkBackdrop
+import com.curio.app.ui.components.GuidePointer
 import com.curio.app.ui.components.QuestGuideToast
 import com.curio.app.ui.theme.CurioMotion
 
@@ -706,23 +708,45 @@ fun CurioNavHost(
             }
         }
         }
-        // ── Quest tour overlay (v8.1/v8.2) — a compact IN-APP floating pill
-        //    near the bottom of the content column (above the bottom bar /
-        //    rail), NOT a dialog. Rendered only while a tour is active — the
-        //    tour itself is started from the Quests page (v8.2), never
-        //    auto-shown.
+        // ── Quest tour overlay (v8.1/v8.3) — a compact IN-APP floating pill,
+        //    NOT a dialog. MOVES WITH THE STEP (v8.3): bottom of the screen
+        //    for the tab steps, below the settings-family hero for Quests /
+        //    Settings, centered on the final step — with a pointer arrow at
+        //    the content it describes and progress dots. Rendered only while
+        //    a tour is active; the tour itself is started from the Quests
+        //    page (v8.2), never auto-shown.
         if (QuestGuide.active) {
             QuestGuide.current?.let { step ->
                 QuestGuideToast(
                     title = step.title,
                     message = step.message,
-                    footer = "${QuestGuide.index + 1} of ${QuestGuide.steps.size}",
+                    stepIndex = QuestGuide.index + 1,
+                    stepCount = QuestGuide.steps.size,
+                    pointer = when (step.position) {
+                        QuestGuide.Position.BOTTOM -> GuidePointer.UP
+                        QuestGuide.Position.TOP -> GuidePointer.DOWN
+                        QuestGuide.Position.CENTER -> null
+                    },
                     actionLabel = if (QuestGuide.isLast) "Finish" else "Next",
                     onClick = { if (QuestGuide.isLast) QuestGuide.stop() else QuestGuide.next() },
                     onClose = { QuestGuide.stop() },
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .align(
+                            when (step.position) {
+                                QuestGuide.Position.BOTTOM -> Alignment.BottomCenter
+                                QuestGuide.Position.TOP -> Alignment.TopCenter
+                                QuestGuide.Position.CENTER -> Alignment.Center
+                            }
+                        )
+                        // TOP steps (Quests / Settings) sit below the screen
+                        // hero instead of floating over it.
+                        .padding(
+                            start = 16.dp,
+                            top = if (step.position == QuestGuide.Position.TOP)
+                                SettingsHeroTotalHeight + 8.dp else 10.dp,
+                            end = 16.dp,
+                            bottom = 10.dp
+                        )
                 )
             }
         }

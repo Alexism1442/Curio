@@ -165,7 +165,12 @@ fun QuestsScreen(navController: NavController) {
                 }
                 item {
                     DailyCard(
-                        quests = CurioQuests.dailyQuestsFor(CurioQuests.todayEpochDay())
+                        quests = CurioQuests.dailyQuestsFor(CurioQuests.todayEpochDay()),
+                        // v8.3 — complete dailies are CLAIMED here (a tap
+                        // grants the XP) and in-progress ones can Go straight
+                        // to where the action happens.
+                        onClaim = { questId -> CurioQuests.claimDaily(context, questId) },
+                        onGo = onQuestNavigate
                     )
                 }
                 item {
@@ -430,6 +435,10 @@ private fun ChainCard(
             trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
         Spacer(Modifier.height(6.dp))
+        // v8.3 — the chain's NEXT actionable stage carries a Go/Start chip
+        // too, so every chain points at what to do next (not just the
+        // globally current quest).
+        val nextIndex = chain.stages.indexOfFirst { !CurioQuests.isStageDone(it) }
         chain.stages.forEachIndexed { index, stage ->
             val done = CurioQuests.isStageDone(stage)
             val isCurrent = !done && stage.id == CurioQuests.currentQuest()?.id
@@ -438,6 +447,7 @@ private fun ChainCard(
                 stage = stage,
                 done = done,
                 isCurrent = isCurrent,
+                isNext = index == nextIndex,
                 onNavigate = { stage.navRoute?.let(onNavigate) }
             )
         }
@@ -451,6 +461,7 @@ private fun ChainStageRow(
     stage: QuestStage,
     done: Boolean,
     isCurrent: Boolean,
+    isNext: Boolean,
     onNavigate: () -> Unit
 ) {
     val accent = when {
@@ -500,11 +511,16 @@ private fun ChainStageRow(
                 color = if (isCurrent) CurioColors.CoralBlush else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        if (isCurrent && stage.navRoute != null) {
+        // v8.3 — the chain's next actionable quest gets a Go/Start chip that
+        // jumps the user to the quest's screen. The globally current quest is
+        // the solid coral "Go"; the other chains' next quests are muted
+        // "Start".
+        if (!done && stage.navRoute != null && isNext) {
             Surface(
                 onClick = onNavigate,
                 shape = RoundedCornerShape(50),
-                color = CurioColors.CoralBlush.copy(alpha = 0.16f)
+                color = if (isCurrent) CurioColors.CoralBlush
+                else CurioColors.CoralBlush.copy(alpha = 0.14f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -512,13 +528,13 @@ private fun ChainStageRow(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        "Go",
+                        if (isCurrent) "Go" else "Start",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = CurioColors.CoralBlush
+                        color = if (isCurrent) Color.White else CurioColors.CoralBlush
                     )
                     CurioForwardArrow(
-                        "Go to quest",
-                        tint = CurioColors.CoralBlush,
+                        if (isCurrent) "Go to quest" else "Start this quest",
+                        tint = if (isCurrent) Color.White else CurioColors.CoralBlush,
                         size = 14.dp
                     )
                 }
@@ -527,9 +543,26 @@ private fun ChainStageRow(
     }
 }
 
-/** Today's three quests with mini progress bars. */
+/**
+ * Where a daily quest's action happens — null when the quest has no single
+ * destination screen (saving/bookmarking need an open topic or entry).
+ */
+private fun dailyGoRoute(kind: CurioQuests.DailyKind): String? = when (kind) {
+    CurioQuests.DailyKind.SPIN -> CurioRoutes.SPIN
+    // Exploring starts on a topic's reveal page — spinning is the fastest
+    // way to land on one.
+    CurioQuests.DailyKind.EXPLORE -> CurioRoutes.SPIN
+    CurioQuests.DailyKind.PROFILE -> CurioRoutes.PROFILE
+    else -> null
+}
+
+/** Today's three quests with mini progress bars (v8.3 — claimable rewards). */
 @Composable
-private fun DailyCard(quests: List<DailyQuest>) {
+private fun DailyCard(
+    quests: List<DailyQuest>,
+    onClaim: (String) -> Unit,
+    onGo: (String) -> Unit
+) {
     CurioSettingsCard {
         CurioCardHeader(CurioIcons.EmojiEvents, "Today's quests", "Resets at midnight")
         Spacer(Modifier.height(2.dp))
@@ -584,11 +617,57 @@ private fun DailyCard(quests: List<DailyQuest>) {
                     )
                 }
                 Spacer(Modifier.width(6.dp))
-                Text(
-                    if (done) "Done" else "+${quest.xpReward} XP",
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = if (done) CurioColors.Sage else CurioColors.CoralBlush
-                )
+                val claimable = !done && progress >= quest.target
+                if (claimable) {
+                    // v8.3 — Claim pill: a tap grants the quest's XP.
+                    Surface(
+                        onClick = { onClaim(quest.id) },
+                        shape = RoundedCornerShape(50),
+                        color = CurioColors.CoralBlush
+                    ) {
+                        Text(
+                            "Claim +${quest.xpReward} XP",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                        )
+                    }
+                } else {
+                    Text(
+                        if (done) "Done" else "+${quest.xpReward} XP",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = if (done) CurioColors.Sage else CurioColors.CoralBlush
+                    )
+                    // v8.3 — Go chip on in-progress dailies: jump to the
+                    // screen where this quest's action happens.
+                    if (!done) {
+                        dailyGoRoute(quest.kind)?.let { route ->
+                            Spacer(Modifier.width(4.dp))
+                            Surface(
+                                onClick = { onGo(route) },
+                                shape = RoundedCornerShape(50),
+                                color = CurioColors.CoralBlush.copy(alpha = 0.14f)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                                ) {
+                                    Text(
+                                        "Go",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = CurioColors.CoralBlush
+                                    )
+                                    CurioForwardArrow(
+                                        "Go to quest",
+                                        tint = CurioColors.CoralBlush,
+                                        size = 12.dp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
