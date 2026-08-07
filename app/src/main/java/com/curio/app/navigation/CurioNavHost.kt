@@ -427,7 +427,13 @@ fun CurioNavHost(
                 }
             }
             composable(CurioRoutes.CABINET) {
-                CabinetScreen(navController = navController)
+                val animatedVisibilityScope = this
+                CompositionLocalProvider(
+                    LocalRevealSharedScope provides sharedTransitionScope,
+                    LocalRevealVisibilityScope provides animatedVisibilityScope
+                ) {
+                    CabinetScreen(navController = navController)
+                }
             }
 
             // ── Spin flow (no bottom nav) ──────────────────────────────────
@@ -492,10 +498,16 @@ fun CurioNavHost(
                 route = CurioRoutes.ENTRY_DETAIL,
                 arguments = listOf(navArgument("entryId") { type = NavType.StringType })
             ) { entry ->
-                EntryDetailScreen(
-                    entryId = entry.arguments?.getString("entryId").orEmpty(),
-                    navController = navController
-                )
+                val animatedVisibilityScope = this
+                CompositionLocalProvider(
+                    LocalRevealSharedScope provides sharedTransitionScope,
+                    LocalRevealVisibilityScope provides animatedVisibilityScope
+                ) {
+                    EntryDetailScreen(
+                        entryId = entry.arguments?.getString("entryId").orEmpty(),
+                        navController = navController
+                    )
+                }
             }
             // Both edit routes reopen a saved entry (a single mood board or a
             // whole multi-section Portfolio) in the universal editor — the

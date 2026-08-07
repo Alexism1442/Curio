@@ -104,6 +104,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
+import com.curio.app.ui.adaptive.LocalRevealSharedScope
+import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.AdaptiveImageGallery
@@ -359,10 +362,22 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         // never re-rolls) while the card rectangle — the title, the frosted
         // Date · Mood · Type card and the back / more controls — stays
         // perfectly LEVEL.
+        // ── Cabinet→Detail morph target: the hero banner is the shared-
+        //    element match for the Cabinet entry card ("cabinet-{entryId}").
+        //    When navigated from Cabinet, the card expands into this hero.
+        val heroMorphMod = run {
+            val scope = LocalRevealSharedScope.current ?: return@run Modifier
+            val vis = LocalRevealVisibilityScope.current ?: return@run Modifier
+            val state = scope.rememberSharedContentState("cabinet-${entryId}")
+            scope.run {
+                Modifier.sharedElement(state, vis, boundsTransform = RevealBoundsTransform)
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(EntryDetailHeroHeight + EntryDetailSheetExtent)
+                .then(heroMorphMod)
         ) {
             // ── White under-sheet — ONE SOLID white sheet layered BEHIND
             // the hero's torn bottom edge. The tear lives ONLY on the hero

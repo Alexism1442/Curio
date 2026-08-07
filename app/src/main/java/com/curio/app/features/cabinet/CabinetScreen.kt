@@ -1,8 +1,14 @@
 package com.curio.app.features.cabinet
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -82,6 +88,9 @@ import com.curio.app.features.settings.settingsReadableInk
 import com.curio.app.features.settings.settingsRoseAccent
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
+import com.curio.app.ui.adaptive.LocalRevealSharedScope
+import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
@@ -376,8 +385,22 @@ fun CabinetScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(visibleEntries, key = { it.id }) { entry ->
+                    // ── Cabinet→Detail morph: match this card to the
+                    //    entry detail hero via shared element. The modifier
+                    //    only attaches when NOT in selection mode (otherwise
+                    //    a multi-select card would become a morph source).
+                    val sharedScope = LocalRevealSharedScope.current
+                    val visScope = LocalRevealVisibilityScope.current
+                    val cardMorphMod = if (!selectionMode && sharedScope != null && visScope != null) {
+                        val state = sharedScope.rememberSharedContentState("cabinet-${entry.id}")
+                        sharedScope.run {
+                            Modifier.sharedElement(state, visScope, boundsTransform = RevealBoundsTransform)
+                        }
+                    } else Modifier
+
                     CurioEntryCard(
                         entry = entry,
+                        modifier = cardMorphMod,
                         selected = entry.id in selectedEntryIds,
                         onLongClick = {
                             // v7.107 — promo/demo mode disables multi-select:
@@ -688,66 +711,87 @@ private fun CabinetHeroHeader(
                     }
                     // Flex spacer — pins the title block just above the tear.
                     Spacer(Modifier.weight(1f))
-                    // ── Search field (open inside the hero) or the Cabinet's
-                    // title + subtitle, pinned just above the tear ──
-                    if (searchActive) {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = onSearchQueryChange,
-                            placeholder = { Text("Search captures…") },
-                            leadingIcon = {
-                                CurioIcon(CurioIcons.Search, null, tint = ink, size = 20.dp)
-                            },
-                            trailingIcon = {
-                                if (searchQuery.isNotEmpty()) {
-                                    IconButton(onClick = { onSearchQueryChange("") }) {
-                                        CurioIcon(
-                                            CurioIcons.Close,
-                                            "Clear search",
-                                            tint = ink.copy(alpha = 0.85f),
-                                            size = 20.dp
-                                        )
+                    // ── Search field or title, animated expand/collapse ──
+                    //    The search bar scales in from the pill's position
+                    //    when opened, and the title fades back in when closed.
+                    AnimatedContent(
+                        targetState = searchActive,
+                        transitionSpec = {
+                            if (targetState) {
+                                // Search opening: scale in + fade in
+                                (scaleIn(tween(280, easing = FastOutSlowInEasing), initialScale = 0.92f)
+                                    + fadeIn(tween(280, easing = FastOutSlowInEasing)))
+                                    .togetherWith(fadeOut(tween(200)))
+                            } else {
+                                // Search closing: title fades back in
+                                (fadeIn(tween(280, easing = FastOutSlowInEasing)))
+                                    .togetherWith(
+                                        scaleOut(tween(200, easing = FastOutSlowInEasing), targetScale = 0.92f)
+                                            + fadeOut(tween(200))
+                                    )
+                            }
+                        },
+                        label = "searchExpand"
+                    ) { active ->
+                        if (active) {
+                            OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = onSearchQueryChange,
+                                placeholder = { Text("Search captures…") },
+                                leadingIcon = {
+                                    CurioIcon(CurioIcons.Search, null, tint = ink, size = 20.dp)
+                                },
+                                trailingIcon = {
+                                    if (searchQuery.isNotEmpty()) {
+                                        IconButton(onClick = { onSearchQueryChange("") }) {
+                                            CurioIcon(
+                                                CurioIcons.Close,
+                                                "Clear search",
+                                                tint = ink.copy(alpha = 0.85f),
+                                                size = 20.dp
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                            singleLine = true,
-                            shape = RoundedCornerShape(50),
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = ink),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(onSearch = {}),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = ink.copy(alpha = 0.16f),
-                                unfocusedContainerColor = ink.copy(alpha = 0.16f),
-                                focusedBorderColor = ink.copy(alpha = 0.55f),
-                                unfocusedBorderColor = ink.copy(alpha = 0.30f),
-                                cursorColor = ink,
-                                focusedTextColor = ink,
-                                unfocusedTextColor = ink,
-                                focusedPlaceholderColor = ink.copy(alpha = 0.72f),
-                                unfocusedPlaceholderColor = ink.copy(alpha = 0.72f),
-                                focusedLeadingIconColor = ink,
-                                unfocusedLeadingIconColor = ink,
-                                focusedTrailingIconColor = ink.copy(alpha = 0.85f),
-                                unfocusedTrailingIconColor = ink.copy(alpha = 0.85f)
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(searchFocus)
-                        )
-                    } else {
-                        Column {
-                            Text(
-                                title,
-                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                                color = ink,
-                                maxLines = 1
+                                },
+                                singleLine = true,
+                                shape = RoundedCornerShape(50),
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = ink),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = {}),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = ink.copy(alpha = 0.16f),
+                                    unfocusedContainerColor = ink.copy(alpha = 0.16f),
+                                    focusedBorderColor = ink.copy(alpha = 0.55f),
+                                    unfocusedBorderColor = ink.copy(alpha = 0.30f),
+                                    cursorColor = ink,
+                                    focusedTextColor = ink,
+                                    unfocusedTextColor = ink,
+                                    focusedPlaceholderColor = ink.copy(alpha = 0.72f),
+                                    unfocusedPlaceholderColor = ink.copy(alpha = 0.72f),
+                                    focusedLeadingIconColor = ink,
+                                    unfocusedLeadingIconColor = ink,
+                                    focusedTrailingIconColor = ink.copy(alpha = 0.85f),
+                                    unfocusedTrailingIconColor = ink.copy(alpha = 0.85f)
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(searchFocus)
                             )
-                            Text(
-                                subtitle,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = ink.copy(alpha = 0.82f),
-                                maxLines = 1
-                            )
+                        } else {
+                            Column {
+                                Text(
+                                    title,
+                                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                                    color = ink,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    subtitle,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = ink.copy(alpha = 0.82f),
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }
