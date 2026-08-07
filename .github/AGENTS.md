@@ -28,7 +28,7 @@ GitHub Actions automation and contributor templates for the Curio Android reposi
 
 - Validates all topic catalogs with `python3 scripts/validate_topics.py`.
 - Runs the Gradle `lintDebug`, `validateTopics`, `assembleDebug`, and `assembleRelease` checks in GitHub Actions using the hosted Android toolchain.
-- Uploads lint reports plus both the debug APK and the release-variant APK for 14 days.
+- Uploads lint reports plus both the debug APK and the release-variant APK for 14 days. Lint-report upload is best-effort and silently skips the artifact when Gradle fails before producing reports; the Gradle check remains authoritative.
 - Signs the release variant with the same `KEYSTORE_*` signing secrets as the release workflow when GitHub provides them (pushes to `main`, same-repo PRs, manual dispatch) and verifies the APK signature is not the debug key. On fork PRs, where GitHub strips secrets, the release variant falls back to the app module's debug-signing config so CI still passes.
 - Cancels an older in-progress run for the same ref when a newer run starts.
 
@@ -59,6 +59,7 @@ The release workflow requires the signing secrets; the Android CI workflow consu
 ## Work Guidance
 
 - Keep workflow names, artifact names, and user-facing copy Curio-specific.
+- Use the current Node 24-compatible artifact action (`actions/upload-artifact@v6`); do not opt into deprecated Node 20 with `ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION`.
 - Keep every workflow and template focused on the current Curio product and its Android delivery path.
 - Keep release signing mandatory and never commit keystores or decoded credentials.
 - Update this contract whenever workflow triggers, required secrets, artifact behavior, or template fields change.

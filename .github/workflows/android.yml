@@ -91,19 +91,21 @@ jobs:
 
       - name: Upload lint reports
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: curio-lint-reports-${{ github.run_number }}
           path: |
             app/build/reports/lint-results*.*
             app/build/reports/lint/**/*.html
             app/build/reports/lint/**/*.xml
-          if-no-files-found: warn
+          # Lint reports are best-effort diagnostics; the Gradle step above
+          # remains authoritative for CI success/failure.
+          if-no-files-found: ignore
           retention-days: 14
 
       - name: Upload debug and release APKs
         if: success()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: curio-pr-apks-${{ github.run_number }}
           path: |

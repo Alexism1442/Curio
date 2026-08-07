@@ -1,17 +1,16 @@
-# Prompt — maximum-quality promo and mood-board exports
+# Prompt — GitHub Actions lint artifact warning
 
 ## Request
-The promo preview looks good, but the saved output changes slightly and its quality drops drastically. Increase promo export quality to maximum. Apply the same maximum-quality treatment to mood-board output.
+CI reports the Node 20 deprecation notice while running `actions/upload-artifact@v5`, followed by:
+
+`Warning: No files were found with the provided path: app/build/reports/lint-results*.*`
+
+## Findings
+- The Node message is an informational runtime transition from GitHub-hosted runners. The workflow must not set `ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true`, because that opts into the deprecated Node 20 runtime.
+- `actions/upload-artifact@v5` remains the configured modern artifact action; no runtime downgrade is needed.
+- Lint reports are optional diagnostics when the Gradle step fails before generating them. The Gradle command remains the authoritative CI failure signal.
 
 ## Completed
-- Promo share exports now opt into fixed 4x density while regular entry share cards retain their established device-density behavior.
-- Promo exports preserve the device font scale so text/layout remain faithful to the preview environment.
-- Promo and mood-board PNG compression use quality 100 (PNG remains lossless).
-- Mood-board exports target a 4096px long side and automatically scale down only when the device-aware ARGB bitmap budget requires it.
-- Failed mood-board captures recycle partially allocated bitmaps; the budget reserves heap for tile bitmaps and Compose rendering.
-
-## Validation
-- `git diff --check` passed.
-- Static Kotlin brace/string checks passed for all changed Kotlin files.
-- Code review approved the promo scoping, density/font-scale fidelity, PNG quality, and failure cleanup.
-- No Gradle build, compile, lint, or test commands were run because repository policy forbids them in this environment; CI should validate the Android release artifact.
+- Changed the lint-report artifact upload to `if-no-files-found: ignore`, removing the misleading warning when no report exists while preserving Gradle failure behavior.
+- Updated `.github/AGENTS.md` to document that lint reports are best-effort and may be absent after an early Gradle failure.
+- Ran workflow/static validation only; no local Gradle commands are allowed by repository policy.
