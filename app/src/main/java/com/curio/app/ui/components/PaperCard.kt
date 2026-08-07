@@ -1784,10 +1784,11 @@ private fun CompactPaperChip(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(50),
-        color = if (active) accent.copy(alpha = 0.18f) else Color.Transparent,
+        color = if (active) accent.copy(alpha = 0.18f)
+                else MaterialTheme.colorScheme.surfaceContainerHighest,
         border = BorderStroke(
             1.dp,
-            if (active) accent.copy(alpha = 0.55f)
+            if (active) accent.copy(alpha = 0.65f)
             else MaterialTheme.colorScheme.outlineVariant
         )
     ) {
@@ -1795,7 +1796,7 @@ private fun CompactPaperChip(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = if (active) accent else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp)
         )
     }
 }
@@ -1827,16 +1828,17 @@ fun NotePaperColorToggle(
             onClick = { expanded = !expanded },
             enabled = enabled,
             shape = RoundedCornerShape(10.dp),
-            color = if (expanded) accent.copy(alpha = 0.16f) else Color.Transparent,
+            color = if (expanded) accent.copy(alpha = 0.18f)
+                    else MaterialTheme.colorScheme.surfaceContainerHighest,
             border = BorderStroke(
                 1.dp,
-                if (expanded) accent.copy(alpha = 0.55f)
+                if (expanded) accent.copy(alpha = 0.65f)
                 else MaterialTheme.colorScheme.outlineVariant
             )
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Live swatch of the current paper color — the border must
@@ -1856,7 +1858,7 @@ fun NotePaperColorToggle(
                 )
                 Text(
                     text = "Color",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     color = ink
                 )
             }
@@ -1881,7 +1883,7 @@ fun NotePaperColorToggle(
                         border = BorderStroke(
                             if (selected) 2.dp else 1.dp,
                             if (selected) accent
-                            else notePaperBorder(candidate).copy(alpha = 0.7f)
+                            else notePaperBorder(candidate).copy(alpha = 0.85f)
                         ),
                         // Each swatch announces itself by color name; the
                         // check icon is purely visual (no invisible-icon hack).

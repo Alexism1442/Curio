@@ -720,16 +720,16 @@ fun RichTextEditor(
         // outline variant, accent), so the dock is properly theme-aware in
         // light, dark, AMOLED and pastel — no hardcoded alpha bumps.
         Surface(
-            shape = RoundedCornerShape(14.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            border = BorderStroke(1.dp, effectiveAccent.copy(alpha = 0.40f)),
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, effectiveAccent.copy(alpha = 0.32f)),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 6.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+                        .padding(start = 6.dp, end = 6.dp, top = 3.dp, bottom = 3.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -773,8 +773,8 @@ fun RichTextEditor(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 10.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             NotePaperStyleToggle(
                                 style = paperStyle,
@@ -813,14 +813,14 @@ fun RichTextEditor(
                             onItalic = { applyFlag(RichFlag.ITALIC) },
                             onHighlight = { applyFlag(RichFlag.HIGHLIGHT) },
                             onSizePick = { applyExactSize(it) },
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
                         )
                     }
                 }
             }
         }
         // Small air gap so the dock reads as one unit above the field/paper.
-        Spacer(Modifier.height(5.dp))
+        Spacer(Modifier.height(4.dp))
 
         // ── The field ───────────────────────────────────────────────────
         // On note-paper ([paper]) the field renders inside a PaperCard with
@@ -1077,11 +1077,13 @@ private fun ToolToggleButton(
     /** Live swatch — e.g. the current paper color, shown before the icon. */
     dot: Color? = null
 ) {
-    // Theme-aware on the dock: collapsed follows the theme's muted tokens,
-    // expanded blooms in the accent — no hardcoded dark-mode alphas.
+    // Theme-aware on the dock: collapsed sits on a tonal surface chip with
+    // the theme's muted tokens, expanded blooms in the accent container —
+    // no hardcoded dark-mode alphas.
     val ink = if (expanded) accent else MaterialTheme.colorScheme.onSurfaceVariant
-    val fill = if (expanded) accent.copy(alpha = 0.16f) else Color.Transparent
-    val rim = if (expanded) accent.copy(alpha = 0.55f)
+    val fill = if (expanded) accent.copy(alpha = 0.18f)
+               else MaterialTheme.colorScheme.surfaceContainerHighest
+    val rim = if (expanded) accent.copy(alpha = 0.65f)
               else MaterialTheme.colorScheme.outlineVariant
     Surface(
         onClick = onToggle,
@@ -1133,10 +1135,11 @@ private fun FormatToolButton(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(10.dp),
-        color = if (active) accent.copy(alpha = 0.16f) else Color.Transparent,
+        color = if (active) accent.copy(alpha = 0.18f)
+                else MaterialTheme.colorScheme.surfaceContainerHighest,
         border = BorderStroke(
             1.dp,
-            if (active) accent.copy(alpha = 0.55f)
+            if (active) accent.copy(alpha = 0.65f)
             else MaterialTheme.colorScheme.outlineVariant
         ),
         modifier = modifier
