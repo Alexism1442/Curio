@@ -24,7 +24,7 @@
 - **Color picker**: chip padding 10/6→9/4dp (matches style-chip family), spacing 6→5dp, `labelSmall`→`labelMedium`, swatch unselected border alpha 0.7→0.85.
 - Changelog bullet added to `fastlane/metadata/android/en-US/changelogs/20260810.txt`.
 
-## Request (2026-08-07, 3rd): Explore-session polish — DONE, pushed as `XXXXXXX`
+## Request (2026-08-07, 3rd): Explore-session polish — DONE, pushed as `7b7f6e5`
 1. **Category-based reflection question in notifications** — shared `ExploreSession.reflectionQuestion()` (data layer): albums/artists → "Finished listening? What track or lyric landed hardest?", films/directors → watching, books/authors → reading, artworks/painters → looking, scientists/discoveries → exploring, wildcard → verb fallback. Added to the live timer notification AND the wrap-up reminder via `BigTextStyle`.
 2. **Live timer above the progress bar now visibly updates** — `NOTIFICATION_REFRESH_MS` 60s → 15s (the shade chronometer ticks itself; the re-render refreshes the content text + progress). `body` computed once, reused by content text + big text (drift-proof).
 3. **Bubble expand/collapse fixed** — `SizeTransform(clip = true)` stops the expanded panel's content from rendering outside the still-pill-sized window mid-animation; fades tuned 240/120 → 220/100.
