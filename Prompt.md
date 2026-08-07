@@ -1,17 +1,20 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 7th): README — design-identity reframe + stale-fact fixes — DONE (committed, NOT pushed)
+## Request (2026-08-07, 8th): Tablet / landscape / desktop adaptive-layout polish — DONE (committed, NOT pushed)
 
-**User request:** "update the readme and also change material design to material inspired custom design — not hand crafted but like scraped from the internet." Clarified via ask_user: **NOT a redesign** — this is README wording only. Reframe the design identity as a *Material-inspired custom design language* assembled from the established design language of the web (Material 3 foundation + editorial/tactile web aesthetic), not a hand-invented look. Also fix stale facts (selected option "Design + fix stale facts").
+**User request:** "the landscape layout and tablet layout still needs fixing — many things are not properly connected and have huge gaps etc. so properly fix them and they should properly adjust in desktop and tablets with a beautiful layout — choose one on your own, you should not ask me about anything. And it should not affect the current layout." (Design decisions were mine; all changes gated on `isWide` so the phone/portrait layout is untouched.)
 
-### Changes (README.md only)
-- **Design Identity / Design & Privacy / Themes sections** — reframed from "Material 3 with Curio's warm-cream paper world" to "Material-inspired custom design language — not a hand-invented look, but one assembled from the established design language of the modern web" (Material 3 open design system as foundation + warm-cream paper world drawn from today's editorial app aesthetics).
-- **Stale facts fixed** (verified against repo):
-  - Topics: 2,500+/2,312+ → **3,133** (validator-summed across the 11 JSON files: 3133).
-  - Level system (1–9) → **50-level quest system** with XP ranks, titles, quest chains.
-  - Kotlin 1.9+ → **Kotlin 2.3+** (actual 2.3.21); Gradle 8.0+ → **Gradle 9.4+** (wrapper 9.4.1); removed "or Canary".
-  - Target OS: "Android 15+ (API 37)" → **Android 17 (API 37)**.
-- Also noticed: `docs/v1.0-launch.md` + `app/AGENTS.md` still carry the old "Material 3 with Curio's warm-cream" framing — left untouched (out of scope; flag if wanted).
+### Design decision
+One **continuous full-bleed watermark collage** fills the tablet/desktop gutters behind the centered content column (the NavHost renders it once), and every screen's content caps at a comfortable **640dp** column inside the 720dp shell so rows/cards never stretch into disconnected, gap-filled plates.
+
+### Changes
+- **`ui/adaptive/CurioAdaptiveLayout.kt`** — added `WideContentMaxWidth = 640.dp` and `@Composable wideContentEdgePadding()` (40dp on wide, 16dp on phone) for LazyColumn contentPadding capping.
+- **`navigation/CurioNavHost.kt`** — on wide only, a single `CurioWatermarkBackdrop` (wildcard, alphaScale 0.55) renders full-bleed behind the 720dp `SharedTransitionLayout` column (gutter collage).
+- **17 feature screens** — their own `CurioWatermarkBackdrop` is now wrapped in `if (!windowWidthSizeClass().isWide)` so there is ONE collage, not a double: Home, Spin, Cabinet, TopicReveal, Recent, Profile, SettingsHub, SettingsSection, BackupTools, Experiments, Onboarding, ManageCategories, TopicDatabase, Quests, Support, PromoMode, EntryDetail.
+- **12 list screens capped to the 640dp column on wide** via `contentPadding start/end = wideContentEdgePadding()`: SettingsHub, SettingsSection, BackupTools, Experiments, ManageCategories, TopicDatabase, Support, PromoMode, Quests, TopicHistory, Recent, + Profile's 4 settings-card rows (hero left full-bleed).
+- **Home** — 4 sections capped with `.widthIn(max = if (isWide) WideContentMaxWidth else Dp.Infinity).align(CenterHorizontally)`.
+- **Deliberate scope note:** the TopicReveal content column was NOT capped — it's the shared-element morph target, and changing its width on wide would alter the reveal hero bounds mid-morph. The reveal stack is already a cohesive centered column.
 
 ### Status
-- Committed locally. **Not pushed** (branch is ahead of origin/main by the reveal-morph commit `cc26e15` too — awaiting user's go-ahead to push).
+- Statically validated (no Gradle in this env per AGENTS.md): all 17 backdrops gated 1:1, all imports used (TopicHistory trims to `wideContentEdgePadding` only), Home sections' `.align()` in Column scopes, `git diff --check` clean, code review passed.
+- Committed locally. **Not pushed** — branch is ahead of origin/main by `cc26e15` (reveal morph), `e9f46de` (README), and this commit, all awaiting the user's go-ahead to push.

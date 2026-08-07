@@ -53,6 +53,7 @@ import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
@@ -288,10 +289,14 @@ fun SettingsHubScreen(navController: NavController) {
         // v7.76 — the flat rows below the hero sit directly on this
         // backdrop, so the glyphs drop to a faint whisper and the text,
         // headers and chips always read first.
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                alphaScale = 0.45f
+            )
+        }
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — the Profile/Home
         // construction, so Settings tears from the very top edge. The hero
@@ -310,7 +315,7 @@ fun SettingsHubScreen(navController: NavController) {
             LazyVerticalGrid(
                 columns = if (wide) GridCells.Adaptive(minSize = 300.dp) else GridCells.Fixed(1),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = heroTotal + 10.dp, bottom = 24.dp),
+                contentPadding = PaddingValues(start = wideContentEdgePadding(), end = wideContentEdgePadding(), top = heroTotal + 10.dp, bottom = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {

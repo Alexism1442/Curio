@@ -26,6 +26,9 @@ import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.SmartDensityMode
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioSectionLabel
 import com.curio.app.ui.components.CurioSettingsDivider
@@ -51,10 +54,14 @@ fun ExperimentsScreen(navController: NavController) {
         // v7.76 — the flat rows below the hero sit directly on this
         // backdrop, so the glyphs drop to a faint whisper and the text,
         // headers and chips always read first.
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                alphaScale = 0.45f
+            )
+        }
         // The hero banner runs up BEHIND the status bar (the header applies
         // its own status-bar inset for the back pill) — Profile/Home style.
         // The hero is drawn LAST (on top of the scroll content): the rows
@@ -62,7 +69,7 @@ fun ExperimentsScreen(navController: NavController) {
         // at a straight line.
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 8.dp, bottom = 24.dp),
+            contentPadding = PaddingValues(start = wideContentEdgePadding(), end = wideContentEdgePadding(), top = SettingsHeroTotalHeight + 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item { CurioSectionLabel("Card surfaces") }

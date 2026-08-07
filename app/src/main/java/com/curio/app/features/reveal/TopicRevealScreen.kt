@@ -91,10 +91,12 @@ import com.curio.app.data.TopicJsonLoader
 import com.curio.app.data.buildExploreSearchUrl
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
@@ -428,7 +430,11 @@ fun TopicRevealScreen(
         //    teaser / action cards above it sit on OPAQUE category surfaces
         //    so the glyphs only show in the gaps around them, never bleeding
         //    through the cards.
-        CurioWatermarkBackdrop(activeCat = cat)
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(activeCat = cat)
+        }
 
         Column(
             modifier = Modifier

@@ -924,7 +924,11 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
         //    the screen in a muted shade, behind all content, so the quiet
         //    space around the deck still carries a whisper of the Curio
         //    world. The active category's glyph gets a faint accent tint.
-        CurioWatermarkBackdrop(activeCat = deckCat)
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(activeCat = deckCat)
+        }
 
         // ── Landscape / tablet: side-by-side layout (v7.x) ─────────
         //    On wide windows the bottom bar would waste horizontal space;

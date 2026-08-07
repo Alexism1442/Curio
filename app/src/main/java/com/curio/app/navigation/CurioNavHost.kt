@@ -59,6 +59,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.curio.app.data.AppPreferences
+import com.curio.app.data.CategoryId
+import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSessionStore
@@ -100,6 +102,7 @@ import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBottomBar
 import com.curio.app.ui.components.CurioNavigationRail
+import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioMotion
 
 /**
@@ -348,6 +351,17 @@ fun CurioNavHost(
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
+        // Wide windows (tablet / landscape / desktop): ONE continuous
+        // full-bleed watermark collage fills the gutters around the centered
+        // column so the page never floats in dead background. Each screen
+        // gates its own backdrop off on wide (see the screens) so there is a
+        // single collage instead of a double.
+        if (wide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                alphaScale = 0.55f
+            )
+        }
         SharedTransitionLayout(
             // The shared-transition root for the whole NavHost: the Spin
             // front ticket and the Topic Reveal hero are matched

@@ -37,6 +37,9 @@ import com.curio.app.data.ExploredTopic
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.UnexploredTopic
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioEmptyState
 import com.curio.app.ui.components.CurioForwardArrow
@@ -125,10 +128,14 @@ fun RecentScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            modifier = Modifier.fillMaxSize()
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -167,7 +174,7 @@ fun RecentScreen(navController: NavController) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
+                    contentPadding = PaddingValues(horizontal = wideContentEdgePadding(), vertical = 18.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(feed, key = { it.key }) { item ->

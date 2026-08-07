@@ -44,6 +44,9 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.features.settings.SettingsHeroHeader
 import com.curio.app.features.settings.SettingsHeroTotalHeight
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
@@ -92,9 +95,13 @@ fun QuestsScreen(navController: NavController) {
         // ── Watermark backdrop — muted category glyphs behind the content
         // (the settings/profile language). Quests are category-neutral, so
         // the wildcard sparkle leads the collage.
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD)
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD)
+            )
+        }
         // The hero is drawn LAST (on top of the scroll content): the quest
         // cards scroll UP and disappear behind the ragged tear instead of
         // clipping at a straight line — the same overlay construction as
@@ -102,7 +109,7 @@ fun QuestsScreen(navController: NavController) {
         ScreenEntrance {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
+                contentPadding = PaddingValues(start = wideContentEdgePadding(), end = wideContentEdgePadding(), top = SettingsHeroTotalHeight + 10.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 item {

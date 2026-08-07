@@ -290,11 +290,15 @@ fun CabinetScreen(navController: NavController) {
         // carried by the page wash, the chip row and the card tints.
         // v7.77 — the flat grid sits directly on this backdrop, so the
         // glyphs stay a faint whisper and the cards always read first.
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            modifier = Modifier.fillMaxSize(),
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                modifier = Modifier.fillMaxSize(),
+                alphaScale = 0.45f
+            )
+        }
         Column(
             modifier = Modifier.fillMaxSize()
         ) {

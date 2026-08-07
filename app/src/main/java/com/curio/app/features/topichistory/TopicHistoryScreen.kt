@@ -37,6 +37,7 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioEntry
 import com.curio.app.data.CurioRepositoryHolder
 import com.curio.app.data.PinnedTopic
+import com.curio.app.ui.adaptive.wideContentEdgePadding
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioEmptyState
 import com.curio.app.ui.components.ScreenEntrance
@@ -115,7 +116,7 @@ fun TopicHistoryScreen(navController: NavController) {
                     .fillMaxSize()
                     .weight(1f),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 16.dp,
+                    horizontal = wideContentEdgePadding(),
                     vertical = 8.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(4.dp)

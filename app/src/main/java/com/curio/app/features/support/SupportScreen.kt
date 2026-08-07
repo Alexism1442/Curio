@@ -48,6 +48,9 @@ import com.curio.app.data.UpdateChecker
 import com.curio.app.data.UpdateInfo
 import com.curio.app.features.settings.SettingsHeroHeader
 import com.curio.app.features.settings.SettingsHeroTotalHeight
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.components.CurioCardHeader
@@ -131,17 +134,21 @@ fun SupportScreen(navController: NavController) {
             .background(MaterialTheme.colorScheme.background)
     ) {
         // ── Watermark backdrop — muted category glyphs (settings family).
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                alphaScale = 0.45f
+            )
+        }
         // ── Scroll content — fills the screen, runs under the ragged tear.
         ScreenEntrance {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
+                    start = wideContentEdgePadding(),
+                    end = wideContentEdgePadding(),
                     top = SettingsHeroTotalHeight + 10.dp,
                     bottom = 24.dp
                 ),

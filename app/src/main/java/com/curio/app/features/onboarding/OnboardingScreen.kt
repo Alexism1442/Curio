@@ -79,6 +79,8 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.features.settings.settingsReadableInk
 import com.curio.app.features.settings.settingsRoseAccent
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioSettingsCard
 import com.curio.app.ui.components.CurioSettingsDivider
 import com.curio.app.ui.components.CurioWatermarkBackdrop
@@ -182,10 +184,14 @@ fun OnboardingScreen(navController: NavController) {
         // ── Watermark backdrop — muted category glyphs behind the slides
         // (the Home/Profile language; the wildcard sparkle leads because
         // onboarding is category-neutral).
-        CurioWatermarkBackdrop(
-            activeCat = CurioCategories.byId(CategoryId.WILDCARD),
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = CurioCategories.byId(CategoryId.WILDCARD),
+                alphaScale = 0.45f
+            )
+        }
         Column(modifier = Modifier.fillMaxSize()) {
             // ── The big torn-rose hero — covers well over half the screen
             //    (v7.111: deepened from 0.62 to 0.70 of the screen height so

@@ -95,6 +95,9 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.features.recent.RecentFeedItem
 import com.curio.app.features.recent.buildRecentFeed
+import com.curio.app.ui.adaptive.WideContentMaxWidth
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioForwardArrow
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.components.SoftTornBottomShape
@@ -252,9 +255,13 @@ fun HomeScreen(navController: NavController) {
             //    content (same treatment as the Spin page). The quest is
             //    always the wildcard Surprise now (no category chips), so
             //    the wildcard die stays highlighted.
-            CurioWatermarkBackdrop(
-                activeCat = CurioCategories.byId(CategoryId.WILDCARD)
-            )
+            // Wide windows: the NavHost's full-bleed collage replaces the
+            // page's own backdrop so there is ONE continuous collage.
+            if (!windowWidthSizeClass().isWide) {
+                CurioWatermarkBackdrop(
+                    activeCat = CurioCategories.byId(CategoryId.WILDCARD)
+                )
+            }
             // Hoisted scroll state — the sticky top bar (menu + profile
             // pills) reads it to pop out of the hero into frosted pills.
             val homeScroll = rememberScrollState()
@@ -497,7 +504,15 @@ fun HomeScreen(navController: NavController) {
             // button. The button picks a random category — or a random mix —
             // persists it (the plain Shuffle tab is authoritative from
             // prefs) and opens the deck.
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        // Wide windows: keep the section in the comfortable
+                        // centered column so rows never stretch into
+                        // disconnected plates (phone layout untouched).
+                        .widthIn(max = if (windowWidthSizeClass().isWide) WideContentMaxWidth else Dp.Infinity)
+                        .align(Alignment.CenterHorizontally)
+                ) {
                 QuestShuffleCard(
                     accent = homeRoseAccent(),
                     onShuffle = {
@@ -565,7 +580,15 @@ fun HomeScreen(navController: NavController) {
             // into the active slot; the ✕ discards it.
             val queuedSessions = ExploreSessionStore.queuedSessionsState
             if (queuedSessions.isNotEmpty()) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        // Wide windows: keep the section in the comfortable
+                        // centered column so rows never stretch into
+                        // disconnected plates (phone layout untouched).
+                        .widthIn(max = if (windowWidthSizeClass().isWide) WideContentMaxWidth else Dp.Infinity)
+                        .align(Alignment.CenterHorizontally)
+                ) {
                     Text(
                         "Queued explores",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -609,7 +632,15 @@ fun HomeScreen(navController: NavController) {
             val savedQuotes = AppPreferences.savedQuotesState
             val pinnedTopics = AppPreferences.pinnedTopicsState
             if (savedQuotes.isNotEmpty() || pinnedTopics.isNotEmpty()) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        // Wide windows: keep the section in the comfortable
+                        // centered column so rows never stretch into
+                        // disconnected plates (phone layout untouched).
+                        .widthIn(max = if (windowWidthSizeClass().isWide) WideContentMaxWidth else Dp.Infinity)
+                        .align(Alignment.CenterHorizontally)
+                ) {
                     Text(
                         "Saved",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -646,7 +677,15 @@ fun HomeScreen(navController: NavController) {
             Spacer(Modifier.height(20.dp))
 
             // ── 5. Recents — explored + unexplored topics and recent entries ──
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        // Wide windows: keep the section in the comfortable
+                        // centered column so rows never stretch into
+                        // disconnected plates (phone layout untouched).
+                        .widthIn(max = if (windowWidthSizeClass().isWide) WideContentMaxWidth else Dp.Infinity)
+                        .align(Alignment.CenterHorizontally)
+                ) {
                 // Promo mode swaps in the demo feed; otherwise the real one.
                 val recentPreview = (if (promoOn) promoFeed else recentFeed).take(5)
                 Row(

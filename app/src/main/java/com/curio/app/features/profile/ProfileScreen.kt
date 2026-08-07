@@ -81,6 +81,9 @@ import com.curio.app.data.PromoMode
 import com.curio.app.data.StreakTracker
 import com.curio.app.infrastructure.CurioCrashReporter
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.wideContentEdgePadding
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
@@ -250,10 +253,14 @@ fun ProfileScreen(navController: NavController) {
         // v7.76 — the flat content below the hero sits directly on this
         // backdrop, so the glyphs drop to a faint whisper and the rows,
         // headers and chips always read first.
-        CurioWatermarkBackdrop(
-            activeCat = backdropActiveCat,
-            alphaScale = 0.45f
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = backdropActiveCat,
+                alphaScale = 0.45f
+            )
+        }
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -279,7 +286,7 @@ fun ProfileScreen(navController: NavController) {
             // Breathing room below the torn seam (≈ Home's quest-block gap).
             item { Spacer(Modifier.height(6.dp)) }
             item {
-                Box(Modifier.padding(horizontal = 16.dp)) {
+                Box(Modifier.padding(horizontal = wideContentEdgePadding())) {
                     // Keep the whole gamification story together: XP explains
                     // the current level, the quest row opens the full journey,
                     // and the badge preview shows the immediate payoff.
@@ -298,7 +305,7 @@ fun ProfileScreen(navController: NavController) {
             }
             if (categoryCounts.isNotEmpty()) {
                 item {
-                    Box(Modifier.padding(horizontal = 16.dp)) {
+                    Box(Modifier.padding(horizontal = wideContentEdgePadding())) {
                         CurioSettingsCard(border = null) {
                             LanesCard(
                                 counts = categoryCounts,
@@ -309,7 +316,7 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
             item {
-                Box(Modifier.padding(horizontal = 16.dp)) {
+                Box(Modifier.padding(horizontal = wideContentEdgePadding())) {
                     CurioSettingsCard(border = null) {
                         SettingsNavCard(
                             onOpenSettings = { navController.navigate(CurioRoutes.SETTINGS) { launchSingleTop = true } }
@@ -318,7 +325,7 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
             item {
-                Box(Modifier.padding(horizontal = 16.dp)) {
+                Box(Modifier.padding(horizontal = wideContentEdgePadding())) {
                     CurioSettingsCard(border = null) {
                         SupportCard(
                             crashCount = crashCount,

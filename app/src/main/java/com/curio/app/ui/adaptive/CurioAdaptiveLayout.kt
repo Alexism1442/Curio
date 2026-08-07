@@ -28,6 +28,27 @@ import androidx.compose.ui.unit.dp
 val CurioContentMaxWidth: Dp = 720.dp
 
 /**
+ * The comfortable INNER content column on wide windows (tablet / landscape /
+ * desktop) — narrower than the 720dp shell cap so phone-designed rows and
+ * cards never stretch into disconnected, gap-filled plates. The extra margin
+ * shows the full-bleed watermark collage around the content.
+ */
+val WideContentMaxWidth: Dp = 640.dp
+
+/**
+ * Horizontal edge padding that keeps the standard 16dp on phones but centers
+ * a [WideContentMaxWidth] column inside the 720dp shell on wide windows.
+ * Pass as the start/end of a LazyColumn's contentPadding — the LazyColumn
+ * stays full-bleed (so scrollbars/insets behave) while its rows land in the
+ * comfortable centered column.
+ */
+@Composable
+fun wideContentEdgePadding(): Dp {
+    val wide = windowWidthSizeClass().isWide
+    return if (wide) (CurioContentMaxWidth - WideContentMaxWidth) / 2 else 16.dp
+}
+
+/**
  * The current window's width size class, recomposed on configuration
  * changes (rotation, resize, multi-window). Uses the canonical
  * `calculateWindowSizeClass(activity)` API of material3-window-size-class.

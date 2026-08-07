@@ -301,14 +301,18 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         // blend used to chop the top glyphs at its bottom edge (the "cut"
         // look). [EntryDetailHeroClearance] clears the hero with a small
         // gap; the hero card's own symbol scatter is untouched.
-        CurioWatermarkBackdrop(
-            activeCat = cat,
-            topClearance = EntryDetailHeroClearance,
-            // v7.76 — quieter still: the glyphs now sit at a faint whisper so
-            // the text below the hero always reads first.
-            alphaScale = 0.45f,
-            modifier = Modifier.fillMaxSize()
-        )
+        // Wide windows: the NavHost's full-bleed collage replaces the page's
+        // own backdrop so there is ONE continuous collage, not a double.
+        if (!windowWidthSizeClass().isWide) {
+            CurioWatermarkBackdrop(
+                activeCat = cat,
+                topClearance = EntryDetailHeroClearance,
+                // v7.76 — quieter still: the glyphs now sit at a faint whisper so
+                // the text below the hero always reads first.
+                alphaScale = 0.45f,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         // Hoisted scroll state — the sticky top bar (back + more controls)
         // reads it to pop out of the hero into frosted floating pills, the
         // same scroll-linked clock Home uses for its menu / profile pills.
