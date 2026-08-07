@@ -1,55 +1,30 @@
-# Prompt — request log (DOX)
+# Prompt.md — Current Request Log
 
-This file is the running log per the DOX framework (see root `AGENTS.md` — Prompt.md).
+## Request (2026-08-07): Topic-data CI fix + Cabinet/Quests/Guide overhaul
 
-## Current request — "fix morph dip + title text morph + smoothen Cabinet animations"
+### Part 1 — DONE, pushed as `c7d4967` (CI validator now passes)
+- Raised `exploreAction.instruction` cap 450 → 600 chars in:
+  - `app/build.gradle.kts` (validateTopics Gradle task — the CI failure)
+  - `scripts/validate_topics.py` (`MAX_INSTRUCTION_LEN`)
+  - `app/src/main/assets/topics/SCHEMA.md` (contract doc)
+- Removed `book-sympathizer-dupe` broken stub (empty instruction, tier 0) from `books.json`
+- Committed the two user batch scripts (`batch_authors_books.py`, `batch_all_remaining.py`)
+- Validator: 11 files, 3133 topics, **0 errors**
 
-**Reported problems:**
-1. Tapping the Spin ticket opens Topic Reveal with the smooth shared-element morph,
-   but at the START of the animation the card visibly moves DOWN before expanding
-   (user suspected the bottom navbar).
-2. Only the card/icon morphs; the topic TITLE text pops in after the expansion —
-   make the title morph too.
-3. The Cabinet animations feel somewhat janky — make them more seamless.
+### Part 2 — DONE (uncommitted → next commit)
+Big multi-part request (user answered ask_user: guide toggleable default-ON with Go-button dialog; quests: unify EVERYTHING into chains + UI redesign; levels → 50):
 
-**Root cause of the dip (confirmed by code analysis):** `CurioNavHost` renders the
-Scaffold bottom bar only for tab routes (`showBottomBar`). Navigating Spin → Reveal
-removes the bar in the same frame the transition starts → `innerPadding.bottom` drops
-~80dp instantly → the exiting Spin screen re-lays-out taller, and its deck stage is
-**bottom-anchored** (`contentAlignment = BottomCenter` / `Arrangement.Bottom`), so the
-ticket physically drops ~80dp → the morph then plays from the lowered position
-("moves down, then animates").
+1. **Cabinet chips** — `CabinetChipBarRestTop` 10dp → 4dp below hero (closer to tear); content tops 18 → 12dp.
+2. **Cabinet card redesign** (`CurioTopicCard.kt`) — compact 96dp hero header with mini category watermark scatter (BoxScope.MiniHeroWatermark/MiniHeroGlyph), body = title + Today/Yesterday + format symbol only (body preview + tags removed) → cleaner shared-element morph.
+3. **CurioQuests v8.0** — full rewrite:
+   - 50-level XP curve (12 legacy thresholds + widening steps → level 50 at ~18,458 XP), 50 rank titles
+   - Unified **quest chains**: Deck (spin), Discovery (explore), Keepsakes (save), Tour (guided walkthrough w/ navRoutes), Shelf (quote), Pin Board (pin), Flame (streak), Taste (like), Ladder (XP ranks)
+   - Stage-based awarding (`awardedStagesState`), legacy journey/achievement id migration map, `checkAll` while-loop (XP stages cascade), guarded write
+   - Public API: `Chains`, `allStages()`, `stageProgress()`, `isStageDone()`, `chainProgress()`, `currentQuest()`; hooks unchanged
+4. **QuestsScreen** — rewritten for chains: rank card (50 levels), CURRENT QUEST hero w/ Go button, chain cards w/ clickable stage Go rows + progress bars, Today's quests, unified badge shelf.
+5. **ProfileScreen** — quest card migrated to new API (`currentQuest()`, `allStages()`, `isStageDone()`).
+6. **Auto-guide** — `AppPreferences.guideEnabledState` (default true, KEY_GUIDE_ENABLED), Settings Appearance "Guided tour" toggle; CurioNavHost guide dialog (1200ms delay on stable tab, "Go · +XP" navigates to quest screen, "Later" dismisses per-quest via rememberSaveable).
+7. **PromoMode** — `DEMO_XP` 960 → 20000 (sits above level-50 threshold so promo shows Curio Sovereign).
 
-**Fixes (one commit):**
-1. `CurioNavHost.kt` — on the morph-target routes (`REVEAL`, `ENTRY_DETAIL`) the
-   bottomBar slot now renders an INVISIBLE placeholder sized exactly like the bar
-   (`heightIn(min = 80.dp)` + `windowInsetsPadding(navigationBars)`, mirroring the
-   `CurioBottomBar` construction), so `innerPadding` never changes and the exiting
-   tab screen never re-lays-out mid-morph. Fixes both Spin→Reveal and Cabinet→Detail
-   (and their pop-backs). Reveal/Detail are scrollable/top-anchored, so the reserved
-   space is invisible on those screens; reveal→capture stays stable (top-anchored).
-2. `RevealSharedScopes.kt` — new `RevealTitleSharedElementKey = "reveal-hero-title"`.
-3. `SpinScreen.kt` (`HeroTicketCard`) — the ticket's title Text is now its own shared
-   element (nested inside the "reveal-hero" card element — the framework excludes the
-   inner element from the outer's overlay, so the card expands while the title glides
-   out separately).
-4. `TopicRevealScreen.kt` — the headline below the hero is the matching shared element
-   (null-guarded for secondary entry points). It deliberately has NO entrance animation
-   (the hero's existing comment shows entrance animations on shared elements affect the
-   overlay → would make the text invisible mid-morph).
-5. `CabinetScreen.kt` (`CabinetChipPop`) — eased the per-pill pop (scale, color bloom,
-   elevation) on the same FastOutSlowIn curve as the bar's lift, so the chips settle in
-   sync with the bar instead of popping linearly ("janky" feel).
-
-**Known risks to verify on-device/CI (can't run Gradle here):**
-- Nested shared element (ticket title inside the card shared element) — intended
-  behavior per the framework, but worth a visual check; fallback is dropping the title
-  shared element and keeping only the card morph.
-- The title's crossfade travels from the ticket (light ink on gradient) to the reveal
-  headline (onSurface) — a brief color blend over the cream page; acceptable.
-- REVEAL/ENTRY_DETAIL now render in an 80dp-shorter content area (scrollable screens,
-  mostly invisible; verify reveal bottom CTA / detail bottom content when scrolled).
-
-**Validation:** no Gradle builds allowed in this environment (root AGENTS.md); changes
-were reviewed by code-reviewer-glm and verified with grep/diff. CI on push is the
-compile check. Committed to `main` and pushed.
+### Remaining
+- Commit + push Part 2, then any follow-ups the user requests.

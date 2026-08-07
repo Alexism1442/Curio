@@ -27,7 +27,9 @@ object PromoMode {
      * bar. Must be >= 940 (the last XP_THRESHOLDS entry in CurioQuests) or
      * levelForXp lands one short; 960 reads as a plausible earned total.
      */
-    const val DEMO_XP = 960
+    // v8.0 — the level curve now reaches 50 ranks (threshold ~18.5k XP);
+    // the promo sample shows the top rank, Curio Sovereign.
+    const val DEMO_XP = 20000
 
     /**
      * The six fully-working demo entries — one per capture format, built

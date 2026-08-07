@@ -96,6 +96,7 @@ object AppPreferences {
     // Experimental voice-to-text/dictation. Default OFF so microphone
     // transcription never appears or starts until the user opts in.
     private const val KEY_VOICE_TO_TEXT_ENABLED = "voice_to_text_enabled"
+    private const val KEY_GUIDE_ENABLED = "guide_enabled"
     private const val KEY_PINNED_TOPICS = "pinned_topics"   // JSON array of PinnedTopic
     private const val KEY_SAVED_QUOTES = "saved_quotes"      // JSON array of SavedQuote
     private const val KEY_TOPIC_SENTIMENTS = "topic_sentiments"  // JSON object: "CATEGORY:topicId" -> "like"/"dislike"
@@ -268,6 +269,14 @@ object AppPreferences {
         private set
 
     /**
+     * Guided-tour state (v8.0) — when ON, a small dialog points at the next
+     * quest and offers a Go button to jump to its screen. Default ON;
+     * discoverable and toggleable in Settings.
+     */
+    var guideEnabledState by mutableStateOf(true)
+        private set
+
+    /**
      * Reactive pinned-topics state — updated by [pinTopic] / [unpinTopic] so
      * the Topic Reveal pin button and the Topic History "Pinned" section
      * recompose instantly. Seeded from prefs in [initThemeMode].
@@ -335,6 +344,7 @@ object AppPreferences {
         liveNotificationsEnabledState = isLiveNotificationsEnabled(context)
         overlayBubbleEnabledState = isOverlayBubbleEnabled(context)
         voiceToTextEnabledState = isVoiceToTextEnabled(context)
+        guideEnabledState = isGuideEnabled(context)
         pinnedTopicsState = getPinnedTopics(context)
         savedQuotesState = getSavedQuotes(context)
         topicSentimentsState = getTopicSentiments(context)
@@ -889,6 +899,15 @@ object AppPreferences {
             .putString(KEY_CATEGORY_ORDER, valid.joinToString(",") { it.name })
             .apply()
         categoryOrderState = valid
+    }
+
+    // ── Guided tour ──────────────────────────────────────────────────
+    fun isGuideEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_GUIDE_ENABLED, true)
+
+    fun setGuideEnabled(context: Context, enabled: Boolean) {
+        guideEnabledState = enabled
+        prefs(context).edit().putBoolean(KEY_GUIDE_ENABLED, enabled).apply()
     }
 
     // ── Daily reminder ───────────────────────────────────────────────

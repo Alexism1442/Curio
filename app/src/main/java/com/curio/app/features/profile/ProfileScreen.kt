@@ -882,10 +882,10 @@ private fun ProgressAndAchievementsCard(
     isMaxLevel: Boolean,
     onOpenQuests: () -> Unit
 ) {
-    val currentQuest = CurioQuests.currentJourneyQuest()
-    val unlocked = CurioQuests.Achievements.filter { it.id in CurioQuests.achievementsState }
-    val next = CurioQuests.Achievements.firstOrNull { it.id !in CurioQuests.achievementsState }
-    val total = CurioQuests.Achievements.size
+    val currentQuest = CurioQuests.currentQuest()
+    val allStages = CurioQuests.allStages()
+    val unlocked = allStages.filter { CurioQuests.isStageDone(it) }
+    val total = allStages.size
     val fraction = if (total == 0) 0f else unlocked.size.toFloat() / total
 
     Column(
@@ -996,7 +996,10 @@ private fun ProgressAndAchievementsCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 maxItemsInEachRow = 3
             ) {
-                unlocked.take(3).forEach { achievement ->
+                unlocked.take(3).forEach { stage ->
+                    val stageGlyph = CurioQuests.Chains.firstOrNull { chain ->
+                        chain.stages.any { it.id == stage.id }
+                    }?.glyph ?: CurioIcons.EmojiEvents
                     Surface(
                         shape = RoundedCornerShape(50),
                         color = CurioColors.Sage.copy(alpha = 0.13f),
@@ -1008,9 +1011,9 @@ private fun ProgressAndAchievementsCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            CurioIcon(achievement.glyph, null, tint = CurioColors.Sage, size = 14.dp)
+                            CurioIcon(stageGlyph, null, tint = CurioColors.Sage, size = 14.dp)
                             Text(
-                                achievement.title,
+                                stage.title,
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1,
@@ -1022,7 +1025,7 @@ private fun ProgressAndAchievementsCard(
             }
         } else {
             Text(
-                next?.let { "Next badge: ${it.title}" } ?: "Keep exploring to unlock your first badge.",
+                currentQuest?.let { "Next: ${it.title}" } ?: "Keep exploring to unlock your first badge.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,

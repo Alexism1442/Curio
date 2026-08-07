@@ -10,30 +10,32 @@ import org.json.JSONObject
 import java.util.Calendar
 
 /**
- * Curio's quests & levels system (v7.40).
+ * Curio's quests & levels system (v8.0).
  *
  * A light gamification layer that runs ALWAYS-ON (no settings toggle):
  *
  *  - **XP & levels** — every curious act earns XP (spin +2, explore +5,
  *    save +10, pin/quote +3, like +2…). XP is cumulative; the level curve
- *    climbs from "First Spark" to "Grand Curator".
- *  - **Journey** — a guided beginner quest sequence that walks the user
- *    through the whole app (spin → explore → save → settings → profile →
- *    pin → quote → daily → five saves → achievement). Each quest pays XP
- *    once when its target is reached; the UI always points at the next
- *    incomplete quest.
+ *    climbs from "First Spark" through 50 ranks to "Curio Sovereign".
+ *  - **Quest chains** — every quest lives in a progressive CHAIN: related
+ *    goals are grouped (The Deck = spin 1 → 5 → 25 → 100; Keepsakes =
+ *    save 1 → 5 → 25 → 100 → every format…). A chain's stages complete in
+ *    order — when one is done the NEXT one becomes the current quest, so
+ *    the UI always points at exactly one thing to do. Chains replace the
+ *    old flat journey list, daily pool display, and achievement shelf:
+ *    every stage is a badge, every badge lives in a chain.
+ *  - **The Tour** — a guided walkthrough chain (Settings → Profile →
+ *    pin → quote → daily → badge) with routes to jump straight to each
+ *    screen; the auto-guide dialog drives this chain.
  *  - **Daily quests** — three quests picked per day from a rotating pool
- *    (seeded by the calendar day, so they stay stable all day and change
- *    at midnight). Progress resets daily; completing one auto-awards XP.
- *  - **Achievements** — eighteen one-time badges across spins, explores,
- *    saves, formats, quotes, pins, streaks, likes, the journey and level
- *    milestones. Unlocking one auto-awards XP.
+ *    (seeded by the calendar day, stable all day, resets at midnight).
  *
  * Persistence mirrors the other data objects: one SharedPreferences file
  * (`curio_quests`, listed in [CurioBackupManager] so it ships with the
  * user's backup) with JSON values, plus reactive Compose state seeded by
  * [seed] from MainActivity. All event hooks are fire-and-forget and
- * cheap — they may be called from any thread.
+ * cheap — they may be called from any thread. Legacy journey/achievement
+ * awards migrate into their chain-stage ids on first seed.
  */
 object CurioQuests {
 
@@ -43,12 +45,14 @@ object CurioQuests {
     private const val KEY_LIFETIME = "lifetime"
     private const val KEY_FORMATS = "formats"
     private const val KEY_CATEGORIES = "categories"
-    private const val KEY_JOURNEY_AWARDED = "journey_awarded"
+    private const val KEY_STAGES_AWARDED = "stages_awarded"
     private const val KEY_DAILY_DATE = "daily_date"
     private const val KEY_DAILY_PROGRESS = "daily_progress"
     private const val KEY_DAILY_AWARDED = "daily_awarded"
-    private const val KEY_ACHIEVEMENTS = "achievements"
     private const val KEY_BEST_STREAK = "best_streak"
+    // Legacy keys — read once during migration, never written again.
+    private const val KEY_LEGACY_JOURNEY_AWARDED = "journey_awarded"
+    private const val KEY_LEGACY_ACHIEVEMENTS = "achievements"
 
     // ── Reactive state (seeded by [seed], kept in sync by every hook) ──
     var xpState by mutableIntStateOf(0)
@@ -59,7 +63,7 @@ object CurioQuests {
         private set
     var categoriesState by mutableStateOf<Set<String>>(emptySet())
         private set
-    var journeyAwardedState by mutableStateOf<Set<String>>(emptySet())
+    var awardedStagesState by mutableStateOf<Set<String>>(emptySet())
         private set
     var dailyDateState by mutableIntStateOf(-1)
         private set
@@ -67,12 +71,10 @@ object CurioQuests {
         private set
     var dailyAwardedState by mutableStateOf<Set<String>>(emptySet())
         private set
-    var achievementsState by mutableStateOf<Set<String>>(emptySet())
-        private set
     var bestStreakState by mutableIntStateOf(0)
         private set
 
-    /** One-time cumulative counters that drive journey + achievements. */
+    /** One-time cumulative counters that drive chain progress. */
     data class LifetimeCounters(
         val spins: Int = 0,
         val explores: Int = 0,
@@ -86,11 +88,41 @@ object CurioQuests {
         val dailyCompleted: Int = 0
     )
 
-    // ── Level curve — cumulative XP needed to REACH each level ─────────
-    // 1 at 0 XP; the curve climbs a little faster than saves-only, so a
-    // new user sees Level 2 within a couple of actions and the high levels
-    // stay a long-term goal.
-    private val XP_THRESHOLDS = listOf(0, 15, 40, 80, 135, 205, 290, 390, 505, 635, 780, 940)
+    // ── Level curve — cumulative XP needed to REACH each level (50) ────
+    // The first 12 thresholds keep the v7.40 pacing (a new user sees Level 2
+    // within a couple of actions); beyond that the steps widen steadily so
+    // the deep ranks stay a long-term goal. Total 50 levels.
+    private val XP_THRESHOLDS: List<Int> = buildList {
+        addAll(listOf(0, 15, 40, 80, 135, 205, 290, 390, 505, 635, 780, 940))
+        var xp = 940
+        var step = 110
+        while (size < 50) {
+            step += 18
+            xp += step
+            add(xp)
+        }
+    }
+
+    private val LEVEL_TITLES = listOf(
+        "First Spark", "Curious Newcomer", "Tuned Ear", "Pattern Spotter", "Comparator",
+        "Synthesizer", "Curator", "Master Curator", "Lore Keeper", "Lane Walker",
+        "Archive Scholar", "Grand Curator",
+        // 13–20
+        "Wandering Scholar", "Lantern Bearer", "Tome Walker", "Index Dreamer",
+        "Shelf Maven", "Margin Dweller", "Footnote Follower", "Chapter Scout",
+        // 21–28
+        "Card Cataloguer", "Stack Surfer", "Dust Jacket Dancer", "Bookplate Baron",
+        "Archive Acolyte", "Footnote Philosopher", "Marginalia Monk", "Deck Diviner",
+        // 29–36
+        "Lane Luminator", "Curiosity Conductor", "Wonder Warden", "Spark Shepherd",
+        "Knowledge Keeper", "Scribe of Secrets", "Vault Walker", "Atlas Aficionado",
+        // 37–44
+        "Chronology Keeper", "Labyrinth Listener", "Riddle Reader", "Insight Oracle",
+        "Truth Tender", "Wisdom Weaver", "Grand Gatherer", "Lore Lord",
+        // 45–50
+        "Myth Keeper", "Archive Sovereign", "Eternal Student", "Curio Champion",
+        "Curio Legend", "Curio Sovereign"
+    )
 
     fun levelForXp(xp: Int): Int {
         var level = 1
@@ -108,106 +140,174 @@ object CurioQuests {
         return ((xp - from).toFloat() / (to - from).coerceAtLeast(1)) to to
     }
 
-    fun levelTitle(level: Int): String = when (level) {
-        1 -> "First Spark"
-        2 -> "Curious Newcomer"
-        3 -> "Tuned Ear"
-        4 -> "Pattern Spotter"
-        5 -> "Comparator"
-        6 -> "Synthesizer"
-        7 -> "Curator"
-        8 -> "Master Curator"
-        9 -> "Lore Keeper"
-        10 -> "Lane Walker"
-        11 -> "Archive Scholar"
-        else -> "Grand Curator"
-    }
+    fun levelTitle(level: Int): String =
+        LEVEL_TITLES.getOrElse(level - 1) { LEVEL_TITLES.last() }
 
     /** The highest achievable level — UI uses this for the max-level state. */
     val maxLevel: Int get() = XP_THRESHOLDS.size
 
-    // ── Journey quests — the guided beginner tour through the app ──────
-    // Displayed in order; the "current" quest is the first incomplete one.
-    // Progress is derived from the counters (no per-quest map), and XP is
-    // awarded exactly once per quest when its target is reached.
-    enum class JourneyKind { SPIN, EXPLORE, SAVE, SETTINGS, PROFILE, PIN, QUOTE, DAILY, ACHIEVEMENT }
+    // ── Quest chains — progressive stages; complete one, the next shows ──
+    enum class QuestKind {
+        SPIN, EXPLORE, SAVE, SETTINGS, PROFILE, PIN, QUOTE, DAILY, ACHIEVEMENT,
+        STREAK, LIKE, FORMATS, LANES, XP
+    }
 
-    data class JourneyQuest(
+    data class QuestStage(
         val id: String,
         val title: String,
         val description: String,
         val hint: String,
         val xpReward: Int,
-        val kind: JourneyKind,
+        val kind: QuestKind,
         val target: Int,
         /** Optional route to jump straight to the quest's screen. */
         val navRoute: String? = null
     )
 
-    val Journey: List<JourneyQuest> = listOf(
-        JourneyQuest(
-            id = "take-the-wheel", title = "Spin the deck",
-            description = "Shuffle a random deck and let curiosity pick the topic.",
-            hint = "Tap the Shuffle button on the Spin tab.",
-            xpReward = 10, kind = JourneyKind.SPIN, target = 1,
-            navRoute = "spin"
+    data class QuestChain(
+        val id: String,
+        val glyph: String,
+        val title: String,
+        val subtitle: String,
+        val stages: List<QuestStage>
+    )
+
+    val Chains: List<QuestChain> = listOf(
+        // ── The Deck — spin chain (leads the guide: a new user's first
+        //    quest is "First Spin", which jumps straight to the Spin tab) ──
+        QuestChain(
+            id = "deck", glyph = "casino", title = "The Deck", subtitle = "Spin your way up the ranks",
+            stages = listOf(
+                QuestStage("deck-1", "First Spin", "Spin the deck once", "Tap the Shuffle button on the Spin tab.", 10, QuestKind.SPIN, 1, navRoute = "spin"),
+                QuestStage("deck-5", "Deck Regular", "Spin 5 times", "Keep shuffling — the deck resets each spin.", 15, QuestKind.SPIN, 5),
+                QuestStage("deck-25", "Deck Master", "Spin 25 times", "A quarter of a century of spins.", 25, QuestKind.SPIN, 25),
+                QuestStage("deck-100", "Deck Legend", "Spin 100 times", "The deck knows your name now.", 40, QuestKind.SPIN, 100)
+            )
         ),
-        JourneyQuest(
-            id = "first-look", title = "Explore a topic",
-            description = "Open a topic and tap Explore to go find it in the world.",
-            hint = "Spin, then tap the landed card and choose Explore.",
-            xpReward = 15, kind = JourneyKind.EXPLORE, target = 1
+        // ── Discovery — explore chain ──────────────────────────────────
+        QuestChain(
+            id = "discovery", glyph = "explore", title = "Discovery", subtitle = "Go find things in the world",
+            stages = listOf(
+                QuestStage("disc-1", "First Discovery", "Explore your first topic", "Open a topic and tap Explore.", 10, QuestKind.EXPLORE, 1),
+                QuestStage("disc-5", "Globe Trotter", "Explore 5 topics", "Five deep dives under your belt.", 15, QuestKind.EXPLORE, 5),
+                QuestStage("disc-25", "Pathfinder", "Explore 25 topics", "A quarter century of exploration.", 25, QuestKind.EXPLORE, 25),
+                QuestStage("disc-lanes", "All Lanes", "Explore in every lane", "Try every category at least once.", 30, QuestKind.LANES, CurioCategories.visible.size)
+            )
         ),
-        JourneyQuest(
-            id = "first-keepsake", title = "Save your first capture",
-            description = "Turn what you found into a note, sound bite, or mood board.",
-            hint = "After exploring, write it down and save it to the Cabinet.",
-            xpReward = 20, kind = JourneyKind.SAVE, target = 1
+        // ── Keepsakes — save chain ─────────────────────────────────────
+        QuestChain(
+            id = "keepsakes", glyph = "inventory_2", title = "Keepsakes", subtitle = "Fill your Cabinet",
+            stages = listOf(
+                QuestStage("keep-1", "First Keepsake", "Save your first capture", "Write down what you found.", 10, QuestKind.SAVE, 1),
+                QuestStage("keep-5", "Notebook Keeper", "Save 5 captures", "Five keepsakes in the Cabinet.", 15, QuestKind.SAVE, 5),
+                QuestStage("keep-25", "Archivist", "Save 25 captures", "A growing archive of curiosity.", 25, QuestKind.SAVE, 25),
+                QuestStage("keep-100", "Librarian of Lanes", "Save 100 captures", "A hundred moments, preserved.", 35, QuestKind.SAVE, 100),
+                QuestStage("keep-formats", "Every Format", "Save one capture in every format", "Notes, sound bites, galleries — the full kit.", 30, QuestKind.FORMATS, CaptureFormat.entries.size)
+            )
         ),
-        JourneyQuest(
-            id = "settle-in", title = "Look around Settings",
-            description = "Appearance, reminders, recording, backup — make Curio yours.",
-            hint = "Open Settings and browse the sections.",
-            xpReward = 10, kind = JourneyKind.SETTINGS, target = 1,
-            navRoute = "settings"
+        // ── The Tour — the guided walkthrough (drives the auto-guide) ──
+        QuestChain(
+            id = "tour", glyph = "flag", title = "The Tour", subtitle = "A guided walk through Curio",
+            stages = listOf(
+                QuestStage(
+                    id = "tour-settings", title = "Look around Settings",
+                    description = "Appearance, reminders, recording, backup — make Curio yours.",
+                    hint = "Open Settings and browse the sections.",
+                    xpReward = 10, kind = QuestKind.SETTINGS, target = 1, navRoute = "settings"
+                ),
+                QuestStage(
+                    id = "tour-profile", title = "Visit your profile",
+                    description = "See your stats, level, and lanes.",
+                    hint = "Open Profile from Home's avatar pill.",
+                    xpReward = 10, kind = QuestKind.PROFILE, target = 1, navRoute = "profile"
+                ),
+                QuestStage(
+                    id = "tour-pin", title = "Pin a topic for later",
+                    description = "Bookmark a topic you want to come back to.",
+                    hint = "On any topic reveal, tap the pin button.",
+                    xpReward = 10, kind = QuestKind.PIN, target = 1
+                ),
+                QuestStage(
+                    id = "tour-quote", title = "Bookmark a quote",
+                    description = "Save a line from a capture to your Saved shelf.",
+                    hint = "Open a saved capture and tap the bookmark on a quote.",
+                    xpReward = 10, kind = QuestKind.QUOTE, target = 1
+                ),
+                QuestStage(
+                    id = "tour-daily", title = "Complete a daily quest",
+                    description = "Finish one of today's three quests.",
+                    hint = "Check Today's quests below and knock one out.",
+                    xpReward = 15, kind = QuestKind.DAILY, target = 1
+                ),
+                QuestStage(
+                    id = "tour-achievement", title = "Unlock a badge",
+                    description = "Earn any badge from the quest chains.",
+                    hint = "Every stage you finish unlocks its badge.",
+                    xpReward = 25, kind = QuestKind.ACHIEVEMENT, target = 1
+                )
+            )
         ),
-        JourneyQuest(
-            id = "raise-the-flag", title = "Visit your profile",
-            description = "See your stats, level, and lanes.",
-            hint = "Open Profile from Home's avatar pill.",
-            xpReward = 10, kind = JourneyKind.PROFILE, target = 1,
-            navRoute = "profile"
+        // ── The Shelf — quote chain ────────────────────────────────────
+        QuestChain(
+            id = "shelf", glyph = "format_quote", title = "The Shelf", subtitle = "Save the lines you love",
+            stages = listOf(
+                QuestStage("quote-1", "Quote Collector", "Bookmark your first quote", "Tap the bookmark on any quote.", 10, QuestKind.QUOTE, 1),
+                QuestStage("quote-5", "Quote Hoarder", "Bookmark 5 quotes", "Five lines worth keeping.", 15, QuestKind.QUOTE, 5)
+            )
         ),
-        JourneyQuest(
-            id = "pin-it", title = "Pin a topic for later",
-            description = "Bookmark a topic you want to come back to.",
-            hint = "On any topic reveal, tap the pin button.",
-            xpReward = 10, kind = JourneyKind.PIN, target = 1
+        // ── Pin Board — pin chain ──────────────────────────────────────
+        QuestChain(
+            id = "pinboard", glyph = "bookmark", title = "Pin Board", subtitle = "Keep topics at hand",
+            stages = listOf(
+                QuestStage("pin-1", "Pin Cushion", "Pin your first topic", "Tap the pin on any topic reveal.", 10, QuestKind.PIN, 1),
+                QuestStage("pin-5", "Pin Board", "Pin 5 topics", "Five topics pinned for later.", 15, QuestKind.PIN, 5)
+            )
         ),
-        JourneyQuest(
-            id = "collect-a-thought", title = "Bookmark a quote",
-            description = "Save a line from a capture to your Saved shelf.",
-            hint = "Open a saved capture and tap the bookmark on a quote.",
-            xpReward = 10, kind = JourneyKind.QUOTE, target = 1
+        // ── The Flame — streak chain ───────────────────────────────────
+        QuestChain(
+            id = "flame", glyph = "local_fire_department", title = "The Flame", subtitle = "Keep the streak alive",
+            stages = listOf(
+                QuestStage("flame-3", "Spark Streak", "Keep a 3-day streak", "Come back tomorrow, and the day after.", 15, QuestKind.STREAK, 3),
+                QuestStage("flame-7", "Week of Wonder", "Keep a 7-day streak", "A full week of daily curiosity.", 25, QuestKind.STREAK, 7),
+                QuestStage("flame-30", "Month of Mystery", "Keep a 30-day streak", "Thirty days of wonder.", 40, QuestKind.STREAK, 30)
+            )
         ),
-        JourneyQuest(
-            id = "daily-driver", title = "Complete a daily quest",
-            description = "Finish one of today's three quests.",
-            hint = "Check Today's quests below and knock one out.",
-            xpReward = 15, kind = JourneyKind.DAILY, target = 1
+        // ── Taste — like chain ─────────────────────────────────────────
+        QuestChain(
+            id = "taste", glyph = "thumb_up", title = "Taste", subtitle = "Trust your instincts",
+            stages = listOf(
+                QuestStage("like-1", "First Nod", "Like your first topic", "Tap the heart on a topic you love.", 10, QuestKind.LIKE, 1),
+                QuestStage("like-10", "Curator's Taste", "Like 10 topics", "Ten topics you'd defend in public.", 20, QuestKind.LIKE, 10)
+            )
         ),
-        JourneyQuest(
-            id = "five-keepsakes", title = "Save five captures",
-            description = "Fill your Cabinet with keepsakes.",
-            hint = "Keep writing things down as you explore.",
-            xpReward = 25, kind = JourneyKind.SAVE, target = 5
-        ),
-        JourneyQuest(
-            id = "badge-of-honor", title = "Unlock an achievement",
-            description = "Earn a badge from the achievements shelf.",
-            hint = "Every milestone below unlocks a badge.",
-            xpReward = 25, kind = JourneyKind.ACHIEVEMENT, target = 1
+        // ── The Ladder — rank chain (level milestones) ─────────────────
+        QuestChain(
+            id = "rank", glyph = "workspace_premium", title = "The Ladder", subtitle = "Climb the 50 ranks",
+            stages = listOf(
+                QuestStage("rank-5", "Five Rungs Up", "Reach Level 5", "Earn XP from any curious act.", 15, QuestKind.XP, XP_THRESHOLDS[4]),
+                QuestStage("rank-10", "Lore Keeper", "Reach Level 10", "Keep exploring, saving, and spinning.", 25, QuestKind.XP, XP_THRESHOLDS[9]),
+                QuestStage("rank-20", "Archive Scholar", "Reach Level 20", "Halfway up the low ranks.", 40, QuestKind.XP, XP_THRESHOLDS[19]),
+                QuestStage("rank-30", "Wonder Warden", "Reach Level 30", "The middle ranks bow to you.", 60, QuestKind.XP, XP_THRESHOLDS[29]),
+                QuestStage("rank-40", "Insight Oracle", "Reach Level 40", "Few reach the high shelves.", 80, QuestKind.XP, XP_THRESHOLDS[39]),
+                QuestStage("rank-50", "Curio Sovereign", "Reach Level 50", "The whole shelf is yours.", 120, QuestKind.XP, XP_THRESHOLDS[49])
+            )
         )
+    )
+
+    // ── Legacy id migration — old journey quests + achievement badges ──
+    // map onto their chain-stage successors so existing users keep their
+    // awards (and their XP is not paid twice).
+    private val LEGACY_STAGE_MAP = mapOf(
+        "take-the-wheel" to "deck-1", "first-look" to "disc-1", "first-keepsake" to "keep-1",
+        "settle-in" to "tour-settings", "raise-the-flag" to "tour-profile", "pin-it" to "pin-1",
+        "collect-a-thought" to "quote-1", "daily-driver" to "tour-daily", "five-keepsakes" to "keep-5",
+        "badge-of-honor" to "tour-achievement",
+        "spin-1" to "deck-1", "spin-25" to "deck-5", "spin-100" to "deck-25",
+        "explore-1" to "disc-1", "explore-25" to "disc-5", "lanes-all" to "disc-lanes",
+        "save-1" to "keep-1", "save-25" to "keep-5", "save-100" to "keep-25", "formats-all" to "keep-formats",
+        "quote-5" to "quote-5", "pin-5" to "pin-5",
+        "streak-3" to "flame-3", "streak-7" to "flame-7", "streak-30" to "flame-30",
+        "like-10" to "like-10", "journey-done" to "tour-achievement", "xp-505" to "rank-10"
     )
 
     // ── Daily quests — three picked per day from a rotating pool ───────
@@ -240,42 +340,6 @@ object CurioQuests {
         return (0 until DAILY_COUNT).map { i -> DailyPool[(base + i * 2) % DailyPool.size] }
     }
 
-    // ── Achievements — one-time badges with XP payouts ─────────────────
-    enum class AchievementKind {
-        SPIN, EXPLORE, LANES, SAVE, FORMATS, QUOTE, PIN, STREAK, LIKE, JOURNEY, XP
-    }
-
-    data class Achievement(
-        val id: String,
-        val glyph: String,
-        val title: String,
-        val description: String,
-        val xpReward: Int,
-        val kind: AchievementKind,
-        val target: Int
-    )
-
-    val Achievements: List<Achievement> = listOf(
-        Achievement("spin-1", "casino", "First Spin", "Spin the deck once", 10, AchievementKind.SPIN, 1),
-        Achievement("spin-25", "casino", "Deck Regular", "Spin 25 times", 15, AchievementKind.SPIN, 25),
-        Achievement("spin-100", "casino", "Deck Master", "Spin 100 times", 25, AchievementKind.SPIN, 100),
-        Achievement("explore-1", "explore", "First Discovery", "Explore your first topic", 10, AchievementKind.EXPLORE, 1),
-        Achievement("explore-25", "explore", "Globe Trotter", "Explore 25 topics", 20, AchievementKind.EXPLORE, 25),
-        Achievement("lanes-all", "palette", "All Lanes", "Explore in every lane", 30, AchievementKind.LANES, CurioCategories.visible.size),
-        Achievement("save-1", "inventory_2", "First Keepsake", "Save your first capture", 10, AchievementKind.SAVE, 1),
-        Achievement("save-25", "inventory_2", "Notebook Keeper", "Save 25 captures", 20, AchievementKind.SAVE, 25),
-        Achievement("save-100", "inventory_2", "Archivist", "Save 100 captures", 35, AchievementKind.SAVE, 100),
-        Achievement("formats-all", "auto_awesome", "Every Format", "Save one capture in every format", 30, AchievementKind.FORMATS, CaptureFormat.entries.size),
-        Achievement("quote-5", "format_quote", "Quote Collector", "Bookmark 5 quotes", 15, AchievementKind.QUOTE, 5),
-        Achievement("pin-5", "bookmark", "Pin Cushion", "Pin 5 topics", 15, AchievementKind.PIN, 5),
-        Achievement("streak-3", "local_fire_department", "Spark Streak", "Keep a 3-day streak", 15, AchievementKind.STREAK, 3),
-        Achievement("streak-7", "local_fire_department", "Week of Wonder", "Keep a 7-day streak", 25, AchievementKind.STREAK, 7),
-        Achievement("streak-30", "local_fire_department", "Month of Mystery", "Keep a 30-day streak", 40, AchievementKind.STREAK, 30),
-        Achievement("like-10", "thumb_up", "Curator's Taste", "Like 10 topics", 20, AchievementKind.LIKE, 10),
-        Achievement("journey-done", "flag", "Journey Complete", "Finish every journey quest", 50, AchievementKind.JOURNEY, Journey.size),
-        Achievement("xp-505", "workspace_premium", "Lore Keeper", "Reach Level 10", 25, AchievementKind.XP, 505)
-    )
-
     // ── Seed / persistence ──────────────────────────────────────────────
 
     /** Load all persisted state (called once from MainActivity onCreate). */
@@ -285,15 +349,23 @@ object CurioQuests {
         lifetimeState = readLifetime(prefs.getString(KEY_LIFETIME, null))
         formatsState = readStringSet(prefs.getString(KEY_FORMATS, null))
         categoriesState = readStringSet(prefs.getString(KEY_CATEGORIES, null))
-        journeyAwardedState = readStringSet(prefs.getString(KEY_JOURNEY_AWARDED, null))
+        // Chain-stage awards: new key, with legacy journey/achievement sets
+        // migrated into their successor stage ids.
+        val awarded = readStringSet(prefs.getString(KEY_STAGES_AWARDED, null)).toMutableSet()
+        listOf(KEY_LEGACY_JOURNEY_AWARDED, KEY_LEGACY_ACHIEVEMENTS).forEach { legacyKey ->
+            readStringSet(prefs.getString(legacyKey, null)).forEach { old ->
+                LEGACY_STAGE_MAP[old]?.let(awarded::add)
+            }
+        }
+        awardedStagesState = awarded
         dailyDateState = prefs.getInt(KEY_DAILY_DATE, -1)
         dailyProgressState = readIntMap(prefs.getString(KEY_DAILY_PROGRESS, null))
         dailyAwardedState = readStringSet(prefs.getString(KEY_DAILY_AWARDED, null))
-        achievementsState = readStringSet(prefs.getString(KEY_ACHIEVEMENTS, null))
         bestStreakState = prefs.getInt(KEY_BEST_STREAK, 0)
-        // A stale daily slot from a previous day rolls over on the next hook;
-        // reconcile it now so reads are consistent.
         ensureDaily(context)
+        // Re-award any stage the counters already satisfy (post-migration
+        // catch-up, also heals a killed write).
+        checkAll(context)
     }
 
     private fun prefs(context: Context) =
@@ -360,11 +432,10 @@ object CurioQuests {
             .putString(KEY_LIFETIME, lifetime.toString())
             .putString(KEY_FORMATS, JSONArray(formatsState.toList()).toString())
             .putString(KEY_CATEGORIES, JSONArray(categoriesState.toList()).toString())
-            .putString(KEY_JOURNEY_AWARDED, JSONArray(journeyAwardedState.toList()).toString())
+            .putString(KEY_STAGES_AWARDED, JSONArray(awardedStagesState.toList()).toString())
             .putInt(KEY_DAILY_DATE, dailyDateState)
             .putString(KEY_DAILY_PROGRESS, dailyProgress.toString())
             .putString(KEY_DAILY_AWARDED, JSONArray(dailyAwardedState.toList()).toString())
-            .putString(KEY_ACHIEVEMENTS, JSONArray(achievementsState.toList()).toString())
             .putInt(KEY_BEST_STREAK, bestStreakState)
             .apply()
     }
@@ -405,7 +476,6 @@ object CurioQuests {
         bumpDaily(context, DailyKind.SPIN)
         write(context)
         addXp(context, 2)
-        checkJourney(context)
     }
 
     /** The user started exploring a topic (ExploreSessionStore.recordExplored). */
@@ -416,10 +486,9 @@ object CurioQuests {
         bumpDaily(context, DailyKind.EXPLORE)
         write(context)
         addXp(context, 5)
-        checkJourney(context)
     }
 
-    /** A capture was saved (SaveCaptureScreen). [format] feeds the Every-Format achievement. */
+    /** A capture was saved (SaveCaptureScreen). [format] feeds the Every-Format stage. */
     fun onSave(context: Context, format: CaptureFormat) {
         ensureDaily(context)
         lifetimeState = lifetimeState.copy(saves = lifetimeState.saves + 1)
@@ -427,7 +496,6 @@ object CurioQuests {
         bumpDaily(context, DailyKind.SAVE)
         write(context)
         addXp(context, 10)
-        checkJourney(context)
     }
 
     /** A quote was bookmarked (AppPreferences.saveQuote). */
@@ -437,7 +505,6 @@ object CurioQuests {
         bumpDaily(context, DailyKind.QUOTE)
         write(context)
         addXp(context, 3)
-        checkJourney(context)
     }
 
     /** A topic was pinned (AppPreferences.pinTopic). */
@@ -447,7 +514,6 @@ object CurioQuests {
         bumpDaily(context, DailyKind.PIN)
         write(context)
         addXp(context, 3)
-        checkJourney(context)
     }
 
     /** A topic was liked (AppPreferences.setTopicSentiment). */
@@ -457,7 +523,6 @@ object CurioQuests {
         bumpDaily(context, DailyKind.LIKE)
         write(context)
         addXp(context, 2)
-        checkJourney(context)
     }
 
     /** A topic was disliked (AppPreferences.setTopicSentiment). */
@@ -466,27 +531,28 @@ object CurioQuests {
         lifetimeState = lifetimeState.copy(dislikes = lifetimeState.dislikes + 1)
         write(context)
         addXp(context, 1)
-        checkJourney(context)
     }
 
-    /** Profile opened (ProfileScreen) — counts for the journey + daily quests. */
+    /** Profile opened (ProfileScreen) — counts for the tour + daily quests. */
     fun onProfileVisited(context: Context) {
         ensureDaily(context)
         lifetimeState = lifetimeState.copy(profileVisits = lifetimeState.profileVisits + 1)
         bumpDaily(context, DailyKind.PROFILE)
         write(context)
-        checkJourney(context)
+        // 0 XP — the call is just a refresh so the tour chain checks run.
+        addXp(context, 0)
     }
 
-    /** Settings opened (SettingsHubScreen) — counts for the journey quest. */
+    /** Settings opened (SettingsHubScreen) — counts for the tour quest. */
     fun onSettingsVisited(context: Context) {
         ensureDaily(context)
         lifetimeState = lifetimeState.copy(settingsVisits = lifetimeState.settingsVisits + 1)
         write(context)
-        checkJourney(context)
+        // 0 XP — the call is just a refresh so the tour chain checks run.
+        addXp(context, 0)
     }
 
-    /** Streak advanced (StreakTracker.recordActivity) — feeds streak badges. */
+    /** Streak advanced (StreakTracker.recordActivity) — feeds streak stages. */
     fun onStreakRecorded(context: Context, streak: Int) {
         if (streak > bestStreakState) {
             bestStreakState = streak
@@ -512,88 +578,61 @@ object CurioQuests {
             .forEach { quest ->
                 if (quest.id !in dailyAwardedState) {
                     dailyAwardedState = dailyAwardedState + quest.id
-                    dailyCompleted(context, quest.xpReward)
+                    lifetimeState = lifetimeState.copy(dailyCompleted = lifetimeState.dailyCompleted + 1)
+                    write(context)
+                    addXp(context, quest.xpReward)
                 }
             }
     }
 
-    private fun dailyCompleted(context: Context, xpReward: Int) {
-        lifetimeState = lifetimeState.copy(dailyCompleted = lifetimeState.dailyCompleted + 1)
-        write(context)
-        addXp(context, xpReward)
-        checkJourney(context)
-    }
-
-    // ── Journey checks — award each quest's XP once when its target hits ──
-    private fun checkJourney(context: Context) {
-        val counters = lifetimeState
-        var changed = false
-        Journey.forEach { quest ->
-            if (quest.id in journeyAwardedState) return@forEach
-            if (journeyProgress(quest, counters) >= quest.target) {
-                journeyAwardedState = journeyAwardedState + quest.id
-                xpState += quest.xpReward
-                changed = true
+    // ── Chain checks — award each stage's XP once when its target hits ──
+    private fun checkAll(context: Context) {
+        var changed = true
+        var awarded = false
+        while (changed) {
+            changed = false
+            allStages().forEach { stage ->
+                if (stage.id !in awardedStagesState && stageProgress(stage) >= stage.target) {
+                    awardedStagesState = awardedStagesState + stage.id
+                    xpState += stage.xpReward
+                    changed = true
+                    awarded = true
+                }
             }
         }
-        if (changed) {
-            write(context)
-            checkAll(context)
-        }
+        // Only persist when something changed — hooks call this on every tap.
+        if (awarded) write(context)
     }
 
-    /** Live progress for a journey quest, derived from the counters. */
-    fun journeyProgress(quest: JourneyQuest, counters: LifetimeCounters = lifetimeState): Int = when (quest.kind) {
-        JourneyKind.SPIN -> counters.spins
-        JourneyKind.EXPLORE -> counters.explores
-        JourneyKind.SAVE -> counters.saves
-        JourneyKind.SETTINGS -> counters.settingsVisits
-        JourneyKind.PROFILE -> counters.profileVisits
-        JourneyKind.PIN -> counters.pins
-        JourneyKind.QUOTE -> counters.quotes
-        JourneyKind.DAILY -> counters.dailyCompleted
-        JourneyKind.ACHIEVEMENT -> achievementsState.size
+    /** Every stage across every chain, in display order. */
+    fun allStages(): List<QuestStage> = Chains.flatMap { it.stages }
+
+    /** Live progress for one stage, derived from the lifetime counters. */
+    fun stageProgress(stage: QuestStage): Int = when (stage.kind) {
+        QuestKind.SPIN -> lifetimeState.spins
+        QuestKind.EXPLORE -> lifetimeState.explores
+        QuestKind.SAVE -> lifetimeState.saves
+        QuestKind.SETTINGS -> lifetimeState.settingsVisits
+        QuestKind.PROFILE -> lifetimeState.profileVisits
+        QuestKind.PIN -> lifetimeState.pins
+        QuestKind.QUOTE -> lifetimeState.quotes
+        QuestKind.DAILY -> lifetimeState.dailyCompleted
+        QuestKind.ACHIEVEMENT -> awardedStagesState.size
+        QuestKind.STREAK -> bestStreakState
+        QuestKind.LIKE -> lifetimeState.likes
+        QuestKind.FORMATS -> formatsState.size
+        QuestKind.LANES -> categoriesState.size
+        QuestKind.XP -> xpState
     }
 
-    /** True once every journey quest has been completed and paid out. */
-    fun isJourneyComplete(): Boolean =
-        Journey.all { it.id in journeyAwardedState }
+    /** True once the stage's badge has been earned. */
+    fun isStageDone(stage: QuestStage): Boolean = stage.id in awardedStagesState
 
-    // ── Achievement checks — unlock + pay each badge exactly once ───────
-    private fun checkAll(context: Context) {
-        val newlyUnlocked = Achievements.filter { it.id !in achievementsState && achievementProgress(it) >= it.target }
-        if (newlyUnlocked.isEmpty()) return
-        newlyUnlocked.forEach {
-            achievementsState = achievementsState + it.id
-            // Every badge pays its own XP reward exactly once (the shelf's
-            // "+N XP" labels are real, not decoration).
-            xpState += it.xpReward
-        }
-        write(context)
-        checkJourney(context)
-    }
+    /** Completed stage count for a chain (drives its progress bar). */
+    fun chainProgress(chain: QuestChain): Int =
+        chain.stages.count { it.id in awardedStagesState }
 
-    private fun achievementProgress(achievement: Achievement): Int {
-        val counters = lifetimeState
-        return when (achievement.kind) {
-            AchievementKind.SPIN -> counters.spins
-            AchievementKind.EXPLORE -> counters.explores
-            AchievementKind.LANES -> categoriesState.size
-            AchievementKind.SAVE -> counters.saves
-            AchievementKind.FORMATS -> formatsState.size
-            AchievementKind.QUOTE -> counters.quotes
-            AchievementKind.PIN -> counters.pins
-            AchievementKind.STREAK -> bestStreakState
-            AchievementKind.LIKE -> counters.likes
-            AchievementKind.JOURNEY -> journeyAwardedState.size
-            AchievementKind.XP -> xpState
-        }
-    }
-
-    /** Live progress for an achievement badge (for the UI's mini-progress). */
-    fun achievementProgressFor(achievement: Achievement): Int = achievementProgress(achievement)
-
-    /** The next journey quest the UI should point the user at — null when done. */
-    fun currentJourneyQuest(): JourneyQuest? =
-        Journey.firstOrNull { journeyProgress(it) < it.target }
+    /** The next quest the guide + UI should point at — null when all done. */
+    fun currentQuest(): QuestStage? =
+        allStages().firstOrNull { stageProgress(it) < it.target }
 }

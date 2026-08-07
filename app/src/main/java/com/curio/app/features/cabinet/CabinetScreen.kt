@@ -147,7 +147,7 @@ fun CabinetScreen(navController: NavController) {
     val wide = windowWidthSizeClass().isWide
     // Compact hero on tablets/landscape — 140dp instead of 180dp.
     val compactBannerHeight = if (wide) 140.dp else CabinetHeroBannerHeight
-    val contentTop = compactBannerHeight + CabinetHeroSheetExtent + CabinetChipBarHeight + 18.dp
+    val contentTop = compactBannerHeight + CabinetHeroSheetExtent + CabinetChipBarHeight + 12.dp
     var selectedFilter by rememberSaveable(CabinetSessionToken, stateSaver = CategoryIdSaver) {
         mutableStateOf<CategoryId?>(null)
     }
@@ -557,7 +557,7 @@ private const val CABINET_TEAR_SEED = 0xCAB1E
 // the grid scrolls, pinning just below the ragged tear while the entry
 // cards pass underneath it.
 /** Where the chip bar rests below the hero (its unpinned spot). */
-private val CabinetChipBarRestTop = CabinetHeroTotalHeight + 10.dp
+private val CabinetChipBarRestTop = CabinetHeroTotalHeight + 4.dp
 /** Where the chip bar pins when scrolled — just below the ragged tear. */
 private val CabinetChipBarPinnedTop = CabinetHeroTotalHeight + 2.dp
 /** Scroll distance (dp) before the chip bar fully pins (Profile pill style). */
@@ -565,7 +565,7 @@ private val CabinetChipStickyThreshold = 56.dp
 /** The chip bar's layout height — scroll content starts below it. */
 private val CabinetChipBarHeight = 52.dp
 /** Top content padding — hero + chip bar + breathing room. */
-private val CabinetContentTop = CabinetHeroTotalHeight + CabinetChipBarHeight + 18.dp
+private val CabinetContentTop = CabinetHeroTotalHeight + CabinetChipBarHeight + 12.dp
 
 /** One mirrored hero watermark pair (the settings/profile collage). */
 private data class CabinetHeroPair(

@@ -6,8 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,19 +31,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.curio.app.data.CaptureData
 import com.curio.app.data.CaptureFormat
 import com.curio.app.data.CurioCategories
+import com.curio.app.data.CurioCategory
 import com.curio.app.data.CurioEntry
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
 import com.curio.app.ui.theme.CurioMotion
 import com.curio.app.ui.theme.categoryBorder
-import com.curio.app.ui.theme.categoryInk
 import com.curio.app.ui.theme.categorySurface
 import com.curio.app.ui.theme.onAccent
 import com.curio.app.ui.theme.themedAccent
@@ -51,9 +53,12 @@ import com.curio.app.ui.theme.themedAccent
 /**
  * Cabinet's entry card — used in the 2-col grid (Curio Cabinet contract).
  *
- * Upgraded with:
- *  - Press scale animation for tactile feel
- *  - Breathing shimmer on card image header
+ * v8.0 — the compact redesign: a smaller hero header with the SAME
+ * category watermark language as the big torn heroes (mirrored scatter
+ * glyphs at a whisper alpha), and a minimal body — title + when-it-was-
+ * saved + the format symbol. No body preview, no tags: the card stays
+ * small so the Cabinet→Detail shared-element morph reads seamless (less
+ * content to reconcile while the bounds animate).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -118,22 +123,23 @@ fun CurioEntryCard(
         tonalElevation = 1.dp
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Image placeholder — richer theme-aware gradient that ends on
-            // the ACTIVE background (cream / midnight / pure black / dynamic)
-            // so the header melts into the surface behind the card, with the
-            // category glyph as a bright watermark.
+            // ── Compact hero header — category watermark scatter at a
+            // whisper alpha (the same language as the big torn heroes),
+            // the category glyph as a bright focal mark, and the selection
+            // / legacy badges tucked into the corners.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(128.dp)
+                    .height(96.dp)
                     .background(headerBrush),
                 contentAlignment = Alignment.Center
             ) {
+                MiniHeroWatermark(cat)
                 CurioIcon(
                     name = cat.iconGlyph,
                     contentDescription = null,
                     tint = cat.onAccent().copy(alpha = 0.9f),
-                    size = 60.dp
+                    size = 44.dp
                 )
                 if (selected) {
                     Surface(
@@ -177,9 +183,10 @@ fun CurioEntryCard(
                 }
             }
 
+            // ── Minimal body — title, when-it-was-saved, format symbol.
             Column(
-                modifier = Modifier.padding(14.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
                     text = entry.topic.name,
@@ -190,46 +197,6 @@ fun CurioEntryCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = entry.bodyPreview,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                // v7.17 — custom tags, shown as up to 2 tiny #chips so the
-                // Cabinet card previews the labels added on the save page.
-                if (entry.tags.isNotEmpty()) {
-                    Spacer(Modifier.height(6.dp))
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        entry.tags.take(2).forEach { tag ->
-                            Surface(
-                                shape = RoundedCornerShape(50),
-                                color = cat.themedAccent().copy(alpha = 0.1f),
-                                border = BorderStroke(1.dp, cat.themedAccent().copy(alpha = 0.3f))
-                            ) {
-                                Text(
-                                    text = "#$tag",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                                    color = cat.categoryInk(),
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                )
-                            }
-                        }
-                        if (entry.tags.size > 2) {
-                            Text(
-                                text = "+${entry.tags.size - 2}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 2.dp)
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -245,6 +212,76 @@ fun CurioEntryCard(
             }
         }
     }
+}
+
+/**
+ * A scaled-down version of the torn-hero watermark: a mirrored pair of
+ * small category glyphs at a whisper alpha, tucked into the header's
+ * corners so the card carries the same visual language as the full heroes
+ * without fighting the centered category mark.
+ */
+@Composable
+private fun BoxScope.MiniHeroWatermark(cat: CurioCategory) {
+    val symbols = CurioIcons.heroWatermarkSymbols(cat.family)
+    val ink = cat.onAccent()
+    if (symbols.size >= 2) {
+        MiniHeroGlyph(
+            glyph = symbols[0],
+            alignment = Alignment.TopStart,
+            size = 30.dp,
+            rotation = -10f,
+            alpha = 0.18f,
+            tint = ink
+        )
+        MiniHeroGlyph(
+            glyph = symbols[1],
+            alignment = Alignment.BottomEnd,
+            size = 34.dp,
+            rotation = 10f,
+            alpha = 0.20f,
+            tint = ink
+        )
+    }
+    if (symbols.size >= 4) {
+        MiniHeroGlyph(
+            glyph = symbols[3],
+            alignment = Alignment.TopEnd,
+            size = 24.dp,
+            rotation = 8f,
+            alpha = 0.14f,
+            tint = ink
+        )
+        MiniHeroGlyph(
+            glyph = symbols[2],
+            alignment = Alignment.BottomStart,
+            size = 26.dp,
+            rotation = -7f,
+            alpha = 0.16f,
+            tint = ink
+        )
+    }
+}
+
+/** One mini watermark glyph — theme-aware ink at a whisper alpha. */
+@Composable
+private fun BoxScope.MiniHeroGlyph(
+    glyph: String,
+    alignment: Alignment,
+    size: Dp,
+    rotation: Float,
+    alpha: Float,
+    tint: Color
+) {
+    CurioIcon(
+        name = glyph,
+        contentDescription = null,
+        tint = tint.copy(alpha = alpha),
+        size = size,
+        modifier = Modifier
+            .align(alignment)
+            .padding(8.dp)
+            .graphicsLayer { rotationZ = rotation }
+    )
 }
 
 /**

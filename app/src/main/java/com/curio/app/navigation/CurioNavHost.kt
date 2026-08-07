@@ -56,6 +56,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.curio.app.data.AppPreferences
+import com.curio.app.data.CurioQuests
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.formatElapsed
@@ -622,6 +623,88 @@ fun CurioNavHost(
             }
         }
     }
+    }
+
+    // ── Guided-tour prompt (v8.0) — when enabled, a small dialog points at
+    //    the next quest and offers a Go button that jumps to its screen.
+    //    Shows once per quest (dismissed via Later/Go), re-arms when the
+    //    current quest advances, and respects the Settings toggle.
+    val guideQuest = CurioQuests.currentQuest()
+    var guideDismissedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var showGuideDialog by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(routePrefix, guideQuest?.id, AppPreferences.guideEnabledState) {
+        val onStableTab = routePrefix != null && routePrefix in CurioRoutes.bottomNavRoutePrefixes
+        if (onStableTab && AppPreferences.guideEnabledState &&
+            guideQuest != null && guideQuest.navRoute != null &&
+            guideQuest.id != guideDismissedId
+        ) {
+            delay(1200)
+            showGuideDialog = true
+        } else {
+            showGuideDialog = false
+        }
+    }
+    if (showGuideDialog && guideQuest != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showGuideDialog = false
+                guideDismissedId = guideQuest.id
+            },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CurioIcon(
+                        name = CurioIcons.Flag,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        size = 20.dp
+                    )
+                    Text("Next quest")
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        guideQuest.title,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
+                    )
+                    Text(
+                        guideQuest.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        "Hint: ${guideQuest.hint}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showGuideDialog = false
+                    guideDismissedId = guideQuest.id
+                    guideQuest.navRoute?.let { route ->
+                        if (route == CurioRoutes.SPIN) {
+                            navController.navigateToTab(route)
+                        } else {
+                            navController.navigate(route) { launchSingleTop = true }
+                        }
+                    }
+                }) {
+                    Text("Go · +${guideQuest.xpReward} XP")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showGuideDialog = false
+                    guideDismissedId = guideQuest.id
+                }) {
+                    Text("Later")
+                }
+            }
+        )
     }
 
     // ── Done-exploring prompt (app return while a session is active) ────

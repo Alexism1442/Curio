@@ -142,6 +142,10 @@ private fun AppearanceSection() {
         CompactSwitchRow("Entry date & mood", "Date, mood, and attachments on saved entries", AppPreferences.entryMetaEnabledState) {
             AppPreferences.setEntryMetaEnabled(context, it)
         }
+        CurioSettingsDivider()
+        CompactSwitchRow("Guided tour", "Small quest dialogs that walk you through Curio", AppPreferences.guideEnabledState) {
+            AppPreferences.setGuideEnabled(context, it)
+        }
     }
 }
 

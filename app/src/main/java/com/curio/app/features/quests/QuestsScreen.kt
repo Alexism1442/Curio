@@ -37,7 +37,8 @@ import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.CurioQuests.DailyQuest
-import com.curio.app.data.CurioQuests.JourneyQuest
+import com.curio.app.data.CurioQuests.QuestChain
+import com.curio.app.data.CurioQuests.QuestStage
 import com.curio.app.data.PromoMode
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
@@ -55,29 +56,33 @@ import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
 
 /**
- * Quests & levels — Curio's gamification home (v7.40).
+ * Quests & levels — Curio's gamification home (v8.0).
  *
  * Its own page, styled like the settings family: a compact torn rose hero
- * header on a watermark backdrop, then three quest cards and the badge
- * shelf. Reads live reactive state from [CurioQuests], so badges pop the
- * moment they unlock and the current journey quest updates in place.
+ * header on a watermark backdrop, then the rank card and the quest CHAINS.
+ * Reads live reactive state from [CurioQuests], so badges pop the moment
+ * they unlock and the current stage updates in place.
  *
  * Layout:
  *  1. Hero — the shared settings torn-banner header.
- *  2. Level card — the XP bar and current rank.
- *  3. Your journey — the guided beginner tour; the current quest is
- *     highlighted with a jump-to-it button.
- *  4. Today's quests — the three daily quests with mini progress bars.
- *  5. Achievements — the badge shelf in a two-column grid.
+ *  2. Rank card — the XP bar, current rank, and "X of 50" ladder note.
+ *  3. The current quest — the active stage across all chains, with a
+ *     jump-to-it button when the stage has a screen.
+ *  4. Quest chains — every chain (Tour, Deck, Discovery, Keepsakes, Shelf,
+ *     Pin Board, Flame, Taste, Ladder) with its stages; the next stage is
+ *     the hero, later stages preview as locked.
+ *  5. Today's quests — the three daily quests with mini progress bars.
+ *  6. Badge shelf — every chain stage as a badge, in a two-column grid.
  */
 @Composable
 fun QuestsScreen(navController: NavController) {
     // v7.107 — promo/demo-content mode shows the promotional sample XP (top
-    // rank, Grand Curator) while ON; only the level card is demoed here.
+    // rank, Curio Sovereign) while ON; only the level card is demoed here.
     val promoOn = AppPreferences.promoModeState
     val xp = if (promoOn) PromoMode.DEMO_XP else CurioQuests.xpState
     val level = CurioQuests.levelForXp(xp)
     val (progress, nextThreshold) = CurioQuests.xpProgress(xp)
+    val current = CurioQuests.currentQuest()
 
     Box(
         modifier = Modifier
@@ -109,9 +114,17 @@ fun QuestsScreen(navController: NavController) {
                         isMaxLevel = level >= CurioQuests.maxLevel
                     )
                 }
-                item {
-                    JourneyCard(
-                        current = CurioQuests.currentJourneyQuest(),
+                if (current != null) {
+                    item {
+                        CurrentQuestCard(
+                            stage = current,
+                            onNavigate = { route -> navigateToQuest(navController, route) }
+                        )
+                    }
+                }
+                items(CurioQuests.Chains.size) { index ->
+                    ChainCard(
+                        chain = CurioQuests.Chains[index],
                         onNavigate = { route -> navigateToQuest(navController, route) }
                     )
                 }
@@ -121,7 +134,7 @@ fun QuestsScreen(navController: NavController) {
                     )
                 }
                 item {
-                    AchievementsCard()
+                    BadgeShelf()
                 }
             }
         }
@@ -129,13 +142,13 @@ fun QuestsScreen(navController: NavController) {
         // tear as they scroll up.
         SettingsHeroHeader(
             title = "Quests & levels",
-            subtitle = "Grow your curiosity, one quest at a time",
+            subtitle = "Grow your curiosity, one chain at a time",
             onBack = { navController.popBackStack() }
         )
     }
 }
 
-/** Jump to the screen a journey quest points at (tabs navigate like tabs). */
+/** Jump to the screen a quest stage points at (tabs navigate like tabs). */
 private fun navigateToQuest(navController: NavController, route: String) {
     if (route == CurioRoutes.SPIN) {
         navController.navigateToTab(route)
@@ -173,7 +186,8 @@ private fun LevelCard(level: Int, xp: Int, nextThreshold: Int, progress: Float, 
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    "Earning XP with every explore",
+                    if (isMaxLevel) "Curio Sovereign — the whole shelf is yours."
+                    else "Rank $level of ${CurioQuests.maxLevel} · ${CurioQuests.maxLevel - level} to go",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -199,7 +213,7 @@ private fun LevelCard(level: Int, xp: Int, nextThreshold: Int, progress: Float, 
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = if (isMaxLevel) "Grand Curator — the whole shelf is yours."
+            text = if (isMaxLevel) "Curio Sovereign — the whole shelf is yours."
             else "$xp / $nextThreshold XP · ${(nextThreshold - xp).coerceAtLeast(0)} XP to Level ${level + 1}",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -207,163 +221,183 @@ private fun LevelCard(level: Int, xp: Int, nextThreshold: Int, progress: Float, 
     }
 }
 
-/** The guided journey — current quest highlighted, the rest as a checklist. */
+/** The single active quest across all chains — the hero of the page. */
 @Composable
-private fun JourneyCard(
-    current: CurioQuests.JourneyQuest?,
+private fun CurrentQuestCard(
+    stage: QuestStage,
     onNavigate: (String) -> Unit
 ) {
+    val roseHero = if (isCurioDarkTheme()) {
+        CurioColors.HomeRosewoodDark
+    } else {
+        CurioColors.HomeRosewood
+    }
     CurioSettingsCard {
-        CurioCardHeader(CurioIcons.Flag, "Your journey", "A guided tour of Curio")
-        Spacer(Modifier.height(4.dp))
-        if (current != null) {
-            // ── The current quest — the hero of this card ─────────────
-            val done = CurioQuests.journeyProgress(current)
-            val roseHero = if (isCurioDarkTheme()) {
-                CurioColors.HomeRosewoodDark
-            } else {
-                CurioColors.HomeRosewood
-            }
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = roseHero.copy(alpha = 0.10f),
-                border = BorderStroke(1.dp, roseHero.copy(alpha = 0.28f)),
-                modifier = Modifier.fillMaxWidth()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(CurioColors.CoralBlush),
+                contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(14.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(22.dp)
-                                .clip(CircleShape)
-                                .background(CurioColors.CoralBlush),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CurioIcon(
-                                name = CurioIcons.TaskAlt,
-                                contentDescription = null,
-                                tint = Color.White,
-                                size = 14.dp
-                            )
-                        }
-                        Text(
-                            "CURRENT QUEST",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 1.2.sp
-                            ),
-                            color = roseHero
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        current.title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
-                    )
-                    Text(
-                        current.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        current.hint,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Surface(
-                            onClick = { current.navRoute?.let(onNavigate) },
-                            shape = RoundedCornerShape(50),
-                            color = CurioColors.CoralBlush,
-                            enabled = current.navRoute != null,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(
-                                if (current.navRoute != null) "Start · +${current.xpReward} XP"
-                                else "In progress · ${done.coerceAtMost(current.target)}/${current.target}",
-                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = 9.dp),
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                            )
-                        }
-                        Text(
-                            "Hint: ${current.hint}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1.2f)
-                        )
-                    }
-                }
+                CurioIcon(
+                    name = CurioIcons.TaskAlt,
+                    contentDescription = null,
+                    tint = Color.White,
+                    size = 14.dp
+                )
             }
-            Spacer(Modifier.height(8.dp))
-        }
-        // ── The full checklist ────────────────────────────────────────
-        CurioQuests.Journey.forEachIndexed { index, quest ->
-            val done = CurioQuests.journeyProgress(quest) >= quest.target
-            val isCurrent = quest.id == current?.id
-            JourneyRow(
-                index = index,
-                quest = quest,
-                done = done,
-                isCurrent = isCurrent,
-                onNavigate = { quest.navRoute?.let(onNavigate) }
+            Text(
+                "CURRENT QUEST",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 1.2.sp
+                ),
+                color = roseHero
             )
         }
-        if (CurioQuests.isJourneyComplete()) {
-            Spacer(Modifier.height(6.dp))
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = CurioColors.Sage.copy(alpha = 0.14f),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CurioIcon(
-                        name = CurioIcons.EmojiEvents,
-                        contentDescription = null,
-                        tint = CurioColors.Sage,
-                        size = 20.dp
-                    )
-                    Text(
-                        "Journey complete — the whole app is yours to roam.",
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            stage.title,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
+        )
+        Text(
+            stage.description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            "Hint: ${stage.hint}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(10.dp))
+        val done = CurioQuests.stageProgress(stage)
+        val chain = CurioQuests.Chains.firstOrNull { it.stages.any { s -> s.id == stage.id } }
+        Surface(
+            onClick = { stage.navRoute?.let(onNavigate) },
+            shape = RoundedCornerShape(50),
+            color = CurioColors.CoralBlush,
+            enabled = stage.navRoute != null,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                if (stage.navRoute != null) "Start · +${stage.xpReward} XP"
+                else "In progress · ${done.coerceAtMost(stage.target)}/${stage.target}",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = Color.White,
+                modifier = Modifier.padding(vertical = 9.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        }
+        if (chain != null) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "From the ${chain.title} chain — ${CurioQuests.chainProgress(chain)} of ${chain.stages.size} stages done",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
         }
     }
 }
 
-/** One checklist row — number circle, title, and a done/current state. */
+/** One quest chain — its stages trail with the next one highlighted. */
 @Composable
-private fun JourneyRow(
+private fun ChainCard(
+    chain: QuestChain,
+    onNavigate: (String) -> Unit = {}
+) {
+    CurioSettingsCard {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(Brush.verticalGradient(CurioGradients.cardGradient(CurioColors.CoralBlush))),
+                contentAlignment = Alignment.Center
+            ) {
+                CurioIcon(
+                    name = chain.glyph,
+                    contentDescription = null,
+                    tint = Color.White,
+                    size = 20.dp
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    chain.title,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.ExtraBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    chain.subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            val chainDone = CurioQuests.chainProgress(chain)
+            Text(
+                "$chainDone/${chain.stages.size}",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.ExtraBold),
+                color = if (chainDone == chain.stages.size) CurioColors.Sage else CurioColors.CoralBlush
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        LinearProgressIndicator(
+            progress = { (chainDone.toFloat() / chain.stages.size.coerceAtLeast(1)).coerceIn(0f, 1f) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(5.dp)
+                .clip(RoundedCornerShape(50)),
+            color = if (chainDone == chain.stages.size) CurioColors.Sage else CurioColors.CoralBlush,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+        Spacer(Modifier.height(8.dp))
+        chain.stages.forEachIndexed { index, stage ->
+            val done = CurioQuests.isStageDone(stage)
+            val isCurrent = !done && stage.id == CurioQuests.currentQuest()?.id
+            ChainStageRow(
+                index = index,
+                stage = stage,
+                done = done,
+                isCurrent = isCurrent,
+                onNavigate = { stage.navRoute?.let(onNavigate) }
+            )
+        }
+    }
+}
+
+/** One stage row in a chain — number circle, title, and done/current state. */
+@Composable
+private fun ChainStageRow(
     index: Int,
-    quest: JourneyQuest,
+    stage: QuestStage,
     done: Boolean,
     isCurrent: Boolean,
     onNavigate: () -> Unit
 ) {
-    val accent = if (done) CurioColors.Sage else CurioColors.CoralBlush
+    val accent = when {
+        done -> CurioColors.Sage
+        isCurrent -> CurioColors.CoralBlush
+        else -> MaterialTheme.colorScheme.outlineVariant
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -386,7 +420,7 @@ private fun JourneyRow(
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                quest.title,
+                stage.title,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = if (isCurrent || done) FontWeight.ExtraBold else FontWeight.Medium
                 ),
@@ -396,13 +430,13 @@ private fun JourneyRow(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                if (done) "Done · +${quest.xpReward} XP"
-                else "+${quest.xpReward} XP",
+                if (done) "Done · +${stage.xpReward} XP"
+                else "+${stage.xpReward} XP",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isCurrent) CurioColors.CoralBlush else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        if (isCurrent && quest.navRoute != null) {
+        if (isCurrent && stage.navRoute != null) {
             Surface(
                 onClick = onNavigate,
                 shape = RoundedCornerShape(50),
@@ -496,27 +530,28 @@ private fun DailyCard(quests: List<DailyQuest>) {
     }
 }
 
-/** The badge shelf — every achievement in a two-column grid. */
+/** The badge shelf — every chain stage as a badge in a two-column grid. */
 @Composable
-private fun AchievementsCard() {
-    val unlockedCount = CurioQuests.achievementsState.size
+private fun BadgeShelf() {
+    val allStages = CurioQuests.allStages()
+    val unlockedCount = allStages.count { CurioQuests.isStageDone(it) }
     CurioSettingsCard {
         CurioCardHeader(
             CurioIcons.EmojiEvents,
-            "Achievements",
-            "$unlockedCount of ${CurioQuests.Achievements.size} badges"
+            "Badges",
+            "$unlockedCount of ${allStages.size} earned"
         )
         Spacer(Modifier.height(4.dp))
-        CurioQuests.Achievements.chunked(2).forEach { row ->
+        allStages.chunked(2).forEach { row ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 5.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                row.forEach { achievement ->
-                    AchievementTile(
-                        achievement = achievement,
+                row.forEach { stage ->
+                    BadgeTile(
+                        stage = stage,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -528,13 +563,16 @@ private fun AchievementsCard() {
 
 /** One badge tile — glyph, title, and a tiny progress line. */
 @Composable
-private fun AchievementTile(
-    achievement: CurioQuests.Achievement,
+private fun BadgeTile(
+    stage: QuestStage,
     modifier: Modifier = Modifier
 ) {
-    val unlocked = achievement.id in CurioQuests.achievementsState
-    val progress = CurioQuests.achievementProgressFor(achievement)
+    val unlocked = CurioQuests.isStageDone(stage)
+    val progress = CurioQuests.stageProgress(stage)
     val accent = if (unlocked) CurioColors.Sage else CurioColors.CoralBlush
+    val glyph = CurioQuests.Chains.firstOrNull { chain ->
+        chain.stages.any { it.id == stage.id }
+    }?.glyph ?: CurioIcons.EmojiEvents
     Surface(
         shape = RoundedCornerShape(18.dp),
         color = if (unlocked) CurioColors.Sage.copy(alpha = 0.12f)
@@ -559,21 +597,21 @@ private fun AchievementTile(
                     contentAlignment = Alignment.Center
                 ) {
                     CurioIcon(
-                        name = if (unlocked) achievement.glyph else CurioIcons.StarOutline,
+                        name = if (unlocked) glyph else CurioIcons.StarOutline,
                         contentDescription = null,
                         tint = if (unlocked) Color.White else accent,
                         size = 18.dp
                     )
                 }
                 Text(
-                    if (unlocked) "Unlocked" else "+${achievement.xpReward} XP",
+                    if (unlocked) "Unlocked" else "+${stage.xpReward} XP",
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                     color = if (unlocked) CurioColors.Sage else accent
                 )
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                achievement.title,
+                stage.title,
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = if (unlocked) FontWeight.ExtraBold else FontWeight.SemiBold
                 ),
@@ -583,7 +621,7 @@ private fun AchievementTile(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                achievement.description,
+                stage.description,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
@@ -591,7 +629,7 @@ private fun AchievementTile(
             )
             Spacer(Modifier.height(8.dp))
             LinearProgressIndicator(
-                progress = { (progress.toFloat() / achievement.target.coerceAtLeast(1)).coerceIn(0f, 1f) },
+                progress = { (progress.toFloat() / stage.target.coerceAtLeast(1)).coerceIn(0f, 1f) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp)
@@ -601,7 +639,7 @@ private fun AchievementTile(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                if (unlocked) "Badge earned" else "$progress / ${achievement.target}",
+                if (unlocked) "Badge earned" else "$progress / ${stage.target}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
