@@ -1,20 +1,22 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 20th): Revert the text-out-of-morph restructure (72449c9) — full-card morph is back — DONE (pushed)
+## Request (2026-08-07): Replicate reveal action-dock change from `untitled-chat` onto `main` — DONE (pushed)
 
-**User request:** "https://github.com/firefly-sylestia/Curio/commit/72449c98a968720e609ef9bcbf0f4809dfba3067 revert this commit"
+**User request:** "in untitle chat branch theres a chnage in topic reveal screen the button placemnt chnage and the placeholder backgroud from buttom chnage so can u just do that only like replicate it here without copying everything"
 
 ### Analysis
-- `72449c9` ("main card text glitch on back") restructured the shared-element morph: instead of the WHOLE card morphing (gradient + glyph + text), the shared element became only the card face gradient, with all text hoisted out and blooming in after the morph. The user's follow-ups ("why did u remove the morph animation of the main card", "i still dont see any morph open animation of main card") made it clear the full-card morph was the desired behavior — the revert restores it.
+- `untitled-chat` is exactly `main` (7709f70) + 6 commits, all part of one feature: moving the reveal screen's action buttons ("Start exploring" + "Already …" pill) out of the scrolling content into a **themed bottom action dock**, rendered in the Scaffold's reserved bottom slot (the placeholder that previously existed only as an invisible morph spacer).
+- The code change spans exactly 3 files (`TopicRevealScreen.kt`, `CurioNavHost.kt`, `SpinScreen.kt`); the branch's other diff is only its own `Prompt.md` log, which was NOT copied.
+- User wanted ONLY this reveal change replicated, not the whole branch or anything else.
 
-### Fix — revert 72449c9, restore the original whole-card morph
-- **`features/spin/SpinScreen.kt`** — restored from `72449c9^`: `sharedElement` sits back on the OUTER ticket Box (whole card — face gradient, glyph, byline pill, title/tags/teaser all inside it), so the entire card expands out of the deck into the topic page and reverses on back.
-- **`features/reveal/TopicRevealScreen.kt`** — restored from `72449c9^`: `sharedElement` sits back on the hero `Surface` (whole hero — gradient, glyph, action badge, byline, subtype pills all inside it). The `HeroPillEntrance` bloom wrapper is gone (it was added by the reverted commit).
-- **`ui/adaptive/RevealSharedScopes.kt`** — removed `RevealGlyphSharedElementKey` (added by ae28095 on top of the reverted structure): the glyph now lives back inside the whole-card shared element, so the separate glyph element is dead code.
-- Kept from later commits (NOT part of 72449c9): the detail route's bottom-bar reserve removal (ae28095, NavHost) and the reserve fix (db393bd). Changelog top bullets rewritten to describe the full-card morph.
+### Fix — replicate reveal action dock on `main`
+- **`features/reveal/TopicRevealScreen.kt`** — removed the in-content CTA button + "Already …" pill and the trailing nav-inset spacer; added `onBottomBarContentChanged`/`onBottomBarContentCleared` callbacks and a `RevealActionDock` composable (80dp category-surface bar with side-by-side `RevealStartButton` + `RevealAlreadyButton`, state hoisted via `rememberUpdatedState`).
+- **`navigation/CurioNavHost.kt`** — extracted `RevealBottomBarPlaceholder`; the reserved bottom slot now renders the reveal dock when present (via `revealBottomBarContent`) and falls back to the placeholder otherwise, keeping the Scaffold height stable across the shared-element morph. Wired the new callbacks into the `TopicRevealScreen` destination.
+- **`features/spin/SpinScreen.kt`** — coupled navbar-flash fix: Spin no longer clears its published wash on dispose, so the Scaffold nav bar doesn't flash back to the cream theme surface during the shared-element transition before the reveal placeholder takes over.
 
 ### Validation
-No Gradle in this env (per AGENTS.md) — restored files byte-identical to `72449c9^` (verified via `git diff 72449c9^` empty), braces balanced (SpinScreen 394/394, TopicReveal 196/196, RevealSharedScopes 2/2), exactly one `sharedElement`/`rememberSharedContentState` per file (whole-card + whole-hero), no `RevealGlyphSharedElementKey` references remain, `git diff --check` clean. Code review ran. CI on the pushed HEAD is the compile gate.
+No Gradle in this env (per AGENTS.md). The 3 files are byte-identical to the CI-validated `untitled-chat` state (verified via `git diff untitled-chat` empty for those paths). String-aware brace balance: `{}` 383/383, `()` 1277/1277, `[]` 20/20 in SpinScreen; other two files OK. `git diff --cached --check` clean. Only one `TopicRevealScreen` call site (the NavHost one, updated). Key symbols present (`RevealActionDock`, `revealBottomBarContent`, `onBottomBarContentChanged`, `publishSpinWash`). Code review ran. CI on the pushed HEAD is the compile gate.
 
 ### Follow-ups
-- The original text-squash glitch on back is expected to return (that is what 72449c9 fixed) — the user chose the full-card morph over the glitch-free version.
+- The `untitled-chat` branch remains open and unmerged; if the user later merges it wholesale, these changes will apply cleanly (same content).
+- Stray untracked `result` symlink (Nix OpenJDK artifact) still in repo root — not part of this change.
