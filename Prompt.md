@@ -1,5 +1,20 @@
 # Prompt.md — Current Request Log
 
+## Request (2026-08-07, 17th): CI compile — unresolved `coil.request.filterQuality` — DONE (pushed `f5d5c1e`)
+
+**User request:** "fix this" (CI log: `Unresolved reference 'filterQuality'` at MoodBoardZoom.kt 58/218 and AdaptiveImageGallery.kt 34/152).
+
+### Analysis
+`coil.request.filterQuality` does NOT exist in Coil 2.7.0 — it's a Coil 3 (coil3-core) API. My previous fix (ef1052e) wrongly assumed it existed when moving `FilterQuality.High` off the `Image(painter=…)` overload (removed in foundation 1.4+). The two request-level `.filterQuality(FilterQuality.High)` calls + their imports were the 4 failing sites.
+
+### Fix
+- **MoodBoardZoom.kt / AdaptiveImageGallery.kt** — removed `import coil.request.filterQuality` and the `.filterQuality(High)` request calls (AdaptiveImageGallery painter back to plain `rememberAsyncImagePainter(tile.uri)`); also dropped the now-unused `FilterQuality`/`ImageRequest` imports. Comments updated to note sharpness comes from the **4096px decode caps** (the real anti-pixelation fix — Coil 2 has no request-level filter quality).
+- **Kept**: the 4096px zoom/export decode caps, the bounded export preload, and MoodBoardExport's `filterQuality = FilterQuality.High` on the `Image(bitmap = …)` overload (valid — only the painter overload lost the param).
+- No changelog (behavior-neutral compile fix; the decode caps still deliver the sharpness).
+
+### Validation
+Grep: zero `coil.request.filterQuality` references; the only remaining `filterQuality` site is the valid bitmap-overload one in MoodBoardExport + comments. Braces balanced 105/105 and 49/49. `git diff --check` clean. CI on the pushed HEAD is the compile gate.
+
 ## Request (2026-08-07, 16th): Main card texts glitchy when tapping back — DONE (pushed)
 
 **User request:** "the main card texts still looks glitchy when tapping back"
