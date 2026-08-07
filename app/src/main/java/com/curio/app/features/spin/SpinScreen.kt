@@ -148,6 +148,7 @@ import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
+import com.curio.app.ui.adaptive.RevealTitleSharedElementKey
 import com.curio.app.ui.components.MorphEntrance
 import kotlin.random.Random
 
@@ -1909,6 +1910,10 @@ private fun HeroTicketCard(
     val sharedTransitionScope = LocalRevealSharedScope.current ?: return
     val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
+    // v7.x — the ticket's title is its OWN shared element (matched with the
+    // reveal headline below the hero), so the topic name glides out of the
+    // card into its resting place instead of popping in after the expansion.
+    val revealTitleState = sharedTransitionScope.rememberSharedContentState(RevealTitleSharedElementKey)
 
     // v6.3 — slightly bigger ticket (~6% up) so the hero card reads a
     // touch more prominent on the deck.
@@ -2307,7 +2312,20 @@ private fun HeroTicketCard(
                                 ),
                                 color = ink,
                                 maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = if (currentTopic != null) {
+                                    // v7.x — the topic name morphs into the
+                                    // reveal's headline (shared element), so
+                                    // the text glides out of the card instead
+                                    // of popping in after the card expands.
+                                    sharedTransitionScope.run {
+                                        Modifier.sharedElement(
+                                            revealTitleState,
+                                            animatedVisibilityScope,
+                                            boundsTransform = RevealBoundsTransform
+                                        )
+                                    }
+                                } else Modifier
                             )
                             if (currentTopic != null && currentTopic.tags.isNotEmpty()) {
                                 Spacer(Modifier.height(10.dp))

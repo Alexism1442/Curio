@@ -973,20 +973,26 @@ private fun CabinetChipPop(
     // last pill still reaches full pop at full scroll.
     val stagger = (index * 0.07f).coerceAtMost(0.85f)
     val pillProgress = ((frostShift - stagger) / (1f - stagger)).coerceIn(0f, 1f)
-    val pillScale = androidx.compose.ui.util.lerp(0.90f, 1f, pillProgress)
+    // v7.x — ease the per-pill pop on the SAME curve as the bar's lift
+    // (FastOutSlowIn): the old linear progress made each pill's scale/color
+    // track the scroll 1:1 while the bar eased, which read as a slightly
+    // mechanical, janky pop. Easing it settles every pill in sync with the
+    // bar's glide.
+    val eased = FastOutSlowInEasing.transform(pillProgress)
+    val pillScale = androidx.compose.ui.util.lerp(0.90f, 1f, eased)
     // v7.96 — COLOR MORPH: as each pill pops, its neutral surface blooms
     // toward its accent [popSurface] and it lifts with a soft shadow — every
     // chip ripples with its own color as the bar pins, instead of scaling
     // alone.
-    val morphedSurface = lerp(restSurface, popSurface, pillProgress)
-    val popElevation = 6.dp * pillProgress
+    val morphedSurface = lerp(restSurface, popSurface, eased)
+    val popElevation = 6.dp * eased
     Box(
         modifier = Modifier.graphicsLayer {
             scaleX = pillScale
             scaleY = pillScale
         }
     ) {
-        content(pillProgress, morphedSurface, popElevation)
+        content(eased, morphedSurface, popElevation)
     }
 }
 

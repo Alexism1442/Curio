@@ -95,6 +95,7 @@ import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
+import com.curio.app.ui.adaptive.RevealTitleSharedElementKey
 import com.curio.app.ui.components.CurioWatermarkBackdrop
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
@@ -171,6 +172,15 @@ fun TopicRevealScreen(
     }
 
     val resolved = topic
+    // v7.x — the topic headline below the hero is a shared element matched
+    // with the Spin ticket's title: opening a landed topic glides the name
+    // out of the expanding card into its headline spot. Null-guarded —
+    // secondary entry points (Home/Recents/Browse) have no matching source.
+    val titleSharedTransitionScope = LocalRevealSharedScope.current
+    val titleVisibilityScope = LocalRevealVisibilityScope.current
+    val revealTitleState = if (titleSharedTransitionScope != null && titleVisibilityScope != null) {
+        titleSharedTransitionScope.rememberSharedContentState(RevealTitleSharedElementKey)
+    } else null
     val navInsets = WindowInsets.navigationBars.asPaddingValues()
     val context = LocalContext.current
     // v6.7 — pin for later: the bookmark toggles on/off so the user can save
@@ -515,26 +525,42 @@ fun TopicRevealScreen(
                 }
 
                 // ── 3. Topic name ───────────────────────────────────────────
-                // Soft entrance under the morphing hero: the title, tags and
-                // cards fade + rise in a light stagger so the page blooms
-                // after the card expands instead of snapping in.
-                RevealContentEntrance(delayMillis = 60) {
-                    Text(
-                        text = resolved?.name ?: cat.displayName,
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            lineHeight = 40.sp,
-                            letterSpacing = (-0.5).sp
-                        ),
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 20.dp)
-                    )
-                }
+                // v7.x — the title is a SHARED ELEMENT matched with the Spin
+                // ticket's title: it glides out of the expanding card into
+                // its headline spot. It deliberately gets NO entrance
+                // animation: any fade/scale on the element (or an ancestor)
+                // would also apply to the shared overlay and make the text
+                // invisible mid-morph (the same reason the hero has no
+                // MorphEntrance wrapper). Secondary entry points
+                // (Home/Recents/Browse) simply render it in place.
+                Text(
+                    text = resolved?.name ?: cat.displayName,
+                    style = MaterialTheme.typography.displaySmall.copy(
+                        lineHeight = 40.sp,
+                        letterSpacing = (-0.5).sp
+                    ),
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .then(
+                            if (resolved != null && titleSharedTransitionScope != null &&
+                                titleVisibilityScope != null && revealTitleState != null
+                            ) {
+                                titleSharedTransitionScope.run {
+                                    Modifier.sharedElement(
+                                        revealTitleState,
+                                        titleVisibilityScope,
+                                        boundsTransform = RevealBoundsTransform
+                                    )
+                                }
+                            } else Modifier
+                        )
+                )
 
                 // ── 4. Tags chip row (genre / era context) ─────────────────
                 RevealContentEntrance(delayMillis = 110) {

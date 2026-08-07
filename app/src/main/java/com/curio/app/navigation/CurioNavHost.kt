@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -153,6 +157,14 @@ fun CurioNavHost(
         currentRoute?.substringBefore("/")
     }
     val showBottomBar = routePrefix in CurioRoutes.bottomNavRoutePrefixes
+    // Push destinations that host a shared-element morph TARGET (the Reveal
+    // hero grows out of the Spin ticket; the Entry Detail hero out of a
+    // Cabinet card). Their bottom chrome must still RESERVE the bottom bar's
+    // height (an invisible placeholder below) so innerPadding never changes
+    // the moment the bar hides — otherwise the exiting Spin/Cabinet screen
+    // re-lays-out mid-transition and the morph source card visibly dips down
+    // before expanding (the "moves down, then animates" artifact).
+    val reserveBarSpace = routePrefix in setOf(CurioRoutes.REVEAL, CurioRoutes.ENTRY_DETAIL)
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -263,6 +275,16 @@ fun CurioNavHost(
             bottomBar = {
                 if (!wide && showBottomBar) {
                     CurioBottomBar(navController = navController)
+                } else if (!wide && reserveBarSpace) {
+                    // Invisible placeholder sized exactly like the bottom bar
+                    // (80dp + nav-bar inset) so shared-element morph
+                    // transitions never relayout the exiting tab screen.
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 80.dp)
+                            .windowInsetsPadding(WindowInsets.navigationBars)
+                    )
                 }
             },
             // Every screen applies its own statusBarsPadding().  This Scaffold
