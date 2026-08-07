@@ -103,7 +103,10 @@ fun CategoryPickerScreen(navController: NavController) {
         // centered in the same max-width column as every other page.
         Box(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterHorizontally
+            // contentAlignment takes a full Alignment, not Alignment.Horizontal
+            // (CenterHorizontally) — Center also matches the vertical no-op
+            // since the box wraps the sheet content's height.
+            contentAlignment = Alignment.Center
         ) {
         Column(
             modifier = Modifier
