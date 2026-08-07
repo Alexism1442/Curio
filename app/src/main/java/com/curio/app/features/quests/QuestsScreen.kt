@@ -43,6 +43,7 @@ import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
 import com.curio.app.features.settings.SettingsHeroHeader
 import com.curio.app.features.settings.SettingsHeroTotalHeight
+import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.components.CurioCardHeader
 import com.curio.app.ui.components.CurioForwardArrow
 import com.curio.app.ui.components.CurioSettingsCard
@@ -218,10 +219,15 @@ private fun JourneyCard(
         if (current != null) {
             // ── The current quest — the hero of this card ─────────────
             val done = CurioQuests.journeyProgress(current)
+            val roseHero = if (isCurioDarkTheme()) {
+                CurioColors.HomeRosewoodDark
+            } else {
+                CurioColors.HomeRosewood
+            }
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = CurioColors.HomeRosewood.copy(alpha = 0.10f),
-                border = BorderStroke(1.dp, CurioColors.HomeRosewood.copy(alpha = 0.28f)),
+                color = roseHero.copy(alpha = 0.10f),
+                border = BorderStroke(1.dp, roseHero.copy(alpha = 0.28f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(14.dp)) {
@@ -249,7 +255,7 @@ private fun JourneyCard(
                                 fontWeight = FontWeight.ExtraBold,
                                 letterSpacing = 1.2.sp
                             ),
-                            color = CurioColors.HomeRosewood
+                            color = roseHero
                         )
                     }
                     Spacer(Modifier.height(8.dp))

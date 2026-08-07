@@ -8,4 +8,5 @@
 • Corrected the dice's optical vertical position on narrow Home and Shuffle controls, including the animated Spin state.
 • Polished Profile's narrow-screen controls and merged XP, quests, and achievements into one readable card; corrected Detail category scrolling and the paper-colored tear seam.
 • Made Topic Reveal feel continuous with Spin: the landed ticket expands into the reveal hero for both automatic and manual opens.
+• Darkened the shared rose hero-card family in dark mode across Home, Profile, Settings, Cabinet, Onboarding, and Quests while preserving light mode and category colors.
 • 100 new modern music topics — 50 contemporary artists (The 1975, Sabrina Carpenter, Harry Styles, Hozier, Lana Del Rey, Travis Scott, Playboi Carti, Kali Uchis, Tems, Ice Spice…) and 50 of their defining albums (Short n' Sweet, Harry's House, Norman Fucking Rockwell!, Utopia, Currents…)

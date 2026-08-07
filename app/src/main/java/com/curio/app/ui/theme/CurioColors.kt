@@ -84,6 +84,8 @@ object CurioColors {
      * hero fill.
      */
     val HomeRosewood     = Color(0xFFCF8B94)
+    /** Dark-mode companion for the shared Home/Profile/Settings hero family. */
+    val HomeRosewoodDark  = Color(0xFF713849)
 
     /** Tinted (20% alpha) versions of the legacy accents for backgrounds. */
     val LilacTint     = Lilac.copy(alpha = 0.20f)

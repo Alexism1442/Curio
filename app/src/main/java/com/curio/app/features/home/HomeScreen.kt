@@ -287,7 +287,6 @@ fun HomeScreen(navController: NavController) {
             // chip row is gone). The banner wears the muted rose-wood hero
             // accent — in pastel mode (the shipped default) it resolves to
             // the airy rose-wood pastel twin, otherwise the calm base.
-            val accent = CurioColors.HomeRosewood
             val heroFill = homeRoseAccent()
             // Use the actual pastel fill as the ink source too, so the
             // cleaner pink-rose hue carries through the greeting, stat icons
@@ -1255,18 +1254,17 @@ private fun homeReadableInk(fill: Color): Color = if (
 @Composable
 private fun homeRoseAccent(): Color {
     val base = toHsl(CurioColors.HomeRosewood)
-    return if (AppPreferences.pastelColorsState) {
+    return if (isCurioDarkTheme()) {
+        // One shared deep companion keeps this hero family atmospheric in
+        // dark mode, including when pastel mode is enabled.
+        CurioColors.HomeRosewoodDark
+    } else if (AppPreferences.pastelColorsState) {
         // Home keeps its own softer rose treatment: nudge the rosewood hue
         // toward pink and lift it slightly so the pastel reads clean and airy,
         // not brown or terracotta. The small saturation lift keeps the pastel
         // lively without turning it neon. Other category pastels stay unchanged.
         val pinkHue = (base.h - 15f + 360f) % 360f
-        if (isCurioDarkTheme()) {
-            // Keep the darker pastel treatment unchanged for midnight surfaces.
-            fromHsl(pinkHue, (base.s * 0.55f).coerceIn(0f, 0.55f), 0.42f)
-        } else {
-            fromHsl(pinkHue, (base.s * 0.90f).coerceIn(0f, 0.80f), 0.82f)
-        }
+        fromHsl(pinkHue, (base.s * 0.90f).coerceIn(0f, 0.80f), 0.82f)
     } else {
         // v7.36 — the base is a soft dusty rose now; lift it a touch and
         // hold saturation modestly so the non-pastel Home banner reads as a
@@ -1514,7 +1512,11 @@ private fun HomeDrawerContent(onNavigate: (String) -> Unit) {
                     DrawerNavItem(
                         icon = CurioIcons.Replay,
                         label = "Replay intro",
-                        iconTint = CurioColors.HomeRosewood
+                        iconTint = if (isCurioDarkTheme()) {
+                            CurioColors.HomeRosewoodDark
+                        } else {
+                            CurioColors.HomeRosewood
+                        }
                     ) {
                         // Re-show the welcome screens: reset the completed
                         // flag, then open onboarding like Settings' replay.

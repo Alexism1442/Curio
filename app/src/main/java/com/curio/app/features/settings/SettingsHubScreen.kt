@@ -235,13 +235,12 @@ private fun BoxScope.SettingsHeroSymbol(
 @Composable
 fun settingsRoseAccent(): Color {
     val base = toHsl(CurioColors.HomeRosewood)
-    return if (AppPreferences.pastelColorsState) {
+    return if (isCurioDarkTheme()) {
+        // Shared dark hero companion used by Settings, Cabinet, and Onboarding.
+        CurioColors.HomeRosewoodDark
+    } else if (AppPreferences.pastelColorsState) {
         val pinkHue = (base.h - 15f + 360f) % 360f
-        if (isCurioDarkTheme()) {
-            fromHsl(pinkHue, (base.s * 0.55f).coerceIn(0f, 0.55f), 0.42f)
-        } else {
-            fromHsl(pinkHue, (base.s * 0.90f).coerceIn(0f, 0.80f), 0.82f)
-        }
+        fromHsl(pinkHue, (base.s * 0.90f).coerceIn(0f, 0.80f), 0.82f)
     } else {
         fromHsl(base.h, (base.s * 0.80f).coerceAtMost(0.40f), (base.l * 1.06f).coerceAtMost(0.70f))
     }
