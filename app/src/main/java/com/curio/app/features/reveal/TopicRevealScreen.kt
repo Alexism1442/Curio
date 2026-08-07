@@ -43,7 +43,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -77,13 +76,11 @@ import com.curio.app.data.TopicJsonLoader
 import com.curio.app.data.buildExploreSearchUrl
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
-import com.curio.app.ui.components.ConfettiBurst
 import com.curio.app.ui.components.CurioWatermarkBackdrop
-import com.curio.app.ui.theme.CurioColors
+import com.curio.app.ui.components.MorphEntrance
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
-import com.curio.app.ui.theme.CurioMotion
 import com.curio.app.ui.theme.categoryBackgroundWash
 import com.curio.app.ui.theme.categoryBorder
 import com.curio.app.ui.theme.categoryInk
@@ -147,13 +144,6 @@ fun TopicRevealScreen(
         // Graceful fallback: an unknown topic stays null so the screen
         // shows the neutral category fallback instead of a wrong topic.
         value = pool.firstOrNull { it.name == topicName }
-    }
-
-    // v5.8 — saveable so a rotation mid-celebration doesn't drop the confetti burst.
-    var confettiTrigger by rememberSaveable { mutableIntStateOf(0) }
-    LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(300)
-        confettiTrigger++
     }
 
     val resolved = topic
@@ -483,11 +473,15 @@ fun TopicRevealScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
                 // ── 2. Hero card — category watermark + verb/duration badge ──
-                HeroCard(
-                    cat = cat,
-                    resolved = resolved,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                // The reveal card grows smoothly from the main card position,
+                // rather than appearing as a separate hard cut.
+                MorphEntrance {
+                    HeroCard(
+                        cat = cat,
+                        resolved = resolved,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
                 // ── 3. Topic name ───────────────────────────────────────────
                 Text(
@@ -915,15 +909,6 @@ fun TopicRevealScreen(
         }
     }
 
-    if (confettiTrigger > 0) {
-        ConfettiBurst(
-            colors = listOf(cat.themedAccent(), if (AppPreferences.tintWashEffective()) cat.tint else cat.themedAccent(), CurioColors.ButterYellow),
-            trigger = confettiTrigger,
-            particleCount = CurioMotion.ConfettiParticleCountLarge,
-            modifier = Modifier.fillMaxSize(),
-            onComplete = {}
-        )
-    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
