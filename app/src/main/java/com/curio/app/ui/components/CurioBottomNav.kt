@@ -20,6 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -121,22 +124,11 @@ fun CurioBottomBar(
     val currentRoute = navBackStackEntry?.destination?.route
     val routePrefix = currentRoute?.substringBefore("/")
 
-    // The nav bar wears each tab's category-tinted page wash: Spin's deck
-    // wash and the Cabinet's active-filter wash — matching the page
-    // background the user is looking at. Home stays on the plain theme
-    // surface (its page is plain), and any route that publishes no wash
-    // falls back to the surface too.
-    val containerColor = when (routePrefix) {
-        CurioRoutes.SPIN -> CurioNavTint.spinWash ?: MaterialTheme.colorScheme.surface
-        CurioRoutes.CABINET -> CurioNavTint.cabinetWash ?: MaterialTheme.colorScheme.surface
-        else -> MaterialTheme.colorScheme.surface
-    }
-
     NavigationBar(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 80.dp),
-        containerColor = containerColor,
+        containerColor = curioNavContainerColor(routePrefix),
         tonalElevation = 0.dp,
         windowInsets = WindowInsets.navigationBars
     ) {
@@ -151,7 +143,11 @@ fun CurioBottomBar(
             NavigationBarItem(
                 selected = selected,
                 onClick = {
-                    if (currentRoute != destination.route) {
+                    // Compare the route PREFIX: the Shuffle tab is also the
+                    // current screen when the deck was opened via a category
+                    // launch ("spin/artists"), and re-tapping an already-
+                    // selected tab must be a no-op instead of re-opening it.
+                    if (routePrefix != destination.route) {
                         // Anchor to HOME (the persistent root), not the
                         // graph start destination: SPLASH is popped on
                         // launch, so popUpTo(startDestination) would be a
@@ -186,4 +182,88 @@ fun CurioBottomBar(
             )
         }
     }
+}
+
+/**
+ * Curio's wide-window navigation — a slim NavigationRail on the left edge,
+ * shown instead of the bottom bar on medium/expanded windows (tablets and
+ * landscape). Shares [CurioBottomNavItems] and the page-wash tint with
+ * [CurioBottomBar], so the rail wears the same category-tinted container
+ * color as the page it sits beside. The parent NavHost decides which nav
+ * chrome to render (see CurioNavHost) and passes a full-height modifier.
+ */
+@Composable
+fun CurioNavigationRail(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val routePrefix = currentRoute?.substringBefore("/")
+
+    NavigationRail(
+        modifier = modifier,
+        containerColor = curioNavContainerColor(routePrefix),
+        // The rail's default insets (systemBarsForVisualComponents, Vertical +
+        // Start) keep its items clear of the status bar and gesture bar while
+        // the rail surface itself spans the full window height.
+        content = {
+            Spacer(Modifier.height(10.dp))
+            CurioBottomNavItems.all.forEach { destination ->
+                val selected = navBackStackEntry?.destination?.hierarchy?.any { routeEntry ->
+                    routeEntry.route == destination.route ||
+                        routeEntry.route?.substringBefore("/") == destination.route
+                } == true
+
+                NavigationRailItem(
+                    selected = selected,
+                onClick = {
+                    // Same prefix-based no-op guard as the bottom bar: a
+                    // category-launched deck ("spin/artists") is still the
+                    // Shuffle tab, so re-tapping must not re-navigate.
+                    if (routePrefix != destination.route) {
+                        navController.navigateToTab(destination.route)
+                    }
+                },
+                    icon = {
+                        CurioIcon(
+                            name = if (selected) destination.selectedIcon else destination.icon,
+                            contentDescription = destination.label,
+                            tint = if (selected)
+                                MaterialTheme.colorScheme.onSecondaryContainer
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant,
+                            size = 24.dp
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = destination.label,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
+                    colors = NavigationRailItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                )
+            }
+        }
+    )
+}
+
+/**
+ * Shared nav-chrome container color: each tab's category-tinted page wash
+ * (Spin's deck wash, the Cabinet's active-filter wash) matching the page
+ * background the user is looking at. Home stays on the plain theme surface
+ * and any route that publishes no wash falls back to the surface too.
+ */
+@Composable
+private fun curioNavContainerColor(routePrefix: String?): Color = when (routePrefix) {
+    CurioRoutes.SPIN -> CurioNavTint.spinWash ?: MaterialTheme.colorScheme.surface
+    CurioRoutes.CABINET -> CurioNavTint.cabinetWash ?: MaterialTheme.colorScheme.surface
+    else -> MaterialTheme.colorScheme.surface
 }

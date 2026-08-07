@@ -75,7 +75,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -528,10 +527,21 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
                             // banner's color (RenderEffect on API 31+;
                             // software blur below).
                             Box(
+                                // The frosted pane is a STATIC vertical glow
+                                // instead of a per-frame 18dp RenderEffect
+                                // blur: over a flat color the blur was a
+                                // visual no-op but cost GPU time on every
+                                // scroll frame (the laggy detail scrolling).
                                 modifier = Modifier
                                     .matchParentSize()
-                                    .background(heroStart.copy(alpha = 0.24f))
-                                    .blur(18.dp)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                heroStart.copy(alpha = 0.30f),
+                                                heroStart.copy(alpha = 0.16f)
+                                            )
+                                        )
+                                    )
                                     .clip(RoundedCornerShape(18.dp))
                             )
                             // Theme-aware frost: dark non-pastel gets a
@@ -2664,10 +2674,12 @@ private fun FrostedExportButton(
             // as the hero grid card's pane (the wash is what's actually
             // behind these buttons).
             Box(
+                // Same static-glow treatment as the hero pane: the wash
+                // gradient is already smooth, so the 18dp blur was a
+                // per-frame GPU no-op during scroll.
                 modifier = Modifier
                     .matchParentSize()
                     .background(Brush.verticalGradient(listOf(category.categoryBackgroundWash(), category.categorySurface(MaterialTheme.colorScheme.surface))))
-                    .blur(18.dp)
                     .clip(RoundedCornerShape(16.dp))
             )
             // ── Frosted white glass tint ── the blurred color blooms behind

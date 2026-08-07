@@ -82,6 +82,8 @@ import com.curio.app.features.settings.settingsReadableInk
 import com.curio.app.features.settings.settingsRoseAccent
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioEmptyState
 import com.curio.app.ui.components.CurioNavTint
@@ -132,6 +134,8 @@ private val CategoryIdSaver = Saver<CategoryId?, String>(
 
 @Composable
 fun CabinetScreen(navController: NavController) {
+    // Wide windows (tablet / landscape) spread the grid into more columns.
+    val wide = windowWidthSizeClass().isWide
     var selectedFilter by rememberSaveable(CabinetSessionToken, stateSaver = CategoryIdSaver) {
         mutableStateOf<CategoryId?>(null)
     }
@@ -358,7 +362,9 @@ fun CabinetScreen(navController: NavController) {
         } else {
             LazyVerticalGrid(
                 state = gridState,
-                columns = GridCells.Fixed(2),
+                // Phones keep the 2-column grid; wide windows gain columns
+                // automatically (3 across on the ~720dp content column).
+                columns = if (wide) GridCells.Adaptive(minSize = 176.dp) else GridCells.Fixed(2),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,

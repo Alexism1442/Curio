@@ -29,8 +29,10 @@ app/src/main/java/com/curio/app/
 │   └── Category.kt                 # CategoryId enum + CurioCategory data class + canonical 6
 ├── navigation/
 │   ├── CurioRoutes.kt              # all route constants + builders + bottomNavRoutes set
-│   └── CurioNavHost.kt             # Scaffold-wrapped NavHost with conditional bottom nav
+│   └── CurioNavHost.kt             # Scaffold-wrapped NavHost with conditional bottom nav + adaptive rail/column
 ├── ui/
+│   ├── adaptive/
+│   │   └── CurioAdaptiveLayout.kt  # window-size-class helper + CurioContentMaxWidth (tablet/landscape contract)
 │   ├── theme/                      # design system primitives
 │   │   ├── CurioColors.kt          # Midnight Signal palette + 6 category accents + wildcard gradient
 │   │   ├── CurioTypography.kt      # geom.ttf for display/headline/label; M3 default for body
@@ -85,6 +87,12 @@ app/src/main/java/com/curio/app/
 - Edge-to-edge is enabled at the Activity level; the system bars are themed by `CurioTheme`'s `SideEffect` to match the current color scheme + light/dark mode.
 - Icon rendering uses `CurioIcon(name = CurioIcons.X)` with the Material Symbols ligature font. Emoji-vs-icon policy is a design decision — confirm with the user (see the Purpose note above).
 - All glyph names used by `CurioIcon` are declared in `CurioIcons.kt` (single source of truth for icon names). Adding a glyph = adding a `const val` there first.
+
+### Adaptive layout (tablet & landscape) — ALWAYS-ON
+- **`ui/adaptive/CurioAdaptiveLayout.kt`** owns the window adaptation contract: `windowWidthSizeClass()` (material3-window-size-class, `calculateWindowSizeClass(activity)`) and `CurioContentMaxWidth = 720.dp`. No Settings toggle — the wide layout engages automatically on medium/expanded windows (>= 600dp wide; tablets, landscape, split-screen) and phones are untouched.
+- **Wide windows:** `CurioNavHost` renders `CurioNavigationRail` (left edge, full height) instead of the bottom bar and centers every route's content in the 720dp max-width column (`fillMaxHeight().widthIn(max = CurioContentMaxWidth)` inside a centered Box); the theme background fills the gutters. Screens keep drawing their own status-bar padding and full-bleed washes inside the NavHost.
+- **Adaptive grids:** use `windowWidthSizeClass().isWide` to switch `GridCells.Fixed(2)` → `GridCells.Adaptive(minSize = …)` (Cabinet 176dp, category pickers 160dp). Picker bottom sheets center their content at `CurioContentMaxWidth` on wide windows (the sheet spans the whole window, so it needs its own cap).
+- Don't add per-screen responsive hacks; read the size class from the shared helper so every screen follows one breakpoint story.
 
 ### Navigation
 - Single NavHost with flat routes (see `CurioRoutes.kt`). Bottom nav visibility is gated by the `CurioRoutes.bottomNavRoutes` set (`HOME`, `SPIN`, `CABINET`).

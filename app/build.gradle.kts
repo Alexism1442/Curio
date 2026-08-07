@@ -132,6 +132,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // Window-size-class breakpoints for the adaptive tablet/landscape layouts
+    // (compact < 600dp, medium 600-839, expanded >= 840).
+    implementation(libs.androidx.material3.window.size)
     // Icons are rendered via Material Symbols font ligatures (CurioIcon), NOT
     // the bundled M2 vector set, so androidx.compose.material.icons.core is
     // intentionally absent. Re-add only if a screen needs an M2 vector icon.

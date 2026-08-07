@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -38,6 +39,9 @@ import com.curio.app.data.AppPreferences
 import com.curio.app.data.CurioCategories
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.navigation.navigateToTab
+import com.curio.app.ui.adaptive.CurioContentMaxWidth
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBackButton
 import com.curio.app.ui.components.CurioCategoryCard
 import com.curio.app.ui.components.MorphEntrance
@@ -63,6 +67,9 @@ fun CategoryPickerScreen(navController: NavController) {
     // lanes drop out and reordered lanes follow Manage Categories instantly.
     val categories = CurioCategories.visible
     val gridState = rememberLazyGridState()
+    // Wide windows (tablet / landscape) spread the deck grid and cap the
+    // sheet's content width so the picker stays readable on large screens.
+    val wide = windowWidthSizeClass().isWide
     // ── Category tint wash — this picker hands off straight to the Shuffle
     //    tab, so it wears the last-used deck's color story (same wash as the
     //    Spin page / Save / Cabinet) instead of a plain theme background.
@@ -92,9 +99,16 @@ fun CategoryPickerScreen(navController: NavController) {
         dragHandle = { BottomSheetDefaults.DragHandle() },
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
+        // The sheet spans the whole window; on wide windows the content is
+        // centered in the same max-width column as every other page.
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterHorizontally
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(max = CurioContentMaxWidth)
                 .navigationBarsPadding()
                 .padding(horizontal = 16.dp)
         ) {
@@ -137,7 +151,7 @@ fun CategoryPickerScreen(navController: NavController) {
             MorphEntrance {
                 LazyVerticalGrid(
                     state = gridState,
-                    columns = GridCells.Fixed(2),
+                    columns = if (wide) GridCells.Adaptive(minSize = 160.dp) else GridCells.Fixed(2),
                     contentPadding = PaddingValues(top = 4.dp, bottom = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -224,6 +238,7 @@ fun CategoryPickerScreen(navController: NavController) {
                 }
             }
         }
+    }
     }
     }
 }

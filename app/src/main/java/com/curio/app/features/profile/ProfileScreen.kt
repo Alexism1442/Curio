@@ -808,6 +808,10 @@ private fun ProfileHeroStat(
             maxLines = 1,
             softWrap = false,
             overflow = TextOverflow.Ellipsis,
+            // Center the label under its centered value: fillMaxWidth on
+            // its own left-aligns the text, which made Level · Saved ·
+            // Lanes hug the left edge of each cell.
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
     }

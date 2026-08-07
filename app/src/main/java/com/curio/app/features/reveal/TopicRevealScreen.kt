@@ -77,8 +77,10 @@ import com.curio.app.data.TopicJsonLoader
 import com.curio.app.data.buildExploreSearchUrl
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.LocalRevealSharedScope
+import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.components.CurioWatermarkBackdrop
-import com.curio.app.ui.components.MorphEntrance
 import com.curio.app.ui.theme.CurioGradients
 import com.curio.app.ui.theme.CurioIcon
 import com.curio.app.ui.theme.CurioIcons
@@ -474,20 +476,20 @@ fun TopicRevealScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
                 // ── 2. Hero card — category watermark + verb/duration badge ──
-                // The reveal card grows smoothly from the main card position,
-                // rather than appearing as a separate hard cut.
-                // Key the entrance to the actual topic, not the initial
-                // loading state. Otherwise MorphEntrance consumes its
-                // one-shot animation while `resolved` is null and the real
-                // hero silently snaps in afterward.
+                // The hero is a SHARED ELEMENT matching the Spin front ticket
+                // ("reveal-hero"): opening a landed topic expands the hero
+                // out of the card's position instead of sliding the page in.
+                // The destination's AnimatedVisibilityScope drives its
+                // visibility during the route transition, so no separate
+                // MorphEntrance wrapper (it would double-animate the hero).
+                // Key the hero to the actual topic, not the initial loading
+                // state, so the shared element re-mounts per topic.
                 key(resolved?.id ?: "topic-loading") {
-                    MorphEntrance {
-                        HeroCard(
-                            cat = cat,
-                            resolved = resolved,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
+                    HeroCard(
+                        cat = cat,
+                        resolved = resolved,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
 
                 // ── 3. Topic name ───────────────────────────────────────────
@@ -928,6 +930,15 @@ private fun HeroCard(
     resolved: CurioTopic?,
     modifier: Modifier = Modifier
 ) {
+    // ── Shared-element handoff (Topic Reveal morph) ──────────────────────
+    // Matches the Spin front ticket's "reveal-hero" element: when this
+    // topic is opened from the deck, the hero expands out of the card's
+    // position (no match — e.g. opened from Home/Recent — renders in
+    // place, no animation). Provided by the NavHost via composition locals.
+    val sharedTransitionScope = LocalRevealSharedScope.current ?: return
+    val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
+    val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
+
     val action = resolved?.exploreAction
     val heroGradient = CurioGradients.cardGradient(cat.themedAccent())
     // v7.5 — pastel mode lightens the hero gradient, so the pill content
@@ -937,7 +948,14 @@ private fun HeroCard(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(260.dp),
+            .height(260.dp)
+            .then(
+                // Shared-element target: bounds animate from the Spin
+                // ticket's position/size to this hero when the topic opens.
+                sharedTransitionScope.run {
+                    Modifier.sharedElement(revealSharedState, animatedVisibilityScope)
+                }
+            ),
         shape = RoundedCornerShape(32.dp),
         color = Color.Transparent,
         shadowElevation = 0.dp

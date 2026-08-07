@@ -1,6 +1,7 @@
 package com.curio.app.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -16,15 +17,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -81,7 +85,13 @@ import com.curio.app.features.spin.SpinScreen
 import com.curio.app.features.home.HomeScreen
 import com.curio.app.features.splash.SplashScreen
 import com.curio.app.features.fieldmind.FieldMindObservationScreen
+import com.curio.app.ui.adaptive.CurioContentMaxWidth
+import com.curio.app.ui.adaptive.LocalRevealSharedScope
+import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBottomBar
+import com.curio.app.ui.components.CurioNavigationRail
 import com.curio.app.ui.theme.CurioMotion
 
 /**
@@ -238,12 +248,20 @@ fun CurioNavHost(
         }
     }
 
+    // ── Adaptive window layout (tablet & landscape) ────────────────────
+    // Medium/Expanded windows (>= 600dp wide) move the three tabs into a
+    // left-edge NavigationRail and center page content in a comfortable
+    // max-width column ([CurioContentMaxWidth]) with the theme background
+    // filling the gutters. Compact phones keep the bottom bar and full-width
+    // content exactly as before. Always-on — no Settings toggle.
+    val wide = windowWidthSizeClass().isWide
+
     // The floating explore bubble now lives in the explore service's overlay
     // window (over other apps), so the Scaffold simply fills the screen.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             bottomBar = {
-                if (showBottomBar) {
+                if (!wide && showBottomBar) {
                     CurioBottomBar(navController = navController)
                 }
             },
@@ -256,12 +274,40 @@ fun CurioNavHost(
             contentWindowInsets = WindowInsets.navigationBars,
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
+        Row(modifier = Modifier.fillMaxSize()) {
+            if (wide && showBottomBar) {
+                // Wide windows: the rail sits at the left edge, full height,
+                // and applies its own system-bar insets.
+                CurioNavigationRail(
+                    navController = navController,
+                    modifier = Modifier.fillMaxHeight()
+                )
+            }
+            Box(
+                // The content area keeps the scaffold insets (bottom bar
+                // height + nav-bar inset) exactly as before; wide windows
+                // just add the centered max-width cap.
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+        SharedTransitionLayout(
+            // The shared-transition root for the whole NavHost: the Spin
+            // front ticket and the Topic Reveal hero are matched
+            // "reveal-hero" shared elements, so opening a landed topic
+            // morphs the reveal hero OUT of the ticket's position instead
+            // of the page sliding in from the side.
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = CurioContentMaxWidth)
+        ) {
+            val sharedTransitionScope = this
         NavHost(
             navController = navController,
             startDestination = CurioRoutes.SPLASH,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier = Modifier.fillMaxSize(),
             // ── Animated screen transitions ────────────────────────────────
             // v7.17 — page-switch glitch fix. The old exit/pop-enter slides
             // used an UNDERDAMPED spring (damping 0.9): it overshot past the
@@ -275,13 +321,11 @@ fun CurioNavHost(
             enterTransition = {
                 when {
                     // Reveal is the continuation of the landed Spin ticket:
-                    // fade + expand instead of the generic horizontal page
-                    // slide, so the destination hero can receive the source
-                    // card's visual handoff.
+                    // fade instead of the generic horizontal page slide — the
+                    // shared "reveal-hero" element (Spin ticket → Reveal
+                    // hero) owns the expansion, so the route stays a clean
+                    // fade and the screen does not double-zoom around it.
                     isRevealRoute(targetState) ->
-                        // The card-level MorphEntrance owns the expansion;
-                        // keep the route transition a clean fade so the whole
-                        // screen does not double-zoom around it.
                         fadeIn(animationSpec = tween(CurioMotion.Durations.RevealHold))
                     // Splash → Home / Onboarding: special elastic morph
                     initialState.destination.route == CurioRoutes.SPLASH ->
@@ -303,11 +347,13 @@ fun CurioNavHost(
             },
             exitTransition = {
                 when {
-                    // Leave the Spin ticket in place while Reveal expands;
-                    // the source card's own opening scale is visible during
-                    // the handoff instead of being swept sideways.
+                    // Leave the Spin ticket in place while Reveal expands:
+                    // the fade is paced to the shared-element morph so the
+                    // source card stays visible for the whole expansion
+                    // instead of winking out 150ms in (a Quick fade would
+                    // vanish under the ~450ms morph).
                     isRevealRoute(targetState) ->
-                        fadeOut(animationSpec = tween(CurioMotion.Durations.Quick))
+                        fadeOut(animationSpec = tween(CurioMotion.Durations.Morph))
                     // Navigating away from splash: no exit needed
                     initialState.destination.route == CurioRoutes.SPLASH ->
                         fadeOut(animationSpec = tween(CurioMotion.Durations.Quick))
@@ -357,7 +403,13 @@ fun CurioNavHost(
                 HomeScreen(navController = navController)
             }
             composable(CurioRoutes.SPIN) {
-                SpinScreen(categorySlug = null, navController = navController)
+                val animatedVisibilityScope = this
+                CompositionLocalProvider(
+                    LocalRevealSharedScope provides sharedTransitionScope,
+                    LocalRevealVisibilityScope provides animatedVisibilityScope
+                ) {
+                    SpinScreen(categorySlug = null, navController = navController)
+                }
             }
             composable(CurioRoutes.CABINET) {
                 CabinetScreen(navController = navController)
@@ -373,10 +425,16 @@ fun CurioNavHost(
                 route = CurioRoutes.SPIN_WITH_CATEGORY,
                 arguments = listOf(navArgument("categorySlug") { type = NavType.StringType })
             ) { entry ->
-                SpinScreen(
-                    categorySlug = entry.arguments?.getString("categorySlug"),
-                    navController = navController
-                )
+                val animatedVisibilityScope = this
+                CompositionLocalProvider(
+                    LocalRevealSharedScope provides sharedTransitionScope,
+                    LocalRevealVisibilityScope provides animatedVisibilityScope
+                ) {
+                    SpinScreen(
+                        categorySlug = entry.arguments?.getString("categorySlug"),
+                        navController = navController
+                    )
+                }
             }
             composable(
                 route = CurioRoutes.REVEAL,
@@ -385,11 +443,17 @@ fun CurioNavHost(
                     navArgument("topicName")     { type = NavType.StringType }
                 )
             ) { entry ->
-                TopicRevealScreen(
-                    categorySlug = entry.arguments?.getString("categorySlug").orEmpty(),
-                    topicName    = safeDecode(entry.arguments?.getString("topicName")),
-                    navController = navController
-                )
+                val animatedVisibilityScope = this
+                CompositionLocalProvider(
+                    LocalRevealSharedScope provides sharedTransitionScope,
+                    LocalRevealVisibilityScope provides animatedVisibilityScope
+                ) {
+                    TopicRevealScreen(
+                        categorySlug = entry.arguments?.getString("categorySlug").orEmpty(),
+                        topicName    = safeDecode(entry.arguments?.getString("topicName")),
+                        navController = navController
+                    )
+                }
             }
             composable(
                 route = CurioRoutes.CAPTURE,
@@ -503,6 +567,9 @@ fun CurioNavHost(
             }
         }
         }
+            }
+        }
+    }
     }
 
     // ── Done-exploring prompt (app return while a session is active) ────

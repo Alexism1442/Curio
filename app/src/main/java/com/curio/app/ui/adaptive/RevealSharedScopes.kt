@@ -1,0 +1,26 @@
+package com.curio.app.ui.adaptive
+
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.staticCompositionLocalOf
+
+/**
+ * Shared-element handoff between the Spin deck and the Topic Reveal page.
+ *
+ * The Spin front ticket and the Reveal hero are matched shared elements
+ * (key [RevealSharedElementKey]), so opening a landed topic morphs the
+ * reveal hero OUT of the ticket's position instead of sliding the page in.
+ *
+ * The scopes are created by [androidx.compose.animation.SharedTransitionLayout]
+ * in CurioNavHost and provided per-destination here, because this Compose
+ * version has no built-in CompositionLocal for the shared transition scope.
+ * Both locals are null-guarded at the consumer sites (never null in the
+ * NavHost subtree).
+ */
+const val RevealSharedElementKey = "reveal-hero"
+
+/** The SharedTransitionScope instance wrapping the NavHost. */
+val LocalRevealSharedScope = staticCompositionLocalOf<SharedTransitionScope?> { null }
+
+/** The destination's AnimatedContentScope (controls the element's visibility). */
+val LocalRevealVisibilityScope = staticCompositionLocalOf<AnimatedVisibilityScope?> { null }

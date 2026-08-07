@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
@@ -109,6 +110,9 @@ import com.curio.app.data.SmartDensityMode
 import com.curio.app.data.StreakTracker
 import com.curio.app.data.TopicJsonLoader
 import com.curio.app.navigation.CurioRoutes
+import com.curio.app.ui.adaptive.CurioContentMaxWidth
+import com.curio.app.ui.adaptive.isWide
+import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.ConfettiBurst
 import com.curio.app.ui.components.CurioCategoryCard
 import com.curio.app.ui.components.CurioNavTint
@@ -138,6 +142,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import com.curio.app.ui.adaptive.LocalRevealSharedScope
+import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
+import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.components.MorphEntrance
 import kotlin.random.Random
 
@@ -1804,6 +1811,15 @@ private fun HeroTicketCard(
     enabled: Boolean,
     onTap: () -> Unit
 ) {
+    // ── Shared-element handoff (Topic Reveal morph) ──────────────────────
+    // This front ticket is the source of the "reveal-hero" shared element:
+    // the reveal destination provides the matching hero, so opening the
+    // landed topic morphs the hero OUT of this card. The scopes are provided
+    // by the NavHost via composition locals (never null in its subtree).
+    val sharedTransitionScope = LocalRevealSharedScope.current ?: return
+    val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
+    val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
+
     // v6.3 — slightly bigger ticket (~6% up) so the hero card reads a
     // touch more prominent on the deck.
     // v6.11 — compact screens scale the whole ticket down (small phones);
@@ -1965,6 +1981,17 @@ private fun HeroTicketCard(
             modifier = Modifier
                 .size(w, h)
                 .align(Alignment.Center)
+                .then(
+                    if (topic != null) {
+                        // Shared-element source for the Topic Reveal hero —
+                        // when this ticket is tapped (or the wheel lands),
+                        // the reveal's hero expands out of this card's
+                        // position instead of the page sliding in.
+                        sharedTransitionScope.run {
+                            Modifier.sharedElement(revealSharedState, animatedVisibilityScope)
+                        }
+                    } else Modifier
+                )
                 .then(
                     if (heroShadowOn) {
                         // v7.14 — layered soft shadow: a broad ambient glow
@@ -3047,6 +3074,9 @@ private fun CategoryPickerSheet(
     // v7.94 — read the REACTIVE visible list directly (no remember): it
     // recomposes when Manage Categories hides/shows/reorders lanes.
     val categories = CurioCategories.visible
+    // Wide windows (tablet / landscape) spread the deck grid and cap the
+    // sheet's content width so the picker stays readable on large screens.
+    val wide = windowWidthSizeClass().isWide
     // Default = tap-to-open (single). Long-press enters multi-select mode.
     var multiSelectMode by remember { mutableStateOf(false) }
     var selectedSlugs by remember { mutableStateOf(setOf<String>()) }
@@ -3065,9 +3095,16 @@ private fun CategoryPickerSheet(
         dragHandle = { BottomSheetDefaults.DragHandle() },
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
+        // The sheet spans the whole window; on wide windows the content is
+        // centered in the same max-width column as every other page.
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterHorizontally
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(max = CurioContentMaxWidth)
                 .navigationBarsPadding()
         ) {
                     // ── Close button + header ────────────────────────
@@ -3154,7 +3191,7 @@ private fun CategoryPickerSheet(
                     ) {
                         MorphEntrance {
                             LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
+                                columns = if (wide) GridCells.Adaptive(minSize = 160.dp) else GridCells.Fixed(2),
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -3253,6 +3290,7 @@ private fun CategoryPickerSheet(
 
                     Spacer(Modifier.height(8.dp))
         }
+    }
     }
 }
 

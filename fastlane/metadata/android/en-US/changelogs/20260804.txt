@@ -3,3 +3,8 @@
 • Smart Density 2x now reliably shrinks the Spin deck on every device.
 • Cabinet search, sorting, bulk selection/deletion, and faster loading are polished.• Detail paper seams are thinner, seeded, wavy, and gap-free.
 • Detail-page scrolling is smoother without reducing image, paper, or content quality.
+• Tablets and landscape are fully adapted: the three tabs move to a left-edge rail, page content centers in a comfortable column, and the Cabinet and category grids add columns on wide screens.
+• The landed topic now EXPANDS out of the shuffle card into the reveal page — a true shared-element morph from the card's own position — instead of the page sliding in.
+• Tapping the Shuffle tab while already on the shuffle page no longer re-opens it — a deck launched from a category ("spin/artists") counts as the Shuffle tab too.
+• Fixed the Profile hero's Level · Saved · Lanes labels hugging the left edge — they're centered under their values again.
+• Detail-page scrolling is smoother: two per-frame frosted-glass blur passes over flat colors were GPU-expensive no-ops and are now static glows.
