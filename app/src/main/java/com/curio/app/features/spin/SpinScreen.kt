@@ -2088,25 +2088,17 @@ private fun HeroTicketCard(
         // during scale. The layered hero shadow sits OUTSIDE the clip (its
         // modifier comes before .clip), so it renders around the card
         // instead of being swallowed by the rounded clip.
+        //
+        // v8.3 — the shared element is ONLY the card FACE (gradient + glyph
+        // + rim-light, inside the Surface below). The ticket's text content
+        // lives OUTSIDE it: on back, the shared-element overlay draws the
+        // destination card shrinking from the hero's bounds to the ticket's,
+        // and text inside it squashes non-uniformly (the old glitchy
+        // main-card text). The texts fade in with the page instead.
         Box(
             modifier = Modifier
                 .size(w, h)
                 .align(Alignment.Center)
-                .then(
-                    if (topic != null) {
-                        // Shared-element source for the Topic Reveal hero —
-                        // when this ticket is tapped (or the wheel lands),
-                        // the reveal's hero expands out of this card's
-                        // position instead of the page sliding in.
-                        sharedTransitionScope.run {
-                            Modifier.sharedElement(
-                                revealSharedState,
-                                animatedVisibilityScope,
-                                boundsTransform = RevealBoundsTransform
-                            )
-                        }
-                    } else Modifier
-                )
                 .then(
                     if (heroShadowOn) {
                         // v7.14 — layered soft shadow: a broad ambient glow
@@ -2151,6 +2143,9 @@ private fun HeroTicketCard(
                 ),
                 modifier = Modifier.fillMaxSize()
             ) {
+                // Content Box — the card's FACE (shared) plus the TEXT layers
+                // (not shared — see the clip Box note above).
+                Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -2201,6 +2196,23 @@ private fun HeroTicketCard(
                                 }
                             } else Modifier
                         )
+                        .then(
+                            if (topic != null) {
+                                // Shared-element source for the Topic Reveal
+                                // hero — when this ticket is tapped (or the
+                                // wheel lands), the reveal's hero expands out
+                                // of this card's position instead of the page
+                                // sliding in. Only the FACE is shared (v8.3) —
+                                // text would squash inside the reversing morph.
+                                sharedTransitionScope.run {
+                                    Modifier.sharedElement(
+                                        revealSharedState,
+                                        animatedVisibilityScope,
+                                        boundsTransform = RevealBoundsTransform
+                                    )
+                                }
+                            } else Modifier
+                        )
                 ) {
                     // One category watermark — keep the Shuffle hero focused
                     // on the active deck instead of repeating the page-wide
@@ -2215,8 +2227,9 @@ private fun HeroTicketCard(
                             .align(Alignment.CenterEnd)
                             .padding(end = 6.dp)
                     )
+                } // shared card face — gradient + glyph + rim-light only
 
-                    // ── Creator byline pill — "Director · Nolan" pinned to
+                // ── Creator byline pill — "Director · Nolan" pinned to
                     //    the ticket's TOP corner (the band the old subtype
                     //    badge owned — the content column's 28dp spacer keeps
                     //    the title clear of it). Same tag language as the

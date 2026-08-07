@@ -1,25 +1,21 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 15th): Quest guide indicators + claim buttons + Go buttons — DONE (pushed)
+## Request (2026-08-07, 16th): Main card texts glitchy when tapping back — DONE (pushed)
 
-**User request:** "improve the turtorial with proper indicators etc and the texts gets short too and also move the according to the screen etc also add claim button per quest box and also add go button next to a quest which will guide the user." (plus a CI compile fix pasted mid-work: `filterQuality` on `Image(painter = …)`)
+**User request:** "the main card texts still looks glitchy when tapping back"
 
-### Analysis
-- **CI compile error first:** foundation 1.4+ REMOVED the `filterQuality` parameter from the `Image(painter: Painter, …)` overload (it only remains on `Image(bitmap: ImageBitmap, …)`). The v8.2 mood-board crispness commit added `filterQuality = FilterQuality.High` to 5 painter-overload call sites (MoodBoardZoom ×3, GalleryWallFormat, AdaptiveImageGallery) → CI failed. MoodBoardExport was fine (bitmap overload).
-- **Tour overlay:** was a bottom-centered pill with a numeric footer, long multi-clause messages, no pointer, no position variation — the user wanted proper indicators, short copy, and screen-relative placement.
-- **Daily quests:** XP was auto-awarded inside `bumpDaily` the instant a target was hit — no reward moment, no claim tap.
-- **Go buttons:** only the globally current quest row had a Go chip; other chains' next quests and in-progress dailies had no jump affordance.
+### Analysis — root cause
+- The Spin ticket and the Topic Reveal hero are matched `"reveal-hero"` shared elements (`RevealSharedElementKey`). The **entire** ticket (title 34sp, tags, teaser, byline pill) and the **entire** reveal hero (action badge, byline, subtype pills) were INSIDE their respective `Modifier.sharedElement` layouts.
+- In `SharedTransitionScope`, the overlay always draws the **destination** screen's shared content animating from the source bounds to the destination bounds. On **back** (Reveal → Spin), the destination is the Spin ticket — so the overlay draws the *ticket's* content shrinking from the hero's bounds (~392×260) to the ticket's (286×310). Because the aspect ratios differ, the shared content scales **non-uniformly** → the ticket's title/tags/teaser squash/stretch during the pop — the "glitchy main card texts on back". (Forward: the same happens to the reveal hero's pills when opening.)
+- The earlier headline fix (v8.2) only moved the reveal HEADLINE out of the hero; the pills and the ticket's whole text block were still shared → the glitch persisted.
 
-### Fix
-1. **`ui/components/MoodBoardZoom.kt`** — `moodBoardPainter` now sets `.filterQuality(FilterQuality.High)` on the Coil `ImageRequest` (import `coil.request.filterQuality`); the 3 painter-overload `filterQuality` params removed. **`features/capture/formats/GalleryWallFormat.kt`** + **`ui/components/AdaptiveImageGallery.kt`** — same: request-level filtering, painter-overload params removed (gallery builds its own `ImageRequest` with `.filterQuality(High)`). Pushed first as `ef1052e` to unblock CI.
-2. **`data/QuestGuide.kt`** — every step's message shortened to one line; new `Position` enum (`BOTTOM` / `TOP` / `CENTER`) per step: Quests & Settings → TOP (below the hero), final step → CENTER, rest BOTTOM.
-3. **`ui/components/QuestGuideToast.kt`** — full redesign: `GuidePointer.UP/DOWN` arrow in a small coral circle floats above/below the pill aimed at the content; progress-dot row under the message (current step filled); `footer` text replaced by `stepIndex`/`stepCount`.
-4. **`navigation/CurioNavHost.kt`** — overlay alignment now follows the step (`BottomCenter` / `TopCenter` / `Center`); TOP steps pad down by `SettingsHeroTotalHeight + 8.dp` so the pill sits under the Quests/Settings hero; pointer derived from position; imports `GuidePointer` + `SettingsHeroTotalHeight`.
-5. **`data/CurioQuests.kt`** — `bumpDaily` no longer grants XP (progress only); new `claimDaily(context, questId)` marks the quest awarded, bumps `dailyCompleted`, persists and grants XP.
-6. **`features/quests/QuestsScreen.kt`** — DailyCard takes `onClaim`/`onGo`; complete-but-unclaimed dailies show a solid **"Claim +XP"** pill; in-progress dailies show "+XP" + a **Go** chip via new `dailyGoRoute(kind)` (SPIN→spin, EXPLORE→spin, PROFILE→profile, rest null); ChainCard computes `nextIndex` and ChainStageRow shows a Go/Start chip on every chain's NEXT actionable stage (solid coral "Go" for the current quest, muted "Start" otherwise).
+### Fix — text lives OUTSIDE the shared elements on both sides
+- **`features/spin/SpinScreen.kt`** — the ticket's `sharedElement` moved from the outer card Box onto the inner **card face** Box (gradient + glyph + rim-light only). The byline pill and the content column (title/tags/teaser/tap-hint) are now siblings in a new content `Box`, so they never render inside the morphing overlay — on back they simply fade in with the page's popEnter fade.
+- **`features/reveal/TopicRevealScreen.kt`** — the hero's `sharedElement` moved from the outer Surface onto the inner **gradient + glyph** Box; the three text pills (action badge, byline, subtype) became siblings wrapped in a new `HeroPillEntrance` — they bloom in with a 300/340/380ms delay (paced to the ~320ms `RevealBoundsTransform` morph) and fade out with the page on back.
+- Both shared pieces are now gradient + glyph only (plus the ticket's rim-light), so the morph scales only graphics — never text — in either direction.
 
 ### Validation
-No Gradle in this env (per AGENTS.md) — static checks: brace balance, no leftover `footer =`/painter-overload `filterQuality`, claim/Go/Position wiring greps, `git diff --check`, code review. Changelog + Prompt.md updated. CI on the pushed HEAD is the compile gate.
+No Gradle in this env (per AGENTS.md) — static checks: brace balance (SpinScreen 395/395, TopicReveal 201/201), exactly one `Modifier.sharedElement` per file on the intended Boxes, the hoisted byline/Column still inside a BoxScope (`Box` content) so `.align()` compiles, `git diff --check` clean. Changelog + Prompt.md updated. Code review ran. CI on the pushed HEAD is the compile gate.
 
 ### Follow-ups
 - None.
