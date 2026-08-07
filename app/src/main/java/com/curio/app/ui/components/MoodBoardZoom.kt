@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -189,8 +190,13 @@ private fun moodBoardZoomSpec(closing: Boolean): FiniteAnimationSpec<Float> =
 /** Decode cap for board tiles (~3-4x their on-screen size). */
 private const val MoodBoardTileDecodePx = 1024
 
-/** Decode cap for the magnified overlays (supports ~4x zoom at 3x density). */
-private const val MoodBoardZoomDecodePx = 2048
+/**
+ * Decode cap for the magnified overlays (v8.2 — raised from 2048 to 4096 so
+ * the zoomed image supports the full 8x pinch at ~1:1 instead of upscaling a
+ * small bitmap). Matches the export's own 4096 cap, so a zoomed photo shows
+ * exactly as much detail as the saved PNG.
+ */
+private const val MoodBoardZoomDecodePx = 4096
 
 /**
  * High-resolution Coil painter for mood-board images. [zoomed] requests the
@@ -272,12 +278,17 @@ fun MoodBoardTiles(
                     )
                     .rotate(tile.rotationDeg)
             ) {
-                Image(
-                    painter = moodBoardPainter(tile.uri, zoomed),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxSize()
+            Image(
+                painter = moodBoardPainter(tile.uri, zoomed),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                // v8.2 — smooth upscaling: the default Low filter leaves
+                // blocky pixels when a tile's layout outgrows its decoded
+                // bitmap (most visible on big tiles and during the zoom
+                // glide). High keeps imported photos crisp.
+                filterQuality = FilterQuality.High,
+                modifier = Modifier
+                    .fillMaxSize()
                         // v6.1 — no inner padding: tiles are sized to the
                         // photo's own aspect ratio, so the image fills the
                         // rounded box edge-to-edge (no white frame).
@@ -598,16 +609,21 @@ fun MoodBoardZoomOverlay(
             // Frameless, like the editor tiles. The board-size painter renders
             // instantly (already cached from the collage) while the hi-res
             // decode for the magnifier streams in — no blank flash mid-glide.
+            // v8.2 — FilterQuality.High on BOTH layers: the glide upscales the
+            // base bitmap before the hi-res arrives, and High keeps that
+            // upscale smooth instead of pixel-cracked.
             Image(
                 painter = moodBoardPainter(tileUri),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
+                filterQuality = FilterQuality.High,
                 modifier = imageModifier
             )
             Image(
                 painter = moodBoardPainter(tileUri, zoomed = true),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
+                filterQuality = FilterQuality.High,
                 modifier = imageModifier
             )
         }

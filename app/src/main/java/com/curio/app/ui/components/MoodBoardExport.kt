@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -180,6 +181,15 @@ object MoodBoardExport {
                 runCatching {
                     val request = ImageRequest.Builder(context)
                         .data(t.uri)
+                        // v8.2 — cap the preload at the export canvas size
+                        // (EXPORT_LONG_SIDE): the output can never exceed
+                        // this, so a 48MP photo no longer allocates a
+                        // multi-hundred-MB bitmap per tile (a full board
+                        // could OOM before the render). Detail above the cap
+                        // is invisible anyway. Keep the zoom overlay's
+                        // MoodBoardZoomDecodePx >= this value so the on-screen
+                        // magnifier never shows less detail than the PNG.
+                        .size(EXPORT_LONG_SIDE, EXPORT_LONG_SIDE)
                         .allowHardware(false)
                         .memoryCachePolicy(CachePolicy.DISABLED)
                         .build()
@@ -492,6 +502,11 @@ private fun MoodBoardShareCard(
                                 bitmap = bmp.asImageBitmap(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Fit,
+                                // v8.2 — smooth upscaling when a tile is
+                                // rendered larger than its bitmap; the default
+                                // Low filter made small tiles look pixelated in
+                                // the saved PNG.
+                                filterQuality = FilterQuality.High,
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .clip(RoundedCornerShape(14.dp))

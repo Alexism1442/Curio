@@ -22,6 +22,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -141,6 +142,10 @@ fun AdaptiveImageGallery(
                                     painter = rememberAsyncImagePainter(tile.uri),
                                     contentDescription = "Attached image",
                                     contentScale = ContentScale.Fit,
+                                    // v8.2 — smooth upscaling when the zoom
+                                    // overlay glides the tile larger than its
+                                    // grid decode.
+                                    filterQuality = FilterQuality.High,
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .clip(RoundedCornerShape(cornerRadius))

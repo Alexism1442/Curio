@@ -57,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -1202,6 +1203,9 @@ private fun MoodBoardEditorTile(
             painter = moodBoardPainter(tile.uri),
             contentDescription = null,
             contentScale = ContentScale.Fit,
+            // v8.2 — smooth upscaling: a tile pinched bigger than its decoded
+            // bitmap stays clean instead of showing blocky pixels.
+            filterQuality = FilterQuality.High,
             modifier = Modifier
                 .size(
                     width = with(density) { renderW.coerceAtLeast(1f).toDp() },
