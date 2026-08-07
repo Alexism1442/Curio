@@ -1059,7 +1059,12 @@ private fun QuestShuffleCard(
                         CurioIcons.Casino,
                         "Shuffle a random deck",
                         tint = ink,
-                        size = 25.dp
+                        size = 25.dp,
+                        // Material Symbols' casino glyph has a slightly
+                        // low visible ink box even when its layout box is
+                        // mathematically centered. Lift only this dice
+                        // affordance; the circle and text stay untouched.
+                        modifier = Modifier.offset(y = (-1).dp)
                     )
                 }
             }

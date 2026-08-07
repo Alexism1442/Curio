@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -2608,7 +2609,14 @@ private fun SpinButton(
                     label = "diceMorph"
                 ) { shuffling ->
                     if (shuffling) {
-                        ShuffleGlyph(tint = pastelFillInk(tint), modifier = Modifier.size(72.dp))
+                        ShuffleGlyph(
+                            tint = pastelFillInk(tint),
+                            modifier = Modifier
+                                .size(72.dp)
+                                // Keep the animated die on the same optical
+                                // center as the resting casino glyph.
+                                .offset(y = (-1.5f).dp)
+                        )
                     } else {
                         // Gentle idle breathe on the resting die — a slow,
                         // even pulse so the settled dice stays alive.
@@ -2626,10 +2634,16 @@ private fun SpinButton(
                             CurioIcons.Casino, null,
                             tint = pastelFillInk(tint),
                             size = if (landedTopic != null) 52.dp else 60.dp,
-                            modifier = Modifier.graphicsLayer {
-                                scaleX = 1f + breathe * 0.05f
-                                scaleY = 1f + breathe * 0.05f
-                            }
+                            // Optical correction for the casino glyph's
+                            // visible bounds. The parent Box and button are
+                            // already centered; only the die's ink needs a
+                            // tiny lift, including the idle Spin state.
+                            modifier = Modifier
+                                .offset(y = (-1.5f).dp)
+                                .graphicsLayer {
+                                    scaleX = 1f + breathe * 0.05f
+                                    scaleY = 1f + breathe * 0.05f
+                                }
                         )
                     }
                 }

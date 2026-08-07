@@ -5,4 +5,5 @@
 • Polished onboarding spacing: a larger Curio wordmark and roomier, lower intro controls.
 • Refined Topic Reveal’s done action and corrected vertical alignment for Material Symbol icons.
 • Kept torn-paper hero under-layers bright white across dark Profile, Settings, Cabinet, drawer, and intro surfaces.
+• Corrected the dice's optical vertical position on narrow Home and Shuffle controls, including the animated Spin state.
 • 100 new modern music topics — 50 contemporary artists (The 1975, Sabrina Carpenter, Harry Styles, Hozier, Lana Del Rey, Travis Scott, Playboi Carti, Kali Uchis, Tems, Ice Spice…) and 50 of their defining albums (Short n' Sweet, Harry's House, Norman Fucking Rockwell!, Utopia, Currents…)
