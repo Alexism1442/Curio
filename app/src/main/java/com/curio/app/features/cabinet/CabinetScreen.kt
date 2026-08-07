@@ -473,60 +473,65 @@ fun CabinetScreen(navController: NavController) {
             onSearchQueryChange = { searchQuery = it },
             onCloseSearch = { searchActive = false; searchQuery = "" },
             searchFocus = searchFocus,
-            compact = wide
-        ) { ink ->
-            if (selectionMode) {
-                CabinetHeroActionPill(
-                    onClick = {
-                        selectedEntryIds = if (allVisibleSelected) {
-                            selectedEntryIds - categorySelectionIds
-                        } else {
-                            selectedEntryIds + categorySelectionIds
-                        }
-                    },
-                    label = if (allVisibleSelected) "Clear" else "Select all",
-                    ink = ink,
-                    emphasized = true
-                )
-                CabinetHeroActionPill(
-                    onClick = {
-                        if (selectedEntryIds.isNotEmpty()) showBulkDeleteConfirm = true
-                    },
-                    label = "Delete (${selectedEntryIds.size})",
-                    ink = ink,
-                    emphasized = true,
-                    destructive = true
-                )
-                CabinetHeroActionPill(
-                    onClick = { selectionMode = false; selectedEntryIds = emptySet() },
-                    glyph = CurioIcons.Close,
-                    contentDescription = "Cancel selection",
-                    ink = ink
-                )
-            } else {
-                CabinetHeroActionPill(
-                    onClick = {
-                        selectionMode = true
-                        selectedEntryIds = emptySet()
-                    },
-                    label = "Select",
-                    ink = ink
-                )
-                CabinetHeroActionPill(
-                    onClick = { sortNewestFirst = !sortNewestFirst },
-                    glyph = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
-                    contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
-                    ink = ink,
-                    emphasized = sortNewestFirst
-                )
-                CabinetHeroActionPill(
-                    onClick = { searchActive = true },
-                    glyph = CurioIcons.Search,
-                    contentDescription = "Search captures",
-                    ink = ink
-                )
+            compact = wide,
+            // Passed as a NAMED argument (not trailing-lambda syntax): the
+            // @Composable slot isn't the last parameter, and the trailing
+            // form fails to bind it under K2 ("no value passed for
+            // 'trailing'" / "too many arguments").
+            trailing = { ink ->
+                if (selectionMode) {
+                    CabinetHeroActionPill(
+                        onClick = {
+                            selectedEntryIds = if (allVisibleSelected) {
+                                selectedEntryIds - categorySelectionIds
+                            } else {
+                                selectedEntryIds + categorySelectionIds
+                            }
+                        },
+                        label = if (allVisibleSelected) "Clear" else "Select all",
+                        ink = ink,
+                        emphasized = true
+                    )
+                    CabinetHeroActionPill(
+                        onClick = {
+                            if (selectedEntryIds.isNotEmpty()) showBulkDeleteConfirm = true
+                        },
+                        label = "Delete (${selectedEntryIds.size})",
+                        ink = ink,
+                        emphasized = true,
+                        destructive = true
+                    )
+                    CabinetHeroActionPill(
+                        onClick = { selectionMode = false; selectedEntryIds = emptySet() },
+                        glyph = CurioIcons.Close,
+                        contentDescription = "Cancel selection",
+                        ink = ink
+                    )
+                } else {
+                    CabinetHeroActionPill(
+                        onClick = {
+                            selectionMode = true
+                            selectedEntryIds = emptySet()
+                        },
+                        label = "Select",
+                        ink = ink
+                    )
+                    CabinetHeroActionPill(
+                        onClick = { sortNewestFirst = !sortNewestFirst },
+                        glyph = if (sortNewestFirst) CurioIcons.ArrowDownward else CurioIcons.ArrowUpward,
+                        contentDescription = if (sortNewestFirst) "Newest first — tap for oldest" else "Oldest first — tap for newest",
+                        ink = ink,
+                        emphasized = sortNewestFirst
+                    )
+                    CabinetHeroActionPill(
+                        onClick = { searchActive = true },
+                        glyph = CurioIcons.Search,
+                        contentDescription = "Search captures",
+                        ink = ink
+                    )
+                }
             }
-        }
+        )
     }
 }
 

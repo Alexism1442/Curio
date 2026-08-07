@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -911,6 +912,14 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
         // page margin on each side so the fan never runs off the screen.
         val widthFit = ((maxWidth - 24.dp) / 360.dp).coerceIn(0.64f, 1f)
         val fitScale = minOf(heightFit, widthFit)
+        // v7.x — the wide/landscape stage scales by the width left for the
+        // deck (minus ~130dp side rail). Computed HERE in the
+        // BoxWithConstraints scope rather than inside the Row/Column below:
+        // the nested layout lambdas can't resolve this scope's maxWidth as
+        // an implicit receiver, which broke the CI build.
+        val wideFit = ((maxWidth - 130.dp) / 360.dp).coerceIn(
+            if (compactHeight) 0.62f else 0.78f, 1f
+        )
         // ── Watermark backdrop — every category glyph scattered around ──
         //    the screen in a muted shade, behind all content, so the quiet
         //    space around the deck still carries a whisper of the Curio
@@ -936,13 +945,6 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // v7.x — on wide screens the deck scales by available
-                    // width (minus ~130dp side rail). Landscape phones get
-                    // a tighter floor so the button still fits; tablets get
-                    // a comfortable minimum.
-                    val wideFit = ((maxWidth - 130.dp) / 360.dp).coerceIn(
-                        if (compactHeight) 0.62f else 0.78f, 1f
-                    )
                     SpinDeckSection(
                         compact = compactHeight,
                         extraCompact = false,
@@ -1249,6 +1251,7 @@ private fun ColumnScope.SpinDeckSection(
             pulseScale = buttonPulse,
             enabled = enabled,
             compact = compact,
+            fitScale = fitScale,
             onClick = onSpinClick
         )
     }
@@ -2702,18 +2705,25 @@ private fun SpinButton(
     pulseScale: Float,
     enabled: Boolean,
     compact: Boolean = false,
+    fitScale: Float = 1f,
     onClick: () -> Unit
 ) {
     // v6.3 — button grew a little (~7% up): 126dp idle, 108dp landed.
     // v6.11 — compact screens step the button + orbit down ~11% so the
     // pinned Categories/Filter bar always stays on screen.
-    val buttonSize = if (compact) {
+    // v7.x — the button also rides the continuous fit scale: on small
+    // screens the deck compresses via fitScale but the button used to stay
+    // full-size, so it read oversized next to the shrunken fan. It now
+    // shrinks WITH the deck (the orbit ring too), floored at 0.75 so the
+    // CTA never gets tiny.
+    val sizeScale = fitScale.coerceIn(0.75f, 1f)
+    val buttonSize = (if (compact) {
         if (landedTopic != null) 96.dp else 112.dp
     } else {
         if (landedTopic != null) 108.dp else 126.dp
-    }
+    }) * sizeScale
     Box(
-        modifier = Modifier.size(if (compact) 156.dp else 176.dp),
+        modifier = Modifier.size((if (compact) 156.dp else 176.dp) * sizeScale),
         contentAlignment = Alignment.Center
     ) {
         OrbitRing(active = isShuffling, color = tint, modifier = Modifier.fillMaxSize())

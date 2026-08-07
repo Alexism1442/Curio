@@ -986,7 +986,12 @@ private fun TopBarPill(
                 name = glyph,
                 contentDescription = contentDescription,
                 tint = iconTint,
-                size = 22.dp
+                size = 22.dp,
+                // The shared icon renderer already applies the standard 1dp
+                // optical lift, but the menu/person glyphs' ink still reads a
+                // hair low inside the small 42dp pill — nudge it up a touch
+                // more (the same extra correction the casino glyph wears).
+                modifier = Modifier.offset(y = (-0.5f).dp)
             )
         }
     }
