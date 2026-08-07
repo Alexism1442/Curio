@@ -44,7 +44,7 @@ Everything lives on your device. No accounts. No analytics. No tracking. Open so
 2. Install it on any Android 8.0+ device
 3. Android will ask you to allow "install from unknown sources" for your browser — that's normal for sideloaded apps
 
-> **Google Play support is planned.** v1.0 ships via GitHub Releases.
+> **Google Play support is not planned.** v1.0 ships via GitHub Releases.
 
 ### Build from Source
 
