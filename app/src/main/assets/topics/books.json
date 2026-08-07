@@ -4273,23 +4273,6 @@
     "tier": 2
   },
   {
-    "id": "book-sympathizer-dupe",
-    "categoryId": "BOOKS",
-    "subtype": "Book",
-    "name": "The Sympathizer (2015)",
-    "teaser": "Viet Thanh Nguyen's Pulitzer-winning novel, already described above.",
-    "imageUrl": "",
-    "byline": "Viet Thanh Nguyen",
-    "exploreAction": {
-      "verb": "Read",
-      "targetName": "The Sympathizer, full novel",
-      "durationMinutes": "",
-      "instruction": ""
-    },
-    "tags": [],
-    "tier": 0
-  },
-  {
     "id": "book-austerlitz",
     "categoryId": "BOOKS",
     "subtype": "Book",

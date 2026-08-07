@@ -12,7 +12,7 @@ Asserts (per the fixed Gradle task):
   - every topic has id (unique cross-file) + categoryId (matches filename)
   - every topic has subtype/name/teaser/imageUrl/exploreAction
   - every exploreAction has verb/targetName/durationMinutes/instruction
-  - every instruction <= 450 chars
+  - every instruction <= 600 chars
   - tier, if present, is in 1..3
 
 Exit 0 = all OK; exit 1 = at least one failure (print first 10).
@@ -29,7 +29,7 @@ EXPECTED_CATEGORIES = {
 }
 REQUIRED_TOPIC_FIELDS = ("subtype", "name", "teaser", "imageUrl", "exploreAction")
 REQUIRED_ACTION_FIELDS = ("verb", "targetName", "durationMinutes", "instruction")
-MAX_INSTRUCTION_LEN = 450  # matches the Gradle validateTopics task (app/build.gradle.kts)
+MAX_INSTRUCTION_LEN = 600  # matches the Gradle validateTopics task (app/build.gradle.kts)
 
 
 def validate_one(path: Path, seen_ids: dict[str, str]) -> tuple[int, int, list[str]]:

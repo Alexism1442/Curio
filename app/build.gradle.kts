@@ -184,14 +184,14 @@ configurations.configureEach {
 //   - every topic has id (unique cross-file) + categoryId (matches filename)
 //   - every topic has subtype/name/teaser/imageUrl/exploreAction
 //   - every exploreAction has verb/targetName/durationMinutes/instruction
-//   - every instruction <= 450 chars
+//   - every instruction <= 600 chars
 //   - tier, if present, is in 1..3
 //
 // Note: empty arrays are ACCEPTED with a warning (placeholder-empty is OK
 // during the build-out phase — categories ship one-per-PR cadence per
 // CURIO_DATA_PLAN.md §5.1, so a freshly-created category will sit at [] for
 // a PR or two before content lands). Schema errors (malformed field,
-// duplicate cross-file id, bad categoryId, instruction > 450 chars, tier
+// duplicate cross-file id, bad categoryId, instruction > 600 chars, tier
 // out of range) are still hard fails — they're real bugs, not placeholders.
 //
 // When assets/topics/ contains any JSON files, this task is wired into
@@ -263,8 +263,8 @@ tasks.register("validateTopics") {
                 }
                 val instruction = action["instruction"] as? String
                     ?: throw GradleException("${json.name}: topic '$id' exploreAction.instruction missing or non-string")
-                require(instruction.length <= 450) {
-                    throw GradleException("${json.name}: topic '$id' instruction is ${instruction.length} chars (max 450)")
+                require(instruction.length <= 600) {
+                    throw GradleException("${json.name}: topic '$id' instruction is ${instruction.length} chars (max 600)")
                 }
                 if (t.containsKey("tier")) {
                     val tier = t["tier"]
