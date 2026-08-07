@@ -96,7 +96,6 @@ import com.curio.app.ui.adaptive.isWide
 import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
-import com.curio.app.ui.adaptive.RevealGlyphSharedElementKey
 import com.curio.app.ui.adaptive.RevealSharedElementKey
 import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioWatermarkBackdrop
@@ -1024,11 +1023,6 @@ private fun HeroCard(
     val sharedTransitionScope = LocalRevealSharedScope.current ?: return
     val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
-    // v8.4 — the watermark glyph has its own matched shared element
-    // ("reveal-glyph"): same 150dp on the ticket and the hero, so the glyph
-    // translates — never squashes — as the card expands, arriving WITH the
-    // card instead of blooming in as a separate layer.
-    val glyphSharedState = sharedTransitionScope.rememberSharedContentState(RevealGlyphSharedElementKey)
 
     val action = resolved?.exploreAction
     val accent = cat.themedAccent()
@@ -1048,16 +1042,21 @@ private fun HeroCard(
     val heroGradientOn = AppPreferences.heroGradientState
     val heroBorderOn = AppPreferences.heroBorderState
 
-    // v8.3 — the shared element is ONLY the gradient + glyph. The hero's
-    // text pills live OUTSIDE it (see below): text inside a shared element
-    // squashes non-uniformly while the bounds morph between the ticket's
-    // 286×310 and this wider, shorter hero — the old stretched / overlapping
-    // "glitchy" text when tapping back. The pills bloom in after the morph
-    // settles instead, and simply fade out with the page on back.
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(260.dp),
+            .height(260.dp)
+            .then(
+                // Shared-element target: bounds animate from the Spin
+                // ticket's position/size to this hero when the topic opens.
+                sharedTransitionScope.run {
+                    Modifier.sharedElement(
+                        revealSharedState,
+                        animatedVisibilityScope,
+                        boundsTransform = RevealBoundsTransform
+                    )
+                }
+            ),
         shape = RoundedCornerShape(30.dp),
         color = Color.Transparent,
         shadowElevation = 0.dp
@@ -1108,40 +1107,15 @@ private fun HeroCard(
                 Brush.verticalGradient(heroGradient)
             }
 
-            // The SHARED piece — gradient + glyph only, so the morph never
-            // stretches text (see the note on the Surface above).
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(heroBrush, RoundedCornerShape(30.dp))
-                    .then(
-                        // Shared-element target: bounds animate from the Spin
-                        // ticket's position/size to this hero when the topic
-                        // opens (and reverse on back).
-                        sharedTransitionScope.run {
-                            Modifier.sharedElement(
-                                revealSharedState,
-                                animatedVisibilityScope,
-                                boundsTransform = RevealBoundsTransform
-                            )
-                        }
-                    )
             ) {
-            // (The shared face is a pure gradient — the watermark glyph
-            // below rides its OWN "reveal-glyph" shared element: same 150dp
-            // on both sides, so it translates with the card instead of
-            // scaling non-uniformly inside the morphing bounds.)
-            } // inner background Box — the shared element (pure gradient)
-
             // ── Watermark glyph (category icon) — matches the Spin ─────
             //    ticket's exact glyph: same size (150dp), same position
-            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha).
-            //    v8.4 — back inside the morph via its own "reveal-glyph"
-            //    shared element: because it is the same 150dp on both
-            //    sides, it rides the card as a pure translation (no
-            //    non-uniform squash), so the hero's focal mark arrives WITH
-            //    the expanding card — the card reads as the same surface
-            //    throughout, not an empty gradient placeholder.
+            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha), so
+            //    the morph reads as the same card expanding.
             CurioIcon(
                 name = cat.iconGlyph,
                 contentDescription = null,
@@ -1149,51 +1123,34 @@ private fun HeroCard(
                 size = 150.dp,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .then(
-                        sharedTransitionScope.run {
-                            Modifier.sharedElement(
-                                glyphSharedState,
-                                animatedVisibilityScope,
-                                boundsTransform = RevealBoundsTransform
-                            )
-                        }
-                    )
                     .padding(end = 6.dp)
             )
-
-            // ── Hero text pills (NOT shared) — bloom in AFTER the ~320ms
-            //    bounds morph settles instead of squashing inside it; on
-            //    back they fade out with the page, never overlapping the
-            //    ticket's own text.
             // ── Action badge (verb + duration) — white pill on gradient ───
             if (action != null) {
-                HeroPillEntrance(
-                    delayMillis = 300,
-                    modifier = Modifier.align(Alignment.TopStart)
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = ink.copy(alpha = 0.18f),
+                    shadowElevation = 0.dp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(16.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = ink.copy(alpha = 0.18f),
-                        shadowElevation = 0.dp,
-                        modifier = Modifier.padding(16.dp)
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(ink)
-                            )
-                            Text(
-                                text = "${action.verb} for ~${action.durationMinutes} min",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ink
-                            )
-                        }
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(ink)
+                        )
+                        Text(
+                            text = "${action.verb} for ~${action.durationMinutes} min",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ink
+                        )
                     }
                 }
             }
@@ -1211,59 +1168,54 @@ private fun HeroCard(
                 else -> null
             }
             if (byline != null && bylineLabel != null) {
-                HeroPillEntrance(
-                    delayMillis = 340,
-                    modifier = Modifier.align(Alignment.BottomStart)
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = ink.copy(alpha = 0.18f),
+                    shadowElevation = 0.dp,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = ink.copy(alpha = 0.18f),
-                        shadowElevation = 0.dp,
-                        modifier = Modifier.padding(16.dp)
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            CurioIcon(
-                                name = CurioIcons.Person,
-                                contentDescription = null,
-                                tint = ink,
-                                size = 14.dp
-                            )
-                            Text(
-                                text = "$bylineLabel · $byline",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ink,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        CurioIcon(
+                            name = CurioIcons.Person,
+                            contentDescription = null,
+                            tint = ink,
+                            size = 14.dp
+                        )
+                        Text(
+                            text = "$bylineLabel · $byline",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ink,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
             // ── Subtype pill ────────────────────
             if (resolved?.subtype?.isNotBlank() == true) {
-                HeroPillEntrance(
-                    delayMillis = 380,
-                    modifier = Modifier.align(Alignment.BottomEnd)
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = ink.copy(alpha = 0.18f),
+                    shadowElevation = 0.dp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = ink.copy(alpha = 0.18f),
-                        shadowElevation = 0.dp,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = resolved.subtype,
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ink,
-                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                        )
-                    }
+                    Text(
+                        text = resolved.subtype,
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = ink,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                    )
                 }
             }
+            } // inner background Box
         } // BoxWithConstraints
     } // HeroCard Surface
 }
@@ -1378,25 +1330,6 @@ private fun ActionPromptCard(
             )
         }
     }
-}
-
-/** Hero text pills bloom in AFTER the shared-element morph settles (v8.3) —
- *  text inside a shared element squashes non-uniformly while the bounds
- *  animate (ticket 286×310 ⇄ hero ~392×260), so the pills render outside the
- *  shared piece and fade in on a delay paced to the ~320ms bounds morph. */
-@Composable
-private fun HeroPillEntrance(
-    delayMillis: Int = 0,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    AnimatedVisibility(
-        visible = true,
-        modifier = modifier,
-        enter = fadeIn(
-            animationSpec = tween(260, delayMillis = delayMillis, easing = FastOutSlowInEasing)
-        )
-    ) { content() }
 }
 
 /** One-shot soft entrance for the reveal content below the morphing hero —
