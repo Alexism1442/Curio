@@ -8,6 +8,9 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +21,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -29,12 +35,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -71,6 +80,18 @@ enum class SettingsPage(val title: String, val subtitle: String) {
 
 @Composable
 fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
+    // ── Deep-search highlight (v8.0) — the hub's search hands over the exact
+    // row key when a result points inside this sub-section; scroll to it and
+    // pulse it once on entry.
+    val highlightKey = remember { SettingsHighlightTarget.takeIf { it.page == page }?.rowKey }
+    LaunchedEffect(Unit) {
+        SettingsHighlightTarget.page = null
+        SettingsHighlightTarget.rowKey = null
+    }
+    val listState = rememberLazyListState()
+    LaunchedEffect(highlightKey) {
+        if (highlightKey != null) listState.scrollToItem(1)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,6 +112,7 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
         // scroll UP and disappear behind the ragged tear instead of clipping
         // at a straight line.
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = SettingsHeroTotalHeight + 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -98,11 +120,11 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
             item { CurioSectionLabel(page.title) }
             item {
                 when (page) {
-                    SettingsPage.APPEARANCE -> AppearanceSection()
-                    SettingsPage.NOTIFICATIONS -> NotificationsSection()
-                    SettingsPage.RECORDING -> RecordingSection()
-                    SettingsPage.DATA -> DataSection(navController)
-                    SettingsPage.ABOUT -> AboutSection(navController)
+                    SettingsPage.APPEARANCE -> AppearanceSection(highlightKey)
+                    SettingsPage.NOTIFICATIONS -> NotificationsSection(highlightKey)
+                    SettingsPage.RECORDING -> RecordingSection(highlightKey)
+                    SettingsPage.DATA -> DataSection(navController, highlightKey)
+                    SettingsPage.ABOUT -> AboutSection(navController, highlightKey)
                 }
             }
         }
@@ -113,7 +135,7 @@ fun SettingsSectionScreen(navController: NavController, page: SettingsPage) {
 }
 
 @Composable
-private fun AppearanceSection() {
+private fun AppearanceSection(highlightKey: String? = null) {
     val context = LocalContext.current
     val themeStyles = listOf(AppPreferences.THEME_STYLE_DEFAULT, AppPreferences.THEME_STYLE_AMOLED, AppPreferences.THEME_STYLE_MATERIAL)
     val themes = listOf(AppPreferences.THEME_LIGHT, AppPreferences.THEME_DARK, AppPreferences.THEME_SYSTEM)
@@ -123,34 +145,46 @@ private fun AppearanceSection() {
     val themeIndex = themes.indexOf(themeMode).coerceAtLeast(0)
     Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.AutoAwesome, "Visual language", "Small choices shape every page")
-        CompactSegmentedRow("Theme style", listOf("Curio", "AMOLED", "Material"), styleIndex) { index ->
-            AppPreferences.setThemeStyle(context, themeStyles[index])
+        SettingsRowPulse(highlightKey == "appearance-style") {
+            CompactSegmentedRow("Theme style", listOf("Curio", "AMOLED", "Material"), styleIndex) { index ->
+                AppPreferences.setThemeStyle(context, themeStyles[index])
+            }
         }
         CurioSettingsDivider()
-        CompactSegmentedRow("Theme", listOf("Light", "Dark", "System"), themeIndex, enabled = themeStyle != AppPreferences.THEME_STYLE_AMOLED) { index ->
-            AppPreferences.setThemeMode(context, themes[index])
+        SettingsRowPulse(highlightKey == "appearance-theme") {
+            CompactSegmentedRow("Theme", listOf("Light", "Dark", "System"), themeIndex, enabled = themeStyle != AppPreferences.THEME_STYLE_AMOLED) { index ->
+                AppPreferences.setThemeMode(context, themes[index])
+            }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Category tint", "Colorful page backgrounds", AppPreferences.tintWashEffective(), themeStyle == AppPreferences.THEME_STYLE_DEFAULT) {
-            AppPreferences.setTintWashEnabled(context, it)
+        SettingsRowPulse(highlightKey == "appearance-tint") {
+            CompactSwitchRow("Category tint", "Colorful page backgrounds", AppPreferences.tintWashEffective(), themeStyle == AppPreferences.THEME_STYLE_DEFAULT) {
+                AppPreferences.setTintWashEnabled(context, it)
+            }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Pastel colors", "Soft category accents and page tints", AppPreferences.pastelColorsState) {
-            AppPreferences.setPastelColorsEnabled(context, it)
+        SettingsRowPulse(highlightKey == "appearance-pastel") {
+            CompactSwitchRow("Pastel colors", "Soft category accents and page tints", AppPreferences.pastelColorsState) {
+                AppPreferences.setPastelColorsEnabled(context, it)
+            }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Entry date & mood", "Date, mood, and attachments on saved entries", AppPreferences.entryMetaEnabledState) {
-            AppPreferences.setEntryMetaEnabled(context, it)
+        SettingsRowPulse(highlightKey == "appearance-entry") {
+            CompactSwitchRow("Entry date & mood", "Date, mood, and attachments on saved entries", AppPreferences.entryMetaEnabledState) {
+                AppPreferences.setEntryMetaEnabled(context, it)
+            }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Guided tour", "Small quest dialogs that walk you through Curio", AppPreferences.guideEnabledState) {
-            AppPreferences.setGuideEnabled(context, it)
+        SettingsRowPulse(highlightKey == "appearance-guide") {
+            CompactSwitchRow("Guided tour", "Small quest dialogs that walk you through Curio", AppPreferences.guideEnabledState) {
+                AppPreferences.setGuideEnabled(context, it)
+            }
         }
     }
 }
 
 @Composable
-private fun NotificationsSection() {
+private fun NotificationsSection(highlightKey: String? = null) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var reminderHour by remember { mutableStateOf(AppPreferences.getReminderHour(context)) }
@@ -192,8 +226,10 @@ private fun NotificationsSection() {
     }
     Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Notifications, "Notifications", "Quiet nudges, when you want them")
-        CompactSwitchRow("Daily shuffle reminder", if (AppPreferences.reminderEnabledState) "Every day at ${formatHour(AppPreferences.getReminderHour(context))}" else "Off", AppPreferences.reminderEnabledState) { enabled ->
-            if (enabled) enableNotifications { AppPreferences.setReminderEnabled(context, true) } else AppPreferences.setReminderEnabled(context, false)
+        SettingsRowPulse(highlightKey == "notif-reminder") {
+            CompactSwitchRow("Daily shuffle reminder", if (AppPreferences.reminderEnabledState) "Every day at ${formatHour(AppPreferences.getReminderHour(context))}" else "Off", AppPreferences.reminderEnabledState) { enabled ->
+                if (enabled) enableNotifications { AppPreferences.setReminderEnabled(context, true) } else AppPreferences.setReminderEnabled(context, false)
+            }
         }
         if (AppPreferences.reminderEnabledState) {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 6.dp)) {
@@ -219,52 +255,62 @@ private fun NotificationsSection() {
             }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Explore sessions", "Timer, reminder, and done prompt", exploreSessionsEnabled) {
-            exploreSessionsEnabled = it
-            AppPreferences.setExploreSessionsEnabled(context, it)
-        }
-        CurioSettingsDivider()
-        CompactSwitchRow("Live explore notification", "Ongoing timer with pause and stop", liveNotificationsEnabled) { enabled ->
-            if (enabled) enableNotifications {
-                liveNotificationsEnabled = true
-                AppPreferences.setLiveNotificationsEnabled(context, true)
-            } else {
-                liveNotificationsEnabled = false
-                AppPreferences.setLiveNotificationsEnabled(context, false)
+        SettingsRowPulse(highlightKey == "notif-sessions") {
+            CompactSwitchRow("Explore sessions", "Timer, reminder, and done prompt", exploreSessionsEnabled) {
+                exploreSessionsEnabled = it
+                AppPreferences.setExploreSessionsEnabled(context, it)
             }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Floating explore bubble", "Timer bubble over other apps", overlayEnabled) { enabled ->
-            if (enabled && !AppPreferences.overlayActuallyUsable(context)) {
-                runCatching {
-                    overlaySettingsLauncher.launch(
-                        Intent(
-                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                            Uri.parse("package:${context.packageName}")
-                        )
-                    )
+        SettingsRowPulse(highlightKey == "notif-live") {
+            CompactSwitchRow("Live explore notification", "Ongoing timer with pause and stop", liveNotificationsEnabled) { enabled ->
+                if (enabled) enableNotifications {
+                    liveNotificationsEnabled = true
+                    AppPreferences.setLiveNotificationsEnabled(context, true)
+                } else {
+                    liveNotificationsEnabled = false
+                    AppPreferences.setLiveNotificationsEnabled(context, false)
                 }
-            } else {
-                overlayEnabled = enabled
-                AppPreferences.setOverlayBubbleEnabled(context, enabled)
+            }
+        }
+        CurioSettingsDivider()
+        SettingsRowPulse(highlightKey == "notif-bubble") {
+            CompactSwitchRow("Floating explore bubble", "Timer bubble over other apps", overlayEnabled) { enabled ->
+                if (enabled && !AppPreferences.overlayActuallyUsable(context)) {
+                    runCatching {
+                        overlaySettingsLauncher.launch(
+                            Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:${context.packageName}")
+                            )
+                        )
+                    }
+                } else {
+                    overlayEnabled = enabled
+                    AppPreferences.setOverlayBubbleEnabled(context, enabled)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RecordingSection() {
+private fun RecordingSection(highlightKey: String? = null) {
     val context = LocalContext.current
     var quality by remember { mutableStateOf(AudioQualitySettings.get(context)) }
     var showQualityDialog by remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Mic, "Recording", "Voice notes that sound like you")
-        CurioSettingsRow(CurioIcons.Mic, "Audio quality", quality.label) {
-            showQualityDialog = true
+        SettingsRowPulse(highlightKey == "recording-quality") {
+            CurioSettingsRow(CurioIcons.Mic, "Audio quality", quality.label) {
+                showQualityDialog = true
+            }
         }
         CurioSettingsDivider()
-        CompactSwitchRow("Voice-to-text", "Dictation buttons on voice-note fields", AppPreferences.voiceToTextEnabledState) {
-            AppPreferences.setVoiceToTextEnabled(context, it)
+        SettingsRowPulse(highlightKey == "recording-voice") {
+            CompactSwitchRow("Voice-to-text", "Dictation buttons on voice-note fields", AppPreferences.voiceToTextEnabledState) {
+                AppPreferences.setVoiceToTextEnabled(context, it)
+            }
         }
     }
     if (showQualityDialog) {
@@ -281,37 +327,47 @@ private fun RecordingSection() {
 }
 
 @Composable
-private fun DataSection(navController: NavController) {
+private fun DataSection(navController: NavController, highlightKey: String? = null) {
     Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Backup, "Backup & restore", "Your captures stay yours")
-        CurioSettingsRow(CurioIcons.Backup, "Open backup tools", "Export, restore, or import FieldMind data") {
-            navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
+        SettingsRowPulse(highlightKey == "data-tools") {
+            CurioSettingsRow(CurioIcons.Backup, "Open backup tools", "Export, restore, or import FieldMind data") {
+                navController.navigate(CurioRoutes.SETTINGS_DATA) { launchSingleTop = true }
+            }
         }
         CurioSettingsDivider()
-        CurioSettingsInfoRow(CurioIcons.History, "Backup workspace", "Full backup tools remain in the data workspace")
+        SettingsRowPulse(highlightKey == "data-workspace") {
+            CurioSettingsInfoRow(CurioIcons.History, "Backup workspace", "Full backup tools remain in the data workspace")
+        }
     }
 }
 
 @Composable
-private fun AboutSection(navController: NavController) {
+private fun AboutSection(navController: NavController, highlightKey: String? = null) {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         CurioCardHeader(CurioIcons.Info, "About Curio", "Help and app details")
-        CurioSettingsRow(CurioIcons.Replay, "Replay intro", "See the welcome screens again") {
-            CurioOnboardingState.reset(context)
-            navController.navigate(CurioRoutes.ONBOARDING) { launchSingleTop = true }
+        SettingsRowPulse(highlightKey == "about-intro") {
+            CurioSettingsRow(CurioIcons.Replay, "Replay intro", "See the welcome screens again") {
+                CurioOnboardingState.reset(context)
+                navController.navigate(CurioRoutes.ONBOARDING) { launchSingleTop = true }
+            }
         }
         CurioSettingsDivider()
         // Version straight from the build — VERSION_NAME is the release tag
         // this APK was built from (e.g. "1.0.0"), VERSION_CODE is the
         // per-build number, so the readout is always accurate.
-        CurioSettingsInfoRow(
-            CurioIcons.Info,
-            "Version",
-            "${com.curio.app.BuildConfig.VERSION_NAME} · build ${com.curio.app.BuildConfig.VERSION_CODE}"
-        )
+        SettingsRowPulse(highlightKey == "about-version") {
+            CurioSettingsInfoRow(
+                CurioIcons.Info,
+                "Version",
+                "${com.curio.app.BuildConfig.VERSION_NAME} · build ${com.curio.app.BuildConfig.VERSION_CODE}"
+            )
+        }
         CurioSettingsDivider()
-        CurioUpdateCheckRow()
+        SettingsRowPulse(highlightKey == "about-update") {
+            CurioUpdateCheckRow()
+        }
     }
 }
 
@@ -340,5 +396,35 @@ private fun CompactSwitchRow(title: String, subtitle: String, checked: Boolean, 
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Switch(checked = checked, enabled = enabled, onCheckedChange = onCheckedChange)
+    }
+}
+
+/**
+ * Deep-search highlight pulse — wraps the row the hub's search jumped to.
+ * On entry the matched row flashes a soft primary wash that fades out over
+ * ~1.4s, so the user sees exactly which setting the search found.
+ */
+@Composable
+private fun SettingsRowPulse(
+    active: Boolean,
+    content: @Composable () -> Unit
+) {
+    val pulseAlpha = remember { Animatable(0f) }
+    LaunchedEffect(active) {
+        if (active) {
+            pulseAlpha.snapTo(0.55f)
+            pulseAlpha.animateTo(0f, tween(1400, easing = FastOutSlowInEasing))
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(
+                MaterialTheme.colorScheme.primary.copy(alpha = pulseAlpha.value * 0.35f)
+            )
+            .padding(horizontal = 2.dp)
+    ) {
+        content()
     }
 }

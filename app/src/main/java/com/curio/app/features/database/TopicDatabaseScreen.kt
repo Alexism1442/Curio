@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,12 +23,15 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -77,7 +79,15 @@ fun TopicDatabaseScreen(navController: NavController) {
     // resetting to a fresh blank list every time you come back.
     var query by rememberSaveable { mutableStateOf("") }
     var selectedCat by rememberSaveable { mutableStateOf<CategoryId?>(null) }
-    val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState(0, 0) }
+    // v7.98 — the scroll position is saved EXPLICITLY (index + offset), not
+    // via LazyListState.Saver: the catalog loads asynchronously, so on return
+    // the list first composes with zero rows and a restored LazyListState gets
+    // clamped to 0 before the topics arrive — scrolling back to the top.
+    // Saving the raw numbers and scrolling again once rows exist restores the
+    // exact spot reliably.
+    var savedScrollIndex by rememberSaveable { mutableIntStateOf(0) }
+    var savedScrollOffset by rememberSaveable { mutableIntStateOf(0) }
+    val listState = rememberLazyListState()
     // Reactive done-set — reading the value registers the dependency so the
     // list refreshes when the user marks a topic done (e.g. after returning
     // from a Topic Reveal) or a session records an exploration.
@@ -135,6 +145,29 @@ fun TopicDatabaseScreen(navController: NavController) {
                     )
                 }
             }
+        }
+    }
+
+    // ── Scroll restore + persist ─────────────────────────────────────
+    // The catalog loads asynchronously (produceState), so the first frames
+    // after returning compose an EMPTY list. Restoring a LazyListState there
+    // clamps to 0 before the topics arrive. Instead: remember the exact
+    // index+offset, scroll back once rows actually exist, and keep the
+    // numbers fresh while the user scrolls (only when rows exist, so the
+    // empty flash can't overwrite them).
+    val hasRows = rows.isNotEmpty()
+    LaunchedEffect(hasRows) {
+        if (hasRows && (savedScrollIndex > 0 || savedScrollOffset > 0)) {
+            listState.scrollToItem(savedScrollIndex, savedScrollOffset)
+        }
+    }
+    LaunchedEffect(listState, hasRows) {
+        if (!hasRows) return@LaunchedEffect
+        snapshotFlow {
+            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+        }.collect { (index, offset) ->
+            savedScrollIndex = index
+            savedScrollOffset = offset
         }
     }
 

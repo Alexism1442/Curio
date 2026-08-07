@@ -333,6 +333,14 @@ fun SettingsHubScreen(navController: NavController) {
                                     results.forEachIndexed { index, result ->
                                         if (index > 0) CurioSettingsDivider()
                                         CurioSettingsRow(result.row.icon, result.row.title, result.row.subtitle) {
+                                            val deep = result.deep
+                                            if (deep != null) {
+                                                // Deep result → hand the exact row
+                                                // key to the sub-section screen so
+                                                // it scrolls to + pulses that row.
+                                                SettingsHighlightTarget.page = deep.page
+                                                SettingsHighlightTarget.rowKey = deep.rowKey
+                                            }
                                             navController.navigate(result.row.route) { launchSingleTop = true }
                                         }
                                     }
@@ -451,22 +459,78 @@ private val SettingsSections = listOf(
     )
 )
 
+/** Out-of-band handoff from the hub's search: when a result points INSIDE a
+ *  settings sub-section (Appearance / Notifications / …), the section screen
+ *  reads [page]/[rowKey] on entry and scrolls to + pulses that row. Cleared
+ *  once consumed, mirroring [LightboxTarget]. */
+object SettingsHighlightTarget {
+    var page: SettingsPage? = null
+    var rowKey: String? = null
+}
+
+/** One searchable row that lives INSIDE a settings sub-section screen. */
+private data class SettingsDeepRow(
+    val icon: String,
+    val title: String,
+    val subtitle: String,
+    /** Route to open (the sub-section's own route). */
+    val route: String,
+    /** Sub-section for the highlight pulse; null when no highlight exists. */
+    val page: SettingsPage? = null,
+    /** Stable key identifying the exact row inside [page]. */
+    val rowKey: String? = null
+)
+
+/**
+ * Deep search index — every interactive row inside the sub-section screens
+ * (the settings you reach by tapping Appearance / Notifications / Recording
+ * / Backup & restore / About). The hub search matches these too, so typing
+ * "reminder" finds the daily shuffle reminder, "voice" finds dictation, etc.
+ */
+private val SettingsDeepIndex: List<SettingsDeepRow> = listOf(
+    // ── Appearance ───────────────────────────────────────────────────
+    SettingsDeepRow(CurioIcons.AutoAwesome, "Theme style", "Curio, AMOLED, or Material", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-style"),
+    SettingsDeepRow(CurioIcons.DarkMode, "Theme", "Light, dark, or system", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-theme"),
+    SettingsDeepRow(CurioIcons.Palette, "Category tint", "Colorful page backgrounds", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-tint"),
+    SettingsDeepRow(CurioIcons.AutoAwesome, "Pastel colors", "Soft category accents and page tints", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-pastel"),
+    SettingsDeepRow(CurioIcons.Schedule, "Entry date & mood", "Date, mood, and attachments on saved entries", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-entry"),
+    SettingsDeepRow(CurioIcons.Flag, "Guided tour", "Small quest dialogs that walk you through Curio", CurioRoutes.SETTINGS_APPEARANCE, SettingsPage.APPEARANCE, "appearance-guide"),
+    // ── Notifications ────────────────────────────────────────────────
+    SettingsDeepRow(CurioIcons.Notifications, "Daily shuffle reminder", "A daily nudge to spin the deck", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-reminder"),
+    SettingsDeepRow(CurioIcons.Timer, "Explore sessions", "Timer, reminder, and done prompt", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-sessions"),
+    SettingsDeepRow(CurioIcons.Notifications, "Live explore notification", "Ongoing timer with pause and stop", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-live"),
+    SettingsDeepRow(CurioIcons.BubbleChart, "Floating explore bubble", "Timer bubble over other apps", CurioRoutes.SETTINGS_NOTIFICATIONS, SettingsPage.NOTIFICATIONS, "notif-bubble"),
+    // ── Recording ────────────────────────────────────────────────────
+    SettingsDeepRow(CurioIcons.Mic, "Audio quality", "Voice-note recording quality", CurioRoutes.SETTINGS_RECORDING, SettingsPage.RECORDING, "recording-quality"),
+    SettingsDeepRow(CurioIcons.Edit, "Voice-to-text", "Dictation buttons on voice-note fields", CurioRoutes.SETTINGS_RECORDING, SettingsPage.RECORDING, "recording-voice"),
+    // ── Backup & restore (own screen — no row pulse) ─────────────────
+    SettingsDeepRow(CurioIcons.Backup, "Open backup tools", "Export, restore, or import FieldMind data", CurioRoutes.SETTINGS_DATA),
+    SettingsDeepRow(CurioIcons.History, "Backup workspace", "Full backup tools remain in the data workspace", CurioRoutes.SETTINGS_DATA),
+    // ── About ────────────────────────────────────────────────────────
+    SettingsDeepRow(CurioIcons.Replay, "Replay intro", "See the welcome screens again", CurioRoutes.SETTINGS_ABOUT, SettingsPage.ABOUT, "about-intro"),
+    SettingsDeepRow(CurioIcons.Info, "Version", "App version and build number", CurioRoutes.SETTINGS_ABOUT, SettingsPage.ABOUT, "about-version"),
+    SettingsDeepRow(CurioIcons.Download, "Check for updates", "See the latest release", CurioRoutes.SETTINGS_ABOUT, SettingsPage.ABOUT, "about-update")
+)
+
 /** One flat search result — the matching row plus its section context so
  *  the result list can show where each hit lives and navigate directly. */
 private data class SettingsSearchResult(
     val sectionLabel: String,
-    val row: SettingsRowEntry
+    val row: SettingsRowEntry,
+    /** Non-null when the result points inside a sub-section screen. */
+    val deep: SettingsDeepRow? = null
 )
 
 /** Collects every row whose title or subtitle matches [needle] (case-
- *  insensitive, live-filtered), grouped by section so results read as
- *  "Personalize → Appearance" instead of floating in a nameless list. */
+ *  insensitive, live-filtered): the hub's own navigation rows PLUS the deep
+ *  index (rows inside the sub-section screens), so searching "reminder" or
+ *  "voice" finds the actual setting, not just the section that holds it. */
 private fun collectSearchResults(
     sections: List<SettingsSectionEntry>,
     needle: String
 ): List<SettingsSearchResult> {
     if (needle.isBlank()) return emptyList()
-    return sections.flatMap { section ->
+    val hub = sections.flatMap { section ->
         section.cards.flatMap { card ->
             card.rows.filter { row ->
                 row.title.contains(needle, ignoreCase = true) ||
@@ -474,6 +538,17 @@ private fun collectSearchResults(
             }.map { row -> SettingsSearchResult(section.label, row) }
         }
     }
+    val deep = SettingsDeepIndex.filter { row ->
+        row.title.contains(needle, ignoreCase = true) ||
+            row.subtitle.contains(needle, ignoreCase = true)
+    }.map { row ->
+        SettingsSearchResult(
+            sectionLabel = row.page?.title ?: "Backup & restore",
+            row = SettingsRowEntry(row.icon, row.title, row.subtitle, row.route),
+            deep = row
+        )
+    }
+    return hub + deep
 }
 
 /** Keeps only sections/cards/rows matching [needle] (case-insensitive). A
