@@ -103,6 +103,10 @@ object AppPreferences {
     // transcription never appears or starts until the user opts in.
     private const val KEY_VOICE_TO_TEXT_ENABLED = "voice_to_text_enabled"
     private const val KEY_GUIDE_ENABLED = "guide_enabled"
+    // v8.2 — the quest tour's one-time offer: once the user has taken OR
+    // declined it ("No, thanks" / dismissing the prompt), the offer never
+    // reappears and the first quest navigates normally.
+    private const val KEY_GUIDE_TOUR_OFFERED = "guide_tour_offered"
     private const val KEY_PINNED_TOPICS = "pinned_topics"   // JSON array of PinnedTopic
     private const val KEY_SAVED_QUOTES = "saved_quotes"      // JSON array of SavedQuote
     private const val KEY_TOPIC_SENTIMENTS = "topic_sentiments"  // JSON object: "CATEGORY:topicId" -> "like"/"dislike"
@@ -282,11 +286,18 @@ object AppPreferences {
         private set
 
     /**
-     * Guided-tour state (v8.0) — when ON, a small dialog points at the next
-     * quest and offers a Go button to jump to its screen. Default ON;
-     * discoverable and toggleable in Settings.
+     * Guided-tour state (v8.0) — the MASTER SWITCH for the one-time quest
+     * tour: when ON (default), the Quests page offers the tap-along tour the
+     * first time the user taps the first quest (see [isGuideTourOffered]).
+     * Toggleable in Settings; the tour is never auto-shown from other
+     * screens (v8.2).
      */
     var guideEnabledState by mutableStateOf(true)
+        private set
+
+    // v8.2 — whether the one-time tour offer has been shown (taken or
+    // declined). Suppresses the offer on the Quests page so it never nags.
+    var guideTourOfferedState by mutableStateOf(false)
         private set
 
     /**
@@ -359,6 +370,7 @@ object AppPreferences {
         overlayAskDeclinedState = isOverlayAskDeclined(context)
         voiceToTextEnabledState = isVoiceToTextEnabled(context)
         guideEnabledState = isGuideEnabled(context)
+        guideTourOfferedState = isGuideTourOffered(context)
         pinnedTopicsState = getPinnedTopics(context)
         savedQuotesState = getSavedQuotes(context)
         topicSentimentsState = getTopicSentiments(context)
@@ -938,6 +950,19 @@ object AppPreferences {
     fun setGuideEnabled(context: Context, enabled: Boolean) {
         guideEnabledState = enabled
         prefs(context).edit().putBoolean(KEY_GUIDE_ENABLED, enabled).apply()
+    }
+
+    /**
+     * Whether the one-time quest-tour offer has already been shown (taken
+     * or declined). Once true, the Quests page never offers the tour again
+     * and the first quest navigates normally (v8.2).
+     */
+    fun isGuideTourOffered(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_GUIDE_TOUR_OFFERED, false)
+
+    fun setGuideTourOffered(context: Context, offered: Boolean) {
+        guideTourOfferedState = offered
+        prefs(context).edit().putBoolean(KEY_GUIDE_TOUR_OFFERED, offered).apply()
     }
 
     // ── Daily reminder ───────────────────────────────────────────────

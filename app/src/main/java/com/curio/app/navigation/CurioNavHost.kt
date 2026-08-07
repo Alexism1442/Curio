@@ -61,7 +61,6 @@ import androidx.navigation.navArgument
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
 import com.curio.app.data.CurioCategories
-import com.curio.app.data.CurioQuests
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.QuestGuide
@@ -197,28 +196,11 @@ fun CurioNavHost(
     // process (an active session left behind by a killed app).
     var startupPromptDone by rememberSaveable { mutableStateOf(false) }
 
-    // ── Quest guide (v8.1) — a compact IN-APP OVERLAY (not a dialog) points
-    //    at the next quest; tapping Go jumps to its screen. When the current
-    //    quest is the very first one ("First Spin"), Go launches the full
-    //    auto-navigating guided tour instead, so a new user sees where
-    //    everything lives. Shows once per quest (dismissed via Go / the X),
-    //    re-arms when the current quest advances, respects the Settings
-    //    toggle, and never competes with an active tour.
-    val guideQuest = CurioQuests.currentQuest()
-    var guideDismissedId by rememberSaveable { mutableStateOf<String?>(null) }
-    var showGuideToast by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(routePrefix, guideQuest?.id, AppPreferences.guideEnabledState, QuestGuide.active) {
-        val onStableTab = routePrefix != null && routePrefix in CurioRoutes.bottomNavRoutePrefixes
-        if (onStableTab && AppPreferences.guideEnabledState && !QuestGuide.active &&
-            guideQuest != null && guideQuest.navRoute != null &&
-            guideQuest.id != guideDismissedId
-        ) {
-            delay(1200)
-            showGuideToast = true
-        } else {
-            showGuideToast = false
-        }
-    }
+    // ── Quest tour (v8.1/v8.2) — the tour overlay + auto-navigating runner
+    //    below. The tour itself is STARTED only from the Quests page (the
+    //    one-time offer on the first quest — see QuestsScreen); the old
+    //    auto-showing "next quest" guide pill was removed in v8.2 so nothing
+    //    pops up from other screens.
     // ── Quest tour runner — auto-navigate to the current step's screen so
     //    every overlay tap advances the walkthrough to the next place.
     LaunchedEffect(QuestGuide.active, QuestGuide.index, routePrefix) {
@@ -714,35 +696,11 @@ fun CurioNavHost(
             }
         }
         }
-        // ── Quest guide + tour overlays (v8.1) — a compact IN-APP floating
-        //    pill near the bottom of the content column (above the bottom
-        //    bar / rail), NOT a dialog. The guide overlay points at the next
-        //    quest; the tour overlay walks a new user through every screen.
-        if (showGuideToast && guideQuest != null && !QuestGuide.active) {
-            QuestGuideToast(
-                title = "Next quest: ${guideQuest.title}",
-                message = guideQuest.description,
-                footer = "+${guideQuest.xpReward} XP",
-                actionLabel = "Go",
-                onClick = {
-                    showGuideToast = false
-                    guideDismissedId = guideQuest.id
-                    if (guideQuest.id == QuestGuide.firstQuestId) {
-                        // The very first quest launches the full walkthrough.
-                        QuestGuide.start()
-                    } else {
-                        guideQuest.navRoute?.let { navController.navigateToQuestRoute(it) }
-                    }
-                },
-                onClose = {
-                    showGuideToast = false
-                    guideDismissedId = guideQuest.id
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-            )
-        }
+        // ── Quest tour overlay (v8.1/v8.2) — a compact IN-APP floating pill
+        //    near the bottom of the content column (above the bottom bar /
+        //    rail), NOT a dialog. Rendered only while a tour is active — the
+        //    tour itself is started from the Quests page (v8.2), never
+        //    auto-shown.
         if (QuestGuide.active) {
             QuestGuide.current?.let { step ->
                 QuestGuideToast(
@@ -763,9 +721,11 @@ fun CurioNavHost(
     }
     }
 
-    // (The v8.0 full-dialog guide was replaced in v8.1 by the compact IN-APP
-    // guide overlay + quest tour — see the QuestGuide state at the top of
-    // this composable and the overlays inside the content column above.)
+    // (The v8.0 full-dialog guide and the v8.1 auto-showing "next quest"
+    // overlay were replaced in v8.2: the tour is offered ONCE on the Quests
+    // page when the user taps the first quest and accepts the prompt — see
+    // QuestsScreen. The active-tour overlay is rendered above; the
+    // QuestGuide state lives at the top of this composable.)
 
     // ── Done-exploring prompt (app return while a session is active) ────
     val activeSession = ExploreSessionStore.activeSessionState

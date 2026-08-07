@@ -1,23 +1,29 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 11th): Music topics open YouTube — DONE (pushed)
+## Request (2026-08-07, 12th): Quest guide offer + quest screen cleanup — IN PROGRESS
 
-**User request:** "for albums it still says we will open google search soo fix tht and also opeen youtube for music artists too."
+**User request:** "add a 1st no option for the turtorial guide and keep it only when the user goes to the quest screen and taps and also hide the finished quests and compact the quest screen"
 
 ### Analysis
-- `data/ExploreSearch.kt` `buildExploreSearchUrl` already opened YouTube for **albums** (`CategoryId.ALBUMS`); **artists** still built a Google URL.
-- The only user-visible "Google search" copy was the hardcoded explore-confirmation dialog in `features/reveal/TopicRevealScreen.kt` (line ~901): "We'll open a Google search to get you started." — wrong for music. Remaining mentions are code comments (reveal screen ×2, HomeScreen resume handler, ExploreSearch KDoc).
-- Artist topics carry `subtype "Artist"` (354/354 entries) — the existing query builder (name + year + subtype) works cleanly for YouTube, no artist extraction needed (the topic IS the artist).
+- The quest tour had TWO entry points: (1) a NavHost auto-showing "Next quest" guide pill that popped up on ANY stable tab after 1.2s (with a Go button that launched the full tour when the current quest was the first one), and (2) tapping the first quest on the Quests page — which launched the tour IMMEDIATELY with no consent prompt.
+- User wants: a first-time "No" option, the tour ONLY from a Quests-page tap, finished quests hidden, and a denser quest screen.
+
+### Design
+- **One-time offer (v8.2)** — new persisted `guide_tour_offered` flag (AppPreferences). Tapping the first quest on the Quests page opens a compact AlertDialog ("Take a quick tour?" / "No, thanks"). "No, thanks" OR dismissing marks the offer as seen → the first quest navigates normally from then on, never re-asking. The existing "Guided tour" Settings toggle becomes the master switch (offer only when ON; copy updated).
+- **Quests-page-only trigger** — the NavHost auto-showing guide pill (state + LaunchedEffect + overlay block) is REMOVED; the tour can only be started from the Quests screen tap. `CurioQuests` import dropped from the NavHost (now unused).
+- **Hide finished + compact** — `activeChains = Chains.filter { chainProgress < stages.size }` hides fully-completed chains (badge shelf still shows everything); spacing tightened across LevelCard, CurrentQuestCard, ChainCard, stage rows, DailyCard, BadgeShelf and BadgeTile, and the LazyColumn gap 10→8dp.
 
 ### Changes
-- **`data/ExploreSearch.kt`** — YouTube results page now for `ALBUMS || ARTISTS` (Google for everything else); KDoc updated.
-- **`features/reveal/TopicRevealScreen.kt`** — new `exploreOpenCopy(cat)` helper (albums/artists → "We'll open YouTube to get you started.", else Google); dialog text now uses it; the two code comments corrected.
-- **`features/home/HomeScreen.kt`** — resume-handler comment corrected (comment-only, rides along with the behavior change).
-- **`fastlane/.../20260810.txt`** — changelog bullet added.
-- **`Prompt.md`** — this log.
+- `data/AppPreferences.kt` — KEY_GUIDE_TOUR_OFFERED + `guideTourOfferedState` (seeded in initThemeMode) + `isGuideTourOffered`/`setGuideTourOffered`; guideEnabledState doc updated.
+- `navigation/CurioNavHost.kt` — removed auto-guide state/effect/overlay + unused import; comments updated.
+- `features/quests/QuestsScreen.kt` — offer dialog + `offerTour` gate on the first quest; `navigateFromQuest` removed; CurrentQuestCard takes `showTourCta`; finished chains filtered; compaction.
+- `data/QuestGuide.kt` — KDoc updated (offered once, never auto-shown).
+- `features/settings/SettingsSectionScreen.kt` — "Guided tour" toggle subtitle updated.
+- `fastlane/.../20260810.txt` — changelog bullet.
+- `Prompt.md` — this log.
 
 ### Validation
-No Gradle in this env (per AGENTS.md) — static checks: no other user-visible "Google search" copy remains (only the intentional Google-branch strings), `git diff --check` clean, brace balance re-checked in the reveal screen. Code review + push pending.
+No Gradle in this env (per AGENTS.md) — static checks: brace balance, unused-ref grep, `git diff --check`, code review. Commit + push pending.
 
 ### Follow-ups
-- None. Reminder/notification copy had no Google references.
+- None.

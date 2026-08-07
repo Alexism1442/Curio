@@ -183,7 +183,7 @@ private fun AppearanceSection(highlightKey: String? = null) {
         }
         CurioSettingsDivider()
         SettingsRowPulse(highlightKey == "appearance-guide") {
-            CompactSwitchRow("Guided tour", "Small quest dialogs that walk you through Curio", AppPreferences.guideEnabledState) {
+            CompactSwitchRow("Guided tour", "One-time tap-along tour, offered on the Quests page", AppPreferences.guideEnabledState) {
                 AppPreferences.setGuideEnabled(context, it)
             }
         }

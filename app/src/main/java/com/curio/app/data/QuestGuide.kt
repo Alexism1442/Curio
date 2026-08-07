@@ -8,8 +8,9 @@ import androidx.compose.runtime.setValue
 /**
  * Curio's quest guided tour (v8.1) — a small, tap-along walkthrough that
  * auto-navigates through the app's screens so a new user sees where
- * everything lives. Started by tapping the FIRST quest ("First Spin") on the
- * Quests page, or the guide overlay's Go button while that quest is current.
+ * everything lives. Offered ONCE from the Quests page when the user taps the
+ * first quest ("First Spin") and accepts the one-time prompt (v8.2) — it is
+ * never auto-shown from other screens.
  *
  * Presentation is an IN-APP OVERLAY (not a system Toast, not a dialog): a
  * compact floating pill at the bottom of the screen with a title, a one-line
