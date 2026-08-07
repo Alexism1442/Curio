@@ -1,5 +1,9 @@
 package com.curio.app.data
 
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+
 /**
  * The unified Curio topic schema.
  *
@@ -113,10 +117,16 @@ data class CurioEntry(
     val bodyPreview: String get() = captureData.toPreview()
     /** Full multi-line content for EntryDetail. */
     val bodyContent: String get() = captureData.toFullContent()
-    /** Days since capture (for display). */
+    /**
+     * Calendar days since capture in the device's local timezone (for display).
+     * Comparing calendar dates instead of elapsed 24-hour blocks keeps a
+     * capture from yesterday labeled "Yesterday" immediately after midnight.
+     */
     val capturedAtDaysAgo: Int get() {
-        val diff = System.currentTimeMillis() - capturedAtMillis
-        return (diff / (1000 * 60 * 60 * 24)).toInt().coerceAtLeast(0)
+        val zone = ZoneId.systemDefault()
+        val capturedDate = Instant.ofEpochMilli(capturedAtMillis).atZone(zone).toLocalDate()
+        val today = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(zone).toLocalDate()
+        return ChronoUnit.DAYS.between(capturedDate, today).toInt().coerceAtLeast(0)
     }
 
     /** True when this entry was explicitly restored from FieldMind. */

@@ -1,19 +1,19 @@
-# Prompt — Profile level and progress rearrangement
+# Prompt — Cabinet dates and Entry Detail tear layout
 
 ## Request
-On Profile, replace the hero stats-grid Streak slot with Level. Show the level title (for example, "Synthesizer") in a pill beside the streak pill and Edit profile. Remove the standalone bottom level card, while keeping XP/progress with quests and achievements. The level title pill should show only the title because the numeric level is already visible in the hero stats grid. Do not push; commit locally only.
+Fix Cabinet relative dates so an entry from Aug 5 is 2 days ago and an entry from Aug 6 is yesterday when today is Aug 7. On Entry Detail, narrow the white tear and place the topic category text below the tear in a fixed, non-scrolling layer.
 
 ## Implementation
-- Profile hero stats now show `Level · Saved · Lanes`; the numeric level remains in the Level stat.
-- The hero action row now contains Edit profile, the displayed streak, and a title-only level pill (`CurioQuests.levelTitle(level)`). The action row uses `FlowRow` for narrow screens and uses the promo display streak consistently.
-- Replaced the standalone Profile level card with a compact XP progress card.
-- Added a compact achievements preview with unlocked count, progress, and up to three earned badge chips; the full achievement shelf remains on the Quests page.
-- Existing Quests navigation, lanes, Settings, and Support behavior remain unchanged.
+- `CurioEntry.capturedAtDaysAgo` now compares local calendar dates instead of elapsed 24-hour blocks, so midnight transitions label entries correctly while preserving stored timestamps.
+- Entry Detail's visible white under-sheet was reduced to a narrow 16dp lip with a smaller 3dp offset / 7dp baseline treatment.
+- Extracted the category identity row into `EntryDetailCategoryLabel`, positioned outside the vertical scroll immediately below the hero and white lip.
+- Reserved the category row's footprint inside the scrolling content so the Quick fact and capture body begin below it without overlap.
+- Removed the old category row from the scrolling metadata block; Quick fact and tags remain scrollable.
 
 ## Validation
 - `git diff --check` passed.
-- Comment-aware Kotlin structural checks passed for ProfileScreen.kt.
-- Confirmed the title-only level pill and numeric level stat.
+- Comment-aware Kotlin structure checks passed for both changed Kotlin files.
+- Targeted assertions passed for local calendar date comparison, title-row extraction, removed `EntryDetailMetaLift`, and narrow tear parameters.
 - Code review found no blockers.
 - No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally.
-- No release-note update was made because this change is intentionally being held for the user's every-third-commit push cadence.
+- Local commit only; no push, following the user's every-third-commit workflow.

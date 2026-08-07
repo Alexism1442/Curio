@@ -360,7 +360,7 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(EntryDetailHeroHeight + EntryDetailSheetExtent - EntryDetailMetaLift)
+                .height(EntryDetailHeroHeight + EntryDetailSheetExtent)
         ) {
             // ── White under-sheet — ONE SOLID white sheet layered BEHIND
             // the hero's torn bottom edge. The tear lives ONLY on the hero
@@ -381,20 +381,19 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
             val sheetShape = remember(tearSeed) {
                 SoftTornSheetShape(
                     tearSeed,
-                    lip = 6.dp,
-                    baseline = 12.dp,
+                    lip = 3.dp,
+                    baseline = 7.dp,
                     detail = true
                 )
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(24.dp)
-                    // Keep only a narrow paper overlap below the seam. The
-                    // sheet still starts behind the hero so every up-bite
-                    // reads white, but its lower lip no longer becomes a
-                    // broad second card.
-                    .offset(y = EntryDetailHeroHeight - 10.dp)
+                    .height(16.dp)
+                    // Keep the paper lip intentionally narrow: the category
+                    // label now begins below this seam instead of being tucked
+                    // into the tear.
+                    .offset(y = EntryDetailHeroHeight - 5.dp)
                     .clip(sheetShape)
                     .background(heroSheetColor)
             )
@@ -580,87 +579,20 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
 
         }
 
-        // ── Topic meta — the title lives INSIDE the hero above, so this
-        // block keeps the category label + quick fact + tags. The captured
-        // date/time now lives on the hero's Date segment (v7.39).
-        // v7.39 — the category label rides at the torn seam with a 6dp top
-        // pad. The hero container reclaims the old 32dp tuck in measured
-        // layout, so the label still meets the wave without leaving a blank
-        // band below it. The category is the PRIMARY line (titleLarge
-        // ExtraBold), the Quick fact sits directly under it as SECONDARY
-        // (smaller), then tags. Gutters stay aligned to the format body's
-        // 20dp side padding.
+        // The category label is a fixed layer below the tear. Reserve its
+        // footprint in the scroll content so the quick fact and format body
+        // start below it instead of sliding underneath on the first frame.
+        Spacer(Modifier.height(EntryDetailCategoryBlockHeight))
+
+        // ── Topic meta — the fixed category row is above this scrolling
+        // portion; the quick fact and tags remain part of the entry content.
         Column(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 4.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // v7.38 — the category is plain TEXT, not a pill: glyph + name in
-            // the category's theme-aware ink, LARGE (titleLarge ExtraBold + a
-            // 22dp glyph) so it clearly outranks the quick fact below and its
-            // tip visibly tucks behind the tear. The entry title and the
-            // Legacy marker stay as smaller text on the same line. The
-            // category and the quick fact are BOTH static (no entrance
-            // animation — a scale-in pop would fight the tucked-behind-the-
-            // tear look); only the captured-at + tags keep the entrance.
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                CurioIcon(
-                    name = cat.iconGlyph,
-                    contentDescription = null,
-                    tint = cat.categoryInk(),
-                    size = 22.dp
-                )
-                Text(
-                    text = cat.displayName,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
-                    color = cat.categoryInk()
-                )
-                if (resolvedEntry.title != null) {
-                    Text(
-                        text = resolvedEntry.title,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .weight(1f, fill = false)
-                            .padding(start = 4.dp)
-                    )
-                }
-                // Legacy marker — entries imported from a FieldMind
-                // archive wear this so they stay recognizable.
-                if (resolvedEntry.isLegacy) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.padding(start = 2.dp)
-                    ) {
-                        CurioIcon(
-                            name = CurioIcons.History,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            size = 14.dp
-                        )
-                        Text(
-                            text = "Legacy",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
             // ── Quick fact (v7.38) — the topic's teaser directly under the
-            // category at the tear: backgroundless (the page wash IS the
-            // background — no card fill or border), collapsed to 2 lines with
-            // a "…more" that expands, and tapping "…less" folds it back to
-            // compact. Deliberately SMALLER than the category (labelMedium
-            // heading + bodyMedium teaser) so the hierarchy reads: category
-            // first, spark second, notes third. NO entrance animation — it
-            // sits static on the page.
+            // fixed category label, backgroundless on the page wash.
             QuickFactCard(
                 cat = cat,
                 teaser = resolvedEntry.topic.teaser
@@ -699,16 +631,27 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
         }
 
         // ── Format body ────────────────────────────────────────────────
-        // v7.39 — 8dp vertical padding: the metadata block's 32dp seam tuck
-        // is reclaimed in the hero container's measured height, so the body
-        // receives no extra blank band; horizontal stays 20dp to match the
-        // metadata column gutter.
+        // The fixed category row has its own reserved footprint above this
+        // scrolling content; horizontal stays 20dp to match the metadata
+        // column gutter.
         Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
             FormatBody(entry = resolvedEntry, category = cat, navController = navController)
         }
 
         Spacer(Modifier.height(32.dp))
         }
+
+        // The category row is deliberately outside the verticalScroll column:
+        // it stays anchored immediately below the narrow paper tear while the
+        // quick fact and capture body scroll beneath it.
+        EntryDetailCategoryLabel(
+            entry = resolvedEntry,
+            category = cat,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(y = EntryDetailHeroHeight + EntryDetailSheetExtent)
+                .zIndex(2f)
+        )
 
         // Keep scroll-linked controls in their own recomposition scope. The
         // detail body contains paper Canvas textures, rich text, and image
@@ -766,18 +709,13 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
  */
 private val EntryDetailHeroHeight = 360.dp
 /** Extra layout space reserved for the white sheet below the clipped hero. */
-private val EntryDetailSheetExtent = 24.dp
-/**
- * The category/Quick Facts block tucks 32dp into the hero seam. Subtracting
- * the tuck from the hero container's measured height removes the same space
- * from the scroll layout instead of merely drawing the body upward with an
- * offset.
- */
-private val EntryDetailMetaLift = 32.dp
+private val EntryDetailSheetExtent = 16.dp
+/** Fixed footprint reserved for the category row below the tear. */
+private val EntryDetailCategoryBlockHeight = 60.dp
 
 /** Hero height + a small gap — the watermark's top clearance on this page
- *  (keeps the backdrop glyphs clear of the thin white under-sheet lip below
- *  the hero's torn edge). */
+ *  (keeps the backdrop glyphs clear of the narrow white under-sheet lip
+ *  below the hero's torn edge). */
 private val EntryDetailHeroClearance = EntryDetailHeroHeight + 30.dp
 
 /** Scroll distance (dp) before the back / more pills fully pin as frosted
@@ -789,6 +727,70 @@ private val DetailStickyBarRestTop = 72.dp
 /** The controls' fully-popped top offset below the status bar — the pills
  *  ride up here as the hero scrolls away (Home pins its pills at 12dp). */
 private val DetailStickyBarPoppedTop = 12.dp
+
+/**
+ * Category identity anchored directly below the detail hero's paper lip.
+ * It is intentionally outside the scrolling column so the category remains
+ * a stable reference while the quick fact and capture content move underneath.
+ */
+@Composable
+private fun EntryDetailCategoryLabel(
+    entry: CurioEntry,
+    category: CurioCategory,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(category.categoryBackgroundWash())
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        CurioIcon(
+            name = category.iconGlyph,
+            contentDescription = null,
+            tint = category.categoryInk(),
+            size = 22.dp
+        )
+        Text(
+            text = category.displayName,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
+            color = category.categoryInk(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        if (entry.title != null) {
+            Text(
+                text = entry.title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        if (entry.isLegacy) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                CurioIcon(
+                    name = CurioIcons.History,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    size = 14.dp
+                )
+                Text(
+                    text = "Legacy",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
 
 /**
  * The hero's frosted-glass language for small controls — bright frosted
