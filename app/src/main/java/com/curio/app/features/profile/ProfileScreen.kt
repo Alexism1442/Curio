@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -103,11 +105,13 @@ import kotlinx.coroutines.launch
  *
  * Personalization lives entirely in Settings (appearance, notifications,
  * categories, backup — plus the Experimental section). Profile opens with
- * the Home quest family's TORN rose banner: solid rose fill with the same
- * bold soft tear and a theme-matched under-sheet, a mirrored watermark *  collage of your last-explored lane's symbols, and the Streak · Saved ·
- * Lanes stats pinned INSIDE the banner above the tear (no standalone strip
- * below). Behind everything sits the shared watermark backdrop (glyphs kept
- * below the banner). Below the hero: the level tracker, your lanes, a
+ * the Home quest family's TORN rose banner: solid rose fill with the same *  bold soft tear and a theme-matched under-sheet, a mirrored watermark
+ *  collage of your last-explored lane's symbols, and the Level · Saved ·
+ *  Lanes stats pinned INSIDE the banner above the tear (no standalone strip
+ *  below). Behind everything sits the shared watermark backdrop (glyphs kept
+ *  below the banner). Below the hero: XP progress, quests, achievements,
+ *  your lanes, a
+
  * single Settings entry row, and the support/diagnostics rows — flat
  * content sitting directly on the watermark background (no card shells).
  */
@@ -138,6 +142,7 @@ private data class ProfileHeroPair(
     val alpha: Float
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
@@ -227,7 +232,7 @@ fun ProfileScreen(navController: NavController) {
 
     // v7.38 — Profile joins the Home torn-banner family: the rose banner
     // tears at the bottom (same bold soft tear + theme under-sheet), wears
-    // the mirrored watermark collage, and the Streak · Saved · Lanes stats
+    // the mirrored watermark collage, and the Level · Saved · Lanes stats
     // now live INSIDE the banner above the tear — the standalone strip
     // below is gone.
     Box(
@@ -257,7 +262,8 @@ fun ProfileScreen(navController: NavController) {
             item {
                 ProfileHero(
                     name = displayName,
-                    streakDays = displayStreak,
+                    displayStreak = displayStreak,
+                    level = level,
                     saved = displaySaved,
                     lanes = if (categoryCounts.isEmpty()) CurioCategories.visible.size else categoryCounts.size,
                     family = heroFamily,
@@ -273,13 +279,10 @@ fun ProfileScreen(navController: NavController) {
             item { Spacer(Modifier.height(6.dp)) }
             item {
                 Box(Modifier.padding(horizontal = 16.dp)) {
-                    // v7.93 — Profile cards sit in BORDERLESS boxes
-                    // (CurioSettingsCard with border = null): the soft
-                    // surface container groups each block without the
-                    // hairline outline the Quests/Support cards wear.
+                    // XP remains visible below the hero, but the level/title
+                    // now belongs to the compact hero pill beside the streak.
                     CurioSettingsCard(border = null) {
-                        LevelCard(
-                            level = level,
+                        XpProgressCard(
                             xp = displayXp,
                             progress = progress.first,
                             nextThreshold = progress.second,
@@ -294,6 +297,13 @@ fun ProfileScreen(navController: NavController) {
                         QuestsNavCard(
                             onOpenQuests = { navController.navigate(CurioRoutes.QUESTS) { launchSingleTop = true } }
                         )
+                    }
+                }
+            }
+            item {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    CurioSettingsCard(border = null) {
+                        AchievementsPreviewCard()
                     }
                 }
             }
@@ -489,17 +499,19 @@ private fun ProfileDialogs(
  * banner tears at the bottom with the SAME bold soft tear + theme under-
  * sheet as Home (so the tear reads as a real paper edge), wears the
  * mirrored watermark collage of your last-explored lane's symbols, and
- *  carries the identity row (avatar, name, tagline) plus the Edit pill. The
- *  Streak · Saved · Lanes stats now live INSIDE the banner, pinned just
+ *  carries the identity row (avatar, name, tagline) plus the Edit, streak,
+ *  and level pills. The Level · Saved · Lanes stats now live INSIDE the banner, pinned just
  *  above the torn seam on a soft rose gradient pane — the exact Home stat
  *  bar. Back + Settings are NOT rendered here anymore: they moved to the
  *  scroll-reactive sticky bar in [ProfileScreen] (Home's pop + color-morph
  *  pills); the hero keeps a spacer so its content clears the pinned pills.
  */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun ProfileHero(
     name: String,
-    streakDays: Int,
+    displayStreak: Int,
+    level: Int,
     saved: Int,
     lanes: Int,
     family: CategoryFamily,
@@ -625,7 +637,7 @@ private fun ProfileHero(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                taglineForStreak(streakDays),
+                                taglineForStreak(displayStreak),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = ink.copy(alpha = 0.78f),
                                 maxLines = 1,
@@ -634,11 +646,15 @@ private fun ProfileHero(
                         }
                     }
                     Spacer(Modifier.height(10.dp))
-                    // ── Edit + streak — glass pills (the quest CTA language) ──
-                    Row(
+                    // ── Edit + streak + level — compact glass pills ───────
+                    // FlowRow keeps all three actions beside one another when
+                    // they fit, while allowing the level pill to wrap cleanly
+                    // on narrow phones instead of clipping the title.
+                    FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        maxItemsInEachRow = 3
                     ) {
                         Surface(
                             onClick = onEditName,
@@ -648,15 +664,15 @@ private fun ProfileHero(
                             shadowElevation = 0.dp
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
                             ) {
                                 CurioIcon(CurioIcons.Edit, null, tint = ink, size = 16.dp)
-                                Text("Edit profile", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = ink)
+                                Text("Edit profile", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = ink)
                             }
                         }
-                        if (streakDays > 0) {
+                        if (displayStreak > 0) {
                             Surface(
                                 shape = RoundedCornerShape(50.dp),
                                 color = ink.copy(alpha = 0.18f)
@@ -667,16 +683,36 @@ private fun ProfileHero(
                                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                                 ) {
                                     CurioIcon(CurioIcons.LocalFire, null, tint = ink, size = 16.dp)
-                                    Text("$streakDays-day streak", style = MaterialTheme.typography.labelMedium, color = ink, fontWeight = FontWeight.Bold)
+                                    Text("$displayStreak-day streak", style = MaterialTheme.typography.labelMedium, color = ink, fontWeight = FontWeight.Bold)
                                 }
+                            }
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(50.dp),
+                            color = ink.copy(alpha = 0.18f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                CurioIcon(CurioIcons.WorkspacePremium, null, tint = ink, size = 16.dp)
+                                Text(
+                                    CurioQuests.levelTitle(level),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = ink,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
                     }
                     // Flex spacer — pins the stat bar just above the tear.
                     Spacer(Modifier.weight(1f))
-                    // ── Streak · Saved · Lanes — the stats INSIDE the hero,
-                    // pinned above the torn seam on a soft rose gradient pane
-                    // (the exact Home stat bar; icons in the hero ink).
+                    // ── Level · Saved · Lanes — the stats INSIDE the hero,
+                    // pinned above the torn seam on a soft rose gradient pane.
+                    // The streak remains in the action pill above.
                     Surface(
                         shape = RoundedCornerShape(20.dp),
                         color = Color.Transparent,
@@ -701,9 +737,9 @@ private fun ProfileHero(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 ProfileHeroStat(
-                                    glyph = CurioIcons.LocalFire,
-                                    value = "$streakDays",
-                                    label = "Streak",
+                                    glyph = CurioIcons.WorkspacePremium,
+                                    value = "$level",
+                                    label = "Level",
                                     ink = ink,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -824,41 +860,51 @@ private fun profileReadableInk(fill: Color): Color = if (
 }
 
 @Composable
-private fun LevelCard(level: Int, xp: Int, progress: Float, nextThreshold: Int, isMaxLevel: Boolean) {
+private fun XpProgressCard(
+    xp: Int,
+    progress: Float,
+    nextThreshold: Int,
+    isMaxLevel: Boolean
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Brush.linearGradient(CurioGradients.WildcardGradientStops.take(3))),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("$level", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold), color = Color.White)
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Level $level · ${CurioQuests.levelTitle(level)}", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                Text(
-                    if (isMaxLevel) "Your curiosity has no ceiling."
-                    else "$xp / $nextThreshold XP · ${(nextThreshold - xp).coerceAtLeast(0)} XP to next level",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-        if (!isMaxLevel) {
-            Spacer(Modifier.height(12.dp))
-            LinearProgressIndicator(
-                progress = { progress.coerceIn(0f, 1f) },
-                modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(50)),
-                color = CurioColors.CoralBlush,
-                trackColor = CurioColors.CoralBlush.copy(alpha = 0.14f)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CurioIcon(CurioIcons.WorkspacePremium, null, tint = CurioColors.ButterYellow, size = 22.dp)
+            Text(
+                "XP progress",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                if (isMaxLevel) "$xp XP" else "$xp / $nextThreshold XP",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+        Spacer(Modifier.height(10.dp))
+        LinearProgressIndicator(
+            progress = { progress.coerceIn(0f, 1f) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(50)),
+            color = CurioColors.CoralBlush,
+            trackColor = CurioColors.CoralBlush.copy(alpha = 0.14f)
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = if (isMaxLevel) "Maximum level reached — keep exploring for more XP."
+            else "${(nextThreshold - xp).coerceAtLeast(0)} XP to the next level",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -900,6 +946,71 @@ private fun QuestsNavCard(onOpenQuests: () -> Unit) {
                 }
                 CurioForwardArrow(tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f), size = 18.dp)
             }
+        }
+    }
+}
+
+/** Compact badge summary — the full two-column shelf remains on Quests. */
+@Composable
+private fun AchievementsPreviewCard() {
+    val unlocked = CurioQuests.Achievements.filter { it.id in CurioQuests.achievementsState }
+    val next = CurioQuests.Achievements.firstOrNull { it.id !in CurioQuests.achievementsState }
+    val total = CurioQuests.Achievements.size
+    val fraction = if (total == 0) 0f else unlocked.size.toFloat() / total
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CurioCardHeader(
+            CurioIcons.EmojiEvents,
+            "Achievements",
+            "${unlocked.size} of $total badges"
+        )
+        LinearProgressIndicator(
+            progress = { fraction.coerceIn(0f, 1f) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(50)),
+            color = CurioColors.Sage,
+            trackColor = CurioColors.Sage.copy(alpha = 0.14f)
+        )
+        if (unlocked.isNotEmpty()) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                maxItemsInEachRow = 3
+            ) {
+                unlocked.take(3).forEach { achievement ->
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = CurioColors.Sage.copy(alpha = 0.13f),
+                        border = BorderStroke(1.dp, CurioColors.Sage.copy(alpha = 0.28f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            CurioIcon(achievement.glyph, null, tint = CurioColors.Sage, size = 14.dp)
+                            Text(
+                                achievement.title,
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            Text(
+                next?.let { "Next badge: ${it.title}" } ?: "Keep exploring to unlock your first badge.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

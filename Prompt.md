@@ -1,20 +1,19 @@
-# Prompt — narrow-width dice alignment
+# Prompt — Profile level and progress rearrangement
 
 ## Request
-The previous shared icon centering change did not resolve the visible issue on a narrow Poco M2 Reloaded screen. The Home profile/menu pills also needed to remain stable, and the casino dice looked slightly low inside its pill. The same dice issue is present on the dedicated Shuffle/Spin page.
-
-## Finding
-The icon layout boxes were already centered. The visible Material Symbols `casino` glyph has a small optical low bias, so changing the shared renderer did not fully correct it. Spin also has a separate Canvas-rendered animated `ShuffleGlyph` state that must match the resting `casino` glyph.
+On Profile, replace the hero stats-grid Streak slot with Level. Show the level title (for example, "Synthesizer") in a pill beside the streak pill and Edit profile. Remove the standalone bottom level card, while keeping XP/progress with quests and achievements. The level title pill should show only the title because the numeric level is already visible in the hero stats grid. Do not push; commit locally only.
 
 ## Implementation
-- Added a small `-1.dp` optical lift to Home's circular `Shuffle the deck` casino icon.
-- Added the same `-1.dp` lift to Home's empty-state `Surprise me` casino icon.
-- Added a matching `-1.5.dp` lift to both Spin button dice states: the resting `CurioIcons.Casino` glyph and animated `ShuffleGlyph`.
-- Left the Home menu/profile pill geometry, button circles, and shared icon renderer unchanged.
+- Profile hero stats now show `Level · Saved · Lanes`; the numeric level remains in the Level stat.
+- The hero action row now contains Edit profile, the displayed streak, and a title-only level pill (`CurioQuests.levelTitle(level)`). The action row uses `FlowRow` for narrow screens and uses the promo display streak consistently.
+- Replaced the standalone Profile level card with a compact XP progress card.
+- Added a compact achievements preview with unlocked count, progress, and up to three earned badge chips; the full achievement shelf remains on the Quests page.
+- Existing Quests navigation, lanes, Settings, and Support behavior remain unchanged.
 
 ## Validation
 - `git diff --check` passed.
-- Comment-aware Kotlin structural checks passed for HomeScreen.kt and SpinScreen.kt.
-- Confirmed both Home casino call sites and both Spin dice states have the intended optical offsets.
+- Comment-aware Kotlin structural checks passed for ProfileScreen.kt.
+- Confirmed the title-only level pill and numeric level stat.
 - Code review found no blockers.
-- No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally; CI should validate the Android artifact.
+- No Gradle build, compile, lint, or test commands were run because repository policy forbids them locally.
+- No release-note update was made because this change is intentionally being held for the user's every-third-commit push cadence.
