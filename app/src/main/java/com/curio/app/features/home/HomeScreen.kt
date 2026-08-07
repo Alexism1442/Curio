@@ -557,8 +557,8 @@ fun HomeScreen(navController: NavController) {
                         ) { launchSingleTop = true }
                     },
                     onKeepExploring = {
-                        // Re-open the Google search — the session keeps
-                        // ticking in the background.
+                        // Re-open the search page (Google — YouTube for
+                        // music) — the session keeps ticking in the background.
                         runCatching {
                             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(activeSession.searchUrl)))
                         }

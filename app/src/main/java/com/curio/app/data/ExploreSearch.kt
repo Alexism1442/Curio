@@ -5,9 +5,9 @@ import android.net.Uri
 /**
  * Builds the search URL opened when the user taps "Explore now".
  *
- * Albums and songs (everything in the ALBUMS category) open a YouTube
- * results page so the user can listen directly; every other category keeps
- * the Google search.
+ * Music — albums AND artists (everything in the ALBUMS and ARTISTS
+ * categories) — opens a YouTube results page so the user can listen
+ * directly; every other category keeps the Google search.
  *
  * The query is the topic name plus contextual search hints so the first
  * result is actually the right thing:
@@ -19,6 +19,13 @@ import android.net.Uri
  *    album name still searches fine.
  *  - The subtype is appended as a disambiguator ("album", "film", ...).
  */
+/** True for music categories — album and artist explores open a YouTube
+ *  results page so the user can listen directly (everything else keeps the
+ *  Google search). Single source of truth for the explore URL AND the
+ *  explore-dialog copy (see TopicRevealScreen.exploreOpenCopy). */
+fun categoryOpensYouTube(categoryId: CategoryId): Boolean =
+    categoryId == CategoryId.ALBUMS || categoryId == CategoryId.ARTISTS
+
 fun buildExploreSearchUrl(topic: CurioTopic): String {
     val parts = mutableListOf<String>()
     if (topic.subtype.equals("Album", ignoreCase = true)) {
@@ -28,7 +35,7 @@ fun buildExploreSearchUrl(topic: CurioTopic): String {
     extractYear(topic)?.let { parts += it }
     parts += topic.subtype
     val query = parts.joinToString(" ").trim()
-    return if (topic.categoryId == CategoryId.ALBUMS) {
+    return if (categoryOpensYouTube(topic.categoryId)) {
         "https://www.youtube.com/results?search_query=" + Uri.encode(query)
     } else {
         "https://www.google.com/search?q=" + Uri.encode(query)

@@ -89,6 +89,7 @@ import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.TopicCatalog
 import com.curio.app.data.TopicJsonLoader
 import com.curio.app.data.buildExploreSearchUrl
+import com.curio.app.data.categoryOpensYouTube
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.navigation.CurioRoutes
 import com.curio.app.ui.adaptive.isWide
@@ -211,7 +212,8 @@ fun TopicRevealScreen(
     // simply tap "Explore now" again.
     var pendingNotificationSession by remember { mutableStateOf<ExploreSession?>(null) }
 
-    /** Opens the Google search, then lands back on Home — returning to the
+    /** Opens the search page (Google — YouTube for music), then lands back
+     *  on Home — returning to the
      *  app triggers the "are you done exploring?" prompt. Deferred into the
      *  permission callback when a notification-permission request is in
      *  flight, so the foreground service starts while this activity is still
@@ -392,7 +394,7 @@ fun TopicRevealScreen(
         openExploreBrowserAndGoHome(session)
     }
 
-    /** Starts a timed explore session, opens the Google search, back to Home. */
+    /** Starts a timed explore session, opens the search page (Google — YouTube for music), back to Home. */
     fun startExploreSession(topic: CurioTopic) {
         engaged = true
         // Engaging for real — record as recently-explored and clear any
@@ -898,7 +900,7 @@ fun TopicRevealScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
-                        "Time to ${action.verb.lowercase()} ${action.targetName} — roughly ${action.durationMinutes} min. We'll open a Google search to get you started.",
+                        "Time to ${action.verb.lowercase()} ${action.targetName} — roughly ${action.durationMinutes} min. ${exploreOpenCopy(cat)}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -1365,6 +1367,13 @@ private fun verbIcon(verb: String): String = when (verb.lowercase().trim()) {
     "play" -> "play_arrow"
     else -> "auto_awesome"
 }
+
+/** The explore-dialog copy for what actually opens — mirrors
+ *  categoryOpensYouTube so the copy can never drift from the URL built by
+ *  buildExploreSearchUrl. */
+private fun exploreOpenCopy(cat: com.curio.app.data.CurioCategory): String =
+    if (categoryOpensYouTube(cat.id)) "We'll open YouTube to get you started."
+    else "We'll open a Google search to get you started."
 
 /** The "Already …" label — the category's verb, per category (v7.80).
  *  Films/Directors → watched, Albums/Artists → listened, Books/Authors →

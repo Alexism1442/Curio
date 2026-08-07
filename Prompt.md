@@ -1,15 +1,23 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 10th): Overlay permission — stop re-asking + Settings toggle — DONE (pushed)
+## Request (2026-08-07, 11th): Music topics open YouTube — DONE (pushed)
 
-**User request:** "for the overlay permission dont ask it again when the user says no also add a toggle in settings to give the permission."
+**User request:** "for albums it still says we will open google search soo fix tht and also opeen youtube for music artists too."
+
+### Analysis
+- `data/ExploreSearch.kt` `buildExploreSearchUrl` already opened YouTube for **albums** (`CategoryId.ALBUMS`); **artists** still built a Google URL.
+- The only user-visible "Google search" copy was the hardcoded explore-confirmation dialog in `features/reveal/TopicRevealScreen.kt` (line ~901): "We'll open a Google search to get you started." — wrong for music. Remaining mentions are code comments (reveal screen ×2, HomeScreen resume handler, ExploreSearch KDoc).
+- Artist topics carry `subtype "Artist"` (354/354 entries) — the existing query builder (name + year + subtype) works cleanly for YouTube, no artist extraction needed (the topic IS the artist).
 
 ### Changes
-- **`data/AppPreferences.kt`** — new persisted `overlay_ask_declined` flag (`isOverlayAskDeclined` / `setOverlayAskDeclined`, reactive `overlayAskDeclinedState`, seeded in `initThemeMode`). Once the user declines "Display over other apps", all AUTOMATIC prompts are suppressed until they explicitly use the Settings toggle (which always opens the system page and clears the flag).
-- **`features/reveal/TopicRevealScreen.kt`** — the explore-start bubble prompt no longer fires when the permission was declined (explore proceeds without the bubble). "Not now" / dialog-dismiss records the decline; returning from system settings WITHOUT granting records it too; a fresh grant clears it.
-- **`features/settings/SettingsSectionScreen.kt`** (Notifications) — new **"Display over other apps" permission toggle** showing the live grant state; toggling opens the system special-access page (grant OR revoke) and clears the declined flag; returning without granting records the decline. The existing "Floating explore bubble" toggle now clears the declined flag when it opens the system page (explicit intent) and relies on the ON_RESUME observer (not the premature result callback) for the grant/decline decision. Dialog text updated to tell the user it won't ask again until they enable it in Settings.
-- **`features/onboarding/OnboardingScreen.kt`** — returning from the overlay settings page without granting during setup records the decline; a grant clears it.
+- **`data/ExploreSearch.kt`** — YouTube results page now for `ALBUMS || ARTISTS` (Google for everything else); KDoc updated.
+- **`features/reveal/TopicRevealScreen.kt`** — new `exploreOpenCopy(cat)` helper (albums/artists → "We'll open YouTube to get you started.", else Google); dialog text now uses it; the two code comments corrected.
+- **`features/home/HomeScreen.kt`** — resume-handler comment corrected (comment-only, rides along with the behavior change).
+- **`fastlane/.../20260810.txt`** — changelog bullet added.
+- **`Prompt.md`** — this log.
 
-### Status
-- Statically validated (no Gradle in this env): all references consistent, `git diff --check` clean, code review passed.
-- Committed and **pushed** (branch in sync with origin/main after the `bf932c0` CI-fix push).
+### Validation
+No Gradle in this env (per AGENTS.md) — static checks: no other user-visible "Google search" copy remains (only the intentional Google-branch strings), `git diff --check` clean, brace balance re-checked in the reveal screen. Code review + push pending.
+
+### Follow-ups
+- None. Reminder/notification copy had no Google references.
