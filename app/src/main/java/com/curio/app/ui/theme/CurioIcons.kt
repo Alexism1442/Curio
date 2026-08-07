@@ -13,8 +13,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -239,7 +241,18 @@ fun CurioIcon(
             textAlign = TextAlign.Center,
             maxLines = 1,
             softWrap = false,
-            style = TextStyle(lineHeight = size.value.sp)
+            style = TextStyle(
+                lineHeight = size.value.sp,
+                // Material Symbols are font glyphs, not vector Icons. Remove
+                // the platform font padding and center the line box so their
+                // visible ink sits in the same vertical center as adjacent
+                // text and button content.
+                platformStyle = PlatformTextStyle(includeFontPadding = false),
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.Both
+                )
+            )
         )
     }
 }

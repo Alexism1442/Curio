@@ -632,65 +632,48 @@ fun TopicRevealScreen(
                     }
                 }
 
-                // ── 8. "Already …" — ONE button that toggles the done mark
-                //    in place (no separate undo row): ghost when open, filled
-                //    with a check when marked done. Tapping when NOT done
-                //    marks the topic DONE (it never shows in the NEXT shuffle
-                //    again) and asks whether to write about it now. Tapping
-                //    when DONE unmarks it — straight back to the deck. No
-                //    explore session is started and the topic is never
-                //    recorded as unexplored. (v7.92 → v7.100 single-toggle)
-                Surface(
+                // ── 8. "Already …" — a quiet secondary action beneath
+                //    the primary CTA. It keeps the same toggle behavior, but
+                //    no longer competes with Start exploring as a second
+                //    full-width filled card.
+                TextButton(
                     onClick = {
-                        val topic = resolved ?: return@Surface
+                        val topic = resolved ?: return@TextButton
                         // Marking OR unmarking is engaging — backing out must
                         // not record the topic as unexplored afterwards.
                         engaged = true
                         if (isDone) {
-                            // Tap again to undo — the topic returns to the
-                            // shuffle deck (the exact inverse of markDone).
                             ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
                         } else {
-                            // Records explored (Home recents + quests) AND
-                            // marks it done so the next shuffle never deals
-                            // it again.
                             ExploreSessionStore.markDone(context, cat.id, topic.name)
                             showAlreadyDoneDialog = true
                         }
                     },
                     enabled = resolved != null,
-                    shape = RoundedCornerShape(50),
-                    color = if (isDone) {
-                        cat.themedAccent()
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
-                    },
-                    border = if (isDone) {
-                        null
-                    } else {
-                        BorderStroke(1.dp, cat.themedAccent().copy(alpha = 0.35f))
-                    },
+                    shape = RoundedCornerShape(18.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = if (isDone) cat.themedAccent() else MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp)
+                        .padding(top = 8.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         CurioIcon(
-                            CurioIcons.Check, null,
-                            tint = if (isDone) cat.onAccent() else cat.themedAccent(),
+                            name = if (isDone) CurioIcons.Check else CurioIcons.History,
+                            contentDescription = null,
+                            tint = if (isDone) cat.themedAccent() else MaterialTheme.colorScheme.onSurfaceVariant,
                             size = 18.dp
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            // One tick, not two — the Check icon carries it;
-                            // the label adds the undo affordance instead.
                             text = if (isDone) "${alreadyDoneLabel(cat)} — undo" else alreadyDoneLabel(cat),
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = if (isDone) cat.onAccent() else MaterialTheme.colorScheme.onSurface
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                 }
