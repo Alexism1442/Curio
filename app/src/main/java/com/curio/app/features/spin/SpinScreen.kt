@@ -917,6 +917,82 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
         //    world. The active category's glyph gets a faint accent tint.
         CurioWatermarkBackdrop(activeCat = deckCat)
 
+        // ── Landscape / tablet: side-by-side layout (v7.x) ─────────
+        //    On wide windows the bottom bar would waste horizontal space;
+        //    Categories + Filter move to a right-edge rail as tall
+        //    vertical pills, and the deck + Spin button stay centered.
+        val wide = windowWidthSizeClass().isWide
+        if (wide) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                // Center stage — deck carousel + Spin button, sized to the
+                // available width minus the side rail.
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    // v7.x — on wide screens the deck scales by available
+                    // width (minus ~130dp side rail). Landscape phones get
+                    // a tighter floor so the button still fits; tablets get
+                    // a comfortable minimum.
+                    val wideFit = ((maxWidth - 130.dp) / 360.dp).coerceIn(
+                        if (compactHeight) 0.62f else 0.78f, 1f
+                    )
+                    SpinDeckSection(
+                        compact = compactHeight,
+                        extraCompact = false,
+                        densityExtraCompact = false,
+                        roomy = false,
+                        cat = deckCat,
+                        deckAccent = deckAccent,
+                        deckGradient = deckGradient,
+                        isMixed = isMixedDeck,
+                        mixSeed = mixSeed,
+                        displayPool = hand,
+                        cycleIndex = cycleIndex,
+                        shuffling = shuffling,
+                        landedTopic = landedTopic,
+                        opening = isOpening,
+                        enabled = filteredPool.isNotEmpty() && !shuffling,
+                        buttonPulse = buttonPulse,
+                        fitScale = wideFit,
+                        onCardTap = onDeckCardTap,
+                        onSpinClick = onSpinClick
+                    )
+                }
+                // Right rail — Categories + Filter as tall vertical pills
+                Column(
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    VerticalDeckButton(
+                        label = if (isMixedDeck) "Mixed · ${activeCatIds.distinct().size}" else deckCat.displayName,
+                        icon = deckCat.iconGlyph,
+                        cat = deckCat,
+                        selected = true,
+                        onClick = { showCategoryPicker = true },
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    )
+                    VerticalDeckButton(
+                        label = if (activeFilters.isNotEmpty() || activeSubtypes.isNotEmpty())
+                            "Filter · ${activeFilters.size + activeSubtypes.size}" else "Filter",
+                        icon = CurioIcons.Search,
+                        cat = deckCat,
+                        selected = activeFilters.isNotEmpty() || activeSubtypes.isNotEmpty(),
+                        onClick = { showFilters = true },
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    )
+                }
+            }
+        } else {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -1015,6 +1091,7 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
             onCategories = { showCategoryPicker = true },
             onFilter = { showFilters = true }
         )
+        }
         }
     }
 
