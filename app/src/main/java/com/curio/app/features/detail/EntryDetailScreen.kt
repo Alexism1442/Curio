@@ -411,7 +411,16 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
                     .height(EntryDetailHeroHeight)
                     .offset(y = 1.dp)
                     .clip(heroTornShape)
-                    .background(Color.Black.copy(alpha = 0.20f))
+                    .background(
+                if (darkNonPastel) {
+                    // The seam is paper, not a shadow: keep the up-bites
+                    // visibly warm even when the hero/sheet uses midnight
+                    // surfaces in dark mode.
+                    CurioColors.CreamWhite.copy(alpha = 0.94f)
+                } else {
+                    heroSheetColor.copy(alpha = 0.72f)
+                }
+            )
             )
 
             // ── Hero backdrop — the SOLID category color + symbol scatter.
@@ -579,13 +588,15 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
 
         }
 
-        // The category label is a fixed layer below the tear. Reserve its
-        // footprint in the scroll content so the quick fact and format body
-        // start below it instead of sliding underneath on the first frame.
-        Spacer(Modifier.height(EntryDetailCategoryBlockHeight))
+        // The category identity belongs to the reading flow. Keeping it in
+        // this same scroll column prevents it from floating over the quick
+        // fact and capture body on short screens.
+        EntryDetailCategoryLabel(
+            entry = resolvedEntry,
+            category = cat
+        )
 
-        // ── Topic meta — the fixed category row is above this scrolling
-        // portion; the quick fact and tags remain part of the entry content.
+        // ── Topic meta — quick fact and tags follow the category row.
         Column(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
@@ -630,28 +641,14 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
             }
         }
 
-        // ── Format body ────────────────────────────────────────────────
-        // The fixed category row has its own reserved footprint above this
-        // scrolling content; horizontal stays 20dp to match the metadata
-        // column gutter.
+        // ── Format body ────────────────────────────────────────────────            // The category row is part of the scrolling content; horizontal
+            // stays 20dp to match the metadata column gutter.
         Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
             FormatBody(entry = resolvedEntry, category = cat, navController = navController)
         }
 
         Spacer(Modifier.height(32.dp))
         }
-
-        // The category row is deliberately outside the verticalScroll column:
-        // it stays anchored immediately below the narrow paper tear while the
-        // quick fact and capture body scroll beneath it.
-        EntryDetailCategoryLabel(
-            entry = resolvedEntry,
-            category = cat,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(y = EntryDetailHeroHeight + EntryDetailSheetExtent)
-                .zIndex(2f)
-        )
 
         // Keep scroll-linked controls in their own recomposition scope. The
         // detail body contains paper Canvas textures, rich text, and image
@@ -710,8 +707,6 @@ fun EntryDetailScreen(entryId: String, navController: NavController) {
 private val EntryDetailHeroHeight = 360.dp
 /** Extra layout space reserved for the white sheet below the clipped hero. */
 private val EntryDetailSheetExtent = 16.dp
-/** Fixed footprint reserved for the category row below the tear. */
-private val EntryDetailCategoryBlockHeight = 60.dp
 
 /** Hero height + a small gap — the watermark's top clearance on this page
  *  (keeps the backdrop glyphs clear of the narrow white under-sheet lip
@@ -729,9 +724,9 @@ private val DetailStickyBarRestTop = 72.dp
 private val DetailStickyBarPoppedTop = 12.dp
 
 /**
- * Category identity anchored directly below the detail hero's paper lip.
- * It is intentionally outside the scrolling column so the category remains
- * a stable reference while the quick fact and capture content move underneath.
+ * Category identity directly below the detail hero's paper lip. It remains
+ * part of the reading flow so it scrolls away with the quick fact and capture
+ * content instead of overlaying them.
  */
 @Composable
 private fun EntryDetailCategoryLabel(

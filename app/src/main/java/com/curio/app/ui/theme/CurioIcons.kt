@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -241,6 +242,12 @@ fun CurioIcon(
             textAlign = TextAlign.Center,
             maxLines = 1,
             softWrap = false,
+            modifier = Modifier.graphicsLayer {
+                // Material Symbols reserve a little more visual space below
+                // the glyph than above it. Nudge only the painted ink up by
+                // half a dp; the icon's layout box stays perfectly centered.
+                translationY = (-0.5f).dp.toPx()
+            },
             style = TextStyle(
                 lineHeight = size.value.sp,
                 // Material Symbols are font glyphs, not vector Icons. Remove
