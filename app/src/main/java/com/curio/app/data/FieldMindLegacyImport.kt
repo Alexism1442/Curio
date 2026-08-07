@@ -6,6 +6,7 @@ import android.net.Uri
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.InputStream
 import java.util.zip.ZipInputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -665,6 +666,30 @@ object FieldMindLegacyImport {
         splitTags(o.optString("tags")).takeIf { it.isNotEmpty() }?.let { add("Tags: ${it.joinToString(", ")}") }
     }.joinToString("\n").let { if (it.isBlank()) "" else "FieldMind metadata:\n$it" }
 
+    /**
+     * Opens imported media without allowing a JSON archive to read arbitrary
+     * filesystem paths. Content-provider URIs are intentionally supported so
+     * the existing document-picker flow continues to work. Local paths are
+     * accepted only when they already resolve inside this import's temp dir
+     * (used by ZIP extraction); all other schemes and paths are rejected.
+     */
+    private fun openSafeMediaInput(context: Context, tempDir: File, source: String): InputStream? {
+        val parsed = Uri.parse(source)
+        return when (parsed.scheme?.lowercase()) {
+            "content" -> context.contentResolver.openInputStream(parsed)
+            "file" -> openContainedLocalFile(tempDir, File(parsed.path ?: return null))
+            null -> openContainedLocalFile(tempDir, File(source))
+            else -> null
+        }
+    }
+
+    private fun openContainedLocalFile(root: File, requested: File): InputStream? {
+        val rootPath = root.canonicalPath.trimEnd(File.separatorChar) + File.separator
+        val candidate = requested.canonicalFile
+        if (!candidate.path.startsWith(rootPath) || !candidate.isFile) return null
+        return candidate.inputStream()
+    }
+
     private fun noteMetadata(o: JSONObject): String = buildList {
         o.optString("category").takeIf { it.isNotBlank() }?.let { add("Category: $it") }
         splitTags(o.optString("tags")).takeIf { it.isNotEmpty() }?.let { add("Tags: ${it.joinToString(", ")}") }
@@ -688,9 +713,7 @@ object FieldMindLegacyImport {
         fun add(target: MutableMap<Long, MutableList<MediaFile>>, id: Long, uri: String, mime: String, caption: String) {
             if (uri.isBlank()) return
             runCatching {
-                val source = if (uri.startsWith("content://") || uri.startsWith("file://")) {
-                    context.contentResolver.openInputStream(Uri.parse(uri))
-                } else File(uri).inputStream()
+                val source = openSafeMediaInput(context, tempDir, uri)
                 val extension = uri.substringAfterLast('.', "").takeIf { it.length in 2..5 }?.let { ".$it" }.orEmpty()
                 val file = File(tempDir, "json_${target.size}_${System.nanoTime()}$extension")
                 source?.use { input -> file.outputStream().use { input.copyTo(it) } }

@@ -36,8 +36,14 @@ object AudioStorageManager {
             "The temporary recording is missing or empty."
         }
 
+        require(isSafeStorageSegment(entryId)) {
+            "Unsafe audio entry id."
+        }
         val audioDir = File(context.filesDir, AUDIO_DIR).apply { mkdirs() }
         val destFile = File(audioDir, "${entryId}.m4a")
+        require(isContainedFile(audioDir, destFile)) {
+            "The audio destination escaped app-private storage."
+        }
         // Editing an existing voice note already points at this destination.
         // Do not copy a file onto itself; just reuse the verified persistent
         // file so editing title/notes never makes the entry disappear.
@@ -62,8 +68,14 @@ object AudioStorageManager {
      * @return The absolute path the file was written to.
      */
     fun restoreAudio(context: Context, entryId: String, bytes: ByteArray): String {
+        require(isSafeStorageSegment(entryId)) {
+            "Unsafe audio entry id."
+        }
         val audioDir = File(context.filesDir, AUDIO_DIR).apply { mkdirs() }
         val destFile = File(audioDir, "${entryId}.m4a")
+        require(isContainedFile(audioDir, destFile)) {
+            "The audio destination escaped app-private storage."
+        }
         destFile.writeBytes(bytes)
         return destFile.absolutePath
     }
@@ -80,7 +92,7 @@ object AudioStorageManager {
 
         // Only delete files under our audio directory (safety guard)
         val audioDir = File(context.filesDir, AUDIO_DIR)
-        if (file.canonicalPath.startsWith(audioDir.canonicalPath)) {
+        if (isContainedFile(audioDir, file)) {
             file.delete()
         }
     }

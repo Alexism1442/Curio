@@ -212,12 +212,19 @@ object CurioBackupManager {
         }
         // Validate the records before deleting any current media or database
         // rows. A truncated JSON file must never be treated as an empty
-        // backup and erase the user's existing Curio data.
+        // backup and erase the user's existing Curio data. IDs must also be
+        // unique: Room's REPLACE policy would otherwise silently discard an
+        // earlier attacker-supplied record.
+        val seenCaptureIds = mutableSetOf<String>()
         for (index in 0 until rawCaptures.length()) {
             val capture = rawCaptures.optJSONObject(index)
                 ?: throw IllegalArgumentException("Backup capture ${index + 1} is invalid")
-            require(capture.optString("id").isNotBlank()) {
+            val rawId = capture.optString("id")
+            require(rawId.isNotBlank()) {
                 "Backup capture ${index + 1} has no id"
+            }
+            require(seenCaptureIds.add(rawId)) {
+                "Backup contains duplicate capture id"
             }
             require(capture.optString("format").isNotBlank()) {
                 "Backup capture ${index + 1} has no format"
@@ -254,7 +261,9 @@ object CurioBackupManager {
             val id = capture.id.orEmpty()
             val format = capture.format.orEmpty()
             val formatDataJson = capture.formatDataJson.orEmpty()
-            require(id.isNotBlank()) { "Backup capture ${index + 1} has no id" }
+            require(isSafeStorageSegment(id)) {
+                "Backup capture ${index + 1} has an unsafe id"
+            }
             require(format.isNotBlank()) { "Backup capture ${index + 1} has no format" }
             require(formatDataJson.isNotBlank()) { "Backup capture ${index + 1} has no capture data" }
             require(runCatching { CaptureFormat.valueOf(format) }.isSuccess) {
@@ -277,6 +286,9 @@ object CurioBackupManager {
             )
         }
         val payloadPreferences = payload.preferences.orEmpty()
+        require(payloadPreferences.keys.all { it in USER_PREF_FILES }) {
+            "This backup contains an unknown preferences file"
+        }
 
         // Restore audio (v2): wipe current recordings, then write each
         // bundled one to filesDir/audio/{id}.m4a and rewrite the capture's
@@ -304,15 +316,21 @@ object CurioBackupManager {
                 if (!updated.isLegacy && updated.topicSubtype == FieldMindLegacyImport.LEGACY_SUBTYPE) {
                     updated = updated.copy(isLegacy = true)
                 }
-                // Audio (v2): write the recording and point the capture at it.
-                updated = updated
+                // Audio (v2): never preserve an audio path from the source
+                // device. A backup is untrusted and its original absolute
+                // path may point anywhere on this device. Clear every stored
+                // path first; only a bundled recording below can establish a
+                // new, app-private destination.
+                val safeData = CaptureConverters.deserializeCaptureData(updated.formatDataJson)
+                    .withoutAudioPaths()
+                updated = updated.copy(formatDataJson = Gson().toJson(safeData))
                 audioFiles[capture.id]?.let { bytes ->
                     val newPath = runCatching {
                         AudioStorageManager.restoreAudio(context, capture.id, bytes)
                     }.getOrNull()
                     if (newPath != null) {
                         runCatching {
-                            CaptureConverters.deserializeCaptureData(capture.formatDataJson)
+                            CaptureConverters.deserializeCaptureData(updated.formatDataJson)
                                 .withAudioPath(newPath)
                         }.getOrNull()?.let { updated = updated.copy(formatDataJson = Gson().toJson(it)) }
                     }
@@ -470,7 +488,17 @@ private fun CaptureData.audioPathOrNull(): String? = when (this) {
  */
 private fun CaptureData.withAudioPath(newPath: String): CaptureData = when (this) {
     is CaptureData.SoundBite -> copy(audioFilePath = newPath)
+    is CaptureData.Marginalia -> copy(audioFilePath = newPath)
     is CaptureData.OpenNotebook -> copy(subData = subData.withAudioPath(newPath))
     is CaptureData.Portfolio -> copy(sections = sections.map { it.copy(data = it.data.withAudioPath(newPath)) })
+    else -> this
+}
+
+/** Removes all source-device audio paths from untrusted backup data. */
+private fun CaptureData.withoutAudioPaths(): CaptureData = when (this) {
+    is CaptureData.SoundBite -> copy(audioFilePath = null)
+    is CaptureData.Marginalia -> copy(audioFilePath = null)
+    is CaptureData.OpenNotebook -> copy(subData = subData.withoutAudioPaths())
+    is CaptureData.Portfolio -> copy(sections = sections.map { it.copy(data = it.data.withoutAudioPaths()) })
     else -> this
 }
