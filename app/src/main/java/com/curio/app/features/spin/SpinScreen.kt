@@ -2214,20 +2214,27 @@ private fun HeroTicketCard(
                             } else Modifier
                         )
                 ) {
-                    // One category watermark — keep the Shuffle hero focused
-                    // on the active deck instead of repeating the page-wide
-                    // glyph collage. Mixed decks use their synthetic spark
-                    // category here, just as they did before the pattern pass.
-                    CurioIcon(
-                        name = cat.iconGlyph,
-                        contentDescription = null,
-                        tint = ink.copy(alpha = 0.16f),
-                        size = 150.dp,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .padding(end = 6.dp)
-                    )
-                } // shared card face — gradient + glyph + rim-light only
+                    // (The shared face is now a PURE gradient + rim-light —
+                    // the watermark glyph below is NOT shared: a glyph inside
+                    // the morphing bounds scales non-uniformly (ticket
+                    // 286×310 ⇄ hero ~392×260) and reads as a stretched oval
+                    // during the morph — on back the overlay would even draw
+                    // the ticket's glyph enlarged to hero size first.)
+                } // shared card face — gradient + rim-light only
+
+                // ── Watermark glyph — the category icon at CenterEnd, the
+                //    same 150dp glyph the reveal hero shows. NOT shared
+                //    (v8.3): it fades in with the page on back instead of
+                //    squashing inside the reversing morph.
+                CurioIcon(
+                    name = cat.iconGlyph,
+                    contentDescription = null,
+                    tint = ink.copy(alpha = 0.16f),
+                    size = 150.dp,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 6.dp)
+                )
 
                 // ── Creator byline pill — "Director · Nolan" pinned to
                     //    the ticket's TOP corner (the band the old subtype

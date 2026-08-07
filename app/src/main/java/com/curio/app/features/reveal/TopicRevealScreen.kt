@@ -1121,20 +1121,31 @@ private fun HeroCard(
                         }
                     )
             ) {
+            // (The shared face is now a PURE gradient — the watermark glyph
+            // below is NOT part of the shared element: a glyph inside the
+            // morphing bounds scales non-uniformly (ticket 286×310 ⇄ hero
+            // ~392×260) and reads as a stretched oval mid-morph.)
+            } // inner background Box — the shared element (pure gradient)
+
             // ── Watermark glyph (category icon) — matches the Spin ─────
             //    ticket's exact glyph: same size (150dp), same position
-            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha), so
-            //    the morph reads as the same card expanding.
-            CurioIcon(
-                name = cat.iconGlyph,
-                contentDescription = null,
-                tint = ink.copy(alpha = 0.16f),
-                size = 150.dp,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 6.dp)
-            )
-            } // inner background Box — the shared element (gradient + glyph)
+            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha). NOT
+            //    shared (v8.3): it blooms in right after the morph settles
+            //    instead of squashing inside it — the same treatment as the
+            //    text pills, so the hero's focal mark appears once the card
+            //    is at rest.
+            HeroPillEntrance(
+                delayMillis = 250,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                CurioIcon(
+                    name = cat.iconGlyph,
+                    contentDescription = null,
+                    tint = ink.copy(alpha = 0.16f),
+                    size = 150.dp,
+                    modifier = Modifier.padding(end = 6.dp)
+                )
+            }
 
             // ── Hero text pills (NOT shared) — bloom in AFTER the ~320ms
             //    bounds morph settles instead of squashing inside it; on
