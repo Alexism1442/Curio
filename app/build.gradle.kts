@@ -73,7 +73,15 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // Production hardening: shrink and obfuscate release code. The
+            // data-layer keep rules in proguard-rules.pro preserve Gson/Room
+            // field names and generated database contracts.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = if (hasReleaseSigningMaterial) {
                 logger.lifecycle("✓ Release APK signed with custom keystore (${envKeyStorePath})")
                 signingConfigs.getByName("release")

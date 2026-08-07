@@ -1,32 +1,30 @@
-# Prompt — approved security hardening
+# Prompt — HTTPS, R8, and secret audit
 
 ## Request
-Implement security findings 1–3 from the Curio audit:
+Implement item 9 from the security audit:
 
-1. Prevent audio restore path traversal.
-2. Prevent FieldMind JSON imports from reading arbitrary local filesystem paths while preserving supported `content://` media imports.
-3. Restrict backup restore to the app's known user preference namespaces.
-
-Also explain finding 9 (network/release hardening) for approval, but do not implement it yet.
+- Enforce HTTPS-only network traffic with explicit Android network security configuration.
+- Enable R8/minification for release builds with conservative keep rules for the Room/Gson data layer.
+- Analyze the repository for embedded secrets and report findings without exposing secret values.
 
 ## Completed
-- Added shared storage path validation and canonical containment helpers.
-- Hardened audio persistence and backup restore against unsafe capture IDs.
-- Backup restore now clears source-device audio paths and only reassigns paths for bundled recordings restored into app-private storage.
-- Backup restore rejects duplicate capture IDs and unknown SharedPreferences namespaces.
-- FieldMind JSON media import now accepts `content://` sources and importer-temp files only; arbitrary local paths and unsupported schemes are rejected.
-- Tightened audio deletion containment to avoid path-prefix boundary mistakes.
+- Added `app/src/main/res/xml/network_security_config.xml` with cleartext traffic disabled and system trust anchors.
+- Bound the network security config in `AndroidManifest.xml` and set `android:usesCleartextTraffic="false"`.
+- Enabled release R8 shrinking, obfuscation, and resource shrinking.
+- Added the default Android optimization rules plus `app/proguard-rules.pro`.
+- Added conservative Gson/Room keep rules for Curio capture and backup models.
+- Added a security release-note entry.
+
+## Secret audit
+- Scanned 180 tracked files for high-confidence private-key and token patterns; none found.
+- Scanned reachable Git history for those same high-confidence patterns; none found.
+- No embedded live API keys, bearer tokens, private keys, keystore files, or passwords were found.
+- Expected secret references exist only in CI/build wiring: GitHub Actions signing secret names and the optional Mapbox Gradle property.
+- Operational risk remains in `scripts/setup-signing-secrets.sh`: it writes signing passwords to temporary plaintext files, prints them for copy/paste, and passes them as command-line arguments. This is not an embedded app secret and was not changed in this request.
+- Content words such as “secret” in topic prose were false positives, not credentials.
 
 ## Validation
 - `git diff --check` passed.
-- Static Kotlin brace/string balance checks passed for all changed Kotlin files.
+- New XML files parsed successfully.
 - Code review found no blockers.
-- No Gradle compile/build/lint/test command was run because the repository forbids those commands locally; CI remains the compilation source of truth.
-
-## Pending approval — finding 9
-Item 9 is defense-in-depth rather than a confirmed exploit in the current HTTPS-only code:
-
-- Add `android:usesCleartextTraffic="false"` and an explicit Network Security Config to prevent future accidental HTTP traffic.
-- Separately consider enabling R8/minification for production releases to make reverse engineering harder; this is not a substitute for keeping secrets out of the APK and may require keep-rule/CI validation.
-
-Do not implement item 9 until the user approves its scope.
+- No Gradle compile/build/lint/test command was run because the repository forbids those commands locally; CI must validate the obfuscated release artifact and Gson/Room behavior.

@@ -1,1 +1,2 @@
+• Security hardening: HTTPS-only network policy, release R8 shrinking/obfuscation, and safer backup/archive restore handling.
 • 100 new modern music topics — 50 contemporary artists (The 1975, Sabrina Carpenter, Harry Styles, Hozier, Lana Del Rey, Travis Scott, Playboi Carti, Kali Uchis, Tems, Ice Spice…) and 50 of their defining albums (Short n' Sweet, Harry's House, Norman Fucking Rockwell!, Utopia, Currents…)
