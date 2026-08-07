@@ -25,12 +25,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -54,6 +51,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -140,11 +138,9 @@ import com.curio.app.ui.theme.themedAccent
  *   ~auto     "One quirky fact to get you curious" card
  *   16 dp      gap
  *   ~auto     "{verb} {target}" action prompt card + "~N min"
- *   24 dp      gap
- *   ~56 dp     Start exploring CTA button
- *    8 dp      gap
- *   ~auto     "Shuffle again instead" text button
- *   24 dp      bottom inset + navigation bars
+ *   24 dp      content breathing room
+ *   bottom     themed action dock (Start exploring + Already …)
+ *   navigation-bar inset is applied inside the dock
  */
 @Composable
 fun TopicRevealScreen(
@@ -154,7 +150,9 @@ fun TopicRevealScreen(
     // Browse-Topics read-only mode (see CurioRoutes.REVEAL): no explore
     // CTA, no like/dislike, no recents recording, and "Already watched"
     // confirms without the write-about-it dialog.
-    browseMode: Boolean = false
+    browseMode: Boolean = false,
+    onBottomBarContentChanged: (@Composable () -> Unit) -> Unit = {},
+    onBottomBarContentCleared: () -> Unit = {}
 ) {
     val cat = remember(categorySlug) {
         CurioCategories.byRouteSlug(categorySlug)
@@ -174,7 +172,6 @@ fun TopicRevealScreen(
     }
 
     val resolved = topic
-    val navInsets = WindowInsets.navigationBars.asPaddingValues()
     val context = LocalContext.current
     // v6.7 — pin for later: the bookmark toggles on/off so the user can save
     // the topic and revisit it from Topic History → "Pinned for later".
@@ -203,6 +200,53 @@ fun TopicRevealScreen(
     // done (never shows in the shuffle again) and asks whether to write
     // about it now.
     var showAlreadyDoneDialog by rememberSaveable { mutableStateOf(false) }
+
+    val pillBg by animateColorAsState(
+        targetValue = if (isDone) cat.themedAccent()
+                      else cat.categorySurface(MaterialTheme.colorScheme.surfaceContainerLow),
+        label = "alreadyDoneBg"
+    )
+    val pillInk by animateColorAsState(
+        targetValue = if (isDone) cat.onAccent()
+                      else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "alreadyDoneInk"
+    )
+    val latestBrowseMode by rememberUpdatedState(browseMode)
+    val latestResolved by rememberUpdatedState(resolved)
+    val latestIsDone by rememberUpdatedState(isDone)
+    val latestPillBg by rememberUpdatedState(pillBg)
+    val latestPillInk by rememberUpdatedState(pillInk)
+    val latestOnExplore by rememberUpdatedState<() -> Unit> { showExploreDialog = true }
+    val latestOnAlready by rememberUpdatedState<() -> Unit> {
+        val currentTopic = latestResolved
+        if (currentTopic != null) {
+            engaged = true
+            if (latestIsDone) {
+                ExploreSessionStore.unmarkDone(context, cat.id, currentTopic.name)
+            } else {
+                ExploreSessionStore.markDone(context, cat.id, currentTopic.name)
+                if (!latestBrowseMode) showAlreadyDoneDialog = true
+            }
+        }
+    }
+    val revealBottomBar = remember(cat) {
+        @Composable {
+            RevealActionDock(
+                cat = cat,
+                browseMode = latestBrowseMode,
+                resolved = latestResolved,
+                isDone = latestIsDone,
+                pillBg = latestPillBg,
+                pillInk = latestPillInk,
+                onExplore = latestOnExplore,
+                onAlready = latestOnAlready
+            )
+        }
+    }
+    DisposableEffect(revealBottomBar) {
+        onBottomBarContentChanged(revealBottomBar)
+        onDispose { onBottomBarContentCleared() }
+    }
 
     // Android 13+ needs POST_NOTIFICATIONS before the persistent explore
     // notification can show — requested when the user starts exploring with
@@ -656,111 +700,12 @@ fun TopicRevealScreen(
                     }
                 }
 
-                // ── 7. Primary CTA — hidden in Browse-Topics mode (read-only:
-                //    no explore sessions, nothing recorded in recents). ──────
-                if (!browseMode) {
-                Button(
-                    onClick = {
-                        val topic = resolved ?: return@Button
-                        // NOTE: engaged is NOT set here — merely tapping the
-                        // CTA isn't engaging. The topic is only recorded as
-                        // recently-explored when the user actually picks
-                        // "Explore now" or "Write about it" (those paths call
-                        // recordExplored + removeUnexplored), so a user who
-                        // dismisses the dialog and backs out still gets the
-                        // topic recorded as recently-UNexplored.
-                        showExploreDialog = true
-                    },
-                    enabled = resolved != null,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = cat.themedAccent(),
-                        contentColor = cat.onAccent(),
-                        disabledContainerColor = cat.themedAccent().copy(alpha = 0.35f),
-                        disabledContentColor = cat.onAccent().copy(alpha = 0.45f)
-                    ),
-                    contentPadding = PaddingValues(horizontal = 28.dp, vertical = 18.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        CurioIcon(CurioIcons.AutoAwesome, null, tint = cat.onAccent(), size = 20.dp)
-                        Text(
-                            text = "Start exploring",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
-                        )
-                    }
-                }
-                }
-
-                // ── 8. "Already …" — full-width pill. Idle: a quiet category-
-                //    surface card with subtle border. Done: accent-filled pill
-                //    that says "Undo" (no check — tapping undoes). Both states
-                //    color-animate smoothly.
-                //    In Browse-Topics mode tapping just confirms (the pill
-                //    flip IS the confirmation); elsewhere it still asks
-                //    whether to write about it now.
-                val pillBg by animateColorAsState(
-                    targetValue = if (isDone) cat.themedAccent()
-                                  else cat.categorySurface(MaterialTheme.colorScheme.surfaceContainerLow),
-                    label = "alreadyDoneBg"
-                )
-                val pillInk by animateColorAsState(
-                    targetValue = if (isDone) cat.onAccent()
-                                  else MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = "alreadyDoneInk"
-                )
-                Surface(
-                    onClick = {
-                        val topic = resolved ?: return@Surface
-                        // Marking OR unmarking is engaging — backing out must
-                        // not record the topic as unexplored afterwards.
-                        engaged = true
-                        if (isDone) {
-                            ExploreSessionStore.unmarkDone(context, cat.id, topic.name)
-                        } else {
-                            ExploreSessionStore.markDone(context, cat.id, topic.name)
-                            // Browse mode: the pill flip IS the confirmation.
-                            if (!browseMode) showAlreadyDoneDialog = true
-                        }
-                    },
-                    enabled = resolved != null,
-                    shape = RoundedCornerShape(18.dp),
-                    color = pillBg,
-                    border = if (isDone) BorderStroke(1.dp, cat.onAccent().copy(alpha = 0.25f))
-                             else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                    ) {
-                        CurioIcon(
-                            name = if (isDone) CurioIcons.Close else CurioIcons.History,
-                            contentDescription = null,
-                            tint = pillInk,
-                            size = 18.dp
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = if (isDone) "Undo" else alreadyDoneLabel(cat),
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = pillInk
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(20.dp))
+                // The action dock is rendered by the Scaffold bottom slot so
+                // it occupies the existing reveal placeholder below this
+                // scrolling content.
+                Spacer(Modifier.height(24.dp))
             }
 
-            Spacer(Modifier.height(navInsets.calculateBottomPadding()))
         }
     }
 
@@ -1003,6 +948,125 @@ fun TopicRevealScreen(
         }
     }
 
+}
+
+@Composable
+private fun RevealActionDock(
+    cat: com.curio.app.data.CurioCategory,
+    browseMode: Boolean,
+    resolved: CurioTopic?,
+    isDone: Boolean,
+    pillBg: Color,
+    pillInk: Color,
+    onExplore: () -> Unit,
+    onAlready: () -> Unit
+) {
+    Surface(
+        color = cat.categorySurface(MaterialTheme.colorScheme.surface),
+        tonalElevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (!browseMode) {
+                RevealStartButton(
+                    enabled = resolved != null,
+                    cat = cat,
+                    modifier = Modifier.weight(1f),
+                    onClick = onExplore
+                )
+            }
+            RevealAlreadyButton(
+                enabled = resolved != null,
+                cat = cat,
+                isDone = isDone,
+                pillBg = pillBg,
+                pillInk = pillInk,
+                modifier = Modifier.weight(1f),
+                onClick = onAlready
+            )
+        }
+    }
+}
+
+@Composable
+private fun RevealStartButton(
+    enabled: Boolean,
+    cat: com.curio.app.data.CurioCategory,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = cat.themedAccent(),
+            contentColor = cat.onAccent(),
+            disabledContainerColor = cat.themedAccent().copy(alpha = 0.35f),
+            disabledContentColor = cat.onAccent().copy(alpha = 0.45f)
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CurioIcon(CurioIcons.AutoAwesome, null, tint = cat.onAccent(), size = 20.dp)
+            Text(
+                text = "Start exploring",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
+            )
+        }
+    }
+}
+
+@Composable
+private fun RevealAlreadyButton(
+    enabled: Boolean,
+    cat: com.curio.app.data.CurioCategory,
+    isDone: Boolean,
+    pillBg: Color,
+    pillInk: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(18.dp),
+        color = pillBg,
+        border = if (isDone) BorderStroke(1.dp, cat.onAccent().copy(alpha = 0.25f))
+                 else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp)
+        ) {
+            CurioIcon(
+                name = if (isDone) CurioIcons.Close else CurioIcons.History,
+                contentDescription = null,
+                tint = pillInk,
+                size = 18.dp
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = if (isDone) "Undo" else alreadyDoneLabel(cat),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = pillInk
+            )
+        }
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1266,7 +1330,7 @@ private fun TeaserCard(
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ═════════════════���═════════════════════════════════════════════════════════
 // Action prompt card ("{verb} {target}" + instruction)
 // ═══════════════════════════════════════════════════════════════════════════
 
