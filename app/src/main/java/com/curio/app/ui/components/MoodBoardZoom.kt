@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.request.filterQuality
 import com.curio.app.data.CaptureData
 import com.curio.app.data.NotePaperColor
 import com.curio.app.data.NotePaperStyle
@@ -210,6 +211,11 @@ fun moodBoardPainter(uri: String, zoomed: Boolean = false): Painter {
         model = ImageRequest.Builder(context)
             .data(uri)
             .size(cap, cap)
+            // v8.2 — filtering lives on the REQUEST, not the Image(painter=…)
+            // call: foundation 1.4+ removed the filterQuality parameter from
+            // that overload. High keeps the decoded bitmap smooth whenever it
+            // upscales (big tiles, the zoom glide) instead of blocky pixels.
+            .filterQuality(FilterQuality.High)
             .build()
     )
 }
@@ -279,14 +285,12 @@ fun MoodBoardTiles(
                     .rotate(tile.rotationDeg)
             ) {
             Image(
+                // v8.2 — FilterQuality.High is set on the Coil REQUEST inside
+                // moodBoardPainter (the painter overload of Image lost its
+                // filterQuality parameter in foundation 1.4+).
                 painter = moodBoardPainter(tile.uri, zoomed),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                // v8.2 — smooth upscaling: the default Low filter leaves
-                // blocky pixels when a tile's layout outgrows its decoded
-                // bitmap (most visible on big tiles and during the zoom
-                // glide). High keeps imported photos crisp.
-                filterQuality = FilterQuality.High,
                 modifier = Modifier
                     .fillMaxSize()
                         // v6.1 — no inner padding: tiles are sized to the
@@ -609,21 +613,19 @@ fun MoodBoardZoomOverlay(
             // Frameless, like the editor tiles. The board-size painter renders
             // instantly (already cached from the collage) while the hi-res
             // decode for the magnifier streams in — no blank flash mid-glide.
-            // v8.2 — FilterQuality.High on BOTH layers: the glide upscales the
-            // base bitmap before the hi-res arrives, and High keeps that
-            // upscale smooth instead of pixel-cracked.
+            // v8.2 — both layers decode with FilterQuality.High on the REQUEST
+            // (moodBoardPainter), so the glide's upscale of the base bitmap
+            // stays smooth instead of pixel-cracked.
             Image(
                 painter = moodBoardPainter(tileUri),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                filterQuality = FilterQuality.High,
                 modifier = imageModifier
             )
             Image(
                 painter = moodBoardPainter(tileUri, zoomed = true),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                filterQuality = FilterQuality.High,
                 modifier = imageModifier
             )
         }

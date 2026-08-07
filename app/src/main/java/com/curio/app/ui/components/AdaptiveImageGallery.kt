@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.request.filterQuality
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -139,13 +141,19 @@ fun AdaptiveImageGallery(
                                 // ratio, so Fit fills the rounded box edge to
                                 // edge — no bars, no cropping.
                                 Image(
-                                    painter = rememberAsyncImagePainter(tile.uri),
+                                    // v8.2 — FilterQuality.High set on the
+                                    // request (foundation 1.4+ removed the
+                                    // painter-overload parameter), so the grid
+                                    // tile upscales smoothly when the zoom
+                                    // overlay glides it larger than its decode.
+                                    painter = rememberAsyncImagePainter(
+                                        ImageRequest.Builder(LocalContext.current)
+                                            .data(tile.uri)
+                                            .filterQuality(FilterQuality.High)
+                                            .build()
+                                    ),
                                     contentDescription = "Attached image",
                                     contentScale = ContentScale.Fit,
-                                    // v8.2 — smooth upscaling when the zoom
-                                    // overlay glides the tile larger than its
-                                    // grid decode.
-                                    filterQuality = FilterQuality.High,
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .clip(RoundedCornerShape(cornerRadius))
