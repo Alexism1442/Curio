@@ -1,25 +1,24 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 13th): Mood-board pixelation on zoom — DONE (pushed)
+## Request (2026-08-07, 14th): Reveal watermark still shifts down — DONE (pushed)
 
-**User request:** "the moodboard saved image still gets pixel crack on zoom make it clear so that the imported images and the after saving it doesnt gets pixeleted"
+**User request:** "add a navbar padding in topic reveal screen so that the watermark doesnt shift as its still shifts down"
 
-### Analysis
-- `MoodBoardZoom.kt` decodes zoomed tiles at only **2048px** (`MoodBoardZoomDecodePx`) — the pinch can reach **8x**, so the zoomed bitmap was upscaled several times → visible "pixel crack".
-- Every `Image` in the mood-board pipeline (zoom overlay, board tiles, editor, gallery, export) used the Compose **default `FilterQuality.Low`**, which leaves blocky pixels when a layout outgrows its decoded bitmap (most visible during the zoom glide and on big tiles).
-- The export preloaded tile bitmaps at FULL original size with no cap — a 48MP photo could allocate a multi-hundred-MB bitmap per tile (OOM risk on a full board) while the output canvas never exceeds 4096px.
-- Compose BOM is 2026.05.01 — `Image(filterQuality = …)` is fully supported.
+### Analysis — root cause found
+- The NavHost already had the right mechanism: `reserveBarSpace` → an invisible placeholder in the `bottomBar` slot sized to the real bar's measured height (`bottomBarHeightPx`), so `innerPadding.bottom` stays constant when navigating a tab → REVEAL / ENTRY_DETAIL (the bar hides on those routes).
+- BUT the condition compared the route PREFIX against the FULL route patterns:
+  `routePrefix in setOf(CurioRoutes.REVEAL, CurioRoutes.ENTRY_DETAIL)`
+  where REVEAL = `"reveal/{categorySlug}/{topicName}?browse={browse}"` and ENTRY_DETAIL = `"detail/{entryId}"`.
+  `"reveal"` / `"detail"` are NEVER in that set → `reserveBarSpace` was **always false** → the placeholder never rendered (verified with python: `'reveal' in {"reveal/{…}", "detail/{entryId}"}` → False).
+- Consequence: on Spin→Reveal the bottom bar vanishes, innerPadding.bottom drops from the bar height to the nav inset, the content area (SharedTransitionLayout) grows by the bar height mid-morph → the exiting ticket shifts down AND the reveal watermark (bias-positioned in the taller container) shifts down. The earlier morph fix (cc26e15) never took effect because of this bug.
 
-### Changes
-- **`ui/components/MoodBoardZoom.kt`** — `MoodBoardZoomDecodePx` 2048 → **4096** (supports the full 8x pinch at ~1:1, matches the export cap); `FilterQuality.High` on the zoom overlay's base + hi-res layers AND the board tile images.
-- **`ui/components/MoodBoardExport.kt`** — preload `ImageRequest` now `.size(4096, 4096)` (memory-safe full-res; output never exceeds it); `FilterQuality.High` on exported tile images.
-- **`features/capture/formats/GalleryWallFormat.kt`** — `FilterQuality.High` on the editor's tile images (pinched-bigger tiles stay clean).
-- **`ui/components/AdaptiveImageGallery.kt`** — `FilterQuality.High` on the gallery grid tiles (smooth during the zoom overlay glide).
+### Fix
+- **`navigation/CurioNavHost.kt`** — `reserveBarSpace` now compares the route PREFIX (`CurioRoutes.REVEAL.substringBefore("/")` / `ENTRY_DETAIL.substringBefore("/")`). The placeholder engages, innerPadding stays constant across the whole transition, and the watermark stays exactly where it was on the deck. This IS the requested "navbar padding" effect, done at the source: padding the reveal screen itself would double-reserve once the placeholder works (a visible empty strip + the watermark sitting 80dp too high).
 - **`fastlane/.../20260810.txt`** — changelog bullet.
 - **`Prompt.md`** — this log.
 
 ### Validation
-No Gradle in this env (per AGENTS.md) — static checks: brace balance, unused-import grep, `git diff --check`, code review. Commit + push pending.
+No Gradle in this env (per AGENTS.md) — static checks: brace balance, prefix math sanity (python), `git diff --check`, code review. Commit + push pending.
 
 ### Follow-ups
 - None.
