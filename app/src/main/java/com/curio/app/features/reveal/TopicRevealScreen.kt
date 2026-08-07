@@ -428,7 +428,7 @@ fun TopicRevealScreen(
         //    teaser / action cards above it sit on OPAQUE category surfaces
         //    so the glyphs only show in the gaps around them, never bleeding
         //    through the cards.
-        CurioWatermarkBackdrop(activeCat = cat, modifier = Modifier.fillMaxSize())
+        CurioWatermarkBackdrop(activeCat = cat)
 
         Column(
             modifier = Modifier
@@ -673,18 +673,19 @@ fun TopicRevealScreen(
                 }
                 }
 
-                // ── 8. "Already …" — a full-width pill toggle. Idle: a quiet
-                //    outlined surface; done: filled with the category accent
-                //    and a check, color-animated so the state flip reads.
+                // ── 8. "Already …" — full-width pill. Idle: a quiet category-
+                //    surface card with subtle border. Done: accent-filled pill
+                //    that says "Undo" (no check — tapping undoes). Both states
+                //    color-animate smoothly.
                 //    In Browse-Topics mode tapping just confirms (the pill
                 //    flip IS the confirmation); elsewhere it still asks
                 //    whether to write about it now.
-                val donePillColor by animateColorAsState(
+                val pillBg by animateColorAsState(
                     targetValue = if (isDone) cat.themedAccent()
-                                  else MaterialTheme.colorScheme.surfaceVariant,
-                    label = "alreadyDonePill"
+                                  else cat.categorySurface(MaterialTheme.colorScheme.surfaceContainerLow),
+                    label = "alreadyDoneBg"
                 )
-                val donePillInk by animateColorAsState(
+                val pillInk by animateColorAsState(
                     targetValue = if (isDone) cat.onAccent()
                                   else MaterialTheme.colorScheme.onSurfaceVariant,
                     label = "alreadyDoneInk"
@@ -705,8 +706,8 @@ fun TopicRevealScreen(
                     },
                     enabled = resolved != null,
                     shape = RoundedCornerShape(18.dp),
-                    color = donePillColor,
-                    border = if (isDone) null
+                    color = pillBg,
+                    border = if (isDone) BorderStroke(1.dp, cat.onAccent().copy(alpha = 0.25f))
                              else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -718,16 +719,16 @@ fun TopicRevealScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                     ) {
                         CurioIcon(
-                            name = if (isDone) CurioIcons.Check else CurioIcons.History,
+                            name = if (isDone) CurioIcons.Close else CurioIcons.History,
                             contentDescription = null,
-                            tint = donePillInk,
+                            tint = pillInk,
                             size = 18.dp
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = alreadyDoneLabel(cat),
+                            text = if (isDone) "Undo" else alreadyDoneLabel(cat),
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = donePillInk
+                            color = pillInk
                         )
                     }
                 }
