@@ -134,7 +134,8 @@ fun PromoModeScreen(navController: NavController) {
                             context = context,
                             cardSize = DpSize(360.dp, 560.dp),
                             authority = "${context.packageName}.fileprovider",
-                            card = { PromoShareCard(topicsTotal = topicTotal) }
+                            card = { PromoShareCard(topicsTotal = topicTotal) },
+                            exportDensity = 4f
                         )
                     }
                 }
@@ -158,7 +159,8 @@ fun PromoModeScreen(navController: NavController) {
                             context = context,
                             cardSize = DpSize(512.dp, 288.dp),
                             authority = "${context.packageName}.fileprovider",
-                            card = { PromoFeatureGraphic(topicsTotal = topicTotal) }
+                            card = { PromoFeatureGraphic(topicsTotal = topicTotal) },
+                            exportDensity = 4f
                         )
                     }
                 }
@@ -182,7 +184,8 @@ fun PromoModeScreen(navController: NavController) {
                             context = context,
                             cardSize = DpSize(360.dp, 640.dp),
                             authority = "${context.packageName}.fileprovider",
-                            card = { PromoAppScreenshot() }
+                            card = { PromoAppScreenshot() },
+                            exportDensity = 4f
                         )
                     }
                 }

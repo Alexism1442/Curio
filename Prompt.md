@@ -1,30 +1,17 @@
-# Prompt — HTTPS, R8, and secret audit
+# Prompt — maximum-quality promo and mood-board exports
 
 ## Request
-Implement item 9 from the security audit:
-
-- Enforce HTTPS-only network traffic with explicit Android network security configuration.
-- Enable R8/minification for release builds with conservative keep rules for the Room/Gson data layer.
-- Analyze the repository for embedded secrets and report findings without exposing secret values.
+The promo preview looks good, but the saved output changes slightly and its quality drops drastically. Increase promo export quality to maximum. Apply the same maximum-quality treatment to mood-board output.
 
 ## Completed
-- Added `app/src/main/res/xml/network_security_config.xml` with cleartext traffic disabled and system trust anchors.
-- Bound the network security config in `AndroidManifest.xml` and set `android:usesCleartextTraffic="false"`.
-- Enabled release R8 shrinking, obfuscation, and resource shrinking.
-- Added the default Android optimization rules plus `app/proguard-rules.pro`.
-- Added conservative Gson/Room keep rules for Curio capture and backup models.
-- Added a security release-note entry.
-
-## Secret audit
-- Scanned 180 tracked files for high-confidence private-key and token patterns; none found.
-- Scanned reachable Git history for those same high-confidence patterns; none found.
-- No embedded live API keys, bearer tokens, private keys, keystore files, or passwords were found.
-- Expected secret references exist only in CI/build wiring: GitHub Actions signing secret names and the optional Mapbox Gradle property.
-- Operational risk remains in `scripts/setup-signing-secrets.sh`: it writes signing passwords to temporary plaintext files, prints them for copy/paste, and passes them as command-line arguments. This is not an embedded app secret and was not changed in this request.
-- Content words such as “secret” in topic prose were false positives, not credentials.
+- Promo share exports now opt into fixed 4x density while regular entry share cards retain their established device-density behavior.
+- Promo exports preserve the device font scale so text/layout remain faithful to the preview environment.
+- Promo and mood-board PNG compression use quality 100 (PNG remains lossless).
+- Mood-board exports target a 4096px long side and automatically scale down only when the device-aware ARGB bitmap budget requires it.
+- Failed mood-board captures recycle partially allocated bitmaps; the budget reserves heap for tile bitmaps and Compose rendering.
 
 ## Validation
 - `git diff --check` passed.
-- New XML files parsed successfully.
-- Code review found no blockers.
-- No Gradle compile/build/lint/test command was run because the repository forbids those commands locally; CI must validate the obfuscated release artifact and Gson/Room behavior.
+- Static Kotlin brace/string checks passed for all changed Kotlin files.
+- Code review approved the promo scoping, density/font-scale fidelity, PNG quality, and failure cleanup.
+- No Gradle build, compile, lint, or test commands were run because repository policy forbids them in this environment; CI should validate the Android release artifact.

@@ -43,6 +43,7 @@ import com.curio.app.ui.theme.themedAccent
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -66,8 +67,11 @@ import kotlinx.coroutines.withContext
  */
 object MoodBoardExport {
 
-    /** Captured PNG long side in px — ~2.5x a 1080p screen, still a sane file size. */
-    private const val EXPORT_LONG_SIDE = 2400
+    /** Requested PNG long side in px — capped below by the device pixel budget. */
+    private const val EXPORT_LONG_SIDE = 4096
+
+    /** Maximum output bitmap budget; the runtime budget may reduce this further. */
+    private const val MAX_EXPORT_BITMAP_BYTES = 64L * 1024L * 1024L
 
     /** Short-side floor for the full-bleed canvas — a very wide/short board
      *  can't collapse the other axis below this. */
@@ -280,15 +284,21 @@ object MoodBoardExport {
             // every version) — no kotlinx extension import needed.
             val result = kotlin.coroutines.suspendCoroutine<Bitmap?> { cont ->
                 composeView.post {
+                    var bmp: Bitmap? = null
                     try {
-                        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                        val canvas = android.graphics.Canvas(bmp)
+                        val allocated = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                        bmp = allocated
+                        val canvas = android.graphics.Canvas(allocated)
                         canvas.drawColor(android.graphics.Color.WHITE)
                         composeView.draw(canvas)
-                        cont.resumeWith(Result.success(bmp))
+                        cont.resumeWith(Result.success(allocated))
+                        bmp = null // ownership moves to the save/share emitter
                     } catch (t: Throwable) {
                         // Never crash the caller — a capture failure reports
-                        // as a failed save/share instead.
+                        // as a failed save/share instead. Recycle a bitmap
+                        // allocated before a draw failure so a large failed
+                        // export cannot remain resident in the heap.
+                        bmp?.recycle()
                         cont.resumeWith(Result.success(null))
                     } finally {
                         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -303,19 +313,39 @@ object MoodBoardExport {
     }
 
     /**
-     * Full-bleed canvas for the board's raw extent: the LONG side is
-     * [EXPORT_LONG_SIDE] and the other axis follows the board's own aspect
-     * (floored at [MIN_EXPORT_SIDE] so a weirdly wide/short board never
-     * collapses to a sliver). Empty/legacy layouts fall back to a square.
+     * Full-bleed canvas for the board's raw extent: the LONG side targets
+     * [EXPORT_LONG_SIDE] and the other axis follows the board's own aspect.
+     * The final ARGB bitmap is constrained by a device-aware memory budget,
+     * reserving heap for preloaded tile bitmaps and Compose so the largest
+     * practical output is used without making a 4096px capture an avoidable
+     * out-of-memory failure. Empty/legacy layouts fall back to a
+     * square.
      */
     private fun exportCanvasSize(maxX: Float, maxY: Float): Pair<Int, Int> {
-        if (maxX <= 0f || maxY <= 0f) return EXPORT_LONG_SIDE to EXPORT_LONG_SIDE
+        if (maxX <= 0f || maxY <= 0f) return safeExportSize(EXPORT_LONG_SIDE, EXPORT_LONG_SIDE)
         val aspect = maxX / maxY
-        return if (aspect >= 1f) {
+        val ideal = if (aspect >= 1f) {
             EXPORT_LONG_SIDE to (EXPORT_LONG_SIDE / aspect).toInt().coerceAtLeast(MIN_EXPORT_SIDE)
         } else {
             (EXPORT_LONG_SIDE * aspect).toInt().coerceAtLeast(MIN_EXPORT_SIDE) to EXPORT_LONG_SIDE
         }
+        return safeExportSize(ideal.first, ideal.second)
+    }
+
+    private fun safeExportSize(width: Int, height: Int): Pair<Int, Int> {
+        val maxBytes = minOf(
+            MAX_EXPORT_BITMAP_BYTES,
+            // Leave most of the app heap available for preloaded tile bitmaps,
+            // Compose, and the temporary encoder buffers.
+            Runtime.getRuntime().maxMemory() / 8L
+        ).coerceAtLeast(4L)
+        val maxPixels = (maxBytes / 4L).coerceAtLeast(1L)
+        val requestedPixels = width.toLong() * height.toLong()
+        if (requestedPixels <= maxPixels) return width to height
+
+        val scale = sqrt(maxPixels.toDouble() / requestedPixels.toDouble())
+        return (width * scale).toInt().coerceAtLeast(1) to
+            (height * scale).toInt().coerceAtLeast(1)
     }
 
     /**

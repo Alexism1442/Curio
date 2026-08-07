@@ -6,7 +6,10 @@ import android.graphics.Bitmap
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.core.content.FileProvider
@@ -27,6 +30,14 @@ import java.io.FileOutputStream
  *
  * Old share images are cleaned up before creating a new one.
  *
+ * Export density defaults to the device density so existing entry share cards
+ * keep their established output. Promo exports opt into a fixed 4x density,
+ * which keeps their logical dp layout stable while producing a large, sharp
+ * PNG on low-density and high-density devices alike.
+
+ * @param exportDensity Optional pixel density for the export. Leave null to
+ *                      use the device density; promo art uses 4x.
+ *
  * @param context   Android context (Activity recommended for lifecycle).
  * @param cardSize  Fixed dimensions for the rendered card (e.g. 400×400 dp).
  * @param authority FileProvider authority string (usually `package.fileprovider`).
@@ -38,10 +49,15 @@ fun shareComposableCard(
     cardSize: DpSize,
     authority: String,
     card: @Composable () -> Unit,
-    onShared: () -> Unit = {}
+    onShared: () -> Unit = {},
+    exportDensity: Float? = null
 ) {
-    val widthPx  = dpToPx(context, cardSize.width)
-    val heightPx = dpToPx(context, cardSize.height)
+    val density = exportDensity
+        ?.coerceAtLeast(1f)
+        ?: context.resources.displayMetrics.density.coerceAtLeast(1f)
+    val fontScale = context.resources.configuration.fontScale
+    val widthPx  = dpToExportPx(cardSize.width, density)
+    val heightPx = dpToExportPx(cardSize.height, density)
 
     // Clean up old share PNGs so the cache doesn't grow unbounded.
     val shareDir = File(context.cacheDir, "share").apply { mkdirs() }
@@ -54,7 +70,13 @@ fun shareComposableCard(
     val composeView = ComposeView(context).apply {
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
 
-        setContent { card() }
+        setContent {
+            CompositionLocalProvider(
+                LocalDensity provides Density(density, fontScale)
+            ) {
+                card()
+            }
+        }
     }
 
     // v7.26 — Android 16 crash fix (same as MoodBoardExport): a ComposeView
@@ -95,7 +117,7 @@ fun shareComposableCard(
             // Save PNG to share cache.
             val file = File(shareDir, "curio_share_${System.currentTimeMillis()}.png")
             FileOutputStream(file).use { fos ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 95, fos)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
             }
             bitmap.recycle()
 
@@ -117,8 +139,8 @@ fun shareComposableCard(
     }
 }
 
-private fun dpToPx(context: Context, dp: Dp): Int =
-    (dp.value * context.resources.displayMetrics.density).toInt()
+private fun dpToExportPx(dp: Dp, density: Float): Int =
+    (dp.value * density).toInt().coerceAtLeast(1)
 
 /**
  * Minimal [LifecycleOwner] for off-screen [ComposeView] instances.
