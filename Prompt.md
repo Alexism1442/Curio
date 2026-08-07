@@ -1,38 +1,28 @@
-# Prompt — Profile responsive polish and detail category/tear fix
+# Prompt — Topic Reveal landed-card morph handoff
 
 ## Request
-Fix the remaining visual issues in Profile and Entry Detail:
-- Material Symbols icons still look optically low; inspect the font box/baseline treatment and correct the shared renderer.
-- On narrow Profile screens, Edit profile, streak, and the level/synthesizer control misalign or wrap unevenly.
-- Profile hero/stat text is clipped at narrow widths.
-- Merge XP progress, quests, and achievements into one coherent Profile card.
-- The Entry Detail category label must scroll with the page instead of sticking over the content.
-- The Entry Detail hero tear must not render as a black/dark strip; it should read as the paper-colored seam.
+When a topic lands on Spin and Topic Reveal opens, the reveal hero should visibly feel like the landed Spin ticket expands/morphs into the Topic Reveal card. The current page does not show that continuity.
 
 ## Analysis
-- `CurioIcon` already removes platform font padding and centers its line box, but Material Symbols' visible ink has a small optical lower bearing. Apply a very small shared upward optical translation to the glyph text without changing its layout box.
-- Profile hero actions use intrinsic-width FlowRow children. Replace the narrow-screen layout with equal-width compact action cells and ellipsized labels so all controls share one baseline and cannot extend beyond the hero gutter.
-- Profile hero stat labels need single-line ellipsis protection. The separate XP, quests, and achievements cards should become one progress-and-achievements card with the existing quest navigation preserved.
-- `EntryDetailCategoryLabel` is currently outside the `verticalScroll` column and is overlaid at a fixed offset; move it directly into the scrolling content after the hero and remove the compensating spacer.
-- The detail tear's explicit `Color.Black.copy(alpha = 0.20f)` layer is the source of the black edge. Keep the layered edge treatment but use the existing paper/sheet color so the seam stays paper-colored in both themes.
+- Spin already has an `isOpening` handoff state and an `Opening…` pulse, but `isOpening` was never set to `true` before the auto-navigation delay, so the source card never communicates the handoff.
+- Topic Reveal already wraps `HeroCard` in `MorphEntrance`, but the wrapper first mounts while `resolved` is still null. When the topic data arrives, the same wrapper remains mounted and only its contents update, so the card's entrance animation has already been consumed before the real topic hero appears.
+- The generic NavHost forward transition slides every destination horizontally. That masks the intended card expansion. Reveal needs a reveal-specific fade/near-scale transition instead of the generic slide.
 
 ## Plan
-1. Update the shared icon renderer for optical centering.
-2. Stabilize Profile hero controls and stat labels for small widths.
-3. Replace separate Profile progress/quest/achievement cards with one combined card.
-4. Put the Entry Detail category row in the scroll content and remove the black seam color.
-5. Review, run permitted non-build checks, update this log, and commit/push.
+1. Set Spin's opening state during the landing-to-reveal handoff and give the source ticket a restrained expansion.
+2. Key Topic Reveal's hero entrance to the resolved topic so the real hero card plays its morph after topic data lands.
+3. Use a reveal-specific NavHost fade/near-scale transition to preserve visual continuity with the expanding ticket.
+4. Give manual landed-card taps the same handoff delay, review, run permitted non-build checks, update Prompt/changelog, and commit/push.
 
 ## Implementation completed
-- `CurioIcon` now applies a small paint-only upward optical correction while preserving its centered layout box.
-- Profile hero actions use equal-width, aligned action cells with two-line ellipsis-safe labels; hero stat labels are protected from clipping.
-- XP progress, quest navigation, and achievement progress/preview now share one Profile gamification card.
-- Entry Detail category identity now sits in the vertical scroll flow instead of a fixed overlay.
-- The detail tear no longer uses a black shadow; dark mode uses a warm paper-colored seam.
+- Auto-land navigation now sets `isOpening` before the handoff delay; the Spin ticket scales up and shows `Opening…`.
+- Manual landed-card opens use the same reveal-handoff delay instead of navigating immediately.
+- Topic Reveal keys `MorphEntrance` to the resolved topic id, so the real hero animates after data loads.
+- Reveal navigation now uses a fade + near-scale entry and no longer relies on the generic horizontal slide for this handoff.
 
 ## Validation
 - `git diff --check` passed.
-- Targeted brace/parenthesis balance checks passed for all three Kotlin files.
-- Confirmed removed Profile helper symbols and fixed category block symbols have no remaining references.
-- Final review found no remaining blockers after removing the unused `zIndex` import.
+- Balanced-delimiter checks passed for Spin, Topic Reveal, and NavHost sources.
+- Targeted assertions confirmed both auto and manual opening paths, keyed hero entrance, and reveal-specific transition.
+- Final review found and fixed the immediate manual-navigation and unused-import issues.
 - No Gradle compile/build/lint/test commands were run because repository policy forbids local Android builds.

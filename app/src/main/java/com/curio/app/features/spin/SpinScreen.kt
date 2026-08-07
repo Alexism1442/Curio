@@ -63,6 +63,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -92,6 +93,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.curio.app.data.AppPreferences
 import com.curio.app.data.CategoryId
@@ -343,6 +347,7 @@ private val StringSetSaver = listSaver<Set<String>, String>(
 fun SpinScreen(categorySlug: String?, navController: NavController) {
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     // v5.7.1 — the slug branch is CurioCategory?; the prefs fallback returns
     // a CategoryId, so resolve it through byId(...) to keep BOTH elvis
     // branches CurioCategory (mixing them inferred Any → MutableState<Any>
@@ -509,6 +514,7 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     // True only during an explicit opening handoff; keeps copy flexible if
     // a future shared-element transition delays navigation.
     var isOpening by remember { mutableStateOf(false) }
+    val openingScope = rememberCoroutineScope()
     var recentTopicIds by rememberSaveable(activeCategory.id, stateSaver = StringSetSaver) {
         mutableStateOf(setOf<String>())
     }
@@ -628,6 +634,19 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     }
     // Hygiene: clear the handoff when Spin leaves composition so a stale wash
     // never lingers for a future route that might share the tint.
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // The preserved Spin tab resumes after Reveal closes. Clear
+                // only the one-shot handoff state so the landed card returns
+                // to its normal tappable resting presentation.
+                isOpening = false
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     DisposableEffect(Unit) {
         onDispose { CurioNavTint.publishSpinWash(null) }
     }
@@ -736,12 +755,19 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
         // again within that window cancels this effect (keyed on
         // shuffleCount) and no navigation happens.
         if (primary != null) {
+            // Keep the settled ticket visible as the source of the handoff:
+            // its restrained lift/scale and "Opening…" label should be on
+            // screen before the destination hero appears.
             landingAlreadyOpened = true
+            isOpening = true
             delay(600)
             // Guard against a category switch during the pause: the effect
             // captured `cat` at launch, so only navigate if it's still the
             // active category.
-            if (cat.id != activeCategory.id) return@LaunchedEffect
+            if (cat.id != activeCategory.id) {
+                isOpening = false
+                return@LaunchedEffect
+            }
             navController.navigate(CurioRoutes.revealFor(primary.categoryId.routeSlug, primary.name)) {
                 launchSingleTop = true
             }
@@ -766,7 +792,7 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
     // ── Deck interaction callbacks — shared by the normal and compact
     //    layout branches (the Carousel call lives in SpinDeckSection) ─
     val onDeckCardTap: () -> Unit = {
-        if (!shuffling && filteredPool.isNotEmpty()) {
+        if (!shuffling && filteredPool.isNotEmpty() && !isOpening) {
             // v7.106 — the front card is ALWAYS openable: the restored
             // landed topic wins when present, otherwise whatever topic the
             // fan is showing right now (idle deck included — no shuffle
@@ -776,8 +802,19 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
             val resolved = resolveTopicForSlot(0, hand, cycleIndex, landedTopic)
             if (resolved != null) {
                 landingAlreadyOpened = true
-                navController.navigate(CurioRoutes.revealFor(resolved.categoryId.routeSlug, resolved.name)) {
-                    launchSingleTop = true
+                isOpening = true
+                // Give the settled ticket time to grow before the reveal
+                // destination enters. This mirrors the automatic landing
+                // handoff instead of making a manual tap feel like a cut.
+                openingScope.launch {
+                    delay(CurioMotion.Durations.RevealHold.toLong())
+                    if (isOpening) {
+                        navController.navigate(
+                            CurioRoutes.revealFor(resolved.categoryId.routeSlug, resolved.name)
+                        ) {
+                            launchSingleTop = true
+                        }
+                    }
                 }
             }
         }
@@ -1822,6 +1859,16 @@ private fun HeroTicketCard(
     // surprises on the card, and it matches every other pastel surface.
     val ink = if (AppPreferences.pastelColorsState) pastelFillInk(accent) else cat.onAccent()
 
+    // ── Opening handoff — the settled ticket grows a little toward the
+    //    reveal hero before navigation. This is deliberately separate from
+    //    the landing settle so the user can read it as one continuous card
+    //    becoming the next screen, not as another shuffle bounce.
+    val openingScale by animateFloatAsState(
+        targetValue = if (opening) 1.08f else 1f,
+        animationSpec = tween(CurioMotion.Durations.RevealHold),
+        label = "openingCardScale"
+    )
+
     // ── Per-tick shuffle pulse — the front card bounces in sync with the
     //    wheel: every time the displayed topic switches, the card kicks
     //    instantly to peak scale then springs back down, rocking side to
@@ -1891,8 +1938,9 @@ private fun HeroTicketCard(
                 // Idle and shuffling both track tickPulse (rest = exactly 1f);
                 // the category-switch + per-tick bounces ride on it, and the
                 // landing handoff snaps to whatever value it left off at.
-                scaleX = if (landed) settleScale.value else tickPulse.value
-                scaleY = if (landed) settleScale.value else tickPulse.value
+                val baseScale = if (landed) settleScale.value else tickPulse.value
+                scaleX = baseScale * openingScale
+                scaleY = baseScale * openingScale
                 // v6.6 — the per-tick rock is a gentle tilt now (16° vs the
                 // old 40°) so the card breathes instead of whipping side to
                 // side, and the vertical hop shrinks to match.

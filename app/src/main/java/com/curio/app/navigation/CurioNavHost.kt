@@ -99,6 +99,9 @@ private fun safeDecode(raw: String?): String =
  * state, and sliding them (worse, with the old underdamped spring) read as
  * the page-switch glitch.
  */
+private fun isRevealRoute(entry: NavBackStackEntry): Boolean =
+    entry.destination.route == CurioRoutes.REVEAL
+
 private fun AnimatedContentTransitionScope<NavBackStackEntry>.isTabSwitch(
     initialState: NavBackStackEntry,
     targetState: NavBackStackEntry
@@ -271,6 +274,15 @@ fun CurioNavHost(
             // implemented).
             enterTransition = {
                 when {
+                    // Reveal is the continuation of the landed Spin ticket:
+                    // fade + expand instead of the generic horizontal page
+                    // slide, so the destination hero can receive the source
+                    // card's visual handoff.
+                    isRevealRoute(targetState) ->
+                        // The card-level MorphEntrance owns the expansion;
+                        // keep the route transition a clean fade so the whole
+                        // screen does not double-zoom around it.
+                        fadeIn(animationSpec = tween(CurioMotion.Durations.RevealHold))
                     // Splash → Home / Onboarding: special elastic morph
                     initialState.destination.route == CurioRoutes.SPLASH ->
                         fadeIn(
@@ -291,6 +303,11 @@ fun CurioNavHost(
             },
             exitTransition = {
                 when {
+                    // Leave the Spin ticket in place while Reveal expands;
+                    // the source card's own opening scale is visible during
+                    // the handoff instead of being swept sideways.
+                    isRevealRoute(targetState) ->
+                        fadeOut(animationSpec = tween(CurioMotion.Durations.Quick))
                     // Navigating away from splash: no exit needed
                     initialState.destination.route == CurioRoutes.SPLASH ->
                         fadeOut(animationSpec = tween(CurioMotion.Durations.Quick))

@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -475,12 +476,18 @@ fun TopicRevealScreen(
                 // ── 2. Hero card — category watermark + verb/duration badge ──
                 // The reveal card grows smoothly from the main card position,
                 // rather than appearing as a separate hard cut.
-                MorphEntrance {
-                    HeroCard(
-                        cat = cat,
-                        resolved = resolved,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                // Key the entrance to the actual topic, not the initial
+                // loading state. Otherwise MorphEntrance consumes its
+                // one-shot animation while `resolved` is null and the real
+                // hero silently snaps in afterward.
+                key(resolved?.id ?: "topic-loading") {
+                    MorphEntrance {
+                        HeroCard(
+                            cat = cat,
+                            resolved = resolved,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
 
                 // ── 3. Topic name ───────────────────────────────────────────
