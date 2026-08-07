@@ -64,6 +64,7 @@ import com.curio.app.data.CurioCategories
 import com.curio.app.data.CurioQuests
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSessionStore
+import com.curio.app.data.QuestGuide
 import com.curio.app.data.formatElapsed
 import com.curio.app.infrastructure.ExploreSessionService
 import com.curio.app.ui.theme.CurioIcon
@@ -103,6 +104,7 @@ import com.curio.app.ui.adaptive.windowWidthSizeClass
 import com.curio.app.ui.components.CurioBottomBar
 import com.curio.app.ui.components.CurioNavigationRail
 import com.curio.app.ui.components.CurioWatermarkBackdrop
+import com.curio.app.ui.components.QuestGuideToast
 import com.curio.app.ui.theme.CurioMotion
 
 /**
@@ -194,6 +196,52 @@ fun CurioNavHost(
     // Survives rotation so the startup prompt only fires on a truly fresh
     // process (an active session left behind by a killed app).
     var startupPromptDone by rememberSaveable { mutableStateOf(false) }
+
+    // ── Quest guide (v8.1) — a compact IN-APP OVERLAY (not a dialog) points
+    //    at the next quest; tapping Go jumps to its screen. When the current
+    //    quest is the very first one ("First Spin"), Go launches the full
+    //    auto-navigating guided tour instead, so a new user sees where
+    //    everything lives. Shows once per quest (dismissed via Go / the X),
+    //    re-arms when the current quest advances, respects the Settings
+    //    toggle, and never competes with an active tour.
+    val guideQuest = CurioQuests.currentQuest()
+    var guideDismissedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var showGuideToast by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(routePrefix, guideQuest?.id, AppPreferences.guideEnabledState, QuestGuide.active) {
+        val onStableTab = routePrefix != null && routePrefix in CurioRoutes.bottomNavRoutePrefixes
+        if (onStableTab && AppPreferences.guideEnabledState && !QuestGuide.active &&
+            guideQuest != null && guideQuest.navRoute != null &&
+            guideQuest.id != guideDismissedId
+        ) {
+            delay(1200)
+            showGuideToast = true
+        } else {
+            showGuideToast = false
+        }
+    }
+    // ── Quest tour runner — auto-navigate to the current step's screen so
+    //    every overlay tap advances the walkthrough to the next place.
+    LaunchedEffect(QuestGuide.active, QuestGuide.index, routePrefix) {
+        if (!QuestGuide.active) return@LaunchedEffect
+        val step = QuestGuide.current ?: return@LaunchedEffect
+        if (step.route.isEmpty()) return@LaunchedEffect
+        if (routePrefix != step.route) {
+            navController.navigateToQuestRoute(step.route)
+        }
+    }
+    // When the tour ends (Finish / the overlay's X), land the user back on a
+    // stable tab instead of leaving the pushed tour screens stacked.
+    var tourWasActive by remember { mutableStateOf(false) }
+    LaunchedEffect(QuestGuide.active) {
+        val now = QuestGuide.active
+        if (tourWasActive && !now) {
+            val prefix = routePrefix
+            if (prefix != null && prefix !in CurioRoutes.bottomNavRoutePrefixes) {
+                navController.popBackStack(CurioRoutes.HOME, inclusive = false)
+            }
+        }
+        tourWasActive = now
+    }
 
     // Ask "are you done exploring?" whenever the app returns to the
     // foreground while an explore session is active — mid-session, after
@@ -666,92 +714,58 @@ fun CurioNavHost(
             }
         }
         }
+        // ── Quest guide + tour overlays (v8.1) — a compact IN-APP floating
+        //    pill near the bottom of the content column (above the bottom
+        //    bar / rail), NOT a dialog. The guide overlay points at the next
+        //    quest; the tour overlay walks a new user through every screen.
+        if (showGuideToast && guideQuest != null && !QuestGuide.active) {
+            QuestGuideToast(
+                title = "Next quest: ${guideQuest.title}",
+                message = guideQuest.description,
+                footer = "+${guideQuest.xpReward} XP",
+                actionLabel = "Go",
+                onClick = {
+                    showGuideToast = false
+                    guideDismissedId = guideQuest.id
+                    if (guideQuest.id == QuestGuide.firstQuestId) {
+                        // The very first quest launches the full walkthrough.
+                        QuestGuide.start()
+                    } else {
+                        guideQuest.navRoute?.let { navController.navigateToQuestRoute(it) }
+                    }
+                },
+                onClose = {
+                    showGuideToast = false
+                    guideDismissedId = guideQuest.id
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+            )
+        }
+        if (QuestGuide.active) {
+            QuestGuide.current?.let { step ->
+                QuestGuideToast(
+                    title = step.title,
+                    message = step.message,
+                    footer = "${QuestGuide.index + 1} of ${QuestGuide.steps.size}",
+                    actionLabel = if (QuestGuide.isLast) "Finish" else "Next",
+                    onClick = { if (QuestGuide.isLast) QuestGuide.stop() else QuestGuide.next() },
+                    onClose = { QuestGuide.stop() },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+            }
+        }
             }
         }
     }
     }
 
-    // ── Guided-tour prompt (v8.0) — when enabled, a small dialog points at
-    //    the next quest and offers a Go button that jumps to its screen.
-    //    Shows once per quest (dismissed via Later/Go), re-arms when the
-    //    current quest advances, and respects the Settings toggle.
-    val guideQuest = CurioQuests.currentQuest()
-    var guideDismissedId by rememberSaveable { mutableStateOf<String?>(null) }
-    var showGuideDialog by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(routePrefix, guideQuest?.id, AppPreferences.guideEnabledState) {
-        val onStableTab = routePrefix != null && routePrefix in CurioRoutes.bottomNavRoutePrefixes
-        if (onStableTab && AppPreferences.guideEnabledState &&
-            guideQuest != null && guideQuest.navRoute != null &&
-            guideQuest.id != guideDismissedId
-        ) {
-            delay(1200)
-            showGuideDialog = true
-        } else {
-            showGuideDialog = false
-        }
-    }
-    if (showGuideDialog && guideQuest != null) {
-        AlertDialog(
-            onDismissRequest = {
-                showGuideDialog = false
-                guideDismissedId = guideQuest.id
-            },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CurioIcon(
-                        name = CurioIcons.Flag,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        size = 20.dp
-                    )
-                    Text("Next quest")
-                }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        guideQuest.title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold)
-                    )
-                    Text(
-                        guideQuest.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        "Hint: ${guideQuest.hint}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showGuideDialog = false
-                    guideDismissedId = guideQuest.id
-                    guideQuest.navRoute?.let { route ->
-                        if (route == CurioRoutes.SPIN) {
-                            navController.navigateToTab(route)
-                        } else {
-                            navController.navigate(route) { launchSingleTop = true }
-                        }
-                    }
-                }) {
-                    Text("Go · +${guideQuest.xpReward} XP")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showGuideDialog = false
-                    guideDismissedId = guideQuest.id
-                }) {
-                    Text("Later")
-                }
-            }
-        )
-    }
+    // (The v8.0 full-dialog guide was replaced in v8.1 by the compact IN-APP
+    // guide overlay + quest tour — see the QuestGuide state at the top of
+    // this composable and the overlays inside the content column above.)
 
     // ── Done-exploring prompt (app return while a session is active) ────
     val activeSession = ExploreSessionStore.activeSessionState

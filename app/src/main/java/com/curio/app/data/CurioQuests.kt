@@ -26,7 +26,9 @@ import java.util.Calendar
  *    every stage is a badge, every badge lives in a chain.
  *  - **The Tour** — a guided walkthrough chain (Settings → Profile →
  *    pin → quote → daily → badge) with routes to jump straight to each
- *    screen; the auto-guide dialog drives this chain.
+ *    screen; the in-app guide overlay drives this chain, and tapping the
+ *    very first quest launches the full auto-navigating quest tour
+ *    (see [QuestGuide]).
  *  - **Daily quests** — three quests picked per day from a rotating pool
  *    (seeded by the calendar day, stable all day, resets at midnight).
  *
@@ -91,16 +93,16 @@ object CurioQuests {
     // ── Level curve — cumulative XP needed to REACH each level (50) ────
     // The first 12 thresholds keep the v7.40 pacing (a new user sees Level 2
     // within a couple of actions); beyond that the per-level cost rises
-    // GENTLY (+12/level) until a 360 XP ceiling, so the deep ranks stay a
-    // long-term goal without turning into a grind — the old step kept
-    // widening to ~776 XP/level at the top, which made the high ranks feel
-    // frozen. Total 50 levels, top at ~12.1k XP.
+    // GENTLY (+8/level) until a 240 XP ceiling, so the deep ranks stay a
+    // long-term goal without turning into a grind — the v7.106 step kept
+    // climbing to a 360 XP cap (~12.1k total), which still made the high
+    // ranks feel frozen. Total 50 levels, top at ~8.6k XP.
     private val XP_THRESHOLDS: List<Int> = buildList {
         addAll(listOf(0, 15, 40, 80, 135, 205, 290, 390, 505, 635, 780, 940))
         var xp = 940
-        var step = 110
+        var step = 90
         while (size < 50) {
-            step = (step + 12).coerceAtMost(360)
+            step = (step + 8).coerceAtMost(240)
             xp += step
             add(xp)
         }
@@ -182,8 +184,11 @@ object CurioQuests {
             id = "deck", glyph = "casino", title = "The Deck", subtitle = "Spin your way up the ranks",
             stages = listOf(
                 QuestStage("deck-1", "First Spin", "Spin the deck once", "Tap the Shuffle button on the Spin tab.", 10, QuestKind.SPIN, 1, navRoute = "spin"),
+                QuestStage("deck-3", "Warming Up", "Spin 3 times", "Three shuffles — the deck is getting to know you.", 5, QuestKind.SPIN, 3),
                 QuestStage("deck-5", "Deck Regular", "Spin 5 times", "Keep shuffling — the deck resets each spin.", 15, QuestKind.SPIN, 5),
+                QuestStage("deck-10", "Deck Habit", "Spin 10 times", "Double digits — a proper habit forming.", 10, QuestKind.SPIN, 10),
                 QuestStage("deck-25", "Deck Master", "Spin 25 times", "A quarter of a century of spins.", 25, QuestKind.SPIN, 25),
+                QuestStage("deck-50", "Deck Virtuoso", "Spin 50 times", "Halfway to legend.", 20, QuestKind.SPIN, 50),
                 QuestStage("deck-100", "Deck Legend", "Spin 100 times", "The deck knows your name now.", 40, QuestKind.SPIN, 100)
             )
         ),
@@ -192,8 +197,11 @@ object CurioQuests {
             id = "discovery", glyph = "explore", title = "Discovery", subtitle = "Go find things in the world",
             stages = listOf(
                 QuestStage("disc-1", "First Discovery", "Explore your first topic", "Open a topic and tap Explore.", 10, QuestKind.EXPLORE, 1),
+                QuestStage("disc-3", "Three Steps Out", "Explore 3 topics", "Three deep dives — the itch is real.", 5, QuestKind.EXPLORE, 3),
                 QuestStage("disc-5", "Globe Trotter", "Explore 5 topics", "Five deep dives under your belt.", 15, QuestKind.EXPLORE, 5),
+                QuestStage("disc-10", "Trail Maker", "Explore 10 topics", "A trail of your own making.", 10, QuestKind.EXPLORE, 10),
                 QuestStage("disc-25", "Pathfinder", "Explore 25 topics", "A quarter century of exploration.", 25, QuestKind.EXPLORE, 25),
+                QuestStage("disc-lane3", "Lane Hopper", "Explore in 3 lanes", "Sample three different categories.", 10, QuestKind.LANES, 3),
                 QuestStage("disc-lanes", "All Lanes", "Explore in every lane", "Try every category at least once.", 30, QuestKind.LANES, CurioCategories.visible.size)
             )
         ),
@@ -202,8 +210,11 @@ object CurioQuests {
             id = "keepsakes", glyph = "inventory_2", title = "Keepsakes", subtitle = "Fill your Cabinet",
             stages = listOf(
                 QuestStage("keep-1", "First Keepsake", "Save your first capture", "Write down what you found.", 10, QuestKind.SAVE, 1),
+                QuestStage("keep-3", "Souvenir Seeker", "Save 3 captures", "Three keepsakes — the shelf starts to fill.", 5, QuestKind.SAVE, 3),
                 QuestStage("keep-5", "Notebook Keeper", "Save 5 captures", "Five keepsakes in the Cabinet.", 15, QuestKind.SAVE, 5),
+                QuestStage("keep-10", "Memory Keeper", "Save 10 captures", "A neat row of remembered moments.", 10, QuestKind.SAVE, 10),
                 QuestStage("keep-25", "Archivist", "Save 25 captures", "A growing archive of curiosity.", 25, QuestKind.SAVE, 25),
+                QuestStage("keep-50", "Archive Curator", "Save 50 captures", "Your Cabinet has a mind of its own now.", 20, QuestKind.SAVE, 50),
                 QuestStage("keep-100", "Librarian of Lanes", "Save 100 captures", "A hundred moments, preserved.", 35, QuestKind.SAVE, 100),
                 QuestStage("keep-formats", "Every Format", "Save one capture in every format", "Notes, sound bites, galleries — the full kit.", 30, QuestKind.FORMATS, CaptureFormat.entries.size)
             )
@@ -255,6 +266,7 @@ object CurioQuests {
             id = "shelf", glyph = "format_quote", title = "The Shelf", subtitle = "Save the lines you love",
             stages = listOf(
                 QuestStage("quote-1", "Quote Collector", "Bookmark your first quote", "Tap the bookmark on any quote.", 10, QuestKind.QUOTE, 1),
+                QuestStage("quote-3", "Quote Keeper", "Bookmark 3 quotes", "Three lines worth keeping close.", 5, QuestKind.QUOTE, 3),
                 QuestStage("quote-5", "Quote Hoarder", "Bookmark 5 quotes", "Five lines worth keeping.", 15, QuestKind.QUOTE, 5)
             )
         ),
@@ -263,6 +275,7 @@ object CurioQuests {
             id = "pinboard", glyph = "bookmark", title = "Pin Board", subtitle = "Keep topics at hand",
             stages = listOf(
                 QuestStage("pin-1", "Pin Cushion", "Pin your first topic", "Tap the pin on any topic reveal.", 10, QuestKind.PIN, 1),
+                QuestStage("pin-3", "Pin Collector", "Pin 3 topics", "Three pins on the board.", 5, QuestKind.PIN, 3),
                 QuestStage("pin-5", "Pin Board", "Pin 5 topics", "Five topics pinned for later.", 15, QuestKind.PIN, 5)
             )
         ),
@@ -270,8 +283,10 @@ object CurioQuests {
         QuestChain(
             id = "flame", glyph = "local_fire_department", title = "The Flame", subtitle = "Keep the streak alive",
             stages = listOf(
+                QuestStage("flame-1", "First Warmth", "Keep a 1-day streak", "Come back tomorrow and the flame stays lit.", 5, QuestKind.STREAK, 1),
                 QuestStage("flame-3", "Spark Streak", "Keep a 3-day streak", "Come back tomorrow, and the day after.", 15, QuestKind.STREAK, 3),
                 QuestStage("flame-7", "Week of Wonder", "Keep a 7-day streak", "A full week of daily curiosity.", 25, QuestKind.STREAK, 7),
+                QuestStage("flame-14", "Fortnight Flame", "Keep a 14-day streak", "Two weeks of steady wonder.", 20, QuestKind.STREAK, 14),
                 QuestStage("flame-30", "Month of Mystery", "Keep a 30-day streak", "Thirty days of wonder.", 40, QuestKind.STREAK, 30)
             )
         ),
@@ -280,6 +295,7 @@ object CurioQuests {
             id = "taste", glyph = "thumb_up", title = "Taste", subtitle = "Trust your instincts",
             stages = listOf(
                 QuestStage("like-1", "First Nod", "Like your first topic", "Tap the heart on a topic you love.", 10, QuestKind.LIKE, 1),
+                QuestStage("like-3", "Taste Maker", "Like 3 topics", "Three topics you'd defend.", 5, QuestKind.LIKE, 3),
                 QuestStage("like-10", "Curator's Taste", "Like 10 topics", "Ten topics you'd defend in public.", 20, QuestKind.LIKE, 10)
             )
         ),
@@ -479,6 +495,8 @@ object CurioQuests {
         bumpDaily(context, DailyKind.SPIN)
         write(context)
         addXp(context, 2)
+        // The tour's Spin step advances the moment the user actually spins.
+        QuestGuide.onWait(QuestGuide.Wait.SPIN)
     }
 
     /** The user started exploring a topic (ExploreSessionStore.recordExplored). */
@@ -489,6 +507,8 @@ object CurioQuests {
         bumpDaily(context, DailyKind.EXPLORE)
         write(context)
         addXp(context, 5)
+        // The tour's Explore step advances when a topic is explored.
+        QuestGuide.onWait(QuestGuide.Wait.EXPLORE)
     }
 
     /** A capture was saved (SaveCaptureScreen). [format] feeds the Every-Format stage. */
@@ -499,6 +519,8 @@ object CurioQuests {
         bumpDaily(context, DailyKind.SAVE)
         write(context)
         addXp(context, 10)
+        // The tour's Save step advances when a capture is saved.
+        QuestGuide.onWait(QuestGuide.Wait.SAVE)
     }
 
     /** A quote was bookmarked (AppPreferences.saveQuote). */
@@ -544,6 +566,8 @@ object CurioQuests {
         write(context)
         // 0 XP — the call is just a refresh so the tour chain checks run.
         addXp(context, 0)
+        // The tour's Profile step advances when the profile is opened.
+        QuestGuide.onWait(QuestGuide.Wait.PROFILE)
     }
 
     /** Settings opened (SettingsHubScreen) — counts for the tour quest. */
@@ -553,6 +577,8 @@ object CurioQuests {
         write(context)
         // 0 XP — the call is just a refresh so the tour chain checks run.
         addXp(context, 0)
+        // The tour's Settings step advances when Settings is opened.
+        QuestGuide.onWait(QuestGuide.Wait.SETTINGS)
     }
 
     /** Streak advanced (StreakTracker.recordActivity) — feeds streak stages. */

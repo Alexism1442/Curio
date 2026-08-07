@@ -226,3 +226,17 @@ fun NavController.navigateToTab(route: String) {
         restoreState = true
     }
 }
+
+/**
+ * Standard quest / guided-tour jump: TAB routes switch tabs (pop to HOME +
+ * save state, like [navigateToTab]); everything else is a push destination
+ * (`launchSingleTop`). Used by the Quests page's Go buttons and by the quest
+ * tour's auto-navigation.
+ */
+fun NavController.navigateToQuestRoute(route: String) {
+    if (route in CurioRoutes.bottomNavRoutePrefixes) {
+        navigateToTab(route)
+    } else {
+        navigate(route) { launchSingleTop = true }
+    }
+}

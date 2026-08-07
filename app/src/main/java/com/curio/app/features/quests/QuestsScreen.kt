@@ -40,8 +40,9 @@ import com.curio.app.data.CurioQuests.DailyQuest
 import com.curio.app.data.CurioQuests.QuestChain
 import com.curio.app.data.CurioQuests.QuestStage
 import com.curio.app.data.PromoMode
+import com.curio.app.data.QuestGuide
 import com.curio.app.navigation.CurioRoutes
-import com.curio.app.navigation.navigateToTab
+import com.curio.app.navigation.navigateToQuestRoute
 import com.curio.app.features.settings.SettingsHeroHeader
 import com.curio.app.features.settings.SettingsHeroTotalHeight
 import com.curio.app.ui.adaptive.isWide
@@ -125,14 +126,14 @@ fun QuestsScreen(navController: NavController) {
                     item {
                         CurrentQuestCard(
                             stage = current,
-                            onNavigate = { route -> navigateToQuest(navController, route) }
+                            onNavigate = { route -> navigateFromQuest(navController, route) }
                         )
                     }
                 }
                 items(CurioQuests.Chains.size) { index ->
                     ChainCard(
                         chain = CurioQuests.Chains[index],
-                        onNavigate = { route -> navigateToQuest(navController, route) }
+                        onNavigate = { route -> navigateFromQuest(navController, route) }
                     )
                 }
                 item {
@@ -155,12 +156,18 @@ fun QuestsScreen(navController: NavController) {
     }
 }
 
-/** Jump to the screen a quest stage points at (tabs navigate like tabs). */
-private fun navigateToQuest(navController: NavController, route: String) {
-    if (route == CurioRoutes.SPIN) {
-        navController.navigateToTab(route)
+/**
+ * Jump to a quest's screen — but when the CURRENT quest is the very first
+ * one ("First Spin"), tapping its Go / Start launches the full guided tour
+ * instead, which auto-navigates through every screen so a new user sees
+ * where everything lives (see [QuestGuide]).
+ */
+private fun navigateFromQuest(navController: NavController, route: String) {
+    val current = CurioQuests.currentQuest()
+    if (current != null && current.id == QuestGuide.firstQuestId) {
+        QuestGuide.start()
     } else {
-        navController.navigate(route) { launchSingleTop = true }
+        navController.navigateToQuestRoute(route)
     }
 }
 
@@ -286,6 +293,9 @@ private fun CurrentQuestCard(
         Spacer(Modifier.height(10.dp))
         val done = CurioQuests.stageProgress(stage)
         val chain = CurioQuests.Chains.firstOrNull { it.stages.any { s -> s.id == stage.id } }
+        // The very first quest ("First Spin") launches the full guided tour
+        // instead of a plain jump — see navigateFromQuest.
+        val isFirstQuest = stage.id == QuestGuide.firstQuestId
         Surface(
             onClick = { stage.navRoute?.let(onNavigate) },
             shape = RoundedCornerShape(50),
@@ -294,7 +304,8 @@ private fun CurrentQuestCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                if (stage.navRoute != null) "Start · +${stage.xpReward} XP"
+                if (isFirstQuest && stage.navRoute != null) "Take the tour · +${stage.xpReward} XP"
+                else if (stage.navRoute != null) "Start · +${stage.xpReward} XP"
                 else "In progress · ${done.coerceAtMost(stage.target)}/${stage.target}",
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                 color = Color.White,

@@ -1,20 +1,18 @@
 # Prompt.md — Current Request Log
 
-## Request (2026-08-07, 8th): Tablet / landscape / desktop adaptive-layout polish — DONE (committed, NOT pushed)
+## Request (2026-08-07, 9th): Quest rebalance + guided tour — DONE (committed, NOT pushed)
 
-**User request:** "the landscape layout and tablet layout still needs fixing — many things are not properly connected and have huge gaps etc. so properly fix them and they should properly adjust in desktop and tablets with a beautiful layout — choose one on your own, you should not ask me about anything. And it should not affect the current layout." (Design decisions were mine; all changes gated on `isWide` so the phone/portrait layout is untouched.)
-
-### Design decision
-One **continuous full-bleed watermark collage** fills the tablet/desktop gutters behind the centered content column (the NavHost renders it once), and every screen's content caps at a comfortable **640dp** column inside the 720dp shell so rows/cards never stretch into disconnected, gap-filled plates.
+**User request:** (1) The 50-level XP curve is still too steep/slow at high ranks — rebalance the thresholds. (2) Rebalance quest tasks — some are too hard; add small easy tasks to make it rewarding. (3) The quest guide: when the user taps the FIRST quest, take them through everything so they know where things are — a proper auto-navigating system (auto-navigate on next tap) with a small TOAST-TYPE OVERLAY, NOT a full dialog. Clarified via follow-up: "by the toast i meant in app overlay system" — an in-app floating overlay, not a system Toast. "don't ask me, do it on your own."
 
 ### Changes
-- **`ui/adaptive/CurioAdaptiveLayout.kt`** — added `WideContentMaxWidth = 640.dp` and `@Composable wideContentEdgePadding()` (40dp on wide, 16dp on phone) for LazyColumn contentPadding capping.
-- **`navigation/CurioNavHost.kt`** — on wide only, a single `CurioWatermarkBackdrop` (wildcard, alphaScale 0.55) renders full-bleed behind the 720dp `SharedTransitionLayout` column (gutter collage).
-- **17 feature screens** — their own `CurioWatermarkBackdrop` is now wrapped in `if (!windowWidthSizeClass().isWide)` so there is ONE collage, not a double: Home, Spin, Cabinet, TopicReveal, Recent, Profile, SettingsHub, SettingsSection, BackupTools, Experiments, Onboarding, ManageCategories, TopicDatabase, Quests, Support, PromoMode, EntryDetail.
-- **12 list screens capped to the 640dp column on wide** via `contentPadding start/end = wideContentEdgePadding()`: SettingsHub, SettingsSection, BackupTools, Experiments, ManageCategories, TopicDatabase, Support, PromoMode, Quests, TopicHistory, Recent, + Profile's 4 settings-card rows (hero left full-bleed).
-- **Home** — 4 sections capped with `.widthIn(max = if (isWide) WideContentMaxWidth else Dp.Infinity).align(CenterHorizontally)`.
-- **Deliberate scope note:** the TopicReveal content column was NOT capped — it's the shared-element morph target, and changing its width on wide would alter the reveal hero bounds mid-morph. The reveal stack is already a cohesive centered column.
+- **XP curve rebalance** (`data/CurioQuests.kt`) — first 12 thresholds unchanged (quick early levels); after that the per-level step now grows +8/level from 90 and caps at **240 XP** (was +12 from 110, cap 360). Total ~**8.6k XP** (was ~12.1k): Level 30 ≈ 3.8k, Level 40 ≈ 6.2k, Level 50 ≈ 8.6k. Existing XP is cumulative, so existing users instantly gain levels — no progress lost.
+- **Small easy quest stages added** (kept every existing stage id so awarded badges never reset / XP never double-pays): The Deck + Spin 3/10/50; Discovery + Explore 3/10 + "Lane Hopper" (3 lanes); Keepsakes + Save 3/10/50; The Shelf + 3 quotes; Pin Board + 3 pins; The Flame + 1-day & 14-day streaks; Taste + 3 likes.
+- **Quest guide → in-app overlay + full tour** (new `data/QuestGuide.kt` + new `ui/components/QuestGuideToast.kt`):
+  - The old full `AlertDialog` guide in the NavHost is replaced by a compact **in-app floating pill** overlay (flag marker, title, one-line message, footer, Next/Go button, close X).
+  - Tapping the **first quest** ("First Spin" — via the Quests page Start button, a chain's Go chip, or the guide overlay's Go) launches a **7-step guided tour** that **auto-navigates** through Home → Spin → Cabinet → Profile → Quests → Settings → done, advancing on every overlay tap; the Spin step **waits for the real spin** (`CurioQuests.onSpin` reports via `QuestGuide.onWait`, same wiring for explore/save/profile/settings) and auto-advances when it happens. Finishing lands the user back on a stable tab.
+  - `navigation/CurioRoutes.kt` — new shared `navigateToQuestRoute()` (tabs via navigateToTab, others pushed) used by both the Quests page and the tour runner.
+- Changelog bullets added to `20260810.txt`.
 
 ### Status
-- Statically validated (no Gradle in this env per AGENTS.md): all 17 backdrops gated 1:1, all imports used (TopicHistory trims to `wideContentEdgePadding` only), Home sections' `.align()` in Column scopes, `git diff --check` clean, code review passed.
-- Committed locally. **Not pushed** — branch is ahead of origin/main by `cc26e15` (reveal morph), `e9f46de` (README), and this commit, all awaiting the user's go-ahead to push.
+- Statically validated (no Gradle in this env per AGENTS.md): no leftover `showGuideDialog`/`navigateToQuest` references, old dialog block fully removed (no duplicate `guideQuest` declarations), `git diff --check` clean, code review passed.
+- Committed locally. **Not pushed** — branch is ahead of origin/main by `cc26e15`, `e9f46de`, `a2d0198` + this commit, all awaiting the user's go-ahead to push.
