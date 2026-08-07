@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -42,7 +43,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -166,9 +169,21 @@ fun CurioNavHost(
     // re-lays-out mid-transition and the morph source card visibly dips down
     // before expanding (the "moves down, then animates" artifact).
     val reserveBarSpace = routePrefix in setOf(CurioRoutes.REVEAL, CurioRoutes.ENTRY_DETAIL)
+    // The bottom bar's exact measured height (px) — captured from the real
+    // bar so the invisible morph-transition placeholder can reserve IDENTICAL
+    // space. M3's NavigationBar consumes the nav-bar inset inside its 80dp
+    // min height, so a naive "80dp + nav inset" placeholder is TALLER than
+    // the bar by the inset: the moment the bar is swapped for the placeholder
+    // (Spin → Reveal), Scaffold innerPadding changes and the
+    // SharedTransitionLayout resizes mid-morph, re-laying out the exiting
+    // screen — the watermark re-aligns and the shared source bounds shift
+    // (the "morph starts a little down" artifact). Reserving the measured
+    // height keeps innerPadding constant across the whole transition.
+    var bottomBarHeightPx by rememberSaveable { mutableStateOf(0) }
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val density = LocalDensity.current
     var showDoneDialog by rememberSaveable { mutableStateOf(false) }
     // v7.31 — two-step "Cancel session": the first tap flips the done-now
     // dialog into a confirm step, the second tap actually ends the explore.
@@ -275,16 +290,33 @@ fun CurioNavHost(
         Scaffold(
             bottomBar = {
                 if (!wide && showBottomBar) {
-                    CurioBottomBar(navController = navController)
+                    CurioBottomBar(
+                        navController = navController,
+                        // Measure the bar's real height so the morph
+                        // placeholder below can reserve exactly this much
+                        // (see bottomBarHeightPx).
+                        modifier = Modifier.onSizeChanged { bottomBarHeightPx = it.height }
+                    )
                 } else if (!wide && reserveBarSpace) {
-                    // Invisible placeholder sized exactly like the bottom bar
-                    // (80dp + nav-bar inset) so shared-element morph
-                    // transitions never relayout the exiting tab screen.
+                    // Invisible placeholder sized to the REAL bar's measured
+                    // height so shared-element morph transitions never
+                    // relayout the exiting tab screen. Must match the bar
+                    // pixel-for-pixel (M3's NavigationBar consumes the
+                    // nav-bar inset inside its 80dp min height — an
+                    // "80dp + insets" spacer would be taller by the inset
+                    // and shift the layout the moment the morph starts).
+                    // Falls back to the old estimate if the bar was never
+                    // measured (e.g. a deep link landing straight on Reveal).
+                    val reserve = if (bottomBarHeightPx > 0) {
+                        with(density) { bottomBarHeightPx.toDp() }
+                    } else null
                     Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 80.dp)
-                            .windowInsetsPadding(WindowInsets.navigationBars)
+                        modifier = Modifier.fillMaxWidth().then(
+                            if (reserve != null) Modifier.height(reserve)
+                            else Modifier
+                                .heightIn(min = 80.dp)
+                                .windowInsetsPadding(WindowInsets.navigationBars)
+                        )
                     )
                 }
             },

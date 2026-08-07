@@ -113,3 +113,4 @@
 • Home's Today's Quest shuffle deck now has a cleaner top inset below the hero tear, so it no longer feels pushed against the banner.
 • Normal paper gets a new selectable rounded-top style, with the hero's soft torn bottom seam and a matching layered paper lip underneath; existing torn, coffee, folded and red-margin options remain available.
 • Detail hero tear polish: the seeded seam now carries a continuous 6–9-wave rhythm with natural noise variation, while the white under-sheet gets a restrained bumpy edge instead of a rigid line
+• Reveal morph polish: the topic headline now fades in cleanly (no more stretched text morph), the card morph no longer starts shifted (the bottom bar reserves its exact height during the transition), and the watermark stays pinned

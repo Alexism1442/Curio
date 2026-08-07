@@ -23,13 +23,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 const val RevealSharedElementKey = "reveal-hero"
 
 /**
- * Second shared element for the topic NAME: the Spin ticket's title morphs
- * into the reveal screen's headline below the hero, so the text glides out
- * of the expanding card instead of popping in after the bounds morph ends.
- */
-const val RevealTitleSharedElementKey = "reveal-hero-title"
-
-/**
  * Bounds animation for the reveal morph — a quick, even FastOutSlowIn
  * tween (320ms) so the card expands into the hero smoothly without the
  * default spring's wobble or the earlier laggy feel.

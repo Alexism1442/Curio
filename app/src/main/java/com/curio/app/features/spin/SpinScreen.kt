@@ -148,7 +148,6 @@ import com.curio.app.ui.adaptive.LocalRevealSharedScope
 import com.curio.app.ui.adaptive.LocalRevealVisibilityScope
 import com.curio.app.ui.adaptive.RevealBoundsTransform
 import com.curio.app.ui.adaptive.RevealSharedElementKey
-import com.curio.app.ui.adaptive.RevealTitleSharedElementKey
 import com.curio.app.ui.components.MorphEntrance
 import kotlin.random.Random
 
@@ -1910,10 +1909,6 @@ private fun HeroTicketCard(
     val sharedTransitionScope = LocalRevealSharedScope.current ?: return
     val animatedVisibilityScope = LocalRevealVisibilityScope.current ?: return
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
-    // v7.x — the ticket's title is its OWN shared element (matched with the
-    // reveal headline below the hero), so the topic name glides out of the
-    // card into its resting place instead of popping in after the expansion.
-    val revealTitleState = sharedTransitionScope.rememberSharedContentState(RevealTitleSharedElementKey)
 
     // v6.3 — slightly bigger ticket (~6% up) so the hero card reads a
     // touch more prominent on the deck.
@@ -2017,6 +2012,13 @@ private fun HeroTicketCard(
     //    left off (zero visual jump) then spring down to rest scale.
     val settleScale = remember { Animatable(1f) }
     val settleY = remember { Animatable(0f) }
+    // True when the ticket enters composition already in the landed state —
+    // a pop back from Topic Reveal, or a restored tab. The landing grow is
+    // only animated when the wheel lands DURING this composition; a fresh
+    // landed ticket snaps straight to rest so the reversing hero morph
+    // lands on a stable target (the old replay grew the card 1→1.02 under
+    // the overlay — the "back animation starts at the wrong size" artifact).
+    val landedOnEntry = remember { landed }
 
     // Snap both to the pulse's last position on landing (zero visual jump),
     // reset to rest when a new shuffle begins.
@@ -2024,22 +2026,31 @@ private fun HeroTicketCard(
         if (landed) {
             settleScale.snapTo(tickPulse.value)
             settleY.snapTo(-(tickPulse.value - 1f) * 12f)
+            if (landedOnEntry) {
+                // Already at rest — arrive exactly there, no grow animation.
+                settleScale.snapTo(LandedRestScale)
+                settleY.snapTo(0f)
+            } else {
+                // Settle scale + vertical position in parallel (separate
+                // coroutines) so the card lands as one unified glide, not
+                // two sequential springs. v6.6 — the landing settle uses the
+                // controlled Deliberate spring (85% damping, no bounce)
+                // instead of the extreme Elastic overshoot, so the wheel's
+                // stop reads as a confident rest, not a violent bounce.
+                launch { settleScale.animateTo(LandedRestScale, CurioMotion.Springs.Deliberate) }
+                launch { settleY.animateTo(0f, CurioMotion.Springs.Deliberate) }
+            }
         } else {
             settleScale.snapTo(1f)
             settleY.snapTo(0f)
         }
     }
-
-    // Settle scale + vertical position in parallel (separate coroutines)
-    // so the card lands as one unified glide, not two sequential springs.
-    // v6.6 — the landing settle uses the controlled Deliberate spring (85%
-    // damping, no bounce) instead of the extreme Elastic overshoot, so the
-    // wheel's stop reads as a confident rest, not a violent bounce.
-    LaunchedEffect(landed) {
-        if (landed) settleScale.animateTo(LandedRestScale, CurioMotion.Springs.Deliberate)
-    }
-    LaunchedEffect(landed) {
-        if (landed) settleY.animateTo(0f, CurioMotion.Springs.Deliberate)
+    // When the user taps to open, settle back to EXACT scale 1 before the
+    // shared-element morph captures bounds: the overlay animates the LAYOUT
+    // bounds (scale 1.0), so a card still resting at LandedRestScale (1.02)
+    // would start the morph 2% smaller than the visible card.
+    LaunchedEffect(opening) {
+        if (opening) settleScale.animateTo(1f, CurioMotion.Springs.Deliberate)
     }
 
     // Outer Box padded 12dp beyond card for shadow breathing room.
@@ -2313,19 +2324,15 @@ private fun HeroTicketCard(
                                 color = ink,
                                 maxLines = 3,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = if (currentTopic != null) {
-                                    // v7.x — the topic name morphs into the
-                                    // reveal's headline (shared element), so
-                                    // the text glides out of the card instead
-                                    // of popping in after the card expands.
-                                    sharedTransitionScope.run {
-                                        Modifier.sharedElement(
-                                            revealTitleState,
-                                            animatedVisibilityScope,
-                                            boundsTransform = RevealBoundsTransform
-                                        )
-                                    }
-                                } else Modifier
+                                // The title is NOT a shared element anymore:
+                                // text can't morph cleanly in
+                                // SharedTransitionScope (it scales the stable
+                                // layout — the 34sp card title stretched to
+                                // the full-width headline and long names
+                                // warped). The reveal headline fades in on
+                                // its own; the hero card is the only shared
+                                // piece.
+                                modifier = Modifier
                             )
                             if (currentTopic != null && currentTopic.tags.isNotEmpty()) {
                                 Spacer(Modifier.height(10.dp))
