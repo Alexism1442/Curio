@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -58,9 +59,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -95,7 +103,9 @@ import com.curio.app.ui.theme.categoryBackgroundWash
 import com.curio.app.ui.theme.categoryBorder
 import com.curio.app.ui.theme.categoryInk
 import com.curio.app.ui.theme.categorySurface
+import com.curio.app.ui.theme.isCurioDarkTheme
 import com.curio.app.ui.theme.onAccent
+import com.curio.app.ui.theme.pastelFillInk
 import com.curio.app.ui.theme.themedAccent
 
 /**
@@ -982,10 +992,22 @@ private fun HeroCard(
     val revealSharedState = sharedTransitionScope.rememberSharedContentState(RevealSharedElementKey)
 
     val action = resolved?.exploreAction
-    val heroGradient = CurioGradients.cardGradient(cat.themedAccent())
+    val accent = cat.themedAccent()
+    val heroGradient = CurioGradients.cardGradient(accent)
     // v7.5 — pastel mode lightens the hero gradient, so the pill content
     // flips from white to the deep accent (light) / light twin (dark).
-    val ink = cat.onAccent()
+    // Match the Spin ticket's ink formula exactly so the morph reads as
+    // the same card expanding: pastel → pastelFillInk, else → onAccent.
+    val ink = if (AppPreferences.pastelColorsState) pastelFillInk(accent) else cat.onAccent()
+
+    // ── Gradient brush — match the Spin ticket's formula so the card
+    //    reads as the same surface during the morph. When heroGradientOn
+    //    is enabled, the hero gets the same top-lit diagonal sweep as the
+    //    deck's front ticket; otherwise a plain vertical gradient.
+    val dark = isCurioDarkTheme()
+    val pastelLightHero = AppPreferences.pastelColorsState && !dark
+    val heroGradientOn = AppPreferences.heroGradientState
+    val heroBorderOn = AppPreferences.heroBorderState
 
     Surface(
         modifier = modifier
@@ -1002,27 +1024,73 @@ private fun HeroCard(
                     )
                 }
             ),
-        shape = RoundedCornerShape(32.dp),
+        shape = RoundedCornerShape(30.dp),
         color = Color.Transparent,
         shadowElevation = 0.dp
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(heroGradient),
-                    RoundedCornerShape(32.dp)
+                .clip(RoundedCornerShape(30.dp))
+                .then(
+                    // Hero border — whisper hairline matching the ticket
+                    if (heroBorderOn) {
+                        Modifier.drawBehind {
+                            val borderW = 1.5.dp.toPx()
+                            val radius = 30.dp.toPx() - borderW / 2f
+                            drawRoundRect(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        lerp(ink, Color.White, if (dark) 0.20f else 0.30f),
+                                        lerp(ink, accent, 0.14f)
+                                    )
+                                ),
+                                topLeft = Offset(borderW / 2f, borderW / 2f),
+                                size = Size(size.width - borderW, size.height - borderW),
+                                cornerRadius = CornerRadius(radius, radius),
+                                style = Stroke(width = borderW)
+                            )
+                        }
+                    } else Modifier
                 )
         ) {
-            // ── Watermark glyph (category icon) ─────────────────────────
+            // ── Gradient brush — pixel-perfect match with the Spin ticket:
+            //    same color stops AND the same diagonal linearGradient when
+            //    heroGradientOn is enabled, so every pixel reads identical
+            //    during the morph.
+            val density = LocalDensity.current
+            val wPx = with(density) { maxWidth.toPx() }
+            val hPx = with(density) { maxHeight.toPx() }
+            val heroBrush = if (heroGradientOn) {
+                val crown = lerp(heroGradient.first(), Color.White, if (pastelLightHero) 0.08f else 0.16f)
+                val base = lerp(heroGradient.last(), Color.Black, 0.06f)
+                val stops = if (heroGradient.size > 2) {
+                    listOf(crown) + heroGradient.drop(1).dropLast(1) + listOf(base)
+                } else {
+                    CurioGradients.hslGradientStops(crown, base, 3)
+                }
+                Brush.linearGradient(stops, start = Offset(0f, 0f), end = Offset(wPx, hPx))
+            } else {
+                Brush.verticalGradient(heroGradient)
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(heroBrush, RoundedCornerShape(30.dp))
+            ) {
+            // ── Watermark glyph (category icon) — matches the Spin ─────
+            //    ticket's exact glyph: same size (150dp), same position
+            //    (CenterEnd + 6dp end), same tint (ink at 0.16 alpha), so
+            //    the morph reads as the same card expanding.
             CurioIcon(
                 name = cat.iconGlyph,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = 0.16f),
-                size = 190.dp,
+                tint = ink.copy(alpha = 0.16f),
+                size = 150.dp,
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(end = 0.dp)
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 6.dp)
             )
             // ── Action badge (verb + duration) — white pill on gradient ───
             if (action != null) {
@@ -1114,8 +1182,9 @@ private fun HeroCard(
                     )
                 }
             }
-        }
-    }
+            } // inner background Box
+        } // BoxWithConstraints
+    } // HeroCard Surface
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

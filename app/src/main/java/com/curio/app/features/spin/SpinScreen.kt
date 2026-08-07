@@ -820,10 +820,12 @@ fun SpinScreen(categorySlug: String?, navController: NavController) {
                 // destination enters. This mirrors the automatic landing
                 // handoff instead of making a manual tap feel like a cut.
                 openingScope.launch {
-                    // v7.x — the morph is the expansion now, so the pre-nav
-                    // pause is a short beat (160ms) instead of the old
-                    // 400ms hold that read as lag on tap.
-                    delay(160)
+                    // v7.x — the morph IS the expansion; this brief pause
+                    // (100ms) lets the "Opening…" label read without adding
+                    // perceptible lag. No pre-grow scale — the shared
+                    // element handles the expansion from the exact card
+                    // position.
+                    delay(100)
                     if (isOpening) {
                         navController.navigate(
                             CurioRoutes.revealFor(resolved.categoryId.routeSlug, resolved.name)
@@ -1884,13 +1886,13 @@ private fun HeroTicketCard(
     // surprises on the card, and it matches every other pastel surface.
     val ink = if (AppPreferences.pastelColorsState) pastelFillInk(accent) else cat.onAccent()
 
-    // ── Opening handoff — the settled ticket lifts only a hair toward the
-    //    reveal hero before navigation. The shared-element morph (see
-    //    CurioNavHost) does the real expansion, so a big pre-grow here only
-    //    made the handoff read as a delay; 1.04 is a subtle lift that says
-    //    "this card is about to open" without fighting the morph.
+    // ── Opening handoff — NO pre-grow. The shared-element morph (see
+    //    CurioNavHost) IS the expansion. A pre-grow made the visual card
+    //    larger than its layout bounds, so the overlay started at the
+    //    wrong position and the morph read as disconnected. The only job
+    //    here is the brief "Opening…" label before navigating.
     val openingScale by animateFloatAsState(
-        targetValue = if (opening) 1.04f else 1f,
+        targetValue = 1f,
         animationSpec = tween(CurioMotion.Durations.RevealHold),
         label = "openingCardScale"
     )

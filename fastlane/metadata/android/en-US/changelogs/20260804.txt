@@ -13,4 +13,5 @@
 • The reveal morph is smoother and snappier both ways — the topic expands out of the card on a quick even ease (less pre-grow delay), the text below blooms in with a gentle stagger, and backing out fades cleanly instead of sliding.
 • The "Already watched" pill on the topic page is redesigned — it fills with the category accent and a check when marked done, color-animated.
 • The dots orbiting the Shuffle button are bigger, glow softly, and shimmer in phase as they spin, with a smooth fade/scale entrance.
+• The topic reveal hero card now matches the Spin ticket pixel-for-pixel — same gradient stops, same glyph size and position, same corner radius — so the morph reads as the same card expanding instead of a visual jump.
 • Onboarding's Skip / Next controls are anchored to the bottom edge on every screen instead of floating high under the banner.
