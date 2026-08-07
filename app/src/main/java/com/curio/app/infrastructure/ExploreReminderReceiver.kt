@@ -15,6 +15,7 @@ import com.curio.app.MainActivity
 import com.curio.app.R
 import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSessionStore
+import com.curio.app.data.reflectionQuestion
 import com.curio.app.navigation.PendingEntryOpen
 
 /**

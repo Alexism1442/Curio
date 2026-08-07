@@ -47,6 +47,7 @@ import com.curio.app.data.ExploreReminderScheduler
 import com.curio.app.data.ExploreSession
 import com.curio.app.data.ExploreSessionStore
 import com.curio.app.data.formatElapsed
+import com.curio.app.data.reflectionQuestion
 import com.curio.app.data.toJsonString
 import com.curio.app.ui.components.ExploreBubbleContent
 import com.curio.app.ui.theme.CurioShapes
