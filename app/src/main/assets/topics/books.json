@@ -3126,5 +3126,1475 @@
       "Classic"
     ],
     "tier": 2
+  },
+  {
+    "id": "book-the-handmaids-tale",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Handmaid's Tale (1985)",
+    "teaser": "Margaret Atwood wrote this dystopia in West Berlin during the Cold War — every detail was based on something that had actually happened somewhere in history. The handmaids' red robes? Biblical. The ceremonial rape? Enslaved women in the American South. The book has been banned more than any other in American schools.",
+    "imageUrl": "",
+    "byline": "Margaret Atwood",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Handmaid's Tale, chapters 1-5",
+      "durationMinutes": 35,
+      "instruction": "Read the first five chapters. Offred narrates in present tense from a single room, describing how she got here through fragments. Notice the shop signs are pictures — handmaids aren't allowed to read. The power of the novel is what she doesn't say: her real name is never revealed."
+    },
+    "tags": [
+      "Canadian",
+      "Dystopian",
+      "Feminist",
+      "20th Century",
+      "1980s"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-if-on-a-winters-night",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "If on a Winter's Night a Traveler (1979)",
+    "teaser": "Italo Calvino's novel that starts in the second person — 'You are about to begin reading Italo Calvino's new novel' — and then keeps restarting. The Reader (you) is the protagonist. Every chapter is the first chapter of a different book that the Reader can never finish because of some absurd publishing error.",
+    "imageUrl": "",
+    "byline": "Italo Calvino",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "If on a Winter's Night a Traveler, the first two chapters",
+      "durationMinutes": 20,
+      "instruction": "Read the first two chapters. Chapter 1 addresses 'you' directly — you buy the book, you start reading. Chapter 2 is the first chapter of a completely different novel. Calvino invented 10 different opening paragraphs for 10 imaginary books, each in a different genre. Notice how the second-person address makes you complicit."
+    },
+    "tags": [
+      "Italian",
+      "Postmodern",
+      "Metafiction",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-remains-of-the-day",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Remains of the Day (1989)",
+    "teaser": "Kazuo Ishiguro's novel about a butler on a road trip through the English countryside, looking back on his decades of perfect service at Darlington Hall. The butler, Stevens, is so repressed that his narration is a study in self-deception — you understand what he's feeling by what he refuses to say. Won the Booker Prize. Ishiguro wrote it in 4 weeks.",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Remains of the Day, first 50 pages",
+      "durationMinutes": 40,
+      "instruction": "Read the opening section — Stevens's diary of his motoring trip. He keeps digressing into his definition of a 'great butler' and you slowly realize every anecdote hides some humiliation he can't admit. Notice his prose — formal, precise, unable to name emotions but somehow making you feel them anyway."
+    },
+    "tags": [
+      "British",
+      "Fiction",
+      "Historical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-pachinko",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Pachinko (2017)",
+    "teaser": "Min Jin Lee's multi-generational saga of a Korean family in Japan from 1910 to the 1980s. Koreans in Japan — Zainichi — were treated as permanent foreigners even after generations. The novel was rejected by every major publisher in New York before it became a National Book Award finalist and a bestseller.",
+    "imageUrl": "",
+    "byline": "Min Jin Lee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Pachinko, Book I: Gohyang/Hometown 1910-1933",
+      "durationMinutes": 45,
+      "instruction": "Read Book I. Sunja, a teenager in a Korean fishing village, becomes pregnant by a married yakuza and is saved by a minister who offers to marry her and take her to Japan. Notice how Lee embeds the history of colonization in the smallest domestic moments — a bowl of rice, a boarding house, a pachinko parlor."
+    },
+    "tags": [
+      "Korean-American",
+      "Historical Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-name-of-the-rose",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Name of the Rose (1980)",
+    "teaser": "Umberto Eco's debut novel — a murder mystery set in a 14th-century monastery where monks are being killed because of a book. Eco was a semiotics professor and the novel is secretly a textbook on medieval philosophy disguised as a thriller. The library is a labyrinth; the killer's motive involves Aristotle's lost treatise on comedy.",
+    "imageUrl": "",
+    "byline": "Umberto Eco",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Name of the Rose, First Day",
+      "durationMinutes": 45,
+      "instruction": "Read 'First Day.' The Franciscan friar William of Baskerville arrives at the abbey and immediately starts deducing things Sherlock Holmes-style — he reconstructs a lost horse from hoofprints. A monk is dead in the scriptorium. Notice how Eco makes the monastery feel like a university campus: jealousies, forbidden books, scholars who'd kill for knowledge."
+    },
+    "tags": [
+      "Italian",
+      "Historical Fiction",
+      "Mystery",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-never-let-me-go",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Never Let Me Go (2005)",
+    "teaser": "Kazuo Ishiguro's dystopia that hides its dystopia — the narrator, Kathy H., is a carer at a boarding school, and the horror of what the school is for only dawns on you slowly. Ishiguro said he wanted to write about mortality, and cloning was just the vehicle. The novel never uses the word 'clone.'",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Never Let Me Go, Part One",
+      "durationMinutes": 35,
+      "instruction": "Read Part One. Kathy describes Hailsham, her old school, in nostalgic detail — the guardians, the art classes, the mysterious 'donations.' Something is wrong but Ishiguro makes you feel it through what Kathy doesn't say. She's a carer, but she's also a 'donor.' The word 'clone' never appears. The tragedy is that Kathy never questions her purpose."
+    },
+    "tags": [
+      "British",
+      "Science Fiction",
+      "Dystopian",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-things-fall-apart",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Things Fall Apart (1958)",
+    "teaser": "Chinua Achebe wrote this novel specifically because he was tired of how Africans were portrayed in English literature — Conrad's 'Heart of Darkness' in particular. The novel follows Okonkwo, a respected Igbo warrior, as his world is dismantled by British colonialism and Christian missionaries. It's the most-read African novel in history.",
+    "imageUrl": "",
+    "byline": "Chinua Achebe",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Things Fall Apart, Part One",
+      "durationMinutes": 30,
+      "instruction": "Read Part One. Achebe writes in English but the cadence is Igbo — proverbs structure the narration, and the novel feels oral even on the page. Okonkwo is a great man who beats his wives and kills his adopted son because the village demands it. Notice how Achebe makes colonialism a tragedy, not a rescue — and Okonkwo is its tragic hero."
+    },
+    "tags": [
+      "Nigerian",
+      "Historical Fiction",
+      "Postcolonial",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-midnights-children",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Midnight's Children (1981)",
+    "teaser": "Salman Rushdie's novel about Saleem Sinai, born at the exact moment of India's independence — and magically connected to the 1,000 other children born in that same hour. Won the Booker Prize in 1981 and then the 'Booker of Bookers' for the best winner in 25 years. Rushdie narrates in a voice that never stops, never pauses, never apologizes.",
+    "imageUrl": "",
+    "byline": "Salman Rushdie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Midnight's Children, Book One",
+      "durationMinutes": 42,
+      "instruction": "Read Book One. Saleem narrates his own life story to Padma, his companion. But he also narrates India's story — partition, language riots, war — because his fate is bound to the nation's. Notice how Rushdie makes history personal: the 1947 partition is not a political event but a family tragedy told through a perforated sheet."
+    },
+    "tags": [
+      "Indian",
+      "Magical Realism",
+      "Historical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-disgrace",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Disgrace (1999)",
+    "teaser": "J.M. Coetzee's novel about David Lurie, a Cape Town professor who loses everything after an affair with a student — and then loses more on his daughter's farm. Won the Booker Prize. The novel was so controversial in South Africa that the ANC called it racist during a parliamentary debate about Coetzee's work.",
+    "imageUrl": "",
+    "byline": "J.M. Coetzee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Disgrace, the whole novel",
+      "durationMinutes": 50,
+      "instruction": "Read the whole novel — it's lean at 220 pages. Lurie is a man who refuses to apologize and then discovers what he should have apologized for. Coetzee's prose is brutally restrained. Notice how the novel shifts from personal disgrace to post-apartheid reckoning — the violence on Lucy's farm is never fully explained, only endured."
+    },
+    "tags": [
+      "South African",
+      "Fiction",
+      "Nobel",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-white-teeth",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "White Teeth (2000)",
+    "teaser": "Zadie Smith's debut novel, written while she was a Cambridge student. It follows two wartime friends — Archie Jones (English) and Samad Iqbal (Bangladeshi) — and their families in multicultural London at the turn of the millennium. Smith was 24 when it was published and won every debut prize available.",
+    "imageUrl": "",
+    "byline": "Zadie Smith",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "White Teeth, Part One",
+      "durationMinutes": 40,
+      "instruction": "Read Part One. Archie tries to gas himself in his car but is saved by a halal butcher. Smith writes London as a collision of accents, religions, and histories that somehow coexist. Notice how she refuses to moralize — every character is flawed, funny, and trying their best. The novel's energy comes from its conviction that multiculturalism is normal, not a problem."
+    },
+    "tags": [
+      "British",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-atonement",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Atonement (2001)",
+    "teaser": "Ian McEwan's novel about a 13-year-old girl who makes a false accusation that destroys two lives — and then spends her entire life trying to atone through writing. The novel contains a novel within it, and the famous twist at the end reinterprets everything you've read. McEwan researched WWII Dunkirk evacuation for 2 years.",
+    "imageUrl": "",
+    "byline": "Ian McEwan",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Atonement, Part One",
+      "durationMinutes": 35,
+      "instruction": "Read Part One. On a hot summer day in 1935, Briony Tallis witnesses a series of events at her family's country house and misinterprets everything. McEwan writes each scene twice — once from Briony's perspective and once from the truth. Notice how the novel itself is Briony's atonement: she wrote it. The whole book is her confession."
+    },
+    "tags": [
+      "British",
+      "Fiction",
+      "Historical",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-house-of-the-spirits",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The House of the Spirits (1982)",
+    "teaser": "Isabel Allende's debut novel, written as a letter to her dying grandfather. It follows four generations of the Trueba family through Chile's turbulent 20th century. The magical-realist style — ghosts at the table, clairvoyant children — is Allende's inheritance from Latin American literary tradition, but the feminism is entirely her own.",
+    "imageUrl": "",
+    "byline": "Isabel Allende",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The House of the Spirits, the opening section",
+      "durationMinutes": 38,
+      "instruction": "Read the opening. Esteban Trueba is a violent patriarch who builds a fortune and destroys his family. Clara, his clairvoyant wife, writes everything in notebooks that become the novel. Notice how Allende makes the political personal — Pinochet's coup arrives not as history but as a knock on the family's door. The magic is the women's resistance."
+    },
+    "tags": [
+      "Chilean",
+      "Magical Realism",
+      "Historical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-to-kill-a-mockingbird",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "To Kill a Mockingbird (1960)",
+    "teaser": "Harper Lee's only published novel for 55 years (until 'Go Set a Watchman' in 2015). It won the Pulitzer and has sold 40+ million copies. Lee based Scout's friend Dill on her childhood neighbor Truman Capote. She gave her manuscript to an editor who said it might sell 2,500 copies. She never wrote another book and refused almost all interviews.",
+    "imageUrl": "",
+    "byline": "Harper Lee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "To Kill a Mockingbird, Part One",
+      "durationMinutes": 40,
+      "instruction": "Read Part One. Scout Finch narrates from childhood, looking back at one summer in Maycomb, Alabama. Boo Radley is a ghost in the house next door; the children act out his story. Notice the point of view: Scout is 6, but her narration is filtered through adult understanding. The trial of Tom Robinson is the center, but the novel earns it through the slow accumulation of small-town rhythms."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Classic",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-nineteen-eighty-four",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "1984 (1949)",
+    "teaser": "Orwell's final novel, written while he was dying of tuberculosis on a remote Scottish island. It was originally called 'The Last Man in Europe.' Every surveillance fear in the novel — telescreens, thought police, newspeak — was Orwell's extrapolation of wartime propaganda and Stalinist purges. The adjective 'Orwellian' entered English within a decade.",
+    "imageUrl": "",
+    "byline": "George Orwell",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "1984, Part One",
+      "durationMinutes": 35,
+      "instruction": "Read Part One. Winston Smith lives in Oceania where Big Brother watches. He commits his first thoughtcrime: buying a blank diary. Orwell builds the horror through details — Victory Gin that tastes like nitric acid, a torn poster that hides the alcove, the Ministry of Truth where Winston rewrites history. Notice the Appendix on Newspeak at the end of the book: the clock is still ticking."
+    },
+    "tags": [
+      "British",
+      "Dystopian",
+      "Political",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-anna-karenina",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Anna Karenina (1878)",
+    "teaser": "Tolstoy's novel about a married aristocrat who leaves her husband for a cavalry officer. The novel opens with the most famous first sentence in literature: 'Happy families are all alike; every unhappy family is unhappy in its own way.' Tolstoy originally planned a novella about an adulterous wife but kept adding — the novel now spans 800+ pages and is as much about Levin farming as Anna's tragedy.",
+    "imageUrl": "",
+    "byline": "Leo Tolstoy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Anna Karenina, Part One",
+      "durationMinutes": 48,
+      "instruction": "Read Part One. Anna arrives at the Moscow train station and meets Vronsky. A man falls under a train — bad omen. Meanwhile Levin proposes to Kitty and is rejected. Tolstoy writes consciousness like no one else: Anna's inner life is a series of sudden shifts — a feeling, then the opposite feeling. Notice how the train becomes the novel's symbol: arrival, escape, and in the end, what Anna throws herself under."
+    },
+    "tags": [
+      "Russian",
+      "Fiction",
+      "Classic",
+      "19th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-brief-wondrous-life-of-oscar-wao",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Brief Wondrous Life of Oscar Wao (2007)",
+    "teaser": "Junot Diaz's novel about an overweight Dominican nerd growing up in New Jersey who dreams of becoming the Dominican J.R.R. Tolkien. The novel won the Pulitzer. The footnotes — lengthy, profane, scholarly — explain Dominican history from Trujillo to the diaspora. Diaz mixes Spanglish, sci-fi references, and deep political history in every paragraph.",
+    "imageUrl": "",
+    "byline": "Junot Diaz",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Brief Wondrous Life of Oscar Wao, Part I",
+      "durationMinutes": 38,
+      "instruction": "Read Part I. The narrator Yunior tells Oscar's story — a ghetto nerd who falls in love too hard and too fast. The footnotes are as long as the page text and cover the Trujillo regime, the fuku (curse), and Dominican nerd culture. Diaz writes like he's telling you a story at 2 AM — profane, tender, full of digressions that circle back. Oscar's tragedy is that he's a romantic in a world that punishes sincerity."
+    },
+    "tags": [
+      "Dominican-American",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-wind-up-bird-chronicle",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Wind-Up Bird Chronicle (1994)",
+    "teaser": "Haruki Murakami's novel about a man searching for his missing cat and then his missing wife — and falling into a well, literally and metaphorically. Set partly during the Japanese occupation of Manchuria, the novel connects personal disappearance to historical atrocity. The wind-up bird is invisible but its cry — like a spring winding — drives the plot.",
+    "imageUrl": "",
+    "byline": "Haruki Murakami",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Wind-Up Bird Chronicle, Book One: The Thieving Magpie",
+      "durationMinutes": 45,
+      "instruction": "Read Book One. Toru Okada quits his job, makes spaghetti, and receives a strange phone call from a woman who says she knows him. Then his cat disappears. Then his wife. Murakami writes the surreal with the same flat affect as the mundane — a woman who talks through a medium, a dry well, a mark on a man's cheek. Notice how WWII atrocities surface in Toru's personal story without ever feeling forced."
+    },
+    "tags": [
+      "Japanese",
+      "Fiction",
+      "Magical Realism",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-color-purple",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Color Purple (1982)",
+    "teaser": "Alice Walker's novel told through letters — first Celie's letters to God, then letters between Celie and her sister Nettie. It won the Pulitzer and the National Book Award. The novel spans 40 years of Celie's life in rural Georgia, from abuse to liberation. Walker's use of Black Southern vernacular was revolutionary — Celie's voice grows in complexity as she ages.",
+    "imageUrl": "",
+    "byline": "Alice Walker",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Color Purple, first 40 letters",
+      "durationMinutes": 42,
+      "instruction": "Read the first 40 letters. Celie is 14 and pregnant by her father — she writes to God because she has no one else. The spelling is phonetic: 'I am fourteen years old. I have always been a good girl.' As Celie ages, her voice matures — the letters become longer, more analytical, more powerful. Notice the silence that surrounds female desire: Shug Avery teaches Celie that pleasure is possible. The novel earns its joy."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Epistolary",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-sapiens",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Sapiens (2014)",
+    "teaser": "Yuval Noah Harari's nonfiction history of humankind — from the Cognitive Revolution (70,000 years ago) to the present. Originally published in Hebrew, it became an international bestseller with 23+ million copies sold. Harari argues that what made Homo sapiens dominant was our ability to believe in fictions: money, nations, laws, gods.",
+    "imageUrl": "",
+    "byline": "Yuval Noah Harari",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Sapiens, Part One: The Cognitive Revolution",
+      "durationMinutes": 45,
+      "instruction": "Read Part One. Harari argues that 70,000 years ago, Sapiens developed language capable of describing things that don't exist — which let us cooperate in huge numbers. Notice his method: each chapter begins with a big claim, supports it with evidence, then undercuts it with a question. The book makes you feel both proud and horrified to be human — the Agricultural Revolution, Harari argues, was 'history's biggest fraud.'"
+    },
+    "tags": [
+      "Israeli",
+      "Nonfiction",
+      "History",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-a-brief-history-of-time",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "A Brief History of Time (1988)",
+    "teaser": "Stephen Hawking's book about cosmology — from the Big Bang to black holes — written for general readers. It stayed on the Sunday Times bestseller list for 237 weeks. Hawking wrote it while almost completely paralyzed by ALS, dictating through a speech synthesizer. The book has sold over 25 million copies though many admit they never finished it.",
+    "imageUrl": "",
+    "byline": "Stephen Hawking",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "A Brief History of Time, chapters 1-3",
+      "durationMinutes": 40,
+      "instruction": "Read the first three chapters. Hawking starts with Aristotle and Ptolemy — our picture of the universe as a series of nested spheres. Then Galileo, Newton, Einstein, and the expanding universe. Notice how Hawking builds each concept on the last: you don't need math to follow the argument, just curiosity. The question at the center: why does the universe bother to exist?"
+    },
+    "tags": [
+      "British",
+      "Nonfiction",
+      "Science",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-demon-copperhead",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Demon Copperhead (2022)",
+    "teaser": "Barbara Kingsolver's novel reimagining David Copperfield in modern Appalachia — a boy born to a teenage mother in a single-wide trailer in Lee County, Virginia. Won the Pulitzer and the Women's Prize. The novel is a direct response to the opioid crisis and the failure of institutions meant to protect children. Demon's voice is the novel's engine: wry, unbroken, irresistible.",
+    "imageUrl": "",
+    "byline": "Barbara Kingsolver",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Demon Copperhead, first 10 chapters",
+      "durationMinutes": 50,
+      "instruction": "Read the first ten chapters. Demon is born in a trailer to a teenage mother who ODs early. He enters foster care — the system is the villain. Kingsolver follows Dickens's chapter structure exactly. Notice Demon's voice: he's telling his story as an adult looking back, with humor that never softens the horror. The foster homes, the child labor, the first pill — the novel is an indictment that reads like a page-turner."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-secret-history",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Secret History (1992)",
+    "teaser": "Donna Tartt's debut novel about a group of elite Classics students at a Vermont college who murder one of their own. The novel tells you who dies and who kills him on the first page — the suspense is why. Tartt wrote it over eight years at Bennington College. The novel launched the 'dark academia' aesthetic and has sold millions.",
+    "imageUrl": "",
+    "byline": "Donna Tartt",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Secret History, Book I",
+      "durationMinutes": 45,
+      "instruction": "Read Book I. Richard Papen arrives at Hampden College from a working-class California background and falls into a clique of beautiful, wealthy, morally untethered Classics students. Their professor Julian teaches them to live like the ancients. The first murder is presented as ritual, then necessity. Notice Tartt's atmosphere: the Vermont winter, the Greek declensions, the opium tea — beauty and decay are inseparable."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Mystery",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-parable-of-the-sower",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Parable of the Sower (1993)",
+    "teaser": "Octavia Butler's dystopian novel set in the 2020s — a world of climate collapse, corporate towns, and a populist president who promises to 'Make America Great Again.' The protagonist Lauren Olamina founds a religion called Earthseed whose first verse is 'God is Change.' Butler predicted our present with eerie accuracy from 1993. She died in 2006 at 58.",
+    "imageUrl": "",
+    "byline": "Octavia Butler",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Parable of the Sower, first 5 chapters",
+      "durationMinutes": 35,
+      "instruction": "Read the first five chapters. Lauren is 15 when her walled community is destroyed. Her journal entries open each chapter with an Earthseed verse. She has 'hyperempathy' — she feels others' pain physically — which is a fatal weakness in a world of constant violence. The novel is a survival story, but the real engine is Lauren's idea: that change is the only constant, and the destination is the stars."
+    },
+    "tags": [
+      "American",
+      "Science Fiction",
+      "Dystopian",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-sympathizer",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Sympathizer (2015)",
+    "teaser": "Viet Thanh Nguyen's debut novel won the Pulitzer. It's a confession written by a half-French, half-Vietnamese communist spy who infiltrates the South Vietnamese army and flees to Los Angeles after the fall of Saigon. The novel is one long sentence of guilt, irony, and savage critique of both American intervention and Vietnamese communism.",
+    "imageUrl": "",
+    "byline": "Viet Thanh Nguyen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Sympathizer, chapters 1-5",
+      "durationMinutes": 45,
+      "instruction": "Read the first five chapters. The narrator is a captain in the South Vietnamese army and a communist mole. He escapes Saigon on one of the last helicopters and lands in Los Angeles. Nguyen writes the entire novel in a confessional voice — the Captain is writing a forced confession in a reeducation camp. Notice the double vision: every event is seen from two ideological perspectives simultaneously. 'I am a spy, a sleeper, a spook, a man of two faces.'"
+    },
+    "tags": [
+      "Vietnamese-American",
+      "Fiction",
+      "Historical",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-klara-and-the-sun",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Klara and the Sun (2021)",
+    "teaser": "Kazuo Ishiguro's first novel after winning the Nobel Prize. It's narrated by Klara, an Artificial Friend — a solar-powered robot companion for children — who observes the world with luminous naivety. The novel is about love, sacrifice, and what happens when technology offers to replace what we've lost. Ishiguro said he wrote the book because he wanted to explore what it means to love without jealousy.",
+    "imageUrl": "",
+    "byline": "Kazuo Ishiguro",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Klara and the Sun, Part One",
+      "durationMinutes": 38,
+      "instruction": "Read Part One. Klara stands in a store waiting to be chosen. She's solar-powered and worships the Sun as a god — she believes it gives her 'special nourishment.' Ishiguro writes from Klara's limited perspective: she processes the world in grids and boxes, and human emotions are puzzles she must solve. Notice how the prose never signals tragedy — like all Ishiguro narrators, Klara's innocence is the novel's devastating tool."
+    },
+    "tags": [
+      "British",
+      "Science Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-goldfinch",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Goldfinch (2013)",
+    "teaser": "Donna Tartt's novel about a boy who survives a terrorist bombing at the Metropolitan Museum of Art and steals a 17th-century painting — Carel Fabritius's 'The Goldfinch.' The novel won the Pulitzer. It's 771 pages of grief, art theft, antique furniture restoration, and a friendship with a Ukrainian boy named Boris who may be the most alive character in contemporary fiction.",
+    "imageUrl": "",
+    "byline": "Donna Tartt",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Goldfinch, Part I",
+      "durationMinutes": 50,
+      "instruction": "Read Part I. Theo Decker, 13, loses his mother in a museum bombing. Dazed, he takes the painting — a small goldfinch chained to its perch. Tartt writes childhood trauma with Proustian density: every object in Theo's life becomes saturated with meaning. Boris, his school friend in Las Vegas, introduces Theo to vodka, drugs, and a philosophy of survival: 'We are two cockroaches, my friend.' The painting becomes Theo's religion."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-slaughterhouse-five",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Slaughterhouse-Five (1969)",
+    "teaser": "Kurt Vonnegut's anti-war novel based on his experience as a POW during the firebombing of Dresden — he was one of the few American soldiers to witness it, sheltered in an underground meat locker. The novel's structure — time-hopping, alien abduction — was Vonnegut's way of writing about trauma that couldn't be narrated linearly. He wrote it 23 years after the bombing.",
+    "imageUrl": "",
+    "byline": "Kurt Vonnegut",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Slaughterhouse-Five, chapters 1-5",
+      "durationMinutes": 30,
+      "instruction": "Read the first five chapters. Billy Pilgrim has 'come unstuck in time.' The novel opens with Vonnegut as a character trying to write the book. Billy's time-traveling is not science fiction — it's PTSD. Each jump is triggered by something in the present: a barbershop quartet reminds him of the German soldiers grinning at the destruction of Dresden. 'So it goes' — the novel's refrain — appears 106 times. Every death is equal."
+    },
+    "tags": [
+      "American",
+      "Satire",
+      "Anti-War",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-americanah",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Americanah (2013)",
+    "teaser": "Chimamanda Ngozi Adichie's novel about Ifemelu and Obinze, Nigerian teenagers in love who emigrate separately — she to America, he to London. Ifemelu starts a blog about race in America called 'Raceteenth.' The novel is about love, hair, race as a construct, and the decision to go home. Adichie said she wrote it because she was tired of reading American books where race was invisible.",
+    "imageUrl": "",
+    "byline": "Chimamanda Ngozi Adichie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Americanah, Part One",
+      "durationMinutes": 42,
+      "instruction": "Read Part One. Ifemelu, now a successful blogger in America, decides to return to Nigeria and braids her hair for the journey — the braiding salon chapters are a frame around the story. Adichie captures the shock of encountering American racial categories as an immigrant: 'I did not think of myself as black and I only became black when I came to America.' Notice the blog posts embedded in the novel — they're sharp, funny, and true."
+    },
+    "tags": [
+      "Nigerian",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-road",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Road (2006)",
+    "teaser": "Cormac McCarthy's post-apocalyptic novel about a father and son walking through a dead America. The world has burned — nothing grows, no birds sing, and the only survivors are 'the good guys' and the cannibals. McCarthy wrote it for his own young son. Won the Pulitzer. The novel strips language to its bones: no chapter numbers, no quotation marks, barely any proper nouns.",
+    "imageUrl": "",
+    "byline": "Cormac McCarthy",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Road, the first half",
+      "durationMinutes": 35,
+      "instruction": "Read the first half. 'When he woke in the woods in the dark and the cold of the night he'd reach out to touch the child sleeping beside him.' The man and the boy push a shopping cart of scavenged goods. Their dialogue is minimalist, liturgical: 'We're carrying the fire.' Notice what McCarthy omits — character names, explanations of the catastrophe, interior monologue. The love is in what they do, not what they say."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Post-Apocalyptic",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-underground-railroad",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Underground Railroad (2016)",
+    "teaser": "Colson Whitehead's novel that turns the metaphorical Underground Railroad into a literal train system running beneath the South — engineers, boxcars, tunnels. Won the Pulitzer and the National Book Award. Whitehead said the premise came from a childish misunderstanding: as a kid, he imagined the Railroad was real, and he wanted to honor that literal belief.",
+    "imageUrl": "",
+    "byline": "Colson Whitehead",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Underground Railroad, chapters 1-4",
+      "durationMinutes": 40,
+      "instruction": "Read the first four chapters. Cora, a slave on a Georgia cotton plantation, escapes on the Underground Railroad — an actual train beneath the soil. Each state she visits is a different iteration of American racism: South Carolina performs a genteel eugenics, North Carolina bans Black people entirely. Whitehead's prose is measured, terrifying, and unflinching. The railroad is a magnificent lie made real — and each stop is a new horror."
+    },
+    "tags": [
+      "American",
+      "Historical Fiction",
+      "Speculative",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-erasure",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Erasure (2001)",
+    "teaser": "Percival Everett's novel about a Black novelist who, enraged by the success of stereotypical 'ghetto fiction,' writes a parody of it under a pseudonym — which becomes a smash hit that the literary establishment takes seriously. The novel was adapted into the Oscar-winning film 'American Fiction' (2023).",
+    "imageUrl": "",
+    "byline": "Percival Everett",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Erasure, first half",
+      "durationMinutes": 40,
+      "instruction": "Read the first half. Thelonious 'Monk' Ellison writes dense, literary novels that don't sell. Under the name Stagg R. Leigh, he writes 'My Pafology' (later retitled 'Fuck') — every stereotype in one book. The novel-within-a-novel is included in full — and it's hilarious and painful in equal measure. Notice how the publishing industry's embrace of the fake book implicates the reader too."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Satire",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-piranesi",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Piranesi (2020)",
+    "teaser": "Susanna Clarke's novel about a man living in an infinite House with marble halls, tides, and statues. He calls himself Piranesi, though that's not his name. He keeps meticulous journals and believes he's one of only two living people in the world. Clarke wrote it while housebound with chronic fatigue syndrome. It won the Women's Prize.",
+    "imageUrl": "",
+    "byline": "Susanna Clarke",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Piranesi, Part One",
+      "durationMinutes": 30,
+      "instruction": "Read Part One. 'I am the Beloved Child of the House.' Piranesi explores the endless halls, catalogues the statues, fishes, and writes in his journals. His narration is gentle, precise, and happy — which is why the dawning horror is so effective. The House is both prison and paradise. Notice the capitalized nouns: the House, the Tides, the Other — Piranesi's worldview is a cosmology of one. The mystery of who he really is unfolds through journal entries."
+    },
+    "tags": [
+      "British",
+      "Fantasy",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-my-brilliant-friend",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "My Brilliant Friend (2011)",
+    "teaser": "Elena Ferrante's first Neapolitan Novel — about Lila and Elena, two girls growing up in a poor Naples neighborhood in the 1950s. Lila is brilliant and dangerous; Elena is the diligent one who gets out. Their friendship is the central love story. The identity of the author — 'Elena Ferrante' is a pseudonym — remains unknown, though a journalist claimed to unmask her in 2016.",
+    "imageUrl": "",
+    "byline": "Elena Ferrante",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "My Brilliant Friend, Childhood + Adolescence",
+      "durationMinutes": 50,
+      "instruction": "Read the Childhood and Adolescence sections. Lila throws Elena's doll into a cellar. Elena does the same to Lila's. They descend into the darkness to retrieve them and Lila doesn't come back — the first of many disappearances. Ferrante writes girlhood as a war fought with grades, shoes, and the attention of boys. Notice the neighborhood (the rione) — it's a character, violent and intimate. Escape is possible, but the rione never lets you go."
+    },
+    "tags": [
+      "Italian",
+      "Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-station-eleven",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Station Eleven (2014)",
+    "teaser": "Emily St. John Mandel's novel about a pandemic that collapses civilization — written years before COVID. A traveling Shakespeare troupe performs for survivor settlements 20 years after a Georgian flu killed 99% of humanity. The novel jumps between the pre-pandemic world and the post, connected by a graphic novel called 'Station Eleven' drawn by the actor Arthur Leander's first wife.",
+    "imageUrl": "",
+    "byline": "Emily St. John Mandel",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Station Eleven, Parts 1-3",
+      "durationMinutes": 40,
+      "instruction": "Read Parts 1-3. Arthur Leander dies of a heart attack onstage during King Lear. That same night, the flu arrives. Twenty years later, Kirsten — a child actress who was on stage with Arthur that night — performs Shakespeare in the post-pandemic wilderness. Mandel makes the apocalypse beautiful: 'Survival is insufficient.' Notice the connections — every character is linked through Arthur, and survival depends on art."
+    },
+    "tags": [
+      "Canadian",
+      "Science Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-odyssey",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Odyssey (c. 8th century BCE)",
+    "teaser": "The ancient Greek epic attributed to Homer — Odysseus's 10-year journey home from the Trojan War. Penelope fends off 108 suitors; Odysseus blinds the Cyclops, resists the Sirens, and descends into the underworld. Every road-trip story, every 'getting home' narrative, descends from this poem. It was composed to be sung, not read.",
+    "imageUrl": "",
+    "byline": "Homer",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Odyssey, Books 1-6",
+      "durationMinutes": 50,
+      "instruction": "Read Books 1-6. Odysseus is on Calypso's island, captive and weeping. Meanwhile in Ithaca, Penelope unweaves her father-in-law's shroud each night to delay choosing a new husband. Telemachus, the son who never knew his father, sets out to find news. Notice how Homer starts in the middle — the story is told through flashbacks and songs. The gods are childish, cruel, and hilarious. Athena's disguise as Mentor gave us the word."
+    },
+    "tags": [
+      "Greek",
+      "Epic Poetry",
+      "Classical",
+      "Ancient"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-i-know-why-the-caged-bird-sings",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "I Know Why the Caged Bird Sings (1969)",
+    "teaser": "Maya Angelou's first memoir — covering her childhood from age 3 to 17 in Stamps, Arkansas. She was raped at 7 by her mother's boyfriend; after she testified and he was killed, she stopped speaking for five years, believing her voice had killed him. The memoir launched her career and was the first nonfiction bestseller by a Black woman.",
+    "imageUrl": "",
+    "byline": "Maya Angelou",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "I Know Why the Caged Bird Sings, chapters 1-15",
+      "durationMinutes": 45,
+      "instruction": "Read the first 15 chapters. Marguerite (later Maya) and her brother Bailey are sent alone on a train at ages 3 and 4 from California to Arkansas with tags pinned to their coats. Angelou's voice is the memoir's gift — she writes from childhood without simplifying childhood. The five years of silence after the assault: she read everything, memorized Shakespeare, and discovered that language could be a refuge. The caged bird sings not despite the cage but because of it."
+    },
+    "tags": [
+      "American",
+      "Memoir",
+      "Autobiography",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-hitchhikers-guide-to-the-galaxy",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Hitchhiker's Guide to the Galaxy (1979)",
+    "teaser": "Douglas Adams's comic science fiction novel that started as a BBC radio series. Arthur Dent is saved from Earth's destruction by his friend Ford Prefect — an alien researcher for the titular guidebook. The answer to life, the universe, and everything is 42. Adams wrote the first draft drunk in a field in Innsbruck. The novel has sold 14+ million copies.",
+    "imageUrl": "",
+    "byline": "Douglas Adams",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Hitchhiker's Guide to the Galaxy, chapters 1-10",
+      "durationMinutes": 30,
+      "instruction": "Read the first ten chapters. Arthur Dent's house is about to be demolished to make way for a bypass — the same morning the Earth is destroyed to make way for an interstellar bypass. Adams's humor is equal parts philosophy and absurdity. Notice the Guide entries — they're the funniest parts of the book, satirizing the tone of tourist guidebooks. The Vogon poetry scene is the worst torture in the galaxy. Don't panic."
+    },
+    "tags": [
+      "British",
+      "Science Fiction",
+      "Comedy",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-half-of-a-yellow-sun",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Half of a Yellow Sun (2006)",
+    "teaser": "Chimamanda Ngozi Adichie's novel about the Biafran War (1967-70), told through three characters: Ugwu, a houseboy; Olanna, a wealthy woman; and Richard, a British writer. Adichie grew up in the house where the Biafran leader once lived; her grandfathers fought on opposite sides. The novel won the Women's Prize and was voted the best book to have won the award.",
+    "imageUrl": "",
+    "byline": "Chimamanda Ngozi Adichie",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Half of a Yellow Sun, Part One: The Early Sixties",
+      "durationMinutes": 48,
+      "instruction": "Read Part One. The novel opens with Ugwu, a village boy, becoming a houseboy for Odenigbo, a radical professor. Olanna moves from Lagos to live with Odenigbo. The first half is domestic — dinner parties, love affairs, academic debates — and Adichie makes you love these characters before the war comes. Notice the shattering mid-novel reveal: the book has been withholding the worst thing that happens."
+    },
+    "tags": [
+      "Nigerian",
+      "Historical Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-virgin-suicides",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Virgin Suicides (1993)",
+    "teaser": "Jeffrey Eugenides's debut novel about the five Lisbon sisters who kill themselves over the course of a year in 1970s suburban Michigan. The novel is narrated by the neighborhood boys, now middle-aged, still obsessed and clueless. Eugenides wrote it in a single summer while working as a secretary.",
+    "imageUrl": "",
+    "byline": "Jeffrey Eugenides",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Virgin Suicides, the whole novel",
+      "durationMinutes": 35,
+      "instruction": "Read the whole novel — it's short, under 250 pages. The boys narrate as a collective 'we' — they never become individuals. They watch the Lisbon girls from across the street, collect their belongings, and 20 years later still can't understand. Notice the epistolary elements: doctor's reports, diary entries, photographs. The girls remain opaque — the novel is about the failure to understand, and the beauty in that failure. 'They made us participate in their own madness.'"
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-crying-in-h-mart",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Crying in H Mart (2021)",
+    "teaser": "Michelle Zauner's memoir about losing her Korean mother to cancer and finding her identity in Korean food. Zauner is better known as the musician Japanese Breakfast. The book became a #1 New York Times bestseller. H Mart is an Asian supermarket chain — the title comes from the experience of crying in the food court because every item reminds you of your dead mother.",
+    "imageUrl": "",
+    "byline": "Michelle Zauner",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Crying in H Mart, the whole memoir",
+      "durationMinutes": 45,
+      "instruction": "Read the whole memoir. Zauner's mother is diagnosed with cancer when Michelle is 25. The memoir moves between the illness, Zauner's childhood in Eugene, Oregon, her rebellious teenage years, and the ritual of cooking Korean food to keep her mother present. Notice the food descriptions — they're precise, physical, and spiritual. Making kimchi becomes a form of grief. The book is a reminder that love lives in the body and the kitchen."
+    },
+    "tags": [
+      "Korean-American",
+      "Memoir",
+      "Nonfiction",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-power",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Power (2016)",
+    "teaser": "Nina Alderman's novel about a world where women suddenly develop the ability to emit electric shocks from their hands — upending every power structure. The novel is framed as a manuscript written 5,000 years in the future by a male historian in a matriarchal world. Won the Women's Prize. It reads like a thriller and thinks like a philosophical treatise.",
+    "imageUrl": "",
+    "byline": "Naomi Alderman",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Power, Book One",
+      "durationMinutes": 38,
+      "instruction": "Read Book One. Teenage girls around the world discover the power — a skein of electricity they can discharge at will. The novel follows four characters: a British foster kid, an American politician's daughter, a Nigerian journalist, and a Moldovan trafficker's son. Alderman makes the premise chillingly plausible — within weeks, the world reorganizes. Notice the frame: letters between 'Neil' and 'Naomi' in a future where men are the weaker sex, and their historical revisionism is the mirror of ours."
+    },
+    "tags": [
+      "British",
+      "Science Fiction",
+      "Feminist",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-homegoing",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Homegoing (2016)",
+    "teaser": "Yaa Gyasi's debut novel spanning 300 years — from the Gold Coast (Ghana) to modern America. Each chapter is a new generation descended from two half-sisters: one married to a British slave trader, one sold into slavery. Gyasi wrote it at 25 after a research trip to Ghana. The novel does in 300 pages what most family sagas do in 800.",
+    "imageUrl": "",
+    "byline": "Yaa Gyasi",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Homegoing, the whole novel",
+      "durationMinutes": 50,
+      "instruction": "Read the whole novel — each chapter is a generation. Effia marries a British governor of Cape Coast Castle; her half-sister Esi is held in the dungeon below the same castle, then shipped to America. Each chapter is a complete short story about one descendant. The structure is a chain: you lose each character after one chapter, but their children carry the inheritance. Notice the recurring fire and water imagery — it runs through the bloodline like a scar."
+    },
+    "tags": [
+      "Ghanaian-American",
+      "Historical Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-vanishing-half",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Vanishing Half (2020)",
+    "teaser": "Brit Bennett's novel about identical twin sisters from a small Black town in Louisiana — one lives as a Black woman, the other passes for white. Their daughters' lives intersect years later. The novel explores race as performance, identity as choice, and what we owe to where we came from. It was an instant #1 bestseller and HBO adapted it.",
+    "imageUrl": "",
+    "byline": "Brit Bennett",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Vanishing Half, Parts I-II",
+      "durationMinutes": 40,
+      "instruction": "Read Parts I and II. The Vignes twins run away from Mallard, Louisiana — a town so light-skinned it was founded on colorism. Desiree returns years later with a 'blue-black' daughter. Stella has disappeared into whiteness — her new life in Brentwood, California is built on a lie she can never confess. Bennett writes passing not as deception but as grief: Stella loses her twin, her mother, her town, and eventually herself."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-giovannis-room",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Giovanni's Room (1956)",
+    "teaser": "James Baldwin's novel about an American man in Paris torn between his girlfriend and an Italian bartender named Giovanni. Baldwin's publisher told him to burn the manuscript — it would ruin his career as a 'Negro' writer. He published anyway. The novel's narrator, David, is white, which was deliberate: Baldwin didn't want the novel dismissed as merely a 'Black' or 'gay' story.",
+    "imageUrl": "",
+    "byline": "James Baldwin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Giovanni's Room, the whole novel",
+      "durationMinutes": 42,
+      "instruction": "Read the whole novel — it's under 200 pages. David waits in the south of France for a train. Giovanni is about to be executed. Baldwin writes desire and self-loathing in the same sentence: David loves Giovanni and hates himself for it. The room of the title is where Giovanni hides David from the world — it becomes a tomb. Notice how Baldwin never lets David off the hook. The ending is a mirror."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-normal-people",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Normal People (2018)",
+    "teaser": "Sally Rooney's novel about Marianne and Connell — he's the popular son of a cleaner, she's the weird rich girl. They pretend not to know each other at school, then meet again at Trinity College. The novel is about class, intimacy, and the words they can't say. The BBC adaptation broke viewing records.",
+    "imageUrl": "",
+    "byline": "Sally Rooney",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Normal People, chapters 1-5",
+      "durationMinutes": 35,
+      "instruction": "Read the first five chapters. Connell's mother cleans Marianne's house. At school, they don't speak. Rooney writes without quotation marks, letting dialogue bleed into narration. The sex scenes are explicit and tender — they're where the characters are most honest. Notice the power shifts: in high school Marianne is beneath Connell; at Trinity the roles reverse. Class is not just money; it's who gets to speak and who has to listen."
+    },
+    "tags": [
+      "Irish",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-fire-next-time",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Fire Next Time (1963)",
+    "teaser": "James Baldwin's book-length essay in the form of two letters — one to his 14-year-old nephew, one from 'a region of my mind.' Published in The New Yorker, it became an instant classic. Baldwin writes that 'God gave Noah the rainbow sign, No more water, the fire next time!' — the title is a warning. The essay is a diagnosis of American racism from the inside, written with love and fury.",
+    "imageUrl": "",
+    "byline": "James Baldwin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Fire Next Time, the whole book",
+      "durationMinutes": 30,
+      "instruction": "Read the whole book — it's short but every sentence is loaded. Baldwin's letter to his nephew: 'You were born where you were born and faced the future that you faced because you were black and for no other reason.' The second essay is about his experience with the Nation of Islam and his realization that Christianity and Islam are both failing Black America. Notice the balance of tenderness and rage — Baldwin never sacrifices one for the other."
+    },
+    "tags": [
+      "American",
+      "Essays",
+      "Nonfiction",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-dubliners",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Dubliners (1914)",
+    "teaser": "James Joyce's collection of 15 short stories about Dublin in the early 20th century. Each story is a portrait of paralysis — the characters can't escape their city, their jobs, their memories. Joyce spent 10 years fighting publishers over the word 'bloody.' The collection ends with 'The Dead,' widely considered the greatest short story in English.",
+    "imageUrl": "",
+    "byline": "James Joyce",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Dubliners, the first 7 stories",
+      "durationMinutes": 38,
+      "instruction": "Read the first seven stories. 'Araby' — a boy promises to bring a gift from a bazaar to a girl he barely knows. When he arrives as the stalls are closing, his romantic fantasy collapses. Joyce called these stories 'epiphanies' — moments when a character suddenly understands something about their life. Notice how little happens: the drama is interior. The paralysis is not just Dublin's; it's the human condition."
+    },
+    "tags": [
+      "Irish",
+      "Fiction",
+      "Short Stories",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-passion-according-to-gh",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Passion According to G.H. (1964)",
+    "teaser": "Clarice Lispector's novel about a wealthy woman in Rio de Janeiro who enters her maid's room and crushes a cockroach — and from that act, has a mystical crisis that dissolves her entire sense of self. The novel is less a story than an extended meditation. Lispector described it as 'the best book I wrote, and I don't understand it.'",
+    "imageUrl": "",
+    "byline": "Clarice Lispector",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Passion According to G.H., the whole novel",
+      "durationMinutes": 40,
+      "instruction": "Read the whole novel — it's short but intense. G.H. (she is never fully named) enters the room that her maid has just left. Everything is clean, white, and terrifyingly empty. The cockroach is ancient, pre-human. When its white paste oozes out, G.H. eats it — and the world dissolves. Lispector's prose is a sustained panic attack: the sentences fragment, circle back, ask questions they can't answer. The novel is about the horror of being alive."
+    },
+    "tags": [
+      "Brazilian",
+      "Fiction",
+      "Philosophical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-season-of-migration-to-the-north",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Season of Migration to the North (1966)",
+    "teaser": "Tayeb Salih's novel about a Sudanese man who returns from studying in England to find a stranger, Mustafa Sa'eed, has settled in his village. Mustafa Sa'eed's story is Conrad's 'Heart of Darkness' reversed — the 'savage' goes to Europe and conquers it through seduction. The Arab Literary Academy named it the greatest Arabic novel of the 20th century.",
+    "imageUrl": "",
+    "byline": "Tayeb Salih",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Season of Migration to the North, chapters 1-5",
+      "durationMinutes": 40,
+      "instruction": "Read the first five chapters. The narrator discovers Mustafa Sa'eed, a mysterious older man who quotes English poetry in a Sudanese village. Sa'eed's story emerges: a brilliant student sent to England who seduced English women as revenge for colonialism and was tried for murder of a woman he drove to suicide. Salih's prose is hypnotic — the Nile flows through every page. The novel asks: can the colonized ever go home?"
+    },
+    "tags": [
+      "Sudanese",
+      "Fiction",
+      "Postcolonial",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-a-visit-from-the-goon-squad",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "A Visit from the Goon Squad (2010)",
+    "teaser": "Jennifer Egan's novel told in 13 interlinked stories, including one chapter written entirely as a PowerPoint presentation. It spans from the 1970s punk scene to a near-future New York, following Bennie Salazar, a record executive, and Sasha, his kleptomaniac assistant. Won the Pulitzer. Time is the 'goon squad' — it takes everything eventually.",
+    "imageUrl": "",
+    "byline": "Jennifer Egan",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "A Visit from the Goon Squad, chapters 1-4",
+      "durationMinutes": 38,
+      "instruction": "Read the first four chapters. Sasha steals a wallet on a date. Bennie sprays gold flakes in his coffee and can't feel music anymore. Each chapter shifts perspective and time, but characters recur in the background. The PowerPoint chapter (Chapter 12) is not a gimmick — each slide is a short story. Egan writes the music industry as a metaphor for aging: everyone's trying to stay relevant as time closes in."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-pachinko-novel",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Pachinko (2017)",
+    "teaser": "Min Jin Lee's multi-generational novel about a Korean family in Japan from 1910 to the 1980s. Koreans in Japan — Zainichi — were treated as permanent foreigners even after generations. The novel was rejected by every major publisher before becoming a National Book Award finalist. The title refers to pachinko parlors — one of the few businesses Zainichi Koreans could own.",
+    "imageUrl": "",
+    "byline": "Min Jin Lee",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Pachinko, Book I",
+      "durationMinutes": 50,
+      "instruction": "Read Book I. Sunja, a teenager in a Korean fishing village, becomes pregnant by a married yakuza. A Christian minister offers to marry her and take her to Japan. Lee embeds the history of Japanese colonization of Korea in the smallest domestic moments: a bowl of rice, a boarding house, the registry that marks Koreans as aliens. The novel spans three generations; each one carries the weight of the previous."
+    },
+    "tags": [
+      "Korean-American",
+      "Historical Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-canterbury-tales",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Canterbury Tales (c. 1400)",
+    "teaser": "Geoffrey Chaucer's collection of 24 stories told by pilgrims traveling to Canterbury Cathedral. Each pilgrim tells a tale — knight, miller, wife of Bath, pardoner — in their own voice. Chaucer wrote in Middle English when that was revolutionary: French and Latin were the languages of literature. He died before finishing it; the tales we have are a fragment.",
+    "imageUrl": "",
+    "byline": "Geoffrey Chaucer",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Canterbury Tales, the General Prologue + 3 tales",
+      "durationMinutes": 48,
+      "instruction": "Read the General Prologue and three tales: The Knight's Tale, The Miller's Tale, and The Wife of Bath's Tale. Each pilgrim is introduced in a portrait of startling vividness — the Prioress who feeds her dogs better than the poor, the Friar who's more pimp than priest. The Miller's Tale is a fabliau about a cuckolded carpenter — it's filthy and hilarious. Notice the Wife of Bath: she's been married five times and has the best argument for female sovereignty in medieval literature."
+    },
+    "tags": [
+      "British",
+      "Poetry",
+      "Classic",
+      "Medieval"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-sympathizer-dupe",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Sympathizer (2015)",
+    "teaser": "Viet Thanh Nguyen's Pulitzer-winning novel, already described above.",
+    "imageUrl": "",
+    "byline": "Viet Thanh Nguyen",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Sympathizer, full novel",
+      "durationMinutes": "",
+      "instruction": ""
+    },
+    "tags": [],
+    "tier": 0
+  },
+  {
+    "id": "book-austerlitz",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Austerlitz (2001)",
+    "teaser": "W.G. Sebald's final novel about a man who arrives in England on a Kindertransport at age 4 and doesn't learn his real name or origin until he's retired. The novel is narrated as a series of conversations, accompanied by uncaptioned photographs — they feel like evidence but prove nothing. Sebald died in a car crash weeks after finishing it.",
+    "imageUrl": "",
+    "byline": "W.G. Sebald",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Austerlitz, the whole novel",
+      "durationMinutes": 50,
+      "instruction": "Read the whole novel — it's one long paragraph punctuated by photographs. Jacques Austerlitz, an architectural historian, tells his story to the narrator in train stations and cafes across Europe. He was a child refugee from Prague; his mother died in Theresienstadt. Sebald's sentences are immense — they hold decades in one breath. The photographs are uncaptioned: a building, a boy in a costume, a pair of eyes. They haunt the text without explaining it."
+    },
+    "tags": [
+      "German",
+      "Fiction",
+      "Historical",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-a-wizard-of-earthsea",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "A Wizard of Earthsea (1968)",
+    "teaser": "Ursula K. Le Guin's fantasy novel about a boy named Ged who goes to a wizard school and releases a shadow monster in an act of pride. He spends the rest of the novel being hunted by his own darkness. Le Guin wrote it as a response to the lack of non-white heroes in fantasy — all the characters in Earthsea are brown-skinned. It was published decades before Harry Potter and says more about the danger of magical power in 200 pages than Rowling does in 7 books.",
+    "imageUrl": "",
+    "byline": "Ursula K. Le Guin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "A Wizard of Earthsea, the whole novel",
+      "durationMinutes": 42,
+      "instruction": "Read the whole novel. Ged, a goatherd with a gift for magic, is trained at the school of Roke. In a duel of pride, he summons a shadow from the land of the dead. The shadow pursues him; eventually he realizes he must stop running and turn to face it. The novel is structured like a Taoist parable: the shadow is Ged's own death, and naming it is the only way to be free. Le Guin's magic has moral weight — every spell has consequences."
+    },
+    "tags": [
+      "American",
+      "Fantasy",
+      "Young Adult",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-bluest-eye",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Bluest Eye (1970)",
+    "teaser": "Toni Morrison's debut novel about Pecola Breedlove, a Black girl who prays for blue eyes, believing they will make her beautiful and loved. The novel is told in fragments — from multiple perspectives, across years — because Pecola's trauma can't be narrated in a straight line. Morrison wrote it while working as an editor at Random House, getting up at 4 AM to write before her children woke.",
+    "imageUrl": "",
+    "byline": "Toni Morrison",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Bluest Eye, the whole novel",
+      "durationMinutes": 45,
+      "instruction": "Read the whole novel. The novel opens with a Dick-and-Jane primer that fractures into nonsense — the safe white world is breaking apart. Pecola's story is told by Claudia, a girl who survives what Pecola doesn't. Morrison shows racism as a poison that turns inward: Pecola believes if she had blue eyes, she would be beautiful. The novel's tragedy is not just what happens to Pecola but that her community participates in destroying her."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Literary",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-braiding-sweetgrass",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Braiding Sweetgrass (2013)",
+    "teaser": "Robin Wall Kimmerer's book about indigenous wisdom and botany. Kimmerer is a Potawatomi botanist and professor who bridges western science and Native knowledge. Each chapter weaves together ecology, storytelling, and memoir. The title comes from the Potawatomi story of Skywoman, who brought plants to earth. The book was a slow-burn bestseller that became a phenomenon years after publication.",
+    "imageUrl": "",
+    "byline": "Robin Wall Kimmerer",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Braiding Sweetgrass, Part One: Planting Sweetgrass",
+      "durationMinutes": 42,
+      "instruction": "Read Part One. Kimmerer begins with Skywoman falling from the sky, creating Turtle Island with a handful of mud. Then she describes pecans, strawberries, and the grammar of animacy in Potawatomi — English treats the natural world as 'it'; Potawatomi treats it as someone. Notice how Kimmerer refuses to choose between science and spirituality: they are two languages for the same love. 'In some Native languages the term for plants translates to those who take care of us.'"
+    },
+    "tags": [
+      "Native American",
+      "Nonfiction",
+      "Nature",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-on-earth-were-briefly-gorgeous",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "On Earth We're Briefly Gorgeous (2019)",
+    "teaser": "Ocean Vuong's debut novel written as a letter from a Vietnamese-American son to his illiterate mother. Vuong is a poet, and the novel reads like a long poem — every sentence is chiseled. It moves between the Vietnam War, a nail salon in Hartford, and a first love with a white boy in tobacco fields. The novel is autobiographical in spirit but Vuong insists it's fiction.",
+    "imageUrl": "",
+    "byline": "Ocean Vuong",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "On Earth We're Briefly Gorgeous, Part One",
+      "durationMinutes": 38,
+      "instruction": "Read Part One. 'Let me begin again.' Little Dog writes to his mother Rose, who cannot read. He describes his grandmother Lan, who escaped an arranged marriage during the war, and his first love, Trevor, who taught him to drive a combine harvester. Vuong writes about the body — his mother's hands scarred from the nail salon, Trevor's body in the tobacco fields — as the site where love and violence are the same thing. The monarch butterfly is the novel's recurring image: migration, transformation, fragile beauty."
+    },
+    "tags": [
+      "Vietnamese-American",
+      "Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-if-beale-street-could-talk",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "If Beale Street Could Talk (1974)",
+    "teaser": "James Baldwin's novel about a young Black couple in 1970s Harlem — Tish and Fonny. Fonny is in prison for a rape he didn't commit, and Tish is pregnant with his child. The novel is narrated by Tish, whose voice is steady and fierce. Baldwin wrote it as a love story, not a protest novel — but love under racism is protest. Adapted into an Oscar-winning film in 2018.",
+    "imageUrl": "",
+    "byline": "James Baldwin",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "If Beale Street Could Talk, the whole novel",
+      "durationMinutes": 40,
+      "instruction": "Read the whole novel. Tish tells Fonny — and us — how they fell in love. She's 19 and pregnant; her family rallies around Fonny while his own family fractures. Baldwin writes love as the only resistance that matters: Tish's family pools their money for lawyers, brings food, holds each other. The novel is about the carceral system but never lets the system overshadow the people. Tish's narration is the novel's miracle — she's never bitter, only certain."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Romance",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-vaster-wilds",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Vaster Wilds (2023)",
+    "teaser": "Lauren Groff's novel about a servant girl who escapes a 17th-century colonial settlement in Virginia during a famine and runs into the wilderness with nothing but her wits. The novel is a survival story and a spiritual crisis told in prose that feels like scripture. Groff wrote it in a fever during the pandemic.",
+    "imageUrl": "",
+    "byline": "Lauren Groff",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Vaster Wilds, Part One",
+      "durationMinutes": 38,
+      "instruction": "Read Part One. A girl known only as 'the girl' or 'the servant' flees the Jamestown settlement in the dead of winter. She has no name because she was never given one that mattered. The wilderness is violent — wolves, starvation, exposure — but also holy. Groff's prose is stripped to its essentials: every sentence is physical. The girl's spiritual crisis intensifies as she starves: she sees God in a flash of light on ice and questions whether God has ever seen her."
+    },
+    "tags": [
+      "American",
+      "Historical Fiction",
+      "Literary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-alchemist",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Alchemist (1988)",
+    "teaser": "Paulo Coelho's allegorical novel about Santiago, a Spanish shepherd who dreams of treasure at the pyramids. The novel was a slow seller at first — Coelho's first publisher dropped him — but has now sold over 65 million copies in 80+ languages. It's one of the best-selling books in history and the most translated book by a living author.",
+    "imageUrl": "",
+    "byline": "Paulo Coelho",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Alchemist, Part One",
+      "durationMinutes": 25,
+      "instruction": "Read Part One. Santiago sells his sheep and sails to Tangier. He's robbed, works for a crystal merchant, and joins a caravan crossing the Sahara. Coelho writes in simple declarative sentences — the prose feels like folklore. 'When you want something, all the universe conspires in helping you to achieve it.' The novel is less a plot than a parable: the treasure was never at the pyramids. Notice the alchemist himself appears only in the last third."
+    },
+    "tags": [
+      "Brazilian",
+      "Fiction",
+      "Allegorical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-bee-sting",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Bee Sting (2023)",
+    "teaser": "Paul Murray's novel about the Barnes family — an Irish family unraveling after the 2008 financial crash. The novel is structured in four parts, each from a different family member's perspective. It was shortlisted for the Booker Prize. The novel is funny, devastating, and 650 pages that feel like 300.",
+    "imageUrl": "",
+    "byline": "Paul Murray",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Bee Sting, Part One: Cass",
+      "durationMinutes": 42,
+      "instruction": "Read Part One. Cass Barnes, 17, is drinking in the woods with her friend Elaine when the novel opens. Her father's car dealership is failing; her mother is selling things on eBay; her brother is building a bunker. Murray writes Irish family life with comic precision and then turns the screw: the financial crash is a slow-motion car wreck that everyone sees coming and no one can stop. The bee sting of the title is both literal and metaphorical."
+    },
+    "tags": [
+      "Irish",
+      "Fiction",
+      "Contemporary",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-midnight-library",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Midnight Library (2020)",
+    "teaser": "Matt Haig's novel about Nora Seed, who tries to kill herself and finds herself in a library between life and death — each book contains a different version of her life she could have lived. The novel is about regret and the paths not taken. Haig wrote it after his own mental health crisis and it became a global bestseller.",
+    "imageUrl": "",
+    "byline": "Matt Haig",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Midnight Library, the whole novel",
+      "durationMinutes": 38,
+      "instruction": "Read the whole novel. Nora lands in the Midnight Library presided over by her old school librarian Mrs. Elm. She can try any life — Olympic swimmer, rock star, glaciologist, mother — and if she finds one worth living, she stays. The premise is simple but Haig executes it with empathy: each life teaches Nora something about the one she already has. The novel's philosophy is not 'anything is possible' but 'what you have is already enough.'"
+    },
+    "tags": [
+      "British",
+      "Fiction",
+      "Speculative",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-kindred",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Kindred (1979)",
+    "teaser": "Octavia Butler's novel about Dana, a Black woman in 1976 Los Angeles who is suddenly transported to a Maryland plantation in 1815. She is pulled back in time whenever her white ancestor Rufus is in mortal danger — she must keep him alive long enough to father her ancestor. Butler called it 'grim fantasy' — there's no explanation for the time travel, just the unflinching reality of slavery.",
+    "imageUrl": "",
+    "byline": "Octavia Butler",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Kindred, the whole novel",
+      "durationMinutes": 48,
+      "instruction": "Read the whole novel. Dana's first trip to the past: she saves a drowning white boy named Rufus and is nearly shot by his father. The time travel is involuntary and brutal — Dana arrives disoriented and returns with injuries. Butler doesn't romanticize the past: Dana must live as a slave, and the novel documents the daily violence without flinching. Rufus grows from a frightened boy into a slaveholder who believes he owns Dana. The horror is not the time travel; it's history."
+    },
+    "tags": [
+      "American",
+      "Science Fiction",
+      "Historical",
+      "20th Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-yellowface",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Yellowface (2023)",
+    "teaser": "R.F. Kuang's novel about June Hayward, a white writer who steals her dead Chinese-American friend's manuscript and publishes it as her own — complete with an ethnically ambiguous author photo. What follows is a satire of the publishing industry, cancel culture, and literary appropriation. The novel went viral on BookTok and became a bestseller.",
+    "imageUrl": "",
+    "byline": "R.F. Kuang",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Yellowface, the whole novel",
+      "durationMinutes": 35,
+      "instruction": "Read the whole novel. Athena Liu dies choking on a pancake in front of June, who takes her unpublished manuscript about Chinese laborers in WWI. June edits it, changes her name to Juniper Song, and becomes a literary star. The novel works as thriller and satire: June's narration is a masterclass in self-justification. Kuang makes you understand June even as you recoil. The publishing industry — sensitivity readers, Twitter pile-ons, diversity panels — is skewered with insider knowledge."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Satire",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-the-sellout",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "The Sellout (2015)",
+    "teaser": "Paul Beatty's novel about a Black man who reinstates slavery and segregation in his Los Angeles neighborhood — as satire — and ends up in the Supreme Court. Won the Booker Prize (the first American to win it). Every sentence is a joke that's serious. Beatty's narrator is an urban farmer who grows satsumas and watermelons and calls himself a 'sellout' for loving the neighborhood no one else cares about.",
+    "imageUrl": "",
+    "byline": "Paul Beatty",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "The Sellout, chapters 1-8",
+      "durationMinutes": 38,
+      "instruction": "Read the first eight chapters. The narrator (unnamed) is raised by a sociologist father who used him as a subject in racial psychology experiments. His father is shot by the police, and the narrator's response is absurdity: he takes a slave, paints a line of segregation on the street. Beatty's prose is hip-hop and literature at once — dense with references, profane, hilarious. The satire is so sharp it hurts: the novel is about how race is simultaneously everything and nothing."
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Satire",
+      "21st Century"
+    ],
+    "tier": 2
+  },
+  {
+    "id": "book-their-eyes-were-watching-god",
+    "categoryId": "BOOKS",
+    "subtype": "Book",
+    "name": "Their Eyes Were Watching God (1937)",
+    "teaser": "Zora Neale Hurston's novel about Janie Crawford's journey through three marriages to selfhood in rural Florida. Out of print for decades, rescued in 1975 by Alice Walker, who put a gravestone on Hurston's unmarked grave. The novel is written in lyrical third person and Black Southern dialect — the two registers are the novel's music.",
+    "imageUrl": "",
+    "byline": "Zora Neale Hurston",
+    "exploreAction": {
+      "verb": "Read",
+      "targetName": "Their Eyes Were Watching God, chapters 1-6",
+      "durationMinutes": 40,
+      "instruction": "Read the first six chapters. Janie returns to Eatonville and tells her story. Her grandmother marries her off at 16 — she 'had been summoned to behold a revelation.' Janie's journey is toward the horizon: not a man but a self. Hurston's prose is incantatory: 'Ships at a distance have every man's wish on board.' The hurricane section is one of the most terrifying passages in American literature. Janie survives it all — and the novel ends with her pulling in her horizon 'like a great fish-net.'"
+    },
+    "tags": [
+      "American",
+      "Fiction",
+      "Harlem Renaissance",
+      "20th Century"
+    ],
+    "tier": 2
   }
 ]
